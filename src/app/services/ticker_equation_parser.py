@@ -93,9 +93,11 @@ class TickerEquationParser:
         # Fetch all ticker data
         ticker_data = {}
         for ticker in tickers:
-            if ticker not in self._ticker_cache:
-                self._ticker_cache[ticker] = fetch_price_history(ticker, period, interval)
-            ticker_data[ticker] = self._ticker_cache[ticker]
+            # Create cache key with ticker, period, and interval
+            cache_key = (ticker, period, interval)
+            if cache_key not in self._ticker_cache:
+                self._ticker_cache[cache_key] = fetch_price_history(ticker, period, interval)
+            ticker_data[ticker] = self._ticker_cache[cache_key]
 
         # Align dates - find common date range
         aligned_data = self._align_dates(ticker_data)
