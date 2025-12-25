@@ -415,8 +415,8 @@ class PriceChart(pg.PlotWidget):
         y_range = self.oscillator_vb.viewRange()[1]
         
         # Use more generous thresholds for easier grabbing
-        x_threshold = (x_range[1] - x_range[0]) * 0.01
-        y_threshold = (y_range[1] - y_range[0]) * 0.01
+        x_threshold = (x_range[1] - x_range[0]) * 0.05  # 5% of X range
+        y_threshold = (y_range[1] - y_range[0]) * 0.15  # 15% of Y range
         
         # Check each oscillator item
         for item in self._oscillator_indicator_lines:
@@ -447,7 +447,6 @@ class PriceChart(pg.PlotWidget):
                                 dy = abs(view_pos.y() - y)
                                 
                                 if dx < x_threshold and dy < y_threshold:
-                                    print(f"Hit detected on oscillator marker at ({x:.2f}, {y:.2f})")
                                     return True
         
         return False
@@ -518,10 +517,8 @@ class PriceChart(pg.PlotWidget):
         # Otherwise use default behavior
         super().mouseReleaseEvent(ev)
 
-    def clear(self):
-        """Override clear to properly clean up both price and oscillator ViewBoxes."""
-        print(f"DEBUG: Clearing chart. Price indicators: {len(self._price_indicator_lines)}, Oscillator indicators: {len(self._oscillator_indicator_lines)}")
-        
+    def _clear_chart(self):
+        """Custom clear method to properly clean up both price and oscillator ViewBoxes."""
         # Remove old legend first
         if hasattr(self, 'legend') and self.legend is not None:
             try:
@@ -530,29 +527,45 @@ class PriceChart(pg.PlotWidget):
                 pass
             self.legend = None
         
-        # Clear price indicator items
-        for item in self._price_indicator_lines:
+        # Remove oscillator indicators - use slice copy to avoid modification during iteration
+        for item in self._oscillator_indicator_lines[:]:
             try:
+                self.oscillator_vb.removeItem(item)
                 if item.scene() is not None:
-                    self.price_vb.removeItem(item)
-            except Exception as e:
-                print(f"DEBUG: Error removing price indicator: {e}")
-        self._price_indicator_lines.clear()
-        
-        # Clear oscillator indicator items
-        for item in self._oscillator_indicator_lines:
-            try:
-                if item.scene() is not None:
-                    self.oscillator_vb.removeItem(item)
-            except Exception as e:
-                print(f"DEBUG: Error removing oscillator indicator: {e}")
+                    item.scene().removeItem(item)
+            except:
+                pass
         self._oscillator_indicator_lines.clear()
         
-        # Also clear the oscillator ViewBox completely
-        try:
-            self.oscillator_vb.clear()
-        except Exception as e:
-            print(f"DEBUG: Error clearing oscillator ViewBox: {e}")
+        # Remove price indicators - use slice copy
+        for item in self._price_indicator_lines[:]:
+            try:
+                self.price_vb.removeItem(item)
+                if item.scene() is not None:
+                    item.scene().removeItem(item)
+            except:
+                pass
+        self._price_indicator_lines.clear()
+        
+        # Remove candles manually
+        if self._candles is not None:
+            try:
+                self.price_vb.removeItem(self._candles)
+                if self._candles.scene() is not None:
+                    self._candles.scene().removeItem(self._candles)
+            except:
+                pass
+            self._candles = None
+        
+        # Remove line manually
+        if self._line is not None:
+            try:
+                self.price_vb.removeItem(self._line)
+                if self._line.scene() is not None:
+                    self._line.scene().removeItem(self._line)
+            except:
+                pass
+            self._line = None
         
         # Hide oscillator axis when cleared
         self.oscillator_axis.hide()
@@ -564,13 +577,8 @@ class PriceChart(pg.PlotWidget):
         self._cursor_over_oscillator = False
         self.setCursor(QtCore.Qt.ArrowCursor)
         
-        # Call parent clear for candles and price line
-        super().clear()
-        
         # Re-add legend after clear
         self.legend = self.addLegend(offset=(10, 10))
-        
-        print("DEBUG: Clear complete")
 
     def _update_oscillator_geometry(self, *args):
         """Update the oscillator ViewBox to match price ViewBox geometry with offset."""
@@ -738,7 +746,7 @@ class PriceChart(pg.PlotWidget):
         indicators: Dict[str, Dict[str, Any]] = None,
     ) -> None:
         if df is None or df.empty:
-            self.clear()
+            self._clear_chart()
             return
 
         prev_left_dt, prev_right_dt = self._get_visible_date_window()
@@ -753,10 +761,12 @@ class PriceChart(pg.PlotWidget):
 
         self.setLabel("right", "Price (USD)" if self._scale_mode == "regular" else "Price (USD, log scale)")
 
-        # Use our custom clear method
-        self.clear()
+        # Clear chart
+        self._clear_chart()
         self._candles = None
         self._line = None
+        self._price_indicator_lines = []
+        self._oscillator_indicator_lines = []
 
         self.bottom_axis.set_index(df_plot.index)
         x = np.arange(len(df_plot), dtype=float)
@@ -897,10 +907,8 @@ class PriceChart(pg.PlotWidget):
                     
                     if is_oscillator:
                         self._oscillator_indicator_lines.append(scatter)
-                        print(f"DEBUG: Added oscillator scatter '{col}', total oscillators: {len(self._oscillator_indicator_lines)}")
                     else:
                         self._price_indicator_lines.append(scatter)
-                        print(f"DEBUG: Added price scatter '{col}', total price indicators: {len(self._price_indicator_lines)}")
                     
                 else:
                     # Render as line plot (for continuous indicators)
@@ -931,10 +939,8 @@ class PriceChart(pg.PlotWidget):
                     
                     if is_oscillator:
                         self._oscillator_indicator_lines.append(line)
-                        print(f"DEBUG: Added oscillator line '{col}', total oscillators: {len(self._oscillator_indicator_lines)}")
                     else:
                         self._price_indicator_lines.append(line)
-                        print(f"DEBUG: Added price line '{col}', total price indicators: {len(self._price_indicator_lines)}")
                 
                 color_idx += 1
         
