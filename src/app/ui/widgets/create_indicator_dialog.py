@@ -22,7 +22,7 @@ from app.core.theme_manager import ThemeManager
 
 class CreateIndicatorDialog(QDialog):
     """
-    Dialog for creating custom indicators with user-specified parameters
+    Dialog for creating/editing custom indicators with user-specified parameters
     and appearance settings.
     """
 
@@ -33,12 +33,14 @@ class CreateIndicatorDialog(QDialog):
             "params": [
                 {"name": "length", "label": "Period", "default": "20", "type": "int"},
             ],
+            "uses_markers": False,  # Only uses lines
         },
         "EMA": {
             "name": "Exponential Moving Average",
             "params": [
                 {"name": "length", "label": "Period", "default": "12", "type": "int"},
             ],
+            "uses_markers": False,
         },
         "Bollinger Bands": {
             "name": "Bollinger Bands",
@@ -46,12 +48,14 @@ class CreateIndicatorDialog(QDialog):
                 {"name": "length", "label": "Period", "default": "20", "type": "int"},
                 {"name": "std", "label": "Std Dev", "default": "2", "type": "float"},
             ],
+            "uses_markers": False,
         },
         "RSI": {
             "name": "Relative Strength Index",
             "params": [
                 {"name": "length", "label": "Period", "default": "14", "type": "int"},
             ],
+            "uses_markers": False,
         },
         "MACD": {
             "name": "MACD",
@@ -60,12 +64,14 @@ class CreateIndicatorDialog(QDialog):
                 {"name": "slow", "label": "Slow Period", "default": "26", "type": "int"},
                 {"name": "signal", "label": "Signal Period", "default": "9", "type": "int"},
             ],
+            "uses_markers": False,
         },
         "ATR": {
             "name": "Average True Range",
             "params": [
                 {"name": "length", "label": "Period", "default": "14", "type": "int"},
             ],
+            "uses_markers": False,
         },
         "Stochastic": {
             "name": "Stochastic Oscillator",
@@ -74,14 +80,17 @@ class CreateIndicatorDialog(QDialog):
                 {"name": "d", "label": "D Period", "default": "3", "type": "int"},
                 {"name": "smooth_k", "label": "Smooth K", "default": "3", "type": "int"},
             ],
+            "uses_markers": False,
         },
         "OBV": {
             "name": "On-Balance Volume",
-            "params": [],  # No parameters
+            "params": [],
+            "uses_markers": False,
         },
         "VWAP": {
             "name": "Volume Weighted Average Price",
-            "params": [],  # No parameters
+            "params": [],
+            "uses_markers": False,
         },
     }
 
@@ -118,18 +127,24 @@ class CreateIndicatorDialog(QDialog):
         ("Custom...", None),
     ]
 
-    def __init__(self, theme_manager: ThemeManager, parent=None):
+    def __init__(self, theme_manager: ThemeManager, parent=None, edit_mode=False, indicator_config=None):
         super().__init__(parent)
-        self.setWindowTitle("Create Custom Indicator")
+        self.setWindowTitle("Edit Indicator" if edit_mode else "Create Custom Indicator")
         self.setModal(True)
         self.setMinimumWidth(500)
         
         self.theme_manager = theme_manager
+        self.edit_mode = edit_mode
+        self.indicator_config = indicator_config or {}
         self.param_inputs = {}
         self.selected_color = (0, 150, 255)  # Default blue
         
         self._setup_ui()
         self._apply_theme()
+        
+        # If in edit mode, populate fields
+        if self.edit_mode and self.indicator_config:
+            self._populate_from_config()
 
     def _setup_ui(self):
         """Create the dialog UI."""
@@ -137,7 +152,8 @@ class CreateIndicatorDialog(QDialog):
         layout.setSpacing(15)
 
         # Header
-        self.header = QLabel("Create Custom Indicator")
+        header_text = "Edit Indicator" if self.edit_mode else "Create Custom Indicator"
+        self.header = QLabel(header_text)
         self.header.setObjectName("dialogHeader")
         layout.addWidget(self.header)
 
@@ -148,6 +164,11 @@ class CreateIndicatorDialog(QDialog):
         self.type_combo = QComboBox()
         self.type_combo.addItems(list(self.INDICATOR_TYPES.keys()))
         self.type_combo.currentTextChanged.connect(self._on_type_changed)
+        
+        # Disable type combo in edit mode
+        if self.edit_mode:
+            self.type_combo.setEnabled(False)
+        
         type_layout.addWidget(self.type_combo, stretch=1)
         
         layout.addLayout(type_layout)
@@ -172,8 +193,8 @@ class CreateIndicatorDialog(QDialog):
         layout.addWidget(param_group)
 
         # Appearance settings
-        appearance_group = self._create_appearance_group()
-        layout.addWidget(appearance_group)
+        self.appearance_group = self._create_appearance_group()
+        layout.addWidget(self.appearance_group)
 
         # Initialize with first indicator type
         self._on_type_changed(self.type_combo.currentText())
@@ -186,13 +207,80 @@ class CreateIndicatorDialog(QDialog):
         self.cancel_btn.clicked.connect(self.reject)
         button_layout.addWidget(self.cancel_btn)
         
-        self.create_btn = QPushButton("Create Indicator")
+        button_text = "Update Indicator" if self.edit_mode else "Create Indicator"
+        self.create_btn = QPushButton(button_text)
         self.create_btn.setDefault(True)
         self.create_btn.setObjectName("defaultButton")
         self.create_btn.clicked.connect(self._create_indicator)
         button_layout.addWidget(self.create_btn)
         
         layout.addLayout(button_layout)
+
+    def _populate_from_config(self):
+        """Populate dialog fields from existing indicator config."""
+        config = self.indicator_config
+        
+        # Set indicator type
+        indicator_type = config.get("type")
+        if indicator_type:
+            index = self.type_combo.findText(indicator_type)
+            if index >= 0:
+                self.type_combo.setCurrentIndex(index)
+        
+        # Set custom name
+        custom_name = config.get("custom_name", "")
+        if custom_name:
+            self.name_input.setText(custom_name)
+        
+        # Set parameters
+        params = config.get("params", {})
+        for param_name, value in params.items():
+            if param_name in self.param_inputs:
+                self.param_inputs[param_name]["widget"].setText(str(value))
+        
+        # Set appearance
+        appearance = config.get("appearance", {})
+        
+        # Color
+        color = appearance.get("color", (0, 150, 255))
+        self.selected_color = color
+        self.color_preview.setStyleSheet(
+            f"font-size: 24px; color: rgb({color[0]}, {color[1]}, {color[2]});"
+        )
+        
+        # Find matching preset color or set to Custom
+        color_index = len(self.PRESET_COLORS) - 1  # Default to Custom
+        for i, (name, preset_color) in enumerate(self.PRESET_COLORS[:-1]):
+            if preset_color == color:
+                color_index = i
+                break
+        self.color_combo.setCurrentIndex(color_index)
+        
+        # Line width
+        line_width = appearance.get("line_width", 2)
+        self.line_width_spin.setValue(line_width)
+        
+        # Line style
+        line_style = appearance.get("line_style", Qt.SolidLine)
+        for style_name, style_value in self.LINE_STYLES.items():
+            if style_value == line_style:
+                index = self.line_style_combo.findText(style_name)
+                if index >= 0:
+                    self.line_style_combo.setCurrentIndex(index)
+                break
+        
+        # Marker shape
+        marker_shape = appearance.get("marker_shape", "o")
+        for shape_name, shape_value in self.MARKER_SHAPES.items():
+            if shape_value == marker_shape:
+                index = self.marker_shape_combo.findText(shape_name)
+                if index >= 0:
+                    self.marker_shape_combo.setCurrentIndex(index)
+                break
+        
+        # Marker size
+        marker_size = appearance.get("marker_size", 10)
+        self.marker_size_spin.setValue(marker_size)
 
     def _create_appearance_group(self) -> QGroupBox:
         """Create appearance settings group."""
@@ -221,16 +309,19 @@ class CreateIndicatorDialog(QDialog):
         self.line_width_spin.setMaximum(10)
         self.line_width_spin.setValue(2)
         self.line_width_spin.setSuffix(" px")
+        self.line_width_row = layout.rowCount()
         layout.addRow("Line Width:", self.line_width_spin)
 
         # Line style
         self.line_style_combo = QComboBox()
         self.line_style_combo.addItems(list(self.LINE_STYLES.keys()))
+        self.line_style_row = layout.rowCount()
         layout.addRow("Line Style:", self.line_style_combo)
 
         # Marker shape (for scatter plots)
         self.marker_shape_combo = QComboBox()
         self.marker_shape_combo.addItems(list(self.MARKER_SHAPES.keys()))
+        self.marker_shape_row = layout.rowCount()
         layout.addRow("Marker Shape:", self.marker_shape_combo)
 
         # Marker size
@@ -239,10 +330,43 @@ class CreateIndicatorDialog(QDialog):
         self.marker_size_spin.setMaximum(20)
         self.marker_size_spin.setValue(10)
         self.marker_size_spin.setSuffix(" px")
+        self.marker_size_row = layout.rowCount()
         layout.addRow("Marker Size:", self.marker_size_spin)
 
         group.setLayout(layout)
         return group
+
+    def _update_appearance_visibility(self, indicator_type: str):
+        """Show/hide appearance options based on indicator type."""
+        indicator_info = self.INDICATOR_TYPES.get(indicator_type, {})
+        uses_markers = indicator_info.get("uses_markers", False)
+        
+        # Get the form layout
+        form_layout = self.appearance_group.layout()
+        
+        # Show/hide marker-related fields
+        # Line options are always visible
+        # Marker options only visible if indicator uses markers
+        
+        if hasattr(self, 'marker_shape_row'):
+            # Hide marker shape
+            label_item = form_layout.itemAt(self.marker_shape_row, QFormLayout.LabelRole)
+            field_item = form_layout.itemAt(self.marker_shape_row, QFormLayout.FieldRole)
+            
+            if label_item and label_item.widget():
+                label_item.widget().setVisible(uses_markers)
+            if field_item and field_item.widget():
+                field_item.widget().setVisible(uses_markers)
+        
+        if hasattr(self, 'marker_size_row'):
+            # Hide marker size
+            label_item = form_layout.itemAt(self.marker_size_row, QFormLayout.LabelRole)
+            field_item = form_layout.itemAt(self.marker_size_row, QFormLayout.FieldRole)
+            
+            if label_item and label_item.widget():
+                label_item.widget().setVisible(uses_markers)
+            if field_item and field_item.widget():
+                field_item.widget().setVisible(uses_markers)
 
     def _on_color_changed(self, color_name: str):
         """Handle color selection change."""
@@ -515,9 +639,12 @@ class CreateIndicatorDialog(QDialog):
             no_params_label = QLabel("This indicator has no configurable parameters.")
             no_params_label.setStyleSheet("font-style: italic; color: #888888;")
             self.param_form.addRow(no_params_label)
+        
+        # Update appearance field visibility
+        self._update_appearance_visibility(indicator_type)
 
     def _create_indicator(self):
-        """Validate inputs and create the indicator."""
+        """Validate inputs and create/update the indicator."""
         indicator_type = self.type_combo.currentText()
         
         # Collect and validate parameters
@@ -571,5 +698,5 @@ class CreateIndicatorDialog(QDialog):
         self.accept()
 
     def get_indicator_config(self):
-        """Get the created indicator configuration."""
+        """Get the created/edited indicator configuration."""
         return getattr(self, "result", None)

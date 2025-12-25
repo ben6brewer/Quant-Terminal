@@ -266,6 +266,7 @@ class ChartModule(QWidget):
         self.chart = PriceChart()
         content_layout.addWidget(self.chart, stretch=1)
         
+        
         # Apply initial theme to chart
         self.chart.set_theme(self.theme_manager.current_theme)
 
@@ -312,6 +313,8 @@ class ChartModule(QWidget):
         self.overlay_list.setSelectionMode(QListWidget.MultiSelection)
         self.overlay_list.addItems(IndicatorService.get_overlay_names())
         self.overlay_list.setMaximumHeight(200)
+        # Double-click to edit
+        self.overlay_list.itemDoubleClicked.connect(self._edit_indicator_from_list)
         layout.addWidget(self.overlay_list)
 
         # Oscillator indicators section
@@ -323,6 +326,8 @@ class ChartModule(QWidget):
         self.oscillator_list.setSelectionMode(QListWidget.MultiSelection)
         self.oscillator_list.addItems(IndicatorService.get_oscillator_names())
         self.oscillator_list.setMaximumHeight(150)
+        # Double-click to edit
+        self.oscillator_list.itemDoubleClicked.connect(self._edit_indicator_from_list)
         layout.addWidget(self.oscillator_list)
 
         # Apply button
@@ -334,6 +339,11 @@ class ChartModule(QWidget):
         clear_btn = QPushButton("Clear All")
         clear_btn.clicked.connect(self._clear_indicators)
         layout.addWidget(clear_btn)
+
+        # Edit button
+        edit_btn = QPushButton("✏️ Edit Selected")
+        edit_btn.clicked.connect(self._edit_selected_indicator)
+        layout.addWidget(edit_btn)
 
         # Delete selected indicator button
         delete_btn = QPushButton("🗑 Delete Selected")
@@ -410,6 +420,193 @@ class ChartModule(QWidget):
         # Re-render without indicators
         self.render_from_cache()
 
+    def _edit_indicator_from_list(self, item) -> None:
+        """Edit an indicator that was double-clicked in the sidebar list."""
+        indicator_name = item.text()
+        self._edit_indicator(indicator_name)
+
+    def _edit_selected_indicator(self) -> None:
+        """Edit the currently selected indicator from the sidebar."""
+        # Get selected item from either list
+        selected_overlay = self.overlay_list.selectedItems()
+        selected_oscillator = self.oscillator_list.selectedItems()
+        
+        selected = selected_overlay + selected_oscillator
+        
+        if len(selected) == 0:
+            QMessageBox.information(
+                self,
+                "No Indicator Selected",
+                "Please select an indicator to edit.",
+            )
+            return
+        
+        if len(selected) > 1:
+            QMessageBox.information(
+                self,
+                "Multiple Indicators Selected",
+                "Please select only one indicator to edit.",
+            )
+            return
+        
+        indicator_name = selected[0].text()
+        self._edit_indicator(indicator_name)
+
+    def _edit_indicator(self, indicator_name: str) -> None:
+        """Open the edit dialog for an indicator."""
+        # Get the indicator config
+        if indicator_name not in IndicatorService.ALL_INDICATORS:
+            QMessageBox.warning(
+                self,
+                "Indicator Not Found",
+                f"Indicator '{indicator_name}' not found.",
+            )
+            return
+        
+        config = IndicatorService.ALL_INDICATORS[indicator_name]
+        
+        # Check if this is a plugin-based indicator
+        if config.get("kind") == "plugin":
+            QMessageBox.information(
+                self,
+                "Cannot Edit Plugin",
+                f"'{indicator_name}' is a plugin-based indicator and cannot be edited through the UI.\n\n"
+                "To modify it, edit the plugin file directly.",
+            )
+            return
+        
+        # Build indicator config for the dialog
+        indicator_type_map = {
+            "sma": "SMA",
+            "ema": "EMA",
+            "bbands": "Bollinger Bands",
+            "rsi": "RSI",
+            "macd": "MACD",
+            "atr": "ATR",
+            "stochastic": "Stochastic",
+            "obv": "OBV",
+            "vwap": "VWAP",
+        }
+        
+        kind = config.get("kind")
+        indicator_type = indicator_type_map.get(kind, kind)
+        
+        # Extract parameters (exclude 'kind' and 'appearance')
+        params = {k: v for k, v in config.items() if k not in ["kind", "appearance"]}
+        
+        # Get appearance settings
+        appearance = config.get("appearance", {})
+        
+        # Try to extract custom name from the indicator_name
+        # If it matches the auto-generated pattern, don't set custom_name
+        custom_name = None
+        auto_name = self._generate_auto_name(indicator_type, params)
+        if indicator_name != auto_name:
+            custom_name = indicator_name
+        
+        edit_config = {
+            "type": indicator_type,
+            "params": params,
+            "custom_name": custom_name,
+            "appearance": appearance,
+        }
+        
+        # Open edit dialog
+        dialog = CreateIndicatorDialog(
+            self.theme_manager,
+            self,
+            edit_mode=True,
+            indicator_config=edit_config,
+        )
+        
+        if dialog.exec():
+            new_config = dialog.get_indicator_config()
+            if new_config:
+                # Remove old indicator
+                old_name = indicator_name
+                IndicatorService.remove_custom_indicator(old_name)
+                
+                # Add updated indicator
+                self._add_indicator_from_config(new_config)
+                
+                # Update selection if this indicator was active
+                if old_name in self.state["indicators"]:
+                    self.state["indicators"].remove(old_name)
+                    # Add new name
+                    new_name = new_config.get("custom_name") or self._generate_auto_name(
+                        new_config["type"], new_config["params"]
+                    )
+                    self.state["indicators"].append(new_name)
+                
+                # Refresh lists and re-render
+                self._refresh_indicator_lists()
+                self.render_from_cache()
+                
+                QMessageBox.information(
+                    self,
+                    "Indicator Updated",
+                    f"Successfully updated indicator.",
+                )
+
+    def _generate_auto_name(self, indicator_type: str, params: dict) -> str:
+        """Generate auto name for an indicator based on type and params."""
+        if not params:
+            return indicator_type
+        elif indicator_type == "SMA":
+            return f"SMA({params.get('length', '')})"
+        elif indicator_type == "EMA":
+            return f"EMA({params.get('length', '')})"
+        elif indicator_type == "Bollinger Bands":
+            return f"BB({params.get('length', '')},{params.get('std', '')})"
+        elif indicator_type == "RSI":
+            return f"RSI({params.get('length', '')})"
+        elif indicator_type == "MACD":
+            return f"MACD({params.get('fast', '')},{params.get('slow', '')},{params.get('signal', '')})"
+        elif indicator_type == "ATR":
+            return f"ATR({params.get('length', '')})"
+        elif indicator_type == "Stochastic":
+            return f"Stochastic({params.get('k', '')},{params.get('d', '')},{params.get('smooth_k', '')})"
+        else:
+            return indicator_type
+
+    def _add_indicator_from_config(self, config: dict) -> None:
+        """Add an indicator from a config dict."""
+        indicator_type = config["type"]
+        params = config["params"]
+        custom_name = config.get("custom_name")
+        appearance = config.get("appearance", {})
+        
+        # Use custom name if provided, otherwise auto-generate
+        if custom_name:
+            name = custom_name
+        else:
+            name = self._generate_auto_name(indicator_type, params)
+        
+        # Build config for IndicatorService
+        kind_map = {
+            "SMA": "sma",
+            "EMA": "ema",
+            "Bollinger Bands": "bbands",
+            "RSI": "rsi",
+            "MACD": "macd",
+            "ATR": "atr",
+            "Stochastic": "stochastic",
+            "OBV": "obv",
+            "VWAP": "vwap",
+        }
+        
+        indicator_config = {
+            "kind": kind_map[indicator_type],
+            **params,
+            "appearance": appearance,
+        }
+        
+        # Determine if overlay or oscillator
+        is_overlay = indicator_type in ["SMA", "EMA", "Bollinger Bands", "VWAP"]
+        
+        # Add to IndicatorService
+        IndicatorService.add_custom_indicator(name, indicator_config, is_overlay)
+
     def _create_custom_indicator(self) -> None:
         """Open dialog to create a custom indicator."""
         dialog = CreateIndicatorDialog(self.theme_manager, self)
@@ -417,35 +614,12 @@ class ChartModule(QWidget):
         if dialog.exec():
             config = dialog.get_indicator_config()
             if config:
-                # Build indicator name
-                indicator_type = config["type"]
-                params = config["params"]
+                # Generate name
                 custom_name = config.get("custom_name")
-                appearance = config.get("appearance", {})
-                
-                # Use custom name if provided, otherwise auto-generate
                 if custom_name:
                     name = custom_name
                 else:
-                    # Format name based on type
-                    if not params:
-                        name = indicator_type
-                    elif indicator_type == "SMA":
-                        name = f"SMA({params['length']})"
-                    elif indicator_type == "EMA":
-                        name = f"EMA({params['length']})"
-                    elif indicator_type == "Bollinger Bands":
-                        name = f"BB({params['length']},{params['std']})"
-                    elif indicator_type == "RSI":
-                        name = f"RSI({params['length']})"
-                    elif indicator_type == "MACD":
-                        name = f"MACD({params['fast']},{params['slow']},{params['signal']})"
-                    elif indicator_type == "ATR":
-                        name = f"ATR({params['length']})"
-                    elif indicator_type == "Stochastic":
-                        name = f"Stochastic({params['k']},{params['d']},{params['smooth_k']})"
-                    else:
-                        name = indicator_type
+                    name = self._generate_auto_name(config["type"], config["params"])
                 
                 # Check if already exists
                 if name in IndicatorService.ALL_INDICATORS:
@@ -456,30 +630,8 @@ class ChartModule(QWidget):
                     )
                     return
                 
-                # Build config for IndicatorService
-                kind_map = {
-                    "SMA": "sma",
-                    "EMA": "ema",
-                    "Bollinger Bands": "bbands",
-                    "RSI": "rsi",
-                    "MACD": "macd",
-                    "ATR": "atr",
-                    "Stochastic": "stochastic",
-                    "OBV": "obv",
-                    "VWAP": "vwap",
-                }
-                
-                indicator_config = {
-                    "kind": kind_map[indicator_type],
-                    **params,
-                    "appearance": appearance,  # Store appearance settings
-                }
-                
-                # Determine if overlay or oscillator
-                is_overlay = indicator_type in ["SMA", "EMA", "Bollinger Bands", "VWAP"]
-                
-                # Add to IndicatorService
-                IndicatorService.add_custom_indicator(name, indicator_config, is_overlay)
+                # Add indicator
+                self._add_indicator_from_config(config)
                 
                 # Refresh the lists
                 self._refresh_indicator_lists()
@@ -581,12 +733,11 @@ class ChartModule(QWidget):
             # Calculate indicators if any are selected
             indicators = {}
             if self.state["indicators"]:
-                # This now returns Dict[str, Dict[str, Any]] with "data" and "appearance" keys
                 indicators = IndicatorService.calculate_multiple(
                     self.state["df"], self.state["indicators"]
                 )
             
-            # Render chart with indicators (indicators dict now includes appearance)
+            # Render chart with indicators
             self.chart.set_prices(
                 self.state["df"],
                 ticker=self.state["ticker"],

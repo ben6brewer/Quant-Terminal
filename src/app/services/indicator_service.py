@@ -389,7 +389,7 @@ class IndicatorService:
     @classmethod
     def calculate_multiple(
         cls, df: pd.DataFrame, indicator_names: List[str]
-    ) -> Dict[str, pd.DataFrame]:
+    ) -> Dict[str, Dict[str, Any]]:
         """
         Calculate multiple indicators.
 
@@ -398,13 +398,22 @@ class IndicatorService:
             indicator_names: List of indicator names to calculate
 
         Returns:
-            Dictionary mapping indicator names to their calculated DataFrames
+            Dictionary mapping indicator names to dicts containing:
+                - "data": DataFrame with indicator values
+                - "appearance": Appearance settings dict (or empty dict if none)
         """
         results = {}
         for name in indicator_names:
-            result = cls.calculate(df, name)
-            if result is not None:
-                results[name] = result
+            result_df = cls.calculate(df, name)
+            if result_df is not None:
+                # Get appearance settings from config if available
+                config = cls.ALL_INDICATORS.get(name, {})
+                appearance = config.get("appearance", {})
+                
+                results[name] = {
+                    "data": result_df,
+                    "appearance": appearance,
+                }
         return results
 
     # ========================
