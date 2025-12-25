@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+import importlib.util
+import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Type, Any
 import pandas as pd
 import numpy as np
 
@@ -12,20 +14,109 @@ class IndicatorService:
     Service for calculating technical indicators.
     Implements indicators manually using pandas and numpy (no external dependencies).
     All indicators are user-created and persisted to disk.
+    
+    Now supports loading custom indicator plugins from Python files.
     """
 
     # Storage for user-created indicators (starts empty)
     OVERLAY_INDICATORS = {}
     OSCILLATOR_INDICATORS = {}
     ALL_INDICATORS = {}
+    
+    # Storage for custom indicator classes loaded from files
+    CUSTOM_INDICATOR_CLASSES = {}
 
     # Path to save/load custom indicators
     _SAVE_PATH = Path.home() / ".quant_terminal" / "custom_indicators.json"
+    
+    # Path to custom indicator plugin files
+    _PLUGIN_PATH = Path.home() / ".quant_terminal" / "custom_indicators"
 
     @classmethod
     def initialize(cls) -> None:
-        """Initialize the service and load saved indicators."""
+        """Initialize the service and load saved indicators and plugins."""
         cls.load_indicators()
+        cls.load_custom_indicator_plugins()
+
+    @classmethod
+    def load_custom_indicator_plugins(cls) -> None:
+        """
+        Load custom indicator plugins from the custom_indicators directory.
+        
+        Each plugin should be a Python file containing a class that inherits
+        from BaseIndicator.
+        """
+        if not cls._PLUGIN_PATH.exists():
+            cls._PLUGIN_PATH.mkdir(parents=True, exist_ok=True)
+            print(f"Created custom indicators directory: {cls._PLUGIN_PATH}")
+            return
+        
+        # Find all Python files in the plugin directory
+        plugin_files = list(cls._PLUGIN_PATH.glob("*.py"))
+        
+        if not plugin_files:
+            print(f"No custom indicator plugins found in {cls._PLUGIN_PATH}")
+            return
+        
+        print(f"Loading custom indicator plugins from {cls._PLUGIN_PATH}")
+        
+        for plugin_file in plugin_files:
+            try:
+                # Skip __init__.py and base_indicator.py
+                if plugin_file.name.startswith("__") or plugin_file.name == "base_indicator.py":
+                    continue
+                
+                # Load the module
+                module_name = plugin_file.stem
+                spec = importlib.util.spec_from_file_location(module_name, plugin_file)
+                if spec is None or spec.loader is None:
+                    print(f"  Failed to load spec for {plugin_file.name}")
+                    continue
+                
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[module_name] = module
+                spec.loader.exec_module(module)
+                
+                # Find classes that inherit from BaseIndicator
+                # We need to import BaseIndicator or check for the right methods
+                indicator_classes = []
+                for attr_name in dir(module):
+                    attr = getattr(module, attr_name)
+                    if (isinstance(attr, type) and 
+                        hasattr(attr, 'calculate') and 
+                        hasattr(attr, 'NAME') and
+                        attr_name != 'BaseIndicator'):
+                        indicator_classes.append(attr)
+                
+                # Register each indicator class
+                for indicator_class in indicator_classes:
+                    cls._register_custom_indicator_class(indicator_class)
+                    print(f"  Loaded: {indicator_class.NAME} from {plugin_file.name}")
+                
+            except Exception as e:
+                print(f"  Error loading plugin {plugin_file.name}: {e}")
+                import traceback
+                traceback.print_exc()
+
+    @classmethod
+    def _register_custom_indicator_class(cls, indicator_class: Type[Any]) -> None:
+        """Register a custom indicator class."""
+        name = indicator_class.NAME
+        is_overlay = indicator_class.IS_OVERLAY
+        
+        # Store the class
+        cls.CUSTOM_INDICATOR_CLASSES[name] = indicator_class
+        
+        # Add to appropriate category
+        # For plugin-based indicators, we use a special config that includes the class
+        config = {"kind": "plugin", "class": name}
+        
+        cls.ALL_INDICATORS[name] = config
+        
+        if is_overlay:
+            cls.OVERLAY_INDICATORS[name] = config
+        else:
+            cls.OSCILLATOR_INDICATORS[name] = config
 
     @classmethod
     def get_overlay_names(cls) -> List[str]:
@@ -69,7 +160,15 @@ class IndicatorService:
 
     @classmethod
     def remove_custom_indicator(cls, name: str) -> None:
-        """Remove a custom indicator."""
+        """
+        Remove a custom indicator.
+        Note: Cannot remove plugin-based indicators (they're loaded from files).
+        """
+        # Check if this is a plugin-based indicator
+        if name in cls.CUSTOM_INDICATOR_CLASSES:
+            print(f"Cannot remove plugin-based indicator '{name}'. Delete the plugin file instead.")
+            return
+        
         cls.ALL_INDICATORS.pop(name, None)
         cls.OVERLAY_INDICATORS.pop(name, None)
         cls.OSCILLATOR_INDICATORS.pop(name, None)
@@ -79,22 +178,36 @@ class IndicatorService:
 
     @classmethod
     def save_indicators(cls) -> None:
-        """Save all custom indicators to disk."""
+        """
+        Save all custom indicators to disk.
+        Note: Plugin-based indicators are not saved here (they're in plugin files).
+        """
         try:
             # Create directory if it doesn't exist
             cls._SAVE_PATH.parent.mkdir(parents=True, exist_ok=True)
             
+            # Filter out plugin-based indicators
+            overlays_to_save = {
+                k: v for k, v in cls.OVERLAY_INDICATORS.items()
+                if v.get("kind") != "plugin"
+            }
+            oscillators_to_save = {
+                k: v for k, v in cls.OSCILLATOR_INDICATORS.items()
+                if v.get("kind") != "plugin"
+            }
+            
             # Prepare data to save
             data = {
-                "overlays": cls.OVERLAY_INDICATORS,
-                "oscillators": cls.OSCILLATOR_INDICATORS,
+                "overlays": overlays_to_save,
+                "oscillators": oscillators_to_save,
             }
             
             # Write to JSON file
             with open(cls._SAVE_PATH, 'w') as f:
                 json.dump(data, f, indent=2)
                 
-            print(f"Saved {len(cls.ALL_INDICATORS)} indicators to {cls._SAVE_PATH}")
+            saved_count = len(overlays_to_save) + len(oscillators_to_save)
+            print(f"Saved {saved_count} indicators to {cls._SAVE_PATH}")
             
         except Exception as e:
             print(f"Error saving indicators: {e}")
@@ -150,6 +263,11 @@ class IndicatorService:
         kind = config["kind"]
 
         try:
+            # Check if this is a plugin-based indicator
+            if kind == "plugin":
+                return cls._calculate_plugin_indicator(df, indicator_name)
+            
+            # Built-in indicators
             if kind == "sma":
                 return cls._calculate_sma(df, config["length"])
             elif kind == "ema":
@@ -172,6 +290,29 @@ class IndicatorService:
 
         except Exception as e:
             print(f"Error calculating {indicator_name}: {e}")
+            return None
+
+    @classmethod
+    def _calculate_plugin_indicator(cls, df: pd.DataFrame, indicator_name: str) -> Optional[pd.DataFrame]:
+        """Calculate a plugin-based custom indicator."""
+        if indicator_name not in cls.CUSTOM_INDICATOR_CLASSES:
+            print(f"Plugin class not found for {indicator_name}")
+            return None
+        
+        try:
+            # Get the indicator class
+            indicator_class = cls.CUSTOM_INDICATOR_CLASSES[indicator_name]
+            
+            # Create an instance and calculate
+            indicator_instance = indicator_class()
+            result = indicator_instance.calculate(df)
+            
+            return result
+            
+        except Exception as e:
+            print(f"Error calculating plugin indicator {indicator_name}: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
     @classmethod

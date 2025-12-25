@@ -499,7 +499,13 @@ class PriceChart(pg.PlotWidget):
     def _plot_indicators(
         self, x: np.ndarray, df: pd.DataFrame, indicators: Dict[str, pd.DataFrame]
     ) -> None:
-        """Plot indicator overlays on the price chart."""
+        """
+        Plot indicator overlays on the price chart.
+        
+        Now supports:
+        - Line plots for continuous indicators
+        - Scatter plots for sparse signals (crossovers, etc.)
+        """
         color_idx = 0
         
         for indicator_name, indicator_df in indicators.items():
@@ -508,18 +514,78 @@ class PriceChart(pg.PlotWidget):
             
             # Plot each column in the indicator dataframe
             for col in indicator_df.columns:
-                y = indicator_df[col].to_numpy()
+                y_series = indicator_df[col]
                 
-                # Apply log transform if in log mode
-                if self._scale_mode == "log":
-                    y = self._to_log10_series(pd.Series(y)).to_numpy()
+                # Check if this is a sparse signal column (mostly NaN values)
+                # Sparse signals should be rendered as scatter points, not lines
+                non_nan_count = y_series.notna().sum()
+                total_count = len(y_series)
+                is_sparse = non_nan_count < (total_count * 0.1)  # Less than 10% non-NaN
                 
-                # Get color for this indicator line
-                color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
-                pen = pg.mkPen(color=color, width=2, style=QtCore.Qt.DashLine if "BB" in col else QtCore.Qt.SolidLine)
-                
-                # Plot the indicator
-                line = self.plot(x, y, pen=pen, name=col)
-                self._indicator_lines.append(line)
+                if is_sparse and non_nan_count > 0:
+                    # Render as scatter plot (for crossover signals, etc.)
+                    # Extract non-NaN points
+                    mask = y_series.notna()
+                    x_points = x[mask]
+                    y_points = y_series[mask].to_numpy()
+                    
+                    # Apply log transform if in log mode
+                    if self._scale_mode == "log":
+                        y_points = self._to_log10_series(pd.Series(y_points)).to_numpy()
+                    
+                    # Determine marker color and style based on column name
+                    if "Golden" in col or "Bull" in col or "Buy" in col:
+                        # Bullish signals - green
+                        symbol = 'o'  # Circle
+                        color = (76, 175, 80)  # Green
+                        size = 12
+                    elif "Death" in col or "Bear" in col or "Sell" in col:
+                        # Bearish signals - red
+                        symbol = 'x'  # X marker
+                        color = (244, 67, 54)  # Red
+                        size = 12
+                    else:
+                        # Default signal marker
+                        symbol = 'd'  # Diamond
+                        color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
+                        size = 10
+                    
+                    # Create scatter plot
+                    scatter = pg.ScatterPlotItem(
+                        x=x_points,
+                        y=y_points,
+                        pen=pg.mkPen(None),
+                        brush=pg.mkBrush(color),
+                        symbol=symbol,
+                        size=size,
+                        name=col,
+                    )
+                    self.addItem(scatter)
+                    self._indicator_lines.append(scatter)
+                    
+                else:
+                    # Render as line plot (for continuous indicators)
+                    y = y_series.to_numpy()
+                    
+                    # Apply log transform if in log mode
+                    if self._scale_mode == "log":
+                        y = self._to_log10_series(y_series).to_numpy()
+                    
+                    # Get color for this indicator line
+                    color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
+                    
+                    # Determine line style
+                    if "BB" in col or "Band" in col:
+                        line_style = QtCore.Qt.DashLine
+                    elif "Middle" in col or "SMA" in col or "EMA" in col:
+                        line_style = QtCore.Qt.SolidLine
+                    else:
+                        line_style = QtCore.Qt.SolidLine
+                    
+                    pen = pg.mkPen(color=color, width=2, style=line_style)
+                    
+                    # Plot the indicator
+                    line = self.plot(x, y, pen=pen, name=col)
+                    self._indicator_lines.append(line)
                 
                 color_idx += 1
