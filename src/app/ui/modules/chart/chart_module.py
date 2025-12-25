@@ -15,9 +15,11 @@ from PySide6.QtCore import Qt
 
 from app.ui.widgets.price_chart import PriceChart
 from app.ui.widgets.create_indicator_dialog import CreateIndicatorDialog
+from app.ui.widgets.chart_settings_dialog import ChartSettingsDialog
 from app.services.market_data import fetch_price_history
 from app.services.ticker_equation_parser import TickerEquationParser
 from app.services.indicator_service import IndicatorService
+from app.services.chart_settings_manager import ChartSettingsManager
 from app.core.theme_manager import ThemeManager
 from app.core.config import (
     DEFAULT_TICKER,
@@ -41,6 +43,9 @@ class ChartModule(QWidget):
         self.theme_manager = theme_manager
         self.equation_parser = TickerEquationParser()
         self.indicator_service = IndicatorService()
+        
+        # Initialize chart settings manager
+        self.chart_settings_manager = ChartSettingsManager()
         
         # Initialize indicator service to load saved indicators
         IndicatorService.initialize()
@@ -251,6 +256,12 @@ class ChartModule(QWidget):
         self.indicators_btn.setMaximumWidth(120)
         controls.addWidget(self.indicators_btn)
 
+        # Chart settings button
+        self.chart_settings_btn = QPushButton("⚙️ Settings")
+        self.chart_settings_btn.setMaximumWidth(120)
+        self.chart_settings_btn.clicked.connect(self._open_chart_settings)
+        controls.addWidget(self.chart_settings_btn)
+
         controls.addStretch(1)
         root.addWidget(self.controls_widget)
 
@@ -262,10 +273,9 @@ class ChartModule(QWidget):
         content_layout.setContentsMargins(0, 0, 0, 0)
         content_layout.setSpacing(0)
 
-        # Chart
-        self.chart = PriceChart()
+        # Chart with settings
+        self.chart = PriceChart(chart_settings=self.chart_settings_manager.get_all_settings())
         content_layout.addWidget(self.chart, stretch=1)
-        
         
         # Apply initial theme to chart
         self.chart.set_theme(self.theme_manager.current_theme)
@@ -714,6 +724,26 @@ class ChartModule(QWidget):
             item = self.oscillator_list.item(i)
             if item.text() in oscillator_selected:
                 item.setSelected(True)
+
+    def _open_chart_settings(self) -> None:
+        """Open the chart settings dialog."""
+        dialog = ChartSettingsDialog(
+            self.theme_manager,
+            self.chart_settings_manager.get_all_settings(),
+            self
+        )
+        
+        if dialog.exec():
+            settings = dialog.get_settings()
+            if settings:
+                # Update settings manager
+                self.chart_settings_manager.update_settings(settings)
+                
+                # Update chart
+                self.chart.update_chart_settings(settings)
+                
+                # Re-render to apply settings
+                self.render_from_cache()
 
     def current_chart_type(self) -> str:
         return self.chart_type_combo.currentText()

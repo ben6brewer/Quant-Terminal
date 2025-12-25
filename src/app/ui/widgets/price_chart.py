@@ -196,7 +196,7 @@ class DraggableIndexDateAxisItem(pg.AxisItem):
 
 
 # -----------------------------
-# Candles (keeping existing code)
+# Candles (with color support)
 # -----------------------------
 class CandlestickItem(pg.GraphicsObject):
     """
@@ -204,15 +204,24 @@ class CandlestickItem(pg.GraphicsObject):
     x is an integer index (0..N-1) for uniform spacing
     """
 
-    def __init__(self, data, bar_width: float = CANDLE_BAR_WIDTH):
+    def __init__(self, data, bar_width: float = CANDLE_BAR_WIDTH, up_color=None, down_color=None):
         super().__init__()
         self.data = np.array(data, dtype=float)
         self.bar_width = float(bar_width)
+        self.up_color = up_color or (76, 153, 0)
+        self.down_color = down_color or (200, 50, 50)
         self._picture = None
         self._generate_picture()
 
     def setData(self, data):
         self.data = np.array(data, dtype=float)
+        self._generate_picture()
+        self.update()
+
+    def setColors(self, up_color, down_color):
+        """Update candle colors and regenerate picture."""
+        self.up_color = up_color
+        self.down_color = down_color
         self._generate_picture()
         self.update()
 
@@ -225,8 +234,8 @@ class CandlestickItem(pg.GraphicsObject):
             self._picture = picture
             return
 
-        up_color = (76, 153, 0)
-        down_color = (200, 50, 50)
+        up_color = self.up_color
+        down_color = self.down_color
         up_pen = pg.mkPen(color=up_color, width=1)
         down_pen = pg.mkPen(color=down_color, width=1)
         up_brush = pg.mkBrush(up_color)
@@ -279,7 +288,7 @@ class CandlestickItem(pg.GraphicsObject):
 
 
 # -----------------------------
-# Chart (with indicator support)
+# Chart (with indicator and settings support)
 # -----------------------------
 class PriceChart(pg.PlotWidget):
     # Indicator color palette
@@ -292,7 +301,7 @@ class PriceChart(pg.PlotWidget):
         (255, 0, 150),    # Magenta
     ]
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, chart_settings=None):
         super().__init__(parent=parent)
 
         self.showGrid(x=True, y=True)
@@ -321,8 +330,26 @@ class PriceChart(pg.PlotWidget):
         self._scale_mode: str = "regular"
         self._theme: str = "dark"
 
+        # Store chart settings
+        self.chart_settings = chart_settings or {}
+
         # Add legend
         self.legend = self.addLegend(offset=(10, 10))
+
+        # Apply initial background
+        self._apply_background()
+
+    def _apply_background(self):
+        """Apply background color from settings or theme."""
+        custom_bg = self.chart_settings.get('chart_background')
+        if custom_bg:
+            # Convert RGB tuple to hex color
+            bg_hex = f"#{custom_bg[0]:02x}{custom_bg[1]:02x}{custom_bg[2]:02x}"
+            self.setBackground(bg_hex)
+        else:
+            # Use theme default
+            bg_color = 'w' if self._theme == "light" else '#1e1e1e'
+            self.setBackground(bg_color)
 
     # -----------------------------
     # Scale transform (plot-space only)
@@ -348,13 +375,49 @@ class PriceChart(pg.PlotWidget):
     def set_theme(self, theme: str) -> None:
         """Set the chart theme (affects line color and background)."""
         self._theme = theme
-        # Update background color
-        bg_color = 'w' if theme == "light" else '#1e1e1e'
-        self.setBackground(bg_color)
+        # Apply background (respects custom settings)
+        self._apply_background()
 
     def get_line_color(self) -> tuple[int, int, int]:
-        """Get line color based on current theme."""
+        """Get line color from settings or theme."""
+        custom_color = self.chart_settings.get('line_color')
+        if custom_color:
+            return custom_color
         return (0, 0, 0) if self._theme == "light" else (76, 175, 80)
+
+    def get_line_settings(self) -> dict:
+        """Get line settings from custom settings or theme default."""
+        # Check for custom line color
+        custom_color = self.chart_settings.get('line_color')
+        if custom_color:
+            color = custom_color
+        else:
+            # Use theme default
+            color = (0, 0, 0) if self._theme == "light" else (76, 175, 80)
+        
+        width = self.chart_settings.get('line_width', 2)
+        style = self.chart_settings.get('line_style', QtCore.Qt.SolidLine)
+        
+        return {'color': color, 'width': width, 'style': style}
+
+    def update_chart_settings(self, settings):
+        """Update chart settings and refresh display."""
+        self.chart_settings = settings or {}
+        
+        # Update background
+        self._apply_background()
+        
+        # Update candle colors if candles exist
+        if self._candles:
+            up_color = settings.get('candle_up_color', (76, 153, 0))
+            down_color = settings.get('candle_down_color', (200, 50, 50))
+            self._candles.setColors(up_color, down_color)
+        
+        # Update line if exists
+        if self._line:
+            line_settings = self.get_line_settings()
+            pen = pg.mkPen(color=line_settings['color'], width=line_settings['width'], style=line_settings['style'])
+            self._line.setPen(pen)
 
     # -----------------------------
     # View helpers
@@ -466,9 +529,9 @@ class PriceChart(pg.PlotWidget):
 
             y = df_plot["Close"].astype(float).to_numpy()
             
-            # Get line color based on theme
-            line_color = self.get_line_color()
-            pen = pg.mkPen(color=line_color, width=2)
+            # Get line settings (color, width, style)
+            line_settings = self.get_line_settings()
+            pen = pg.mkPen(color=line_settings['color'], width=line_settings['width'], style=line_settings['style'])
             self._line = self.plot(x, y, pen=pen, name=f"{ticker}")
         else:
             required = {"Open", "High", "Low", "Close"}
@@ -482,7 +545,13 @@ class PriceChart(pg.PlotWidget):
             c = df_plot["Close"].astype(float).to_numpy()
 
             data = np.column_stack([x, o, c, l, h])
-            self._candles = CandlestickItem(data, bar_width=self.candle_width)
+            
+            # Get candle colors and width from settings
+            up_color = self.chart_settings.get('candle_up_color', (76, 153, 0))
+            down_color = self.chart_settings.get('candle_down_color', (200, 50, 50))
+            candle_width = self.chart_settings.get('candle_width', self.candle_width)
+            
+            self._candles = CandlestickItem(data, bar_width=candle_width, up_color=up_color, down_color=down_color)
             self.addItem(self._candles)
 
         # Plot indicators
