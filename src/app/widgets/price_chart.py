@@ -317,6 +317,7 @@ class PriceChart(pg.PlotWidget):
         self._has_initialized_view = False
 
         self._scale_mode: str = "regular"
+        self._theme: str = "dark"
 
     # -----------------------------
     # Scale transform (plot-space only)
@@ -329,6 +330,13 @@ class PriceChart(pg.PlotWidget):
             if col in out.columns:
                 out[col] = np.log10(out[col].astype(float).clip(lower=eps))
         return out
+
+    # -----------------------------
+    # Theme
+    # -----------------------------
+    def set_theme(self, theme: str) -> None:
+        """Set the chart theme (affects line color)."""
+        self._theme = theme
 
     # -----------------------------
     # View helpers
@@ -434,7 +442,15 @@ class PriceChart(pg.PlotWidget):
                 raise ValueError(f"Missing 'Close' column. Columns: {list(df_plot.columns)}")
 
             y = df_plot["Close"].astype(float).to_numpy()
-            self._line = self.plot(x, y, name=f"{ticker} Close")
+            
+            # Set line color based on theme
+            if self._theme == "light":
+                line_color = (0, 0, 0)  # Black for light mode
+            else:
+                line_color = (76, 175, 80)  # Green for dark mode
+            
+            pen = pg.mkPen(color=line_color, width=2)
+            self._line = self.plot(x, y, pen=pen, name=f"{ticker} Close")
         else:
             required = {"Open", "High", "Low", "Close"}
             missing = required - set(df_plot.columns)
