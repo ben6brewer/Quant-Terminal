@@ -420,26 +420,32 @@ class ChartModule(QWidget):
                 # Build indicator name
                 indicator_type = config["type"]
                 params = config["params"]
+                custom_name = config.get("custom_name")
+                appearance = config.get("appearance", {})
                 
-                # Format name based on type
-                if not params:
-                    name = indicator_type
-                elif indicator_type == "SMA":
-                    name = f"SMA({params['length']})"
-                elif indicator_type == "EMA":
-                    name = f"EMA({params['length']})"
-                elif indicator_type == "Bollinger Bands":
-                    name = f"BB({params['length']},{params['std']})"
-                elif indicator_type == "RSI":
-                    name = f"RSI({params['length']})"
-                elif indicator_type == "MACD":
-                    name = f"MACD({params['fast']},{params['slow']},{params['signal']})"
-                elif indicator_type == "ATR":
-                    name = f"ATR({params['length']})"
-                elif indicator_type == "Stochastic":
-                    name = f"Stochastic({params['k']},{params['d']},{params['smooth_k']})"
+                # Use custom name if provided, otherwise auto-generate
+                if custom_name:
+                    name = custom_name
                 else:
-                    name = indicator_type
+                    # Format name based on type
+                    if not params:
+                        name = indicator_type
+                    elif indicator_type == "SMA":
+                        name = f"SMA({params['length']})"
+                    elif indicator_type == "EMA":
+                        name = f"EMA({params['length']})"
+                    elif indicator_type == "Bollinger Bands":
+                        name = f"BB({params['length']},{params['std']})"
+                    elif indicator_type == "RSI":
+                        name = f"RSI({params['length']})"
+                    elif indicator_type == "MACD":
+                        name = f"MACD({params['fast']},{params['slow']},{params['signal']})"
+                    elif indicator_type == "ATR":
+                        name = f"ATR({params['length']})"
+                    elif indicator_type == "Stochastic":
+                        name = f"Stochastic({params['k']},{params['d']},{params['smooth_k']})"
+                    else:
+                        name = indicator_type
                 
                 # Check if already exists
                 if name in IndicatorService.ALL_INDICATORS:
@@ -463,7 +469,11 @@ class ChartModule(QWidget):
                     "VWAP": "vwap",
                 }
                 
-                indicator_config = {"kind": kind_map[indicator_type], **params}
+                indicator_config = {
+                    "kind": kind_map[indicator_type],
+                    **params,
+                    "appearance": appearance,  # Store appearance settings
+                }
                 
                 # Determine if overlay or oscillator
                 is_overlay = indicator_type in ["SMA", "EMA", "Bollinger Bands", "VWAP"]
@@ -571,11 +581,12 @@ class ChartModule(QWidget):
             # Calculate indicators if any are selected
             indicators = {}
             if self.state["indicators"]:
+                # This now returns Dict[str, Dict[str, Any]] with "data" and "appearance" keys
                 indicators = IndicatorService.calculate_multiple(
                     self.state["df"], self.state["indicators"]
                 )
             
-            # Render chart with indicators
+            # Render chart with indicators (indicators dict now includes appearance)
             self.chart.set_prices(
                 self.state["df"],
                 ticker=self.state["ticker"],

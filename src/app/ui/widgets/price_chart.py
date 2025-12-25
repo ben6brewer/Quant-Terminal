@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Any
 
 import numpy as np
 import pandas as pd
@@ -429,7 +429,7 @@ class PriceChart(pg.PlotWidget):
         ticker: str,
         chart_type: str = "Candles",
         scale: str = "Regular",
-        indicators: Dict[str, pd.DataFrame] = None,
+        indicators: Dict[str, Dict[str, Any]] = None,
     ) -> None:
         if df is None or df.empty:
             self.clear()
@@ -497,34 +497,46 @@ class PriceChart(pg.PlotWidget):
             self._has_initialized_view = True
 
     def _plot_indicators(
-        self, x: np.ndarray, df: pd.DataFrame, indicators: Dict[str, pd.DataFrame]
+        self, x: np.ndarray, df: pd.DataFrame, indicators: Dict[str, Dict[str, Any]]
     ) -> None:
         """
-        Plot indicator overlays on the price chart.
+        Plot indicator overlays on the price chart with custom appearance settings.
         
-        Now supports:
-        - Line plots for continuous indicators
-        - Scatter plots for sparse signals (crossovers, etc.)
+        Args:
+            x: Array of x-coordinates (indices)
+            df: Original price DataFrame
+            indicators: Dict mapping indicator names to dicts containing:
+                - "data": DataFrame with indicator values
+                - "appearance": Appearance settings (or None for defaults)
         """
         color_idx = 0
         
-        for indicator_name, indicator_df in indicators.items():
+        for indicator_name, indicator_info in indicators.items():
+            # Extract data and appearance
+            indicator_df = indicator_info.get("data")
+            appearance = indicator_info.get("appearance", {})
+            
             if indicator_df is None or indicator_df.empty:
                 continue
+            
+            # Get appearance settings with defaults
+            custom_color = appearance.get("color", None)
+            line_width = appearance.get("line_width", 2)
+            line_style = appearance.get("line_style", QtCore.Qt.SolidLine)
+            marker_shape = appearance.get("marker_shape", "o")
+            marker_size = appearance.get("marker_size", 10)
             
             # Plot each column in the indicator dataframe
             for col in indicator_df.columns:
                 y_series = indicator_df[col]
                 
-                # Check if this is a sparse signal column (mostly NaN values)
-                # Sparse signals should be rendered as scatter points, not lines
+                # Check if this is a sparse signal column
                 non_nan_count = y_series.notna().sum()
                 total_count = len(y_series)
-                is_sparse = non_nan_count < (total_count * 0.1)  # Less than 10% non-NaN
+                is_sparse = non_nan_count < (total_count * 0.1)
                 
                 if is_sparse and non_nan_count > 0:
                     # Render as scatter plot (for crossover signals, etc.)
-                    # Extract non-NaN points
                     mask = y_series.notna()
                     x_points = x[mask]
                     y_points = y_series[mask].to_numpy()
@@ -533,22 +545,22 @@ class PriceChart(pg.PlotWidget):
                     if self._scale_mode == "log":
                         y_points = self._to_log10_series(pd.Series(y_points)).to_numpy()
                     
-                    # Determine marker color and style based on column name
+                    # Determine marker color and style
                     if "Golden" in col or "Bull" in col or "Buy" in col:
                         # Bullish signals - green
-                        symbol = 'o'  # Circle
-                        color = (76, 175, 80)  # Green
-                        size = 12
+                        symbol = marker_shape if custom_color else 'o'
+                        color = custom_color if custom_color else (76, 175, 80)
+                        size = marker_size
                     elif "Death" in col or "Bear" in col or "Sell" in col:
                         # Bearish signals - red
-                        symbol = 'x'  # X marker
-                        color = (244, 67, 54)  # Red
-                        size = 12
+                        symbol = marker_shape if custom_color else 'x'
+                        color = custom_color if custom_color else (244, 67, 54)
+                        size = marker_size
                     else:
                         # Default signal marker
-                        symbol = 'd'  # Diamond
-                        color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
-                        size = 10
+                        symbol = marker_shape
+                        color = custom_color if custom_color else self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
+                        size = marker_size
                     
                     # Create scatter plot
                     scatter = pg.ScatterPlotItem(
@@ -572,17 +584,19 @@ class PriceChart(pg.PlotWidget):
                         y = self._to_log10_series(y_series).to_numpy()
                     
                     # Get color for this indicator line
-                    color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
-                    
-                    # Determine line style
-                    if "BB" in col or "Band" in col:
-                        line_style = QtCore.Qt.DashLine
-                    elif "Middle" in col or "SMA" in col or "EMA" in col:
-                        line_style = QtCore.Qt.SolidLine
+                    if custom_color:
+                        color = custom_color
                     else:
-                        line_style = QtCore.Qt.SolidLine
+                        color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
                     
-                    pen = pg.mkPen(color=color, width=2, style=line_style)
+                    # Determine line style if not provided
+                    if not custom_color:
+                        if "BB" in col or "Band" in col:
+                            line_style = QtCore.Qt.DashLine
+                        elif "Middle" in col or "SMA" in col or "EMA" in col:
+                            line_style = QtCore.Qt.SolidLine
+                    
+                    pen = pg.mkPen(color=color, width=line_width, style=line_style)
                     
                     # Plot the indicator
                     line = self.plot(x, y, pen=pen, name=col)

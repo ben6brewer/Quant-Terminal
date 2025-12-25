@@ -10,15 +10,20 @@ from PySide6.QtWidgets import (
     QPushButton,
     QFormLayout,
     QMessageBox,
+    QSpinBox,
+    QColorDialog,
+    QGroupBox,
 )
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor
 
 from app.core.theme_manager import ThemeManager
 
 
 class CreateIndicatorDialog(QDialog):
     """
-    Dialog for creating custom indicators with user-specified parameters.
+    Dialog for creating custom indicators with user-specified parameters
+    and appearance settings.
     """
 
     # Define indicator types and their parameters
@@ -80,14 +85,48 @@ class CreateIndicatorDialog(QDialog):
         },
     }
 
+    # Line style options
+    LINE_STYLES = {
+        "Solid": Qt.SolidLine,
+        "Dashed": Qt.DashLine,
+        "Dotted": Qt.DotLine,
+        "Dash-Dot": Qt.DashDotLine,
+    }
+
+    # Marker/shape options
+    MARKER_SHAPES = {
+        "Circle": "o",
+        "Square": "s",
+        "Triangle": "t",
+        "Diamond": "d",
+        "Plus": "+",
+        "Cross": "x",
+        "Star": "star",
+    }
+
+    # Preset colors
+    PRESET_COLORS = [
+        ("Blue", (0, 150, 255)),
+        ("Orange", (255, 150, 0)),
+        ("Purple", (150, 0, 255)),
+        ("Yellow", (255, 200, 0)),
+        ("Cyan", (0, 255, 150)),
+        ("Magenta", (255, 0, 150)),
+        ("Green", (76, 175, 80)),
+        ("Red", (244, 67, 54)),
+        ("White", (255, 255, 255)),
+        ("Custom...", None),
+    ]
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Create Custom Indicator")
         self.setModal(True)
-        self.setMinimumWidth(400)
+        self.setMinimumWidth(500)
         
         self.theme_manager = theme_manager
         self.param_inputs = {}
+        self.selected_color = (0, 150, 255)  # Default blue
         
         self._setup_ui()
         self._apply_theme()
@@ -95,7 +134,7 @@ class CreateIndicatorDialog(QDialog):
     def _setup_ui(self):
         """Create the dialog UI."""
         layout = QVBoxLayout(self)
-        layout.setSpacing(20)
+        layout.setSpacing(15)
 
         # Header
         self.header = QLabel("Create Custom Indicator")
@@ -113,10 +152,28 @@ class CreateIndicatorDialog(QDialog):
         
         layout.addLayout(type_layout)
 
+        # Custom name
+        name_layout = QHBoxLayout()
+        name_layout.addWidget(QLabel("Custom Name (optional):"))
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Leave empty for auto-generated name")
+        name_layout.addWidget(self.name_input, stretch=1)
+        layout.addLayout(name_layout)
+
         # Parameter form
+        param_group = QGroupBox("Indicator Parameters")
+        param_group.setObjectName("paramGroup")
+        param_layout = QVBoxLayout(param_group)
+        
         self.param_form = QFormLayout()
         self.param_form.setSpacing(10)
-        layout.addLayout(self.param_form)
+        param_layout.addLayout(self.param_form)
+        
+        layout.addWidget(param_group)
+
+        # Appearance settings
+        appearance_group = self._create_appearance_group()
+        layout.addWidget(appearance_group)
 
         # Initialize with first indicator type
         self._on_type_changed(self.type_combo.currentText())
@@ -136,6 +193,85 @@ class CreateIndicatorDialog(QDialog):
         button_layout.addWidget(self.create_btn)
         
         layout.addLayout(button_layout)
+
+    def _create_appearance_group(self) -> QGroupBox:
+        """Create appearance settings group."""
+        group = QGroupBox("Appearance Settings")
+        group.setObjectName("appearanceGroup")
+        layout = QFormLayout()
+        layout.setSpacing(10)
+
+        # Color selection
+        color_layout = QHBoxLayout()
+        self.color_combo = QComboBox()
+        for color_name, _ in self.PRESET_COLORS:
+            self.color_combo.addItem(color_name)
+        self.color_combo.currentTextChanged.connect(self._on_color_changed)
+        color_layout.addWidget(self.color_combo, stretch=1)
+        
+        self.color_preview = QLabel("●")
+        self.color_preview.setStyleSheet("font-size: 24px; color: rgb(0, 150, 255);")
+        color_layout.addWidget(self.color_preview)
+        
+        layout.addRow("Color:", color_layout)
+
+        # Line width
+        self.line_width_spin = QSpinBox()
+        self.line_width_spin.setMinimum(1)
+        self.line_width_spin.setMaximum(10)
+        self.line_width_spin.setValue(2)
+        self.line_width_spin.setSuffix(" px")
+        layout.addRow("Line Width:", self.line_width_spin)
+
+        # Line style
+        self.line_style_combo = QComboBox()
+        self.line_style_combo.addItems(list(self.LINE_STYLES.keys()))
+        layout.addRow("Line Style:", self.line_style_combo)
+
+        # Marker shape (for scatter plots)
+        self.marker_shape_combo = QComboBox()
+        self.marker_shape_combo.addItems(list(self.MARKER_SHAPES.keys()))
+        layout.addRow("Marker Shape:", self.marker_shape_combo)
+
+        # Marker size
+        self.marker_size_spin = QSpinBox()
+        self.marker_size_spin.setMinimum(4)
+        self.marker_size_spin.setMaximum(20)
+        self.marker_size_spin.setValue(10)
+        self.marker_size_spin.setSuffix(" px")
+        layout.addRow("Marker Size:", self.marker_size_spin)
+
+        group.setLayout(layout)
+        return group
+
+    def _on_color_changed(self, color_name: str):
+        """Handle color selection change."""
+        if color_name == "Custom...":
+            # Open color picker
+            current_color = QColor(*self.selected_color)
+            color = QColorDialog.getColor(current_color, self, "Select Indicator Color")
+            
+            if color.isValid():
+                self.selected_color = (color.red(), color.green(), color.blue())
+                self.color_preview.setStyleSheet(
+                    f"font-size: 24px; color: rgb({color.red()}, {color.green()}, {color.blue()});"
+                )
+            else:
+                # User canceled, revert to previous selection
+                # Find the previous color in the preset list
+                for i, (name, rgb) in enumerate(self.PRESET_COLORS[:-1]):
+                    if rgb == self.selected_color:
+                        self.color_combo.setCurrentIndex(i)
+                        break
+        else:
+            # Use preset color
+            for name, rgb in self.PRESET_COLORS:
+                if name == color_name and rgb is not None:
+                    self.selected_color = rgb
+                    self.color_preview.setStyleSheet(
+                        f"font-size: 24px; color: rgb({rgb[0]}, {rgb[1]}, {rgb[2]});"
+                    )
+                    break
 
     def _apply_theme(self):
         """Apply the current theme to the dialog."""
@@ -164,6 +300,21 @@ class CreateIndicatorDialog(QDialog):
             QLabel {
                 color: #cccccc;
                 font-size: 13px;
+            }
+            QGroupBox {
+                color: #ffffff;
+                background-color: #2d2d2d;
+                border: 2px solid #3d3d3d;
+                border-radius: 8px;
+                margin-top: 10px;
+                padding-top: 20px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 15px;
+                padding: 0 5px;
             }
             QComboBox {
                 background-color: #1e1e1e;
@@ -194,6 +345,17 @@ class CreateIndicatorDialog(QDialog):
                 font-size: 13px;
             }
             QLineEdit:focus {
+                border: 1px solid #00d4ff;
+            }
+            QSpinBox {
+                background-color: #1e1e1e;
+                color: #ffffff;
+                border: 1px solid #3d3d3d;
+                border-radius: 4px;
+                padding: 8px;
+                font-size: 13px;
+            }
+            QSpinBox:hover {
                 border: 1px solid #00d4ff;
             }
             QPushButton {
@@ -240,6 +402,21 @@ class CreateIndicatorDialog(QDialog):
                 color: #333333;
                 font-size: 13px;
             }
+            QGroupBox {
+                color: #000000;
+                background-color: #f5f5f5;
+                border: 2px solid #d0d0d0;
+                border-radius: 8px;
+                margin-top: 10px;
+                padding-top: 20px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 15px;
+                padding: 0 5px;
+            }
             QComboBox {
                 background-color: #f5f5f5;
                 color: #000000;
@@ -269,6 +446,17 @@ class CreateIndicatorDialog(QDialog):
                 font-size: 13px;
             }
             QLineEdit:focus {
+                border: 1px solid #0066cc;
+            }
+            QSpinBox {
+                background-color: #f5f5f5;
+                color: #000000;
+                border: 1px solid #d0d0d0;
+                border-radius: 4px;
+                padding: 8px;
+                font-size: 13px;
+            }
+            QSpinBox:hover {
                 border: 1px solid #0066cc;
             }
             QPushButton {
@@ -360,10 +548,24 @@ class CreateIndicatorDialog(QDialog):
                 )
                 return
 
+        # Get custom name if provided
+        custom_name = self.name_input.text().strip()
+
+        # Collect appearance settings
+        appearance = {
+            "color": self.selected_color,
+            "line_width": self.line_width_spin.value(),
+            "line_style": self.LINE_STYLES[self.line_style_combo.currentText()],
+            "marker_shape": self.MARKER_SHAPES[self.marker_shape_combo.currentText()],
+            "marker_size": self.marker_size_spin.value(),
+        }
+
         # Store the result
         self.result = {
             "type": indicator_type,
             "params": params,
+            "custom_name": custom_name or None,
+            "appearance": appearance,
         }
         
         self.accept()

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Type, Any
 import pandas as pd
 import numpy as np
+from PySide6.QtCore import Qt
 
 
 class IndicatorService:
@@ -31,6 +32,53 @@ class IndicatorService:
     
     # Path to custom indicator plugin files
     _PLUGIN_PATH = Path.home() / ".quant_terminal" / "custom_indicators"
+
+    # Qt PenStyle mapping for JSON serialization
+    _PENSTYLE_TO_STR = {
+        Qt.SolidLine: "solid",
+        Qt.DashLine: "dash",
+        Qt.DotLine: "dot",
+        Qt.DashDotLine: "dashdot",
+    }
+    
+    _STR_TO_PENSTYLE = {
+        "solid": Qt.SolidLine,
+        "dash": Qt.DashLine,
+        "dot": Qt.DotLine,
+        "dashdot": Qt.DashDotLine,
+    }
+
+    @classmethod
+    def _serialize_appearance(cls, appearance: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert appearance dict to JSON-serializable format."""
+        if not appearance:
+            return appearance
+        
+        serialized = appearance.copy()
+        
+        # Convert Qt.PenStyle to string
+        if "line_style" in serialized:
+            pen_style = serialized["line_style"]
+            if isinstance(pen_style, Qt.PenStyle):
+                serialized["line_style"] = cls._PENSTYLE_TO_STR.get(pen_style, "solid")
+        
+        return serialized
+    
+    @classmethod
+    def _deserialize_appearance(cls, appearance: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert appearance dict from JSON format to runtime format."""
+        if not appearance:
+            return appearance
+        
+        deserialized = appearance.copy()
+        
+        # Convert string to Qt.PenStyle
+        if "line_style" in deserialized:
+            line_style_str = deserialized["line_style"]
+            if isinstance(line_style_str, str):
+                deserialized["line_style"] = cls._STR_TO_PENSTYLE.get(line_style_str, Qt.SolidLine)
+        
+        return deserialized
 
     @classmethod
     def initialize(cls) -> None:
@@ -59,6 +107,12 @@ class IndicatorService:
             return
         
         print(f"Loading custom indicator plugins from {cls._PLUGIN_PATH}")
+        
+        # CRITICAL FIX: Add the plugin directory to sys.path FIRST
+        # This allows imports between plugin files to work (e.g., from base_indicator import BaseIndicator)
+        plugin_path_str = str(cls._PLUGIN_PATH)
+        if plugin_path_str not in sys.path:
+            sys.path.insert(0, plugin_path_str)
         
         for plugin_file in plugin_files:
             try:
@@ -186,15 +240,22 @@ class IndicatorService:
             # Create directory if it doesn't exist
             cls._SAVE_PATH.parent.mkdir(parents=True, exist_ok=True)
             
-            # Filter out plugin-based indicators
-            overlays_to_save = {
-                k: v for k, v in cls.OVERLAY_INDICATORS.items()
-                if v.get("kind") != "plugin"
-            }
-            oscillators_to_save = {
-                k: v for k, v in cls.OSCILLATOR_INDICATORS.items()
-                if v.get("kind") != "plugin"
-            }
+            # Filter out plugin-based indicators and serialize appearance
+            overlays_to_save = {}
+            for k, v in cls.OVERLAY_INDICATORS.items():
+                if v.get("kind") != "plugin":
+                    config = v.copy()
+                    if "appearance" in config:
+                        config["appearance"] = cls._serialize_appearance(config["appearance"])
+                    overlays_to_save[k] = config
+            
+            oscillators_to_save = {}
+            for k, v in cls.OSCILLATOR_INDICATORS.items():
+                if v.get("kind") != "plugin":
+                    config = v.copy()
+                    if "appearance" in config:
+                        config["appearance"] = cls._serialize_appearance(config["appearance"])
+                    oscillators_to_save[k] = config
             
             # Prepare data to save
             data = {
@@ -224,11 +285,21 @@ class IndicatorService:
             with open(cls._SAVE_PATH, 'r') as f:
                 data = json.load(f)
             
-            # Load overlays
-            cls.OVERLAY_INDICATORS = data.get("overlays", {})
+            # Load overlays and deserialize appearance
+            cls.OVERLAY_INDICATORS = {}
+            for k, v in data.get("overlays", {}).items():
+                config = v.copy()
+                if "appearance" in config:
+                    config["appearance"] = cls._deserialize_appearance(config["appearance"])
+                cls.OVERLAY_INDICATORS[k] = config
             
-            # Load oscillators
-            cls.OSCILLATOR_INDICATORS = data.get("oscillators", {})
+            # Load oscillators and deserialize appearance
+            cls.OSCILLATOR_INDICATORS = {}
+            for k, v in data.get("oscillators", {}).items():
+                config = v.copy()
+                if "appearance" in config:
+                    config["appearance"] = cls._deserialize_appearance(config["appearance"])
+                cls.OSCILLATOR_INDICATORS[k] = config
             
             # Rebuild ALL_INDICATORS
             cls.ALL_INDICATORS = {**cls.OVERLAY_INDICATORS, **cls.OSCILLATOR_INDICATORS}
