@@ -8,6 +8,9 @@ import pandas as pd
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 
+from app.utils.formatters import format_price_usd, format_date
+from app.core.config import CANDLE_BAR_WIDTH, DEFAULT_VIEW_PERIOD_DAYS, VIEW_PADDING_PERCENT
+
 
 # -----------------------------
 # Axes
@@ -99,18 +102,6 @@ class DraggablePriceAxisItem(DraggableAxisItem):
         self.scale_mode = (mode or "regular").strip().lower()
         self.update()
 
-    @staticmethod
-    def _format_usd(value: float) -> str:
-        if not np.isfinite(value):
-            return ""
-        if value >= 1e9:
-            return f"${value:,.0f}"
-        if value >= 1e3:
-            return f"${value:,.2f}"
-        if value >= 1:
-            return f"${value:,.2f}"
-        return f"${value:.6f}"
-
     def tickStrings(self, values, scale, spacing):
         out: list[str] = []
 
@@ -127,10 +118,10 @@ class DraggablePriceAxisItem(DraggableAxisItem):
                 except OverflowError:
                     out.append("")
                     continue
-                out.append(self._format_usd(price))
+                out.append(format_price_usd(price))
             else:
                 # v is already price
-                out.append(self._format_usd(float(v)))
+                out.append(format_price_usd(float(v)))
 
         return out
 
@@ -159,7 +150,7 @@ class DraggableIndexDateAxisItem(pg.AxisItem):
             i = int(round(v))
             if 0 <= i < n:
                 dt = self._index_to_dt[i]
-                out.append(dt.strftime("%Y-%m-%d"))
+                out.append(format_date(dt))
             else:
                 out.append("")
         return out
@@ -213,7 +204,7 @@ class CandlestickItem(pg.GraphicsObject):
     x is an integer index (0..N-1) for uniform spacing
     """
 
-    def __init__(self, data, bar_width: float = 0.6):
+    def __init__(self, data, bar_width: float = CANDLE_BAR_WIDTH):
         super().__init__()
         self.data = np.array(data, dtype=float)
         self.bar_width = float(bar_width)
@@ -313,7 +304,7 @@ class PriceChart(pg.PlotWidget):
         self._candles = None
         self._line = None
 
-        self.candle_width = 0.6
+        self.candle_width = CANDLE_BAR_WIDTH
         self._has_initialized_view = False
 
         self._scale_mode: str = "regular"
@@ -335,8 +326,15 @@ class PriceChart(pg.PlotWidget):
     # Theme
     # -----------------------------
     def set_theme(self, theme: str) -> None:
-        """Set the chart theme (affects line color)."""
+        """Set the chart theme (affects line color and background)."""
         self._theme = theme
+        # Update background color
+        bg_color = 'w' if theme == "light" else '#1e1e1e'
+        self.setBackground(bg_color)
+
+    def get_line_color(self) -> tuple[int, int, int]:
+        """Get line color based on current theme."""
+        return (0, 0, 0) if self._theme == "light" else (76, 175, 80)
 
     # -----------------------------
     # View helpers
@@ -363,7 +361,7 @@ class PriceChart(pg.PlotWidget):
         if y_max <= y_min:
             y_max = y_min + 1e-6
 
-        pad = (y_max - y_min) * 0.05 if y_max != y_min else max(1e-6, abs(y_max) * 0.001)
+        pad = (y_max - y_min) * VIEW_PADDING_PERCENT if y_max != y_min else max(1e-6, abs(y_max) * 0.001)
         vb.setYRange(y_min - pad, y_max + pad, padding=0)
 
     def _apply_date_window(self, df_plot: pd.DataFrame, left_dt: pd.Timestamp, right_dt: pd.Timestamp) -> None:
@@ -395,7 +393,7 @@ class PriceChart(pg.PlotWidget):
             return
 
         end = df_plot.index.max()
-        start = end - pd.Timedelta(days=365)
+        start = end - pd.Timedelta(days=DEFAULT_VIEW_PERIOD_DAYS)
         df_1y = df_plot.loc[df_plot.index >= start]
         if df_1y.empty:
             return
@@ -443,12 +441,8 @@ class PriceChart(pg.PlotWidget):
 
             y = df_plot["Close"].astype(float).to_numpy()
             
-            # Set line color based on theme
-            if self._theme == "light":
-                line_color = (0, 0, 0)  # Black for light mode
-            else:
-                line_color = (76, 175, 80)  # Green for dark mode
-            
+            # Get line color based on theme
+            line_color = self.get_line_color()
             pen = pg.mkPen(color=line_color, width=2)
             self._line = self.plot(x, y, pen=pen, name=f"{ticker} Close")
         else:

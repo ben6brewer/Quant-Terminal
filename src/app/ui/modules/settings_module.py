@@ -11,14 +11,17 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
+from app.core.theme_manager import ThemeManager
+
 
 class SettingsModule(QWidget):
     """Settings module with theme switching and other preferences."""
 
-    def __init__(self, hub_window=None, parent=None):
+    def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
-        self.hub_window = hub_window
+        self.theme_manager = theme_manager
         self._setup_ui()
+        self._sync_theme_buttons()
 
     def _setup_ui(self) -> None:
         """Create the settings UI."""
@@ -91,7 +94,6 @@ class SettingsModule(QWidget):
         self.theme_group = QButtonGroup(self)
         
         self.dark_radio = QRadioButton("Dark Mode")
-        self.dark_radio.setChecked(True)  # Default to dark
         self.dark_radio.setStyleSheet("""
             QRadioButton {
                 font-size: 13px;
@@ -127,10 +129,15 @@ class SettingsModule(QWidget):
         group.setLayout(layout)
         return group
 
-    def _on_theme_changed(self) -> None:
-        """Handle theme change."""
-        if self.hub_window is None:
-            return
+    def _sync_theme_buttons(self) -> None:
+        """Synchronize radio buttons with current theme."""
+        current_theme = self.theme_manager.current_theme
+        if current_theme == "dark":
+            self.dark_radio.setChecked(True)
+        else:
+            self.light_radio.setChecked(True)
 
+    def _on_theme_changed(self) -> None:
+        """Handle theme change from radio buttons."""
         theme = "dark" if self.dark_radio.isChecked() else "light"
-        self.hub_window.set_theme(theme)
+        self.theme_manager.set_theme(theme)

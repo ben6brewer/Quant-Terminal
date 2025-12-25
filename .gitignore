@@ -1,20 +1,36 @@
 # Virtual environments
 .venv/
 venv/
+env/
+ENV/
 
 # Python cache / bytecode
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.so
+.Python
 
 # Build / packaging artifacts
 *.egg-info/
 dist/
 build/
+*.egg
 
 # OS / editor junk
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log

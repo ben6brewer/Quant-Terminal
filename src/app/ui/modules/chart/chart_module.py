@@ -10,9 +10,19 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from app.widgets.price_chart import PriceChart
+from app.ui.widgets.price_chart import PriceChart
 from app.services.market_data import fetch_price_history
 from app.services.ticker_equation_parser import TickerEquationParser
+from app.core.theme_manager import ThemeManager
+from app.core.config import (
+    DEFAULT_TICKER,
+    DEFAULT_INTERVAL,
+    DEFAULT_CHART_TYPE,
+    DEFAULT_SCALE,
+    CHART_INTERVALS,
+    CHART_TYPES,
+    CHART_SCALES,
+)
 
 
 class ChartModule(QWidget):
@@ -21,29 +31,30 @@ class ChartModule(QWidget):
     Handles ticker data loading and chart display.
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
-        self.current_theme = "dark"
+        self.theme_manager = theme_manager
         self.equation_parser = TickerEquationParser()
+        
         self._setup_ui()
         self._setup_state()
         self._connect_signals()
 
+        # Connect to theme changes
+        self.theme_manager.theme_changed.connect(self._on_theme_changed)
+
         # Auto-load initial ticker
         self.load_ticker_max(self.ticker_input.text())
 
-    def set_theme(self, theme: str) -> None:
-        """Update the chart module theme."""
-        self.current_theme = theme
+    def _on_theme_changed(self, theme: str) -> None:
+        """Handle theme change signal."""
         self._apply_control_bar_theme()
-        self._apply_chart_theme()
+        self.chart.set_theme(theme)
 
-    def _apply_chart_theme(self) -> None:
-        """Apply theme to the chart widget."""
-        if self.current_theme == "light":
-            self.chart.setBackground('w')  # white background
-        else:
-            self.chart.setBackground('#1e1e1e')  # dark background
+    def _apply_control_bar_theme(self) -> None:
+        """Apply theme-specific styling to the control bar."""
+        stylesheet = self.theme_manager.get_controls_stylesheet()
+        self.controls_widget.setStyleSheet(stylesheet)
 
     def _setup_ui(self) -> None:
         """Create the UI layout."""
@@ -61,7 +72,7 @@ class ChartModule(QWidget):
         # Ticker input
         controls.addWidget(QLabel("TICKER"))
         self.ticker_input = QLineEdit()
-        self.ticker_input.setText("BTC-USD")
+        self.ticker_input.setText(DEFAULT_TICKER)
         self.ticker_input.setMaximumWidth(200)
         self.ticker_input.setPlaceholderText("Ticker or =equation...")
         controls.addWidget(self.ticker_input)
@@ -72,24 +83,24 @@ class ChartModule(QWidget):
         # Interval selector
         controls.addWidget(QLabel("INTERVAL"))
         self.interval_combo = QComboBox()
-        self.interval_combo.addItems(["daily", "weekly", "monthly", "yearly"])
-        self.interval_combo.setCurrentText("daily")
+        self.interval_combo.addItems(CHART_INTERVALS)
+        self.interval_combo.setCurrentText(DEFAULT_INTERVAL)
         self.interval_combo.setMaximumWidth(100)
         controls.addWidget(self.interval_combo)
 
         # Chart type selector
         controls.addWidget(QLabel("CHART"))
         self.chart_type_combo = QComboBox()
-        self.chart_type_combo.addItems(["Candles", "Line"])
-        self.chart_type_combo.setCurrentText("Candles")
+        self.chart_type_combo.addItems(CHART_TYPES)
+        self.chart_type_combo.setCurrentText(DEFAULT_CHART_TYPE)
         self.chart_type_combo.setMaximumWidth(100)
         controls.addWidget(self.chart_type_combo)
 
         # Scale selector
         controls.addWidget(QLabel("SCALE"))
         self.scale_combo = QComboBox()
-        self.scale_combo.addItems(["Regular", "Logarithmic"])
-        self.scale_combo.setCurrentText("Logarithmic")
+        self.scale_combo.addItems(CHART_SCALES)
+        self.scale_combo.setCurrentText(DEFAULT_SCALE)
         self.scale_combo.setMaximumWidth(120)
         controls.addWidget(self.scale_combo)
 
@@ -104,124 +115,11 @@ class ChartModule(QWidget):
         root.addWidget(self.chart, stretch=1)
         
         # Apply initial theme to chart
-        self._apply_chart_theme()
+        self.chart.set_theme(self.theme_manager.current_theme)
 
     def _setup_state(self) -> None:
         """Initialize state management."""
         self.state = {"df": None, "ticker": None, "interval": None}
-
-    def _apply_control_bar_theme(self) -> None:
-        """Apply theme-specific styling to the control bar."""
-        if self.current_theme == "light":
-            stylesheet = """
-                QWidget {
-                    background-color: #f5f5f5;
-                    border-bottom: 2px solid #0066cc;
-                }
-                QLabel {
-                    color: #333333;
-                    font-size: 12px;
-                    font-weight: bold;
-                    padding: 0px 5px;
-                }
-                QLineEdit {
-                    background-color: #ffffff;
-                    color: #000000;
-                    border: 1px solid #d0d0d0;
-                    border-radius: 4px;
-                    padding: 8px 12px;
-                    font-size: 13px;
-                    font-weight: bold;
-                }
-                QLineEdit:focus {
-                    border: 1px solid #0066cc;
-                }
-                QComboBox {
-                    background-color: #ffffff;
-                    color: #000000;
-                    border: 1px solid #d0d0d0;
-                    border-radius: 4px;
-                    padding: 8px 12px;
-                    font-size: 13px;
-                }
-                QComboBox:hover {
-                    border: 1px solid #0066cc;
-                }
-                QComboBox::drop-down {
-                    border: none;
-                    width: 20px;
-                }
-                QComboBox::down-arrow {
-                    image: none;
-                    border-left: 4px solid transparent;
-                    border-right: 4px solid transparent;
-                    border-top: 5px solid #333333;
-                    margin-right: 5px;
-                }
-                QComboBox QAbstractItemView {
-                    background-color: #ffffff;
-                    color: #000000;
-                    selection-background-color: #0066cc;
-                    selection-color: #ffffff;
-                    border: 1px solid #d0d0d0;
-                }
-            """
-        else:  # dark theme
-            stylesheet = """
-                QWidget {
-                    background-color: #2d2d2d;
-                    border-bottom: 2px solid #00d4ff;
-                }
-                QLabel {
-                    color: #cccccc;
-                    font-size: 12px;
-                    font-weight: bold;
-                    padding: 0px 5px;
-                }
-                QLineEdit {
-                    background-color: #1e1e1e;
-                    color: #ffffff;
-                    border: 1px solid #3d3d3d;
-                    border-radius: 4px;
-                    padding: 8px 12px;
-                    font-size: 13px;
-                    font-weight: bold;
-                }
-                QLineEdit:focus {
-                    border: 1px solid #00d4ff;
-                }
-                QComboBox {
-                    background-color: #1e1e1e;
-                    color: #ffffff;
-                    border: 1px solid #3d3d3d;
-                    border-radius: 4px;
-                    padding: 8px 12px;
-                    font-size: 13px;
-                }
-                QComboBox:hover {
-                    border: 1px solid #00d4ff;
-                }
-                QComboBox::drop-down {
-                    border: none;
-                    width: 20px;
-                }
-                QComboBox::down-arrow {
-                    image: none;
-                    border-left: 4px solid transparent;
-                    border-right: 4px solid transparent;
-                    border-top: 5px solid #cccccc;
-                    margin-right: 5px;
-                }
-                QComboBox QAbstractItemView {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                    selection-background-color: #00d4ff;
-                    selection-color: #000000;
-                    border: 1px solid #3d3d3d;
-                }
-            """
-        
-        self.controls_widget.setStyleSheet(stylesheet)
 
     def _connect_signals(self) -> None:
         """Connect all signals."""

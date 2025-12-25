@@ -7,6 +7,13 @@ import numpy as np
 import pandas as pd
 
 from app.services.market_data import fetch_price_history
+from app.core.config import (
+    EQUATION_OPERATORS,
+    EQUATION_PREFIX,
+    DEFAULT_PERIOD,
+    ERROR_INVALID_EXPRESSION,
+    ERROR_NO_OVERLAPPING_DATES,
+)
 
 
 class TickerEquationParser:
@@ -19,9 +26,6 @@ class TickerEquationParser:
         =BTC-USD + ETH-USD
         =(BTC-USD + ETH-USD)/2
     """
-
-    # Operators we support
-    OPERATORS = {"+", "-", "*", "/"}
 
     def __init__(self):
         self._ticker_cache = {}
@@ -37,7 +41,7 @@ class TickerEquationParser:
         text = text.strip()
         
         # Explicit equation marker
-        if text.startswith("="):
+        if text.startswith(EQUATION_PREFIX):
             return True
         
         # Check for operators that indicate equations
@@ -64,7 +68,7 @@ class TickerEquationParser:
         return False
 
     def parse_and_evaluate(
-        self, equation: str, period: str = "max", interval: str = "1d"
+        self, equation: str, period: str = DEFAULT_PERIOD, interval: str = "1d"
     ) -> Tuple[pd.DataFrame, str]:
         """
         Parse and evaluate a ticker equation.
@@ -75,7 +79,7 @@ class TickerEquationParser:
         equation = equation.strip()
         
         # Remove leading = if present
-        if equation.startswith("="):
+        if equation.startswith(EQUATION_PREFIX):
             expr = equation[1:].strip()
         else:
             expr = equation
@@ -100,7 +104,7 @@ class TickerEquationParser:
         result = self._evaluate_expression(tokens, aligned_data)
 
         # Create description
-        description = f"={expr}"
+        description = f"{EQUATION_PREFIX}{expr}"
 
         return result, description
 
@@ -139,7 +143,7 @@ class TickerEquationParser:
                 continue
 
             # Operators - but be careful with minus in ticker names
-            if char in self.OPERATORS:
+            if char in EQUATION_OPERATORS:
                 # Look ahead and behind to determine if this is an operator
                 # or part of a ticker name
                 if char == "-":
@@ -173,7 +177,7 @@ class TickerEquationParser:
             return False
         # Tickers are uppercase with possible hyphens
         # and not operators or parentheses
-        if token in self.OPERATORS or token in "()":
+        if token in EQUATION_OPERATORS or token in "()":
             return False
         # Check if it's a number
         try:
@@ -214,7 +218,7 @@ class TickerEquationParser:
                 common_index = common_index.intersection(df.index)
 
         if len(common_index) == 0:
-            raise ValueError("No overlapping dates found between tickers")
+            raise ValueError(ERROR_NO_OVERLAPPING_DATES)
 
         # Reindex all dataframes to common index
         aligned = {}
@@ -256,10 +260,10 @@ class TickerEquationParser:
                     # Push number as constant
                     stack.append(float(token))
 
-                elif token in self.OPERATORS:
+                elif token in EQUATION_OPERATORS:
                     # Pop two operands and apply operator
                     if len(stack) < 2:
-                        raise ValueError(f"Invalid expression: not enough operands for {token}")
+                        raise ValueError(f"{ERROR_INVALID_EXPRESSION}: not enough operands for {token}")
 
                     b = stack.pop()
                     a = stack.pop()
@@ -278,7 +282,7 @@ class TickerEquationParser:
                     stack.append(result)
 
             if len(stack) != 1:
-                raise ValueError("Invalid expression")
+                raise ValueError(ERROR_INVALID_EXPRESSION)
 
             # Get the result for this price type
             result_values = stack[0]
@@ -308,7 +312,7 @@ class TickerEquationParser:
                     output.append(operator_stack.pop())
                 if operator_stack and operator_stack[-1] == "(":
                     operator_stack.pop()
-            elif token in self.OPERATORS:
+            elif token in EQUATION_OPERATORS:
                 while (
                     operator_stack
                     and operator_stack[-1] != "("
