@@ -16,10 +16,12 @@ from PySide6.QtCore import Qt
 from app.ui.widgets.price_chart import PriceChart
 from app.ui.widgets.create_indicator_dialog import CreateIndicatorDialog
 from app.ui.widgets.chart_settings_dialog import ChartSettingsDialog
+from app.ui.widgets.depth_chart import OrderBookPanel
 from app.services.market_data import fetch_price_history
 from app.services.ticker_equation_parser import TickerEquationParser
 from app.services.indicator_service import IndicatorService
 from app.services.chart_settings_manager import ChartSettingsManager
+from app.services.binance_data import BinanceOrderBook
 from app.core.theme_manager import ThemeManager
 from app.core.config import (
     DEFAULT_TICKER,
@@ -34,7 +36,7 @@ from app.core.config import (
 
 class ChartModule(QWidget):
     """
-    Charting module with indicator support.
+    Charting module with indicator support and order book depth.
     Handles ticker data loading, chart display, and technical indicators.
     """
 
@@ -64,6 +66,7 @@ class ChartModule(QWidget):
         """Handle theme change signal."""
         self._apply_control_bar_theme()
         self._apply_indicator_panel_theme()
+        self._apply_depth_panel_theme()
         self.chart.set_theme(theme)
 
     def _apply_control_bar_theme(self) -> None:
@@ -84,6 +87,11 @@ class ChartModule(QWidget):
             stylesheet = self._get_dark_indicator_panel_stylesheet()
         
         self.indicator_panel.setStyleSheet(stylesheet)
+
+    def _apply_depth_panel_theme(self) -> None:
+        """Apply theme-specific styling to the depth panel."""
+        # The depth panel handles its own theming via theme_manager
+        pass
 
     def _get_dark_indicator_panel_stylesheet(self) -> str:
         """Get dark theme stylesheet for indicator panel."""
@@ -256,6 +264,13 @@ class ChartModule(QWidget):
         self.indicators_btn.setMaximumWidth(120)
         controls.addWidget(self.indicators_btn)
 
+        # Depth button (only enabled for Binance tickers)
+        self.depth_btn = QPushButton("📈 Depth")
+        self.depth_btn.setCheckable(True)
+        self.depth_btn.setMaximumWidth(120)
+        self.depth_btn.setEnabled(False)  # Disabled by default
+        controls.addWidget(self.depth_btn)
+
         # Chart settings button
         self.chart_settings_btn = QPushButton("⚙️ Settings")
         self.chart_settings_btn.setMaximumWidth(120)
@@ -268,7 +283,7 @@ class ChartModule(QWidget):
         # Apply initial theme to control bar
         self._apply_control_bar_theme()
 
-        # Horizontal layout for chart + indicator panel
+        # Horizontal layout for chart + panels
         content_layout = QHBoxLayout()
         content_layout.setContentsMargins(0, 0, 0, 0)
         content_layout.setSpacing(0)
@@ -279,6 +294,12 @@ class ChartModule(QWidget):
         
         # Apply initial theme to chart
         self.chart.set_theme(self.theme_manager.current_theme)
+
+        # Depth panel (hidden by default)
+        self.depth_panel = OrderBookPanel(self.theme_manager)
+        self.depth_panel.setFixedWidth(400)
+        self.depth_panel.setVisible(False)
+        content_layout.addWidget(self.depth_panel)
 
         # Indicator selection panel (hidden by default)
         self.indicator_panel = self._create_indicator_panel()
@@ -400,9 +421,37 @@ class ChartModule(QWidget):
         # Toggle indicator panel
         self.indicators_btn.clicked.connect(self._toggle_indicator_panel)
 
+        # Toggle depth panel
+        self.depth_btn.clicked.connect(self._toggle_depth_panel)
+
     def _toggle_indicator_panel(self) -> None:
         """Toggle the indicator selection panel visibility."""
-        self.indicator_panel.setVisible(self.indicators_btn.isChecked())
+        is_visible = self.indicators_btn.isChecked()
+        self.indicator_panel.setVisible(is_visible)
+        
+        # If showing indicators, hide depth
+        if is_visible and self.depth_panel.isVisible():
+            self.depth_btn.setChecked(False)
+            self.depth_panel.setVisible(False)
+            self.depth_panel.stop_updates()
+
+    def _toggle_depth_panel(self) -> None:
+        """Toggle the depth panel visibility."""
+        is_visible = self.depth_btn.isChecked()
+        self.depth_panel.setVisible(is_visible)
+        
+        # If showing depth, hide indicators
+        if is_visible:
+            if self.indicator_panel.isVisible():
+                self.indicators_btn.setChecked(False)
+                self.indicator_panel.setVisible(False)
+            
+            # Update depth with current ticker
+            if self.state["ticker"]:
+                self.depth_panel.set_ticker(self.state["ticker"])
+        else:
+            # Stop updates when hiding
+            self.depth_panel.stop_updates()
 
     def _apply_indicators(self) -> None:
         """Apply selected indicators to the chart."""
@@ -803,6 +852,20 @@ class ChartModule(QWidget):
             self.state["df"] = df
             self.state["ticker"] = display_name
             self.state["interval"] = interval
+
+            # Check if this ticker is supported on Binance
+            is_binance = BinanceOrderBook.is_binance_ticker(display_name)
+            self.depth_btn.setEnabled(is_binance)
+            
+            # Update depth button tooltip
+            if is_binance:
+                self.depth_btn.setToolTip("Show order book depth from Binance")
+            else:
+                self.depth_btn.setToolTip("Order book depth only available for Binance crypto pairs")
+            
+            # If depth panel is visible, update it
+            if self.depth_panel.isVisible():
+                self.depth_panel.set_ticker(display_name)
 
             self.render_from_cache()
 
