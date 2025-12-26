@@ -862,7 +862,8 @@ class ChartModule(QWidget):
             
             # Enable/disable the depth button
             self.depth_btn.setEnabled(is_binance)
-            
+            self.depth_btn.setVisible(is_binance)
+
             if is_binance:
                 self.depth_btn.setText("📈 Depth ✓")
                 self.depth_btn.setToolTip(
