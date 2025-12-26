@@ -394,8 +394,8 @@ class OrderBookPanel(QWidget):
         source = "Binance.US" if "binance.us" in summary.get("source", "") else "Binance"
         self.status_label.setText(f"Updated: {timestamp} • {source}")
     
-    def start_updates(self, interval_ms: int = 2000):
-        """Start automatic updates (2 seconds for ladder view)."""
+    def start_updates(self, interval_ms: int = 500):
+        """Start automatic updates (500 ms for ladder view)."""
         self.update_timer.start(interval_ms)
     
     def stop_updates(self):
