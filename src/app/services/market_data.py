@@ -52,14 +52,12 @@ def fetch_price_history(
     interval_key = (interval or "1d").strip().lower()
     yf_interval = INTERVAL_MAP.get(interval_key, "1d")
     
-    # Special handling for yearly interval
-    resample_yearly = False
-    if yf_interval == "1y":
-        resample_yearly = True
-        yf_interval = "1d"  # We'll resample from daily data
+    # Check if we need daily data based on ORIGINAL interval_key (before modification)
+    needs_daily = interval_key in ["daily", "1d"]
     
-    # Check if we need daily data (for caching) or can use cache
-    needs_daily = yf_interval == "1d"
+    # Special handling for yearly interval
+    if yf_interval == "1y":
+        yf_interval = "1d"  # We'll resample from daily data
     
     # Try to get from cache first (daily data only)
     if needs_daily:
