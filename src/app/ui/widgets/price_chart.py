@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Any
 
 import numpy as np
 import pandas as pd
@@ -196,7 +196,7 @@ class DraggableIndexDateAxisItem(pg.AxisItem):
 
 
 # -----------------------------
-# Candles (keeping existing code)
+# Candles (with color support)
 # -----------------------------
 class CandlestickItem(pg.GraphicsObject):
     """
@@ -204,15 +204,24 @@ class CandlestickItem(pg.GraphicsObject):
     x is an integer index (0..N-1) for uniform spacing
     """
 
-    def __init__(self, data, bar_width: float = CANDLE_BAR_WIDTH):
+    def __init__(self, data, bar_width: float = CANDLE_BAR_WIDTH, up_color=None, down_color=None):
         super().__init__()
         self.data = np.array(data, dtype=float)
         self.bar_width = float(bar_width)
+        self.up_color = up_color or (76, 153, 0)
+        self.down_color = down_color or (200, 50, 50)
         self._picture = None
         self._generate_picture()
 
     def setData(self, data):
         self.data = np.array(data, dtype=float)
+        self._generate_picture()
+        self.update()
+
+    def setColors(self, up_color, down_color):
+        """Update candle colors and regenerate picture."""
+        self.up_color = up_color
+        self.down_color = down_color
         self._generate_picture()
         self.update()
 
@@ -225,8 +234,8 @@ class CandlestickItem(pg.GraphicsObject):
             self._picture = picture
             return
 
-        up_color = (76, 153, 0)
-        down_color = (200, 50, 50)
+        up_color = self.up_color
+        down_color = self.down_color
         up_pen = pg.mkPen(color=up_color, width=1)
         down_pen = pg.mkPen(color=down_color, width=1)
         up_brush = pg.mkBrush(up_color)
@@ -279,7 +288,32 @@ class CandlestickItem(pg.GraphicsObject):
 
 
 # -----------------------------
-# Chart (with indicator support)
+# Draggable ViewBox for Oscillators
+# -----------------------------
+class DraggableViewBox(pg.ViewBox):
+    """
+    ViewBox for oscillators with independent Y-axis positioning.
+    Dragging is handled at the PlotWidget level for better event routing.
+    """
+    
+    sigVerticalOffsetChanged = QtCore.Signal(float)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._vertical_offset = 0
+    
+    def get_vertical_offset(self):
+        """Get the current vertical offset."""
+        return self._vertical_offset
+    
+    def set_vertical_offset(self, offset):
+        """Set the vertical offset."""
+        self._vertical_offset = offset
+        self.sigVerticalOffsetChanged.emit(offset)
+
+
+# -----------------------------
+# Chart (with oscillator support)
 # -----------------------------
 class PriceChart(pg.PlotWidget):
     # Indicator color palette
@@ -292,13 +326,13 @@ class PriceChart(pg.PlotWidget):
         (255, 0, 150),    # Magenta
     ]
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, chart_settings=None):
         super().__init__(parent=parent)
 
         self.showGrid(x=True, y=True)
         self.setLabel("bottom", "Time")
 
-        # bottom axis is now draggable + date formatted
+        # Main price ViewBox and axes
         self.bottom_axis = DraggableIndexDateAxisItem(orientation="bottom")
         self.right_axis = DraggablePriceAxisItem(orientation="right")
 
@@ -308,12 +342,41 @@ class PriceChart(pg.PlotWidget):
 
         self.setLabel("right", "Price (USD)")
 
-        vb = self.getViewBox()
-        vb.setMouseEnabled(x=True, y=True)
+        self.price_vb = self.getViewBox()
+        self.price_vb.setMouseEnabled(x=True, y=True)
+
+        # Create second ViewBox for oscillators with independent Y-axis
+        self.oscillator_vb = DraggableViewBox()
+        self.oscillator_vb.setMouseEnabled(x=True, y=True)
+        
+        # Create second right axis for oscillators
+        self.oscillator_axis = DraggableAxisItem(orientation="right")
+        self.oscillator_axis.setLabel("Oscillator")
+        
+        # Add the oscillator ViewBox to the plot
+        self.plotItem.scene().addItem(self.oscillator_vb)
+        self.oscillator_axis.linkToView(self.oscillator_vb)
+        
+        # Link X-axes so they pan/zoom together
+        self.oscillator_vb.setXLink(self.price_vb)
+        
+        # Position the oscillator axis to the right of the price axis
+        self.plotItem.layout.addItem(self.oscillator_axis, 2, 3)
+        
+        # Connect signal to update geometry when offset changes
+        self.oscillator_vb.sigVerticalOffsetChanged.connect(self._update_oscillator_geometry)
+        
+        # Initially hide oscillator axis
+        self.oscillator_axis.hide()
 
         self._candles = None
         self._line = None
-        self._indicator_lines = []
+        self._price_indicator_lines = []  # Overlay indicators on price chart
+        self._oscillator_indicator_lines = []  # Oscillator indicators on separate axis
+        
+        # Track if we're dragging the oscillator
+        self._oscillator_drag_active = False
+        self._cursor_over_oscillator = False
 
         self.candle_width = CANDLE_BAR_WIDTH
         self._has_initialized_view = False
@@ -321,8 +384,225 @@ class PriceChart(pg.PlotWidget):
         self._scale_mode: str = "regular"
         self._theme: str = "dark"
 
+        # Store chart settings
+        self.chart_settings = chart_settings or {}
+
         # Add legend
         self.legend = self.addLegend(offset=(10, 10))
+
+        # Apply initial background
+        self._apply_background()
+        
+        # Update oscillator ViewBox geometry when price ViewBox changes
+        self.price_vb.sigRangeChanged.connect(self._update_oscillator_geometry)
+        
+        # Initialize oscillator geometry
+        self._update_oscillator_geometry()
+        
+        # Enable mouse tracking for cursor changes
+        self.setMouseTracking(True)
+
+    def _is_mouse_over_oscillator(self, scene_pos):
+        """Check if mouse position is over any oscillator items."""
+        if not self._oscillator_indicator_lines:
+            return False
+        
+        # Map scene position to oscillator view coordinates
+        view_pos = self.oscillator_vb.mapSceneToView(scene_pos)
+        
+        # Get current view range for threshold calculations
+        x_range = self.oscillator_vb.viewRange()[0]
+        y_range = self.oscillator_vb.viewRange()[1]
+        
+        # Use more generous thresholds for easier grabbing
+        x_threshold = (x_range[1] - x_range[0]) * 0.05  # 5% of X range
+        y_threshold = (y_range[1] - y_range[0]) * 0.15  # 15% of Y range
+        
+        # Check each oscillator item
+        for item in self._oscillator_indicator_lines:
+            if isinstance(item, pg.PlotCurveItem):
+                # For line items, check if mouse is near the line
+                data = item.getData()
+                if data and len(data) >= 2:
+                    x_data, y_data = data[0], data[1]
+                    if x_data is not None and y_data is not None:
+                        # Find the closest point on the line
+                        for i in range(len(x_data)):
+                            if np.isfinite([x_data[i], y_data[i]]).all():
+                                dx = abs(view_pos.x() - x_data[i])
+                                dy = abs(view_pos.y() - y_data[i])
+                                
+                                if dx < x_threshold and dy < y_threshold:
+                                    return True
+                                    
+            elif isinstance(item, pg.ScatterPlotItem):
+                # For scatter items, check proximity to any point
+                data = item.getData()
+                if data and len(data) >= 2:
+                    x_data, y_data = data[0], data[1]
+                    if x_data is not None and y_data is not None:
+                        for x, y in zip(x_data, y_data):
+                            if np.isfinite([x, y]).all():
+                                dx = abs(view_pos.x() - x)
+                                dy = abs(view_pos.y() - y)
+                                
+                                if dx < x_threshold and dy < y_threshold:
+                                    return True
+        
+        return False
+
+    def mousePressEvent(self, ev):
+        """Override to detect clicks on oscillator."""
+        # Map widget position to scene coordinates
+        scene_pos = self.plotItem.vb.mapToScene(ev.pos())
+        
+        # Check if clicking on oscillator (pass scene position)
+        if self._is_mouse_over_oscillator(scene_pos):
+            self._oscillator_drag_active = True
+            self._drag_start_pos = ev.pos()
+            ev.accept()
+            return
+        
+        # Otherwise use default behavior
+        super().mousePressEvent(ev)
+
+    def mouseMoveEvent(self, ev):
+        """Override to handle oscillator dragging and cursor changes."""
+        if self._oscillator_drag_active and hasattr(self, '_drag_start_pos'):
+            # Calculate drag delta
+            delta = ev.pos() - self._drag_start_pos
+            self._drag_start_pos = ev.pos()
+            
+            # Update oscillator vertical offset
+            current_offset = self.oscillator_vb.get_vertical_offset()
+            new_offset = current_offset + delta.y()
+            self.oscillator_vb.set_vertical_offset(new_offset)
+            
+            ev.accept()
+            return
+        
+        # Check if cursor is over oscillator to change cursor
+        if self._oscillator_indicator_lines:
+            scene_pos = self.plotItem.vb.mapToScene(ev.pos())
+            is_over = self._is_mouse_over_oscillator(scene_pos)
+            
+            if is_over and not self._cursor_over_oscillator:
+                # Change cursor to indicate draggable
+                self.setCursor(QtCore.Qt.SizeVerCursor)  # Vertical resize cursor
+                self._cursor_over_oscillator = True
+            elif not is_over and self._cursor_over_oscillator:
+                # Restore default cursor
+                self.setCursor(QtCore.Qt.ArrowCursor)
+                self._cursor_over_oscillator = False
+        
+        # Otherwise use default behavior
+        super().mouseMoveEvent(ev)
+
+    def mouseReleaseEvent(self, ev):
+        """Override to end oscillator dragging."""
+        if self._oscillator_drag_active:
+            self._oscillator_drag_active = False
+            if hasattr(self, '_drag_start_pos'):
+                delattr(self, '_drag_start_pos')
+            
+            # Reset cursor if not still over oscillator
+            scene_pos = self.plotItem.vb.mapToScene(ev.pos())
+            if not self._is_mouse_over_oscillator(scene_pos):
+                self.setCursor(QtCore.Qt.ArrowCursor)
+                self._cursor_over_oscillator = False
+            
+            ev.accept()
+            return
+        
+        # Otherwise use default behavior
+        super().mouseReleaseEvent(ev)
+
+    def _clear_chart(self):
+        """Custom clear method to properly clean up both price and oscillator ViewBoxes."""
+        # Remove old legend first
+        if hasattr(self, 'legend') and self.legend is not None:
+            try:
+                self.legend.scene().removeItem(self.legend)
+            except:
+                pass
+            self.legend = None
+        
+        # Remove oscillator indicators - use slice copy to avoid modification during iteration
+        for item in self._oscillator_indicator_lines[:]:
+            try:
+                self.oscillator_vb.removeItem(item)
+                if item.scene() is not None:
+                    item.scene().removeItem(item)
+            except:
+                pass
+        self._oscillator_indicator_lines.clear()
+        
+        # Remove price indicators - use slice copy
+        for item in self._price_indicator_lines[:]:
+            try:
+                self.price_vb.removeItem(item)
+                if item.scene() is not None:
+                    item.scene().removeItem(item)
+            except:
+                pass
+        self._price_indicator_lines.clear()
+        
+        # Remove candles manually
+        if self._candles is not None:
+            try:
+                self.price_vb.removeItem(self._candles)
+                if self._candles.scene() is not None:
+                    self._candles.scene().removeItem(self._candles)
+            except:
+                pass
+            self._candles = None
+        
+        # Remove line manually
+        if self._line is not None:
+            try:
+                self.price_vb.removeItem(self._line)
+                if self._line.scene() is not None:
+                    self._line.scene().removeItem(self._line)
+            except:
+                pass
+            self._line = None
+        
+        # Hide oscillator axis when cleared
+        self.oscillator_axis.hide()
+        
+        # Reset oscillator position
+        self.oscillator_vb.set_vertical_offset(0)
+        
+        # Reset cursor state
+        self._cursor_over_oscillator = False
+        self.setCursor(QtCore.Qt.ArrowCursor)
+        
+        # Re-add legend after clear
+        self.legend = self.addLegend(offset=(10, 10))
+
+    def _update_oscillator_geometry(self, *args):
+        """Update the oscillator ViewBox to match price ViewBox geometry with offset."""
+        # Get the price ViewBox geometry
+        price_rect = self.price_vb.sceneBoundingRect()
+        
+        # Get vertical offset (in scene coordinates)
+        offset = self.oscillator_vb.get_vertical_offset()
+        
+        # Position oscillator ViewBox with the same dimensions but offset vertically
+        # The offset allows the oscillator to be positioned anywhere over the price chart
+        self.oscillator_vb.setGeometry(price_rect.translated(0, offset))
+
+    def _apply_background(self):
+        """Apply background color from settings or theme."""
+        custom_bg = self.chart_settings.get('chart_background')
+        if custom_bg:
+            # Convert RGB tuple to hex color
+            bg_hex = f"#{custom_bg[0]:02x}{custom_bg[1]:02x}{custom_bg[2]:02x}"
+            self.setBackground(bg_hex)
+        else:
+            # Use theme default
+            bg_color = 'w' if self._theme == "light" else '#1e1e1e'
+            self.setBackground(bg_color)
 
     # -----------------------------
     # Scale transform (plot-space only)
@@ -348,13 +628,49 @@ class PriceChart(pg.PlotWidget):
     def set_theme(self, theme: str) -> None:
         """Set the chart theme (affects line color and background)."""
         self._theme = theme
-        # Update background color
-        bg_color = 'w' if theme == "light" else '#1e1e1e'
-        self.setBackground(bg_color)
+        # Apply background (respects custom settings)
+        self._apply_background()
 
     def get_line_color(self) -> tuple[int, int, int]:
-        """Get line color based on current theme."""
+        """Get line color from settings or theme."""
+        custom_color = self.chart_settings.get('line_color')
+        if custom_color:
+            return custom_color
         return (0, 0, 0) if self._theme == "light" else (76, 175, 80)
+
+    def get_line_settings(self) -> dict:
+        """Get line settings from custom settings or theme default."""
+        # Check for custom line color
+        custom_color = self.chart_settings.get('line_color')
+        if custom_color:
+            color = custom_color
+        else:
+            # Use theme default
+            color = (0, 0, 0) if self._theme == "light" else (76, 175, 80)
+        
+        width = self.chart_settings.get('line_width', 2)
+        style = self.chart_settings.get('line_style', QtCore.Qt.SolidLine)
+        
+        return {'color': color, 'width': width, 'style': style}
+
+    def update_chart_settings(self, settings):
+        """Update chart settings and refresh display."""
+        self.chart_settings = settings or {}
+        
+        # Update background
+        self._apply_background()
+        
+        # Update candle colors if candles exist
+        if self._candles:
+            up_color = settings.get('candle_up_color', (76, 153, 0))
+            down_color = settings.get('candle_down_color', (200, 50, 50))
+            self._candles.setColors(up_color, down_color)
+        
+        # Update line if exists
+        if self._line:
+            line_settings = self.get_line_settings()
+            pen = pg.mkPen(color=line_settings['color'], width=line_settings['width'], style=line_settings['style'])
+            self._line.setPen(pen)
 
     # -----------------------------
     # View helpers
@@ -363,7 +679,7 @@ class PriceChart(pg.PlotWidget):
         if not self.bottom_axis._index_to_dt:
             return None, None
 
-        (x0, x1), _ = self.getViewBox().viewRange()
+        (x0, x1), _ = self.price_vb.viewRange()
         n = len(self.bottom_axis._index_to_dt)
 
         i0 = int(np.clip(round(x0), 0, n - 1))
@@ -377,12 +693,11 @@ class PriceChart(pg.PlotWidget):
         return int(df.index.get_indexer([dt], method="nearest")[0])
 
     def _safe_set_yrange(self, y_min: float, y_max: float) -> None:
-        vb = self.getViewBox()
         if y_max <= y_min:
             y_max = y_min + 1e-6
 
         pad = (y_max - y_min) * VIEW_PADDING_PERCENT if y_max != y_min else max(1e-6, abs(y_max) * 0.001)
-        vb.setYRange(y_min - pad, y_max + pad, padding=0)
+        self.price_vb.setYRange(y_min - pad, y_max + pad, padding=0)
 
     def _apply_date_window(self, df_plot: pd.DataFrame, left_dt: pd.Timestamp, right_dt: pd.Timestamp) -> None:
         i0 = self._date_to_index(df_plot, left_dt)
@@ -390,8 +705,7 @@ class PriceChart(pg.PlotWidget):
         if i0 > i1:
             i0, i1 = i1, i0
 
-        vb = self.getViewBox()
-        vb.setXRange(i0, i1, padding=0)
+        self.price_vb.setXRange(i0, i1, padding=0)
 
         df_vis = df_plot.iloc[max(0, i0) : min(len(df_plot), i1 + 1)]
         if df_vis.empty:
@@ -429,10 +743,10 @@ class PriceChart(pg.PlotWidget):
         ticker: str,
         chart_type: str = "Candles",
         scale: str = "Regular",
-        indicators: Dict[str, pd.DataFrame] = None,
+        indicators: Dict[str, Dict[str, Any]] = None,
     ) -> None:
         if df is None or df.empty:
-            self.clear()
+            self._clear_chart()
             return
 
         prev_left_dt, prev_right_dt = self._get_visible_date_window()
@@ -447,13 +761,12 @@ class PriceChart(pg.PlotWidget):
 
         self.setLabel("right", "Price (USD)" if self._scale_mode == "regular" else "Price (USD, log scale)")
 
-        self.clear()
+        # Clear chart
+        self._clear_chart()
         self._candles = None
         self._line = None
-        self._indicator_lines = []
-        
-        # Re-add legend after clear
-        self.legend = self.addLegend(offset=(10, 10))
+        self._price_indicator_lines = []
+        self._oscillator_indicator_lines = []
 
         self.bottom_axis.set_index(df_plot.index)
         x = np.arange(len(df_plot), dtype=float)
@@ -466,9 +779,9 @@ class PriceChart(pg.PlotWidget):
 
             y = df_plot["Close"].astype(float).to_numpy()
             
-            # Get line color based on theme
-            line_color = self.get_line_color()
-            pen = pg.mkPen(color=line_color, width=2)
+            # Get line settings (color, width, style)
+            line_settings = self.get_line_settings()
+            pen = pg.mkPen(color=line_settings['color'], width=line_settings['width'], style=line_settings['style'])
             self._line = self.plot(x, y, pen=pen, name=f"{ticker}")
         else:
             required = {"Open", "High", "Low", "Close"}
@@ -482,8 +795,14 @@ class PriceChart(pg.PlotWidget):
             c = df_plot["Close"].astype(float).to_numpy()
 
             data = np.column_stack([x, o, c, l, h])
-            self._candles = CandlestickItem(data, bar_width=self.candle_width)
-            self.addItem(self._candles)
+            
+            # Get candle colors and width from settings
+            up_color = self.chart_settings.get('candle_up_color', (76, 153, 0))
+            down_color = self.chart_settings.get('candle_down_color', (200, 50, 50))
+            candle_width = self.chart_settings.get('candle_width', self.candle_width)
+            
+            self._candles = CandlestickItem(data, bar_width=candle_width, up_color=up_color, down_color=down_color)
+            self.price_vb.addItem(self._candles)
 
         # Plot indicators
         if indicators:
@@ -497,29 +816,163 @@ class PriceChart(pg.PlotWidget):
             self._has_initialized_view = True
 
     def _plot_indicators(
-        self, x: np.ndarray, df: pd.DataFrame, indicators: Dict[str, pd.DataFrame]
+        self, x: np.ndarray, df: pd.DataFrame, indicators: Dict[str, Dict[str, Any]]
     ) -> None:
-        """Plot indicator overlays on the price chart."""
-        color_idx = 0
+        """
+        Plot indicators on appropriate ViewBox (price or oscillator).
         
-        for indicator_name, indicator_df in indicators.items():
+        Args:
+            x: Array of x-coordinates (indices)
+            df: Original price DataFrame
+            indicators: Dict mapping indicator names to dicts containing:
+                - "data": DataFrame with indicator values
+                - "appearance": Appearance settings (or None for defaults)
+        """
+        from app.services.indicator_service import IndicatorService
+        
+        color_idx = 0
+        has_oscillators = False
+        
+        for indicator_name, indicator_info in indicators.items():
+            # Extract data and appearance
+            indicator_df = indicator_info.get("data")
+            appearance = indicator_info.get("appearance", {})
+            
             if indicator_df is None or indicator_df.empty:
                 continue
             
+            # Determine if this is an oscillator or overlay
+            is_oscillator = IndicatorService.is_overlay(indicator_name) == False
+            
+            if is_oscillator:
+                has_oscillators = True
+            
+            # Get appearance settings with defaults
+            custom_color = appearance.get("color", None)
+            line_width = appearance.get("line_width", 2)
+            line_style = appearance.get("line_style", QtCore.Qt.SolidLine)
+            marker_shape = appearance.get("marker_shape", "o")
+            marker_size = appearance.get("marker_size", 10)
+            
+            # Select the appropriate ViewBox
+            target_vb = self.oscillator_vb if is_oscillator else self.price_vb
+            
             # Plot each column in the indicator dataframe
             for col in indicator_df.columns:
-                y = indicator_df[col].to_numpy()
+                y_series = indicator_df[col]
                 
-                # Apply log transform if in log mode
-                if self._scale_mode == "log":
-                    y = self._to_log10_series(pd.Series(y)).to_numpy()
+                # Check if this is a sparse signal column
+                non_nan_count = y_series.notna().sum()
+                total_count = len(y_series)
+                is_sparse = non_nan_count < (total_count * 0.1)
                 
-                # Get color for this indicator line
-                color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
-                pen = pg.mkPen(color=color, width=2, style=QtCore.Qt.DashLine if "BB" in col else QtCore.Qt.SolidLine)
-                
-                # Plot the indicator
-                line = self.plot(x, y, pen=pen, name=col)
-                self._indicator_lines.append(line)
+                if is_sparse and non_nan_count > 0:
+                    # Render as scatter plot (for crossover signals, etc.)
+                    mask = y_series.notna()
+                    x_points = x[mask]
+                    y_points = y_series[mask].to_numpy()
+                    
+                    # Apply log transform only for price overlays in log mode
+                    if self._scale_mode == "log" and not is_oscillator:
+                        y_points = self._to_log10_series(pd.Series(y_points)).to_numpy()
+                    
+                    # Determine marker color and style
+                    if "Golden" in col or "Bull" in col or "Buy" in col:
+                        # Bullish signals - green
+                        symbol = marker_shape if custom_color else 'o'
+                        color = custom_color if custom_color else (76, 175, 80)
+                        size = marker_size
+                    elif "Death" in col or "Bear" in col or "Sell" in col:
+                        # Bearish signals - red
+                        symbol = marker_shape if custom_color else 'x'
+                        color = custom_color if custom_color else (244, 67, 54)
+                        size = marker_size
+                    else:
+                        # Default signal marker
+                        symbol = marker_shape
+                        color = custom_color if custom_color else self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
+                        size = marker_size
+                    
+                    # Create scatter plot
+                    scatter = pg.ScatterPlotItem(
+                        x=x_points,
+                        y=y_points,
+                        pen=pg.mkPen(None),
+                        brush=pg.mkBrush(color),
+                        symbol=symbol,
+                        size=size,
+                        name=col,
+                    )
+                    target_vb.addItem(scatter)
+                    
+                    if is_oscillator:
+                        self._oscillator_indicator_lines.append(scatter)
+                    else:
+                        self._price_indicator_lines.append(scatter)
+                    
+                else:
+                    # Render as line plot (for continuous indicators)
+                    y = y_series.to_numpy()
+                    
+                    # Apply log transform only for price overlays in log mode
+                    if self._scale_mode == "log" and not is_oscillator:
+                        y = self._to_log10_series(y_series).to_numpy()
+                    
+                    # Get color for this indicator line
+                    if custom_color:
+                        color = custom_color
+                    else:
+                        color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
+                    
+                    # Determine line style if not provided
+                    if not custom_color:
+                        if "BB" in col or "Band" in col:
+                            line_style = QtCore.Qt.DashLine
+                        elif "Middle" in col or "SMA" in col or "EMA" in col:
+                            line_style = QtCore.Qt.SolidLine
+                    
+                    pen = pg.mkPen(color=color, width=line_width, style=line_style)
+                    
+                    # Plot the indicator
+                    line = pg.PlotCurveItem(x=x, y=y, pen=pen, name=col)
+                    target_vb.addItem(line)
+                    
+                    if is_oscillator:
+                        self._oscillator_indicator_lines.append(line)
+                    else:
+                        self._price_indicator_lines.append(line)
                 
                 color_idx += 1
+        
+        # Show/hide oscillator axis based on whether we have oscillators
+        if has_oscillators:
+            self.oscillator_axis.show()
+            # Auto-fit oscillator range
+            self._auto_fit_oscillator_range()
+        else:
+            self.oscillator_axis.hide()
+
+    def _auto_fit_oscillator_range(self):
+        """Auto-fit the oscillator Y-range to show all oscillator data."""
+        if not self._oscillator_indicator_lines:
+            return
+        
+        # Collect all Y values from oscillator indicators
+        all_y_values = []
+        for item in self._oscillator_indicator_lines:
+            if isinstance(item, pg.ScatterPlotItem):
+                points = item.getData()
+                if points and len(points) > 1:
+                    all_y_values.extend(points[1])
+            elif isinstance(item, pg.PlotCurveItem):
+                y_data = item.getData()[1]
+                if y_data is not None:
+                    all_y_values.extend(y_data[np.isfinite(y_data)])
+        
+        if all_y_values:
+            y_min = np.min(all_y_values)
+            y_max = np.max(all_y_values)
+            
+            # Add some padding
+            padding = (y_max - y_min) * 0.1
+            self.oscillator_vb.setYRange(y_min - padding, y_max + padding, padding=0)

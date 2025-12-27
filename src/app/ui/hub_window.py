@@ -9,7 +9,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QCoreApplication
+from PySide6.QtGui import QMouseEvent, QWheelEvent, QCursor
 
 from app.core.theme_manager import ThemeManager
 from app.core.config import (
@@ -24,21 +25,165 @@ from app.ui.widgets.home_screen import HomeScreen
 class TransparentOverlay(QWidget):
     """
     Transparent overlay widget that passes mouse events through except for its children.
+    Handles complete event forwarding to enable full interaction with module widgets below.
     """
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
+    def _forward_event_to_module(self, event) -> None:
+        """Forward event to the module widget below in the stacked layout."""
+        container = self.parent()
+        if not container:
+            event.ignore()
+            return
+
+        layout = container.layout()
+        if not isinstance(layout, QStackedLayout):
+            event.ignore()
+            return
+
+        # Module is at index 0, overlay at index 1
+        if layout.count() >= 1:
+            module_widget = layout.widget(0)
+            if module_widget:
+                # Map event position to module coordinates
+                # QMouseEvent uses pos(), QWheelEvent uses position()
+                if isinstance(event, QWheelEvent):
+                    event_pos = event.position().toPoint()
+                elif hasattr(event, 'pos'):
+                    event_pos = event.pos()
+                else:
+                    event_pos = None
+
+                if event_pos is not None:
+                    global_pos = self.mapToGlobal(event_pos)
+                    module_pos = module_widget.mapFromGlobal(global_pos)
+
+                    # Find the actual child widget at this position
+                    target_widget = module_widget.childAt(module_pos)
+                    if target_widget:
+                        # Send event to the specific child widget
+                        child_pos = target_widget.mapFromGlobal(global_pos)
+
+                        if isinstance(event, QMouseEvent):
+                            new_event = QMouseEvent(
+                                event.type(),
+                                child_pos,
+                                global_pos,
+                                event.button(),
+                                event.buttons(),
+                                event.modifiers()
+                            )
+                        elif isinstance(event, QWheelEvent):
+                            new_event = QWheelEvent(
+                                child_pos,
+                                global_pos,
+                                event.pixelDelta(),
+                                event.angleDelta(),
+                                event.buttons(),
+                                event.modifiers(),
+                                event.phase(),
+                                event.inverted()
+                            )
+                        else:
+                            event.ignore()
+                            return
+
+                        QCoreApplication.sendEvent(target_widget, new_event)
+                    else:
+                        # No specific child widget, send to module itself
+                        if isinstance(event, QMouseEvent):
+                            new_event = QMouseEvent(
+                                event.type(),
+                                module_pos,
+                                global_pos,
+                                event.button(),
+                                event.buttons(),
+                                event.modifiers()
+                            )
+                        elif isinstance(event, QWheelEvent):
+                            new_event = QWheelEvent(
+                                module_pos,
+                                global_pos,
+                                event.pixelDelta(),
+                                event.angleDelta(),
+                                event.buttons(),
+                                event.modifiers(),
+                                event.phase(),
+                                event.inverted()
+                            )
+                        else:
+                            event.ignore()
+                            return
+
+                        QCoreApplication.sendEvent(module_widget, new_event)
+
+                    event.accept()
+                else:
+                    # Events without position (like leaveEvent)
+                    QCoreApplication.sendEvent(module_widget, event)
+                    event.accept()
+            else:
+                event.ignore()
+        else:
+            event.ignore()
+
     def mousePressEvent(self, event):
-        """Pass mouse events through to widgets below unless clicking on a child widget."""
-        # Check if click is on a child widget
-        child_at_pos = self.childAt(event.pos())
-        if child_at_pos:
-            # Let child handle the event
+        """Pass mouse press events through unless clicking on home button."""
+        if self.childAt(event.pos()):
             super().mousePressEvent(event)
         else:
-            # Pass event through to widget below
-            event.ignore()
+            self._forward_event_to_module(event)
+
+    def mouseReleaseEvent(self, event):
+        """Pass mouse release events through unless on home button."""
+        if self.childAt(event.pos()):
+            super().mouseReleaseEvent(event)
+        else:
+            self._forward_event_to_module(event)
+
+    def mouseMoveEvent(self, event):
+        """Pass mouse move events through unless on home button."""
+        if self.childAt(event.pos()):
+            super().mouseMoveEvent(event)
+        else:
+            self._forward_event_to_module(event)
+
+    def mouseDoubleClickEvent(self, event):
+        """Pass double-click events through unless on home button."""
+        if self.childAt(event.pos()):
+            super().mouseDoubleClickEvent(event)
+        else:
+            self._forward_event_to_module(event)
+
+    def wheelEvent(self, event):
+        """Pass wheel events through unless on home button."""
+        # QWheelEvent uses position() which returns QPointF, convert to QPoint
+        pos = event.position().toPoint()
+        if self.childAt(pos):
+            super().wheelEvent(event)
+        else:
+            self._forward_event_to_module(event)
+
+    def enterEvent(self, event):
+        """Pass enter events through unless entering home button."""
+        pos = self.mapFromGlobal(QCursor.pos())
+        if self.childAt(pos):
+            super().enterEvent(event)
+        else:
+            self._forward_event_to_module(event)
+
+    def leaveEvent(self, event):
+        """Pass leave events through to widgets below."""
+        self._forward_event_to_module(event)
+
+    def contextMenuEvent(self, event):
+        """Pass context menu events through unless on home button."""
+        if self.childAt(event.pos()):
+            super().contextMenuEvent(event)
+        else:
+            self._forward_event_to_module(event)
 
 
 class HubWindow(QMainWindow):

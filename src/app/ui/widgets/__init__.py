@@ -2,16 +2,15 @@ from __future__ import annotations
 
 from app.ui.widgets.price_chart import PriceChart
 from app.ui.widgets.create_indicator_dialog import CreateIndicatorDialog
-from app.ui.widgets.module_tile import ModuleTile
-from app.ui.widgets.module_tile_grid import ModuleTileGrid
-from app.ui.widgets.section_tab_bar import SectionTabBar
-from app.ui.widgets.home_screen import HomeScreen
+from app.ui.widgets.chart_settings_dialog import ChartSettingsDialog
+from app.ui.widgets.depth_chart import OrderBookPanel, DepthChartWidget
+from app.ui.widgets.order_book_ladder import OrderBookLadderWidget
 
 __all__ = [
     "PriceChart",
     "CreateIndicatorDialog",
-    "ModuleTile",
-    "ModuleTileGrid",
-    "SectionTabBar",
-    "HomeScreen",
+    "ChartSettingsDialog",
+    "OrderBookPanel",
+    "DepthChartWidget",
+    "OrderBookLadderWidget",
 ]

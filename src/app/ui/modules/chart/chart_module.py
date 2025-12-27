@@ -15,9 +15,13 @@ from PySide6.QtCore import Qt
 
 from app.ui.widgets.price_chart import PriceChart
 from app.ui.widgets.create_indicator_dialog import CreateIndicatorDialog
+from app.ui.widgets.chart_settings_dialog import ChartSettingsDialog
+from app.ui.widgets.depth_chart import OrderBookPanel
 from app.services.market_data import fetch_price_history
 from app.services.ticker_equation_parser import TickerEquationParser
 from app.services.indicator_service import IndicatorService
+from app.services.chart_settings_manager import ChartSettingsManager
+from app.services.binance_data import BinanceOrderBook
 from app.core.theme_manager import ThemeManager
 from app.core.config import (
     DEFAULT_TICKER,
@@ -32,7 +36,7 @@ from app.core.config import (
 
 class ChartModule(QWidget):
     """
-    Charting module with indicator support.
+    Charting module with indicator support and order book depth.
     Handles ticker data loading, chart display, and technical indicators.
     """
 
@@ -41,6 +45,9 @@ class ChartModule(QWidget):
         self.theme_manager = theme_manager
         self.equation_parser = TickerEquationParser()
         self.indicator_service = IndicatorService()
+        
+        # Initialize chart settings manager
+        self.chart_settings_manager = ChartSettingsManager()
         
         # Initialize indicator service to load saved indicators
         IndicatorService.initialize()
@@ -59,6 +66,7 @@ class ChartModule(QWidget):
         """Handle theme change signal."""
         self._apply_control_bar_theme()
         self._apply_indicator_panel_theme()
+        self._apply_depth_panel_theme()
         self.chart.set_theme(theme)
 
     def _apply_control_bar_theme(self) -> None:
@@ -79,6 +87,11 @@ class ChartModule(QWidget):
             stylesheet = self._get_dark_indicator_panel_stylesheet()
         
         self.indicator_panel.setStyleSheet(stylesheet)
+
+    def _apply_depth_panel_theme(self) -> None:
+        """Apply theme-specific styling to the depth panel."""
+        # The depth panel handles its own theming via theme_manager
+        pass
 
     def _get_dark_indicator_panel_stylesheet(self) -> str:
         """Get dark theme stylesheet for indicator panel."""
@@ -202,10 +215,9 @@ class ChartModule(QWidget):
 
         # Controls bar
         self.controls_widget = QWidget()
-
+        
         controls = QHBoxLayout(self.controls_widget)
-        # Left margin increased to 125px to leave space for home button (100px + margins)
-        controls.setContentsMargins(125, 12, 15, 12)
+        controls.setContentsMargins(125, 12, 15, 12)  # Space for home button
         controls.setSpacing(20)
 
         # Ticker input
@@ -251,20 +263,23 @@ class ChartModule(QWidget):
         self.indicators_btn.setCheckable(True)
         self.indicators_btn.setMaximumWidth(120)
         controls.addWidget(self.indicators_btn)
+        self.indicators_btn.show()
 
-        # Depth button (placeholder - disabled for now)
+        # Depth button
         self.depth_btn = QPushButton("📈 Depth")
         self.depth_btn.setCheckable(True)
         self.depth_btn.setMaximumWidth(120)
-        self.depth_btn.setEnabled(False)
-        self.depth_btn.setToolTip("Order book depth (coming soon)")
+        self.depth_btn.setEnabled(False)  # Disabled by default, enabled for Binance tickers
+        self.depth_btn.setToolTip("Load a Binance crypto pair (BTC-USD, ETH-USD, etc.) to enable")
         controls.addWidget(self.depth_btn)
+        self.depth_btn.show()
 
         # Chart settings button
         self.chart_settings_btn = QPushButton("⚙️ Settings")
         self.chart_settings_btn.setMaximumWidth(120)
-        self.chart_settings_btn.clicked.connect(self._open_settings)
+        self.chart_settings_btn.clicked.connect(self._open_chart_settings)
         controls.addWidget(self.chart_settings_btn)
+        self.chart_settings_btn.show()
 
         controls.addStretch(1)
         root.addWidget(self.controls_widget)
@@ -272,17 +287,23 @@ class ChartModule(QWidget):
         # Apply initial theme to control bar
         self._apply_control_bar_theme()
 
-        # Horizontal layout for chart + indicator panel
+        # Horizontal layout for chart + panels
         content_layout = QHBoxLayout()
         content_layout.setContentsMargins(0, 0, 0, 0)
         content_layout.setSpacing(0)
 
-        # Chart
-        self.chart = PriceChart()
+        # Chart with settings
+        self.chart = PriceChart(chart_settings=self.chart_settings_manager.get_all_settings())
         content_layout.addWidget(self.chart, stretch=1)
         
         # Apply initial theme to chart
         self.chart.set_theme(self.theme_manager.current_theme)
+
+        # Depth panel (hidden by default)
+        self.depth_panel = OrderBookPanel(self.theme_manager)
+        self.depth_panel.setFixedWidth(400)
+        self.depth_panel.setVisible(False)
+        content_layout.addWidget(self.depth_panel)
 
         # Indicator selection panel (hidden by default)
         self.indicator_panel = self._create_indicator_panel()
@@ -327,6 +348,8 @@ class ChartModule(QWidget):
         self.overlay_list.setSelectionMode(QListWidget.MultiSelection)
         self.overlay_list.addItems(IndicatorService.get_overlay_names())
         self.overlay_list.setMaximumHeight(200)
+        # Double-click to edit
+        self.overlay_list.itemDoubleClicked.connect(self._edit_indicator_from_list)
         layout.addWidget(self.overlay_list)
 
         # Oscillator indicators section
@@ -338,6 +361,8 @@ class ChartModule(QWidget):
         self.oscillator_list.setSelectionMode(QListWidget.MultiSelection)
         self.oscillator_list.addItems(IndicatorService.get_oscillator_names())
         self.oscillator_list.setMaximumHeight(150)
+        # Double-click to edit
+        self.oscillator_list.itemDoubleClicked.connect(self._edit_indicator_from_list)
         layout.addWidget(self.oscillator_list)
 
         # Apply button
@@ -349,6 +374,11 @@ class ChartModule(QWidget):
         clear_btn = QPushButton("Clear All")
         clear_btn.clicked.connect(self._clear_indicators)
         layout.addWidget(clear_btn)
+
+        # Edit button
+        edit_btn = QPushButton("✏️ Edit Selected")
+        edit_btn.clicked.connect(self._edit_selected_indicator)
+        layout.addWidget(edit_btn)
 
         # Delete selected indicator button
         delete_btn = QPushButton("🗑 Delete Selected")
@@ -395,17 +425,37 @@ class ChartModule(QWidget):
         # Toggle indicator panel
         self.indicators_btn.clicked.connect(self._toggle_indicator_panel)
 
+        # Toggle depth panel
+        self.depth_btn.clicked.connect(self._toggle_depth_panel)
+
     def _toggle_indicator_panel(self) -> None:
         """Toggle the indicator selection panel visibility."""
-        self.indicator_panel.setVisible(self.indicators_btn.isChecked())
+        is_visible = self.indicators_btn.isChecked()
+        self.indicator_panel.setVisible(is_visible)
+        
+        # If showing indicators, hide depth
+        if is_visible and self.depth_panel.isVisible():
+            self.depth_btn.setChecked(False)
+            self.depth_panel.setVisible(False)
+            self.depth_panel.stop_updates()
 
-    def _open_settings(self) -> None:
-        """Open chart settings dialog."""
-        QMessageBox.information(
-            self,
-            "Settings",
-            "Chart-specific settings coming soon.\n\nUse the Settings button on the home screen for app settings."
-        )
+    def _toggle_depth_panel(self) -> None:
+        """Toggle the depth panel visibility."""
+        is_visible = self.depth_btn.isChecked()
+        self.depth_panel.setVisible(is_visible)
+        
+        # If showing depth, hide indicators
+        if is_visible:
+            if self.indicator_panel.isVisible():
+                self.indicators_btn.setChecked(False)
+                self.indicator_panel.setVisible(False)
+            
+            # Update depth with current ticker
+            if self.state["ticker"]:
+                self.depth_panel.set_ticker(self.state["ticker"])
+        else:
+            # Stop updates when hiding
+            self.depth_panel.stop_updates()
 
     def _apply_indicators(self) -> None:
         """Apply selected indicators to the chart."""
@@ -433,6 +483,193 @@ class ChartModule(QWidget):
         # Re-render without indicators
         self.render_from_cache()
 
+    def _edit_indicator_from_list(self, item) -> None:
+        """Edit an indicator that was double-clicked in the sidebar list."""
+        indicator_name = item.text()
+        self._edit_indicator(indicator_name)
+
+    def _edit_selected_indicator(self) -> None:
+        """Edit the currently selected indicator from the sidebar."""
+        # Get selected item from either list
+        selected_overlay = self.overlay_list.selectedItems()
+        selected_oscillator = self.oscillator_list.selectedItems()
+        
+        selected = selected_overlay + selected_oscillator
+        
+        if len(selected) == 0:
+            QMessageBox.information(
+                self,
+                "No Indicator Selected",
+                "Please select an indicator to edit.",
+            )
+            return
+        
+        if len(selected) > 1:
+            QMessageBox.information(
+                self,
+                "Multiple Indicators Selected",
+                "Please select only one indicator to edit.",
+            )
+            return
+        
+        indicator_name = selected[0].text()
+        self._edit_indicator(indicator_name)
+
+    def _edit_indicator(self, indicator_name: str) -> None:
+        """Open the edit dialog for an indicator."""
+        # Get the indicator config
+        if indicator_name not in IndicatorService.ALL_INDICATORS:
+            QMessageBox.warning(
+                self,
+                "Indicator Not Found",
+                f"Indicator '{indicator_name}' not found.",
+            )
+            return
+        
+        config = IndicatorService.ALL_INDICATORS[indicator_name]
+        
+        # Check if this is a plugin-based indicator
+        if config.get("kind") == "plugin":
+            QMessageBox.information(
+                self,
+                "Cannot Edit Plugin",
+                f"'{indicator_name}' is a plugin-based indicator and cannot be edited through the UI.\n\n"
+                "To modify it, edit the plugin file directly.",
+            )
+            return
+        
+        # Build indicator config for the dialog
+        indicator_type_map = {
+            "sma": "SMA",
+            "ema": "EMA",
+            "bbands": "Bollinger Bands",
+            "rsi": "RSI",
+            "macd": "MACD",
+            "atr": "ATR",
+            "stochastic": "Stochastic",
+            "obv": "OBV",
+            "vwap": "VWAP",
+        }
+        
+        kind = config.get("kind")
+        indicator_type = indicator_type_map.get(kind, kind)
+        
+        # Extract parameters (exclude 'kind' and 'appearance')
+        params = {k: v for k, v in config.items() if k not in ["kind", "appearance"]}
+        
+        # Get appearance settings
+        appearance = config.get("appearance", {})
+        
+        # Try to extract custom name from the indicator_name
+        # If it matches the auto-generated pattern, don't set custom_name
+        custom_name = None
+        auto_name = self._generate_auto_name(indicator_type, params)
+        if indicator_name != auto_name:
+            custom_name = indicator_name
+        
+        edit_config = {
+            "type": indicator_type,
+            "params": params,
+            "custom_name": custom_name,
+            "appearance": appearance,
+        }
+        
+        # Open edit dialog
+        dialog = CreateIndicatorDialog(
+            self.theme_manager,
+            self,
+            edit_mode=True,
+            indicator_config=edit_config,
+        )
+        
+        if dialog.exec():
+            new_config = dialog.get_indicator_config()
+            if new_config:
+                # Remove old indicator
+                old_name = indicator_name
+                IndicatorService.remove_custom_indicator(old_name)
+                
+                # Add updated indicator
+                self._add_indicator_from_config(new_config)
+                
+                # Update selection if this indicator was active
+                if old_name in self.state["indicators"]:
+                    self.state["indicators"].remove(old_name)
+                    # Add new name
+                    new_name = new_config.get("custom_name") or self._generate_auto_name(
+                        new_config["type"], new_config["params"]
+                    )
+                    self.state["indicators"].append(new_name)
+                
+                # Refresh lists and re-render
+                self._refresh_indicator_lists()
+                self.render_from_cache()
+                
+                QMessageBox.information(
+                    self,
+                    "Indicator Updated",
+                    f"Successfully updated indicator.",
+                )
+
+    def _generate_auto_name(self, indicator_type: str, params: dict) -> str:
+        """Generate auto name for an indicator based on type and params."""
+        if not params:
+            return indicator_type
+        elif indicator_type == "SMA":
+            return f"SMA({params.get('length', '')})"
+        elif indicator_type == "EMA":
+            return f"EMA({params.get('length', '')})"
+        elif indicator_type == "Bollinger Bands":
+            return f"BB({params.get('length', '')},{params.get('std', '')})"
+        elif indicator_type == "RSI":
+            return f"RSI({params.get('length', '')})"
+        elif indicator_type == "MACD":
+            return f"MACD({params.get('fast', '')},{params.get('slow', '')},{params.get('signal', '')})"
+        elif indicator_type == "ATR":
+            return f"ATR({params.get('length', '')})"
+        elif indicator_type == "Stochastic":
+            return f"Stochastic({params.get('k', '')},{params.get('d', '')},{params.get('smooth_k', '')})"
+        else:
+            return indicator_type
+
+    def _add_indicator_from_config(self, config: dict) -> None:
+        """Add an indicator from a config dict."""
+        indicator_type = config["type"]
+        params = config["params"]
+        custom_name = config.get("custom_name")
+        appearance = config.get("appearance", {})
+        
+        # Use custom name if provided, otherwise auto-generate
+        if custom_name:
+            name = custom_name
+        else:
+            name = self._generate_auto_name(indicator_type, params)
+        
+        # Build config for IndicatorService
+        kind_map = {
+            "SMA": "sma",
+            "EMA": "ema",
+            "Bollinger Bands": "bbands",
+            "RSI": "rsi",
+            "MACD": "macd",
+            "ATR": "atr",
+            "Stochastic": "stochastic",
+            "OBV": "obv",
+            "VWAP": "vwap",
+        }
+        
+        indicator_config = {
+            "kind": kind_map[indicator_type],
+            **params,
+            "appearance": appearance,
+        }
+        
+        # Determine if overlay or oscillator
+        is_overlay = indicator_type in ["SMA", "EMA", "Bollinger Bands", "VWAP"]
+        
+        # Add to IndicatorService
+        IndicatorService.add_custom_indicator(name, indicator_config, is_overlay)
+
     def _create_custom_indicator(self) -> None:
         """Open dialog to create a custom indicator."""
         dialog = CreateIndicatorDialog(self.theme_manager, self)
@@ -440,29 +677,12 @@ class ChartModule(QWidget):
         if dialog.exec():
             config = dialog.get_indicator_config()
             if config:
-                # Build indicator name
-                indicator_type = config["type"]
-                params = config["params"]
-                
-                # Format name based on type
-                if not params:
-                    name = indicator_type
-                elif indicator_type == "SMA":
-                    name = f"SMA({params['length']})"
-                elif indicator_type == "EMA":
-                    name = f"EMA({params['length']})"
-                elif indicator_type == "Bollinger Bands":
-                    name = f"BB({params['length']},{params['std']})"
-                elif indicator_type == "RSI":
-                    name = f"RSI({params['length']})"
-                elif indicator_type == "MACD":
-                    name = f"MACD({params['fast']},{params['slow']},{params['signal']})"
-                elif indicator_type == "ATR":
-                    name = f"ATR({params['length']})"
-                elif indicator_type == "Stochastic":
-                    name = f"Stochastic({params['k']},{params['d']},{params['smooth_k']})"
+                # Generate name
+                custom_name = config.get("custom_name")
+                if custom_name:
+                    name = custom_name
                 else:
-                    name = indicator_type
+                    name = self._generate_auto_name(config["type"], config["params"])
                 
                 # Check if already exists
                 if name in IndicatorService.ALL_INDICATORS:
@@ -473,26 +693,8 @@ class ChartModule(QWidget):
                     )
                     return
                 
-                # Build config for IndicatorService
-                kind_map = {
-                    "SMA": "sma",
-                    "EMA": "ema",
-                    "Bollinger Bands": "bbands",
-                    "RSI": "rsi",
-                    "MACD": "macd",
-                    "ATR": "atr",
-                    "Stochastic": "stochastic",
-                    "OBV": "obv",
-                    "VWAP": "vwap",
-                }
-                
-                indicator_config = {"kind": kind_map[indicator_type], **params}
-                
-                # Determine if overlay or oscillator
-                is_overlay = indicator_type in ["SMA", "EMA", "Bollinger Bands", "VWAP"]
-                
-                # Add to IndicatorService
-                IndicatorService.add_custom_indicator(name, indicator_config, is_overlay)
+                # Add indicator
+                self._add_indicator_from_config(config)
                 
                 # Refresh the lists
                 self._refresh_indicator_lists()
@@ -576,6 +778,26 @@ class ChartModule(QWidget):
             if item.text() in oscillator_selected:
                 item.setSelected(True)
 
+    def _open_chart_settings(self) -> None:
+        """Open the chart settings dialog."""
+        dialog = ChartSettingsDialog(
+            self.theme_manager,
+            self.chart_settings_manager.get_all_settings(),
+            self
+        )
+        
+        if dialog.exec():
+            settings = dialog.get_settings()
+            if settings:
+                # Update settings manager
+                self.chart_settings_manager.update_settings(settings)
+                
+                # Update chart
+                self.chart.update_chart_settings(settings)
+                
+                # Re-render to apply settings
+                self.render_from_cache()
+
     def current_chart_type(self) -> str:
         return self.chart_type_combo.currentText()
 
@@ -634,6 +856,42 @@ class ChartModule(QWidget):
             self.state["df"] = df
             self.state["ticker"] = display_name
             self.state["interval"] = interval
+
+            # Check if this ticker is supported on Binance
+            is_binance = BinanceOrderBook.is_binance_ticker(display_name)
+            
+            # Enable/disable the depth button
+            self.depth_btn.setEnabled(is_binance)
+            self.depth_btn.setVisible(is_binance)
+
+            if is_binance:
+                self.depth_btn.setText("📈 Depth ✓")
+                self.depth_btn.setToolTip(
+                    f"✓ Order book depth available for {display_name}\n\n"
+                    f"Click to show live Binance order book with:\n"
+                    f"• Real-time bid/ask levels\n"
+                    f"• Cumulative volume visualization\n"
+                    f"• Spread analysis"
+                )
+                
+                # If depth panel is already visible, update it
+                if self.depth_panel.isVisible():
+                    self.depth_panel.set_ticker(display_name)
+            else:
+                self.depth_btn.setText("📈 Depth")
+                self.depth_btn.setToolTip(
+                    f"✗ {display_name} is not available on Binance\n\n"
+                    f"Order book depth is only available for crypto pairs.\n\n"
+                    f"Supported tickers include:\n"
+                    f"BTC-USD, ETH-USD, SOL-USD, DOGE-USD, ADA-USD,\n"
+                    f"MATIC-USD, AVAX-USD, DOT-USD, LINK-USD, and more."
+                )
+                
+                # Hide depth panel if it was visible
+                if self.depth_panel.isVisible():
+                    self.depth_btn.setChecked(False)
+                    self.depth_panel.setVisible(False)
+                    self.depth_panel.stop_updates()
 
             self.render_from_cache()
 
