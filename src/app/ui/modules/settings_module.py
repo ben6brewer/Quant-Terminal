@@ -123,6 +123,21 @@ class SettingsModule(QWidget):
         self.theme_group.addButton(self.light_radio, 1)
         layout.addWidget(self.light_radio)
 
+        self.bloomberg_radio = QRadioButton("Bloomberg Mode")
+        self.bloomberg_radio.setStyleSheet("""
+            QRadioButton {
+                font-size: 13px;
+                padding: 8px;
+                margin-left: 20px;
+            }
+            QRadioButton::indicator {
+                width: 18px;
+                height: 18px;
+            }
+        """)
+        self.theme_group.addButton(self.bloomberg_radio, 2)
+        layout.addWidget(self.bloomberg_radio)
+
         # Connect theme change
         self.theme_group.buttonClicked.connect(self._on_theme_changed)
 
@@ -134,10 +149,17 @@ class SettingsModule(QWidget):
         current_theme = self.theme_manager.current_theme
         if current_theme == "dark":
             self.dark_radio.setChecked(True)
+        elif current_theme == "bloomberg":
+            self.bloomberg_radio.setChecked(True)
         else:
             self.light_radio.setChecked(True)
 
     def _on_theme_changed(self) -> None:
         """Handle theme change from radio buttons."""
-        theme = "dark" if self.dark_radio.isChecked() else "light"
+        if self.dark_radio.isChecked():
+            theme = "dark"
+        elif self.bloomberg_radio.isChecked():
+            theme = "bloomberg"
+        else:
+            theme = "light"
         self.theme_manager.set_theme(theme)

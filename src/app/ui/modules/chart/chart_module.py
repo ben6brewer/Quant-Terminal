@@ -78,14 +78,16 @@ class ChartModule(QWidget):
         """Apply theme-specific styling to the indicator panel."""
         if not hasattr(self, 'indicator_panel'):
             return
-            
+
         theme = self.theme_manager.current_theme
-        
+
         if theme == "light":
             stylesheet = self._get_light_indicator_panel_stylesheet()
+        elif theme == "bloomberg":
+            stylesheet = self._get_bloomberg_indicator_panel_stylesheet()
         else:
             stylesheet = self._get_dark_indicator_panel_stylesheet()
-        
+
         self.indicator_panel.setStyleSheet(stylesheet)
 
     def _apply_depth_panel_theme(self) -> None:
@@ -107,7 +109,7 @@ class ChartModule(QWidget):
                 background-color: #1e1e1e;
                 color: #ffffff;
                 border: 1px solid #3d3d3d;
-                border-radius: 4px;
+                border-radius: 2px;
                 padding: 5px;
             }
             QListWidget::item {
@@ -118,18 +120,22 @@ class ChartModule(QWidget):
                 color: #000000;
             }
             QPushButton {
-                background-color: #1e1e1e;
+                background-color: #2d2d2d;
                 color: #ffffff;
                 border: 1px solid #3d3d3d;
-                border-radius: 4px;
+                border-radius: 2px;
                 padding: 8px;
                 font-weight: bold;
             }
             QPushButton:hover {
                 border: 1px solid #00d4ff;
-                background-color: #2d2d2d;
+                background-color: #353535;
             }
             QPushButton:pressed {
+                background-color: #00d4ff;
+                color: #000000;
+            }
+            QPushButton:checked {
                 background-color: #00d4ff;
                 color: #000000;
             }
@@ -137,7 +143,7 @@ class ChartModule(QWidget):
                 background-color: #00d4ff;
                 color: #000000;
                 border: none;
-                border-radius: 4px;
+                border-radius: 2px;
                 padding: 10px;
                 font-weight: bold;
                 font-size: 12px;
@@ -164,7 +170,7 @@ class ChartModule(QWidget):
                 background-color: #ffffff;
                 color: #000000;
                 border: 1px solid #d0d0d0;
-                border-radius: 4px;
+                border-radius: 2px;
                 padding: 5px;
             }
             QListWidget::item {
@@ -177,16 +183,20 @@ class ChartModule(QWidget):
             QPushButton {
                 background-color: #ffffff;
                 color: #000000;
-                border: 1px solid #d0d0d0;
-                border-radius: 4px;
+                border: 1px solid #cccccc;
+                border-radius: 2px;
                 padding: 8px;
                 font-weight: bold;
             }
             QPushButton:hover {
                 border: 1px solid #0066cc;
-                background-color: #e8e8e8;
+                background-color: #f0f0f0;
             }
             QPushButton:pressed {
+                background-color: #0066cc;
+                color: #ffffff;
+            }
+            QPushButton:checked {
                 background-color: #0066cc;
                 color: #ffffff;
             }
@@ -194,7 +204,7 @@ class ChartModule(QWidget):
                 background-color: #0066cc;
                 color: #ffffff;
                 border: none;
-                border-radius: 4px;
+                border-radius: 2px;
                 padding: 10px;
                 font-weight: bold;
                 font-size: 12px;
@@ -204,6 +214,63 @@ class ChartModule(QWidget):
             }
             QPushButton#createButton:pressed {
                 background-color: #003d7a;
+            }
+        """
+
+    def _get_bloomberg_indicator_panel_stylesheet(self) -> str:
+        """Get Bloomberg theme stylesheet for indicator panel."""
+        return """
+            #indicatorPanel {
+                background-color: #0d1420;
+                border-left: 2px solid #1a2332;
+            }
+            QLabel {
+                color: #b0b0b0;
+            }
+            QListWidget {
+                background-color: #0a1018;
+                color: #e8e8e8;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 5px;
+            }
+            QListWidget::item {
+                padding: 5px;
+            }
+            QListWidget::item:selected {
+                background-color: #FF8000;
+                color: #000000;
+            }
+            QPushButton {
+                background-color: #0a1018;
+                color: #e8e8e8;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 8px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                border: 1px solid #FF8000;
+                background-color: #0d1420;
+            }
+            QPushButton:pressed {
+                background-color: #FF8000;
+                color: #000000;
+            }
+            QPushButton#createButton {
+                background-color: #FF8000;
+                color: #000000;
+                border: none;
+                border-radius: 2px;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 12px;
+            }
+            QPushButton#createButton:hover {
+                background-color: #FF9520;
+            }
+            QPushButton#createButton:pressed {
+                background-color: #E67300;
             }
         """
 
@@ -274,14 +341,16 @@ class ChartModule(QWidget):
         controls.addWidget(self.depth_btn)
         self.depth_btn.show()
 
-        # Chart settings button
+        # Push settings button to the right
+        controls.addStretch(1)
+
+        # Chart settings button (right-aligned)
         self.chart_settings_btn = QPushButton("⚙️ Settings")
+        self.chart_settings_btn.setObjectName("chartSettingsButton")
         self.chart_settings_btn.setMaximumWidth(120)
         self.chart_settings_btn.clicked.connect(self._open_chart_settings)
         controls.addWidget(self.chart_settings_btn)
         self.chart_settings_btn.show()
-
-        controls.addStretch(1)
         root.addWidget(self.controls_widget)
 
         # Apply initial theme to control bar
@@ -391,6 +460,8 @@ class ChartModule(QWidget):
         theme = self.theme_manager.current_theme
         if theme == "light":
             stylesheet = self._get_light_indicator_panel_stylesheet()
+        elif theme == "bloomberg":
+            stylesheet = self._get_bloomberg_indicator_panel_stylesheet()
         else:
             stylesheet = self._get_dark_indicator_panel_stylesheet()
         panel.setStyleSheet(stylesheet)

@@ -262,12 +262,14 @@ class OrderBookPanel(QWidget):
     def _apply_theme(self):
         """Apply theme styling."""
         theme = self.theme_manager.current_theme
-        
+
         if theme == "light":
             stylesheet = self._get_light_stylesheet()
+        elif theme == "bloomberg":
+            stylesheet = self._get_bloomberg_stylesheet()
         else:
             stylesheet = self._get_dark_stylesheet()
-        
+
         self.setStyleSheet(stylesheet)
     
     def _get_dark_stylesheet(self) -> str:
@@ -348,7 +350,48 @@ class OrderBookPanel(QWidget):
                 color: #ffffff;
             }
         """
-    
+
+    def _get_bloomberg_stylesheet(self) -> str:
+        """Get Bloomberg theme stylesheet."""
+        return """
+            QWidget {
+                background-color: #0d1420;
+                color: #e8e8e8;
+            }
+            #depthHeader {
+                background-color: #0a1018;
+                border-bottom: 2px solid #FF8000;
+            }
+            #depthTitle {
+                color: #FF8000;
+            }
+            #statusLabel {
+                color: #b0b0b0;
+                font-size: 10px;
+                font-style: italic;
+                padding: 5px;
+                background-color: #0a1018;
+            }
+            QPushButton {
+                background-color: #0a1018;
+                color: #b0b0b0;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 6px 12px;
+                font-size: 11px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #0d1420;
+                color: #e8e8e8;
+                border: 1px solid #FF8000;
+            }
+            QPushButton:checked {
+                background-color: #FF8000;
+                color: #000000;
+            }
+        """
+
     def set_ticker(self, ticker: str):
         """Set the ticker to display depth for."""
         self.current_ticker = ticker

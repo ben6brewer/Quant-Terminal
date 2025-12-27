@@ -42,8 +42,8 @@ CHART_TYPES = ["Candles", "Line"]
 CHART_SCALES = ["Regular", "Logarithmic"]
 
 # Theme settings
-DEFAULT_THEME = "dark"
-AVAILABLE_THEMES = ["dark", "light"]
+DEFAULT_THEME = "bloomberg"
+AVAILABLE_THEMES = ["dark", "light", "bloomberg"]
 
 # UI Colors - Dark Theme
 DARK_PRIMARY_COLOR = "#00d4ff"
@@ -58,6 +58,21 @@ LIGHT_BACKGROUND_COLOR = "#ffffff"
 LIGHT_SIDEBAR_COLOR = "#f5f5f5"
 LIGHT_TEXT_COLOR = "#000000"
 LIGHT_SECONDARY_TEXT_COLOR = "#333333"
+
+# UI Colors - Bloomberg Theme
+BLOOMBERG_PRIMARY_COLOR = "#FF8000"           # Bloomberg signature orange
+BLOOMBERG_BACKGROUND_COLOR = "#000814"        # Deep navy-black
+BLOOMBERG_PANEL_COLOR = "#0a1018"            # Slightly lighter panels
+BLOOMBERG_SIDEBAR_COLOR = "#0d1420"          # Sidebar background
+BLOOMBERG_TEXT_COLOR = "#e8e8e8"             # Primary text
+BLOOMBERG_SECONDARY_TEXT_COLOR = "#b0b0b0"   # Secondary text
+BLOOMBERG_ACCENT_YELLOW = "#FFD700"          # Amber/gold highlights
+BLOOMBERG_BORDER_COLOR = "#1a2332"           # Subtle borders
+BLOOMBERG_HOVER_COLOR = "#162030"            # Hover states
+BLOOMBERG_GRID_COLOR = "#151f2e"             # Chart grid
+BLOOMBERG_CANDLE_UP = "#00FF00"              # Green candles
+BLOOMBERG_CANDLE_DOWN = "#FF0000"            # Red candles
+BLOOMBERG_CHART_LINE = "#00D4FF"             # Cyan line charts
 
 # Module sections and navigation
 MODULE_SECTIONS = {
@@ -82,9 +97,9 @@ ALL_MODULES = [module for section_modules in MODULE_SECTIONS.values() for module
 
 # Tile settings
 TILE_SCREENSHOT_DIR = Path.home() / ".quant_terminal" / "screenshots"
-TILE_WIDTH = 280
-TILE_HEIGHT = 344  # Updated for 264×264 screenshot + margins
-TILE_COLS = 4
+TILE_WIDTH = 360           # Increased from 280 for 3-column layout
+TILE_HEIGHT = 308          # Decreased from 344 for 4:3 preview (320×240)
+TILE_COLS = 3              # 3-column grid (wider tiles)
 TILE_SPACING = 20
 
 # Chart view settings

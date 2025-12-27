@@ -270,7 +270,8 @@ class HubWindow(QMainWindow):
         overlay.setMinimumSize(100, 40)
 
         # Transparent background - overlay is invisible but passes events through
-        overlay.setStyleSheet("background: transparent;")
+        # Only make the overlay transparent, not its children (home button)
+        overlay.setStyleSheet("TransparentOverlay { background: transparent; }")
 
         # Ensure overlay doesn't interfere with focus
         overlay.setFocusPolicy(Qt.NoFocus)
@@ -325,6 +326,8 @@ class HubWindow(QMainWindow):
 
         if theme == "light":
             stylesheet = self._get_light_stylesheet()
+        elif theme == "bloomberg":
+            stylesheet = self._get_bloomberg_stylesheet()
         else:
             stylesheet = self._get_dark_stylesheet()
 
@@ -342,4 +345,11 @@ class HubWindow(QMainWindow):
         return (
             self.theme_manager.get_light_content_style() +
             self.theme_manager.get_light_home_button_style()
+        )
+
+    def _get_bloomberg_stylesheet(self) -> str:
+        """Get complete Bloomberg theme stylesheet."""
+        return (
+            self.theme_manager.get_bloomberg_content_style() +
+            self.theme_manager.get_bloomberg_home_button_style()
         )

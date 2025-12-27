@@ -25,12 +25,12 @@ class ThemeManager(QObject):
     def set_theme(self, theme: str) -> None:
         """
         Set the application theme.
-        
+
         Args:
-            theme: Either "dark" or "light"
+            theme: Either "dark", "light", or "bloomberg"
         """
-        if theme not in ("dark", "light"):
-            raise ValueError(f"Unknown theme: {theme}. Must be 'dark' or 'light'.")
+        if theme not in ("dark", "light", "bloomberg"):
+            raise ValueError(f"Unknown theme: {theme}. Must be 'dark', 'light', or 'bloomberg'.")
 
         if theme == self._current_theme:
             return
@@ -142,33 +142,44 @@ class ThemeManager(QObject):
                 border-bottom: 2px solid #00d4ff;
             }
             QLabel {
-                color: #cccccc;
+                color: #b0b0b0;
                 font-size: 12px;
                 font-weight: bold;
+                font-family: "Segoe UI", "Arial", sans-serif;
+                letter-spacing: 0.5px;
                 padding: 0px 5px;
             }
             QLineEdit {
                 background-color: #1e1e1e;
                 color: #ffffff;
                 border: 1px solid #3d3d3d;
-                border-radius: 4px;
-                padding: 8px 12px;
+                border-radius: 2px;
+                padding: 7px 10px;
                 font-size: 13px;
-                font-weight: bold;
+                font-weight: 600;
+                selection-background-color: #00d4ff;
+                selection-color: #000000;
+            }
+            QLineEdit:hover {
+                border: 1px solid #00d4ff;
+                background-color: #252525;
             }
             QLineEdit:focus {
                 border: 1px solid #00d4ff;
+                background-color: #252525;
             }
             QComboBox {
                 background-color: #1e1e1e;
                 color: #ffffff;
                 border: 1px solid #3d3d3d;
-                border-radius: 4px;
-                padding: 8px 12px;
+                border-radius: 2px;
+                padding: 7px 10px;
                 font-size: 13px;
+                font-weight: 500;
             }
             QComboBox:hover {
                 border: 1px solid #00d4ff;
+                background-color: #252525;
             }
             QComboBox::drop-down {
                 border: none;
@@ -181,12 +192,53 @@ class ThemeManager(QObject):
                 border-top: 5px solid #cccccc;
                 margin-right: 5px;
             }
+            QComboBox::down-arrow:hover {
+                border-top-color: #00d4ff;
+            }
             QComboBox QAbstractItemView {
                 background-color: #2d2d2d;
                 color: #ffffff;
                 selection-background-color: #00d4ff;
                 selection-color: #000000;
+                border: 1px solid #00d4ff;
+            }
+            QPushButton {
+                background-color: #2d2d2d;
+                color: #ffffff;
                 border: 1px solid #3d3d3d;
+                border-radius: 2px;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                border: 1px solid #00d4ff;
+                background-color: #353535;
+            }
+            QPushButton:pressed {
+                background-color: #00d4ff;
+                color: #000000;
+                border: 1px solid #00d4ff;
+            }
+            QPushButton:checked {
+                background-color: #00d4ff;
+                color: #000000;
+                border: 1px solid #00d4ff;
+            }
+            /* Chart settings button - fully transparent */
+            #chartSettingsButton {
+                background-color: transparent;
+                color: #ffffff;
+                border: 1px solid transparent;
+            }
+            #chartSettingsButton:hover {
+                background-color: rgba(0, 212, 255, 0.15);
+                border: 1px solid #00d4ff;
+            }
+            #chartSettingsButton:pressed {
+                background-color: #00d4ff;
+                color: #000000;
+                border: 1px solid #00d4ff;
             }
         """
 
@@ -279,33 +331,44 @@ class ThemeManager(QObject):
                 border-bottom: 2px solid #0066cc;
             }
             QLabel {
-                color: #333333;
+                color: #555555;
                 font-size: 12px;
                 font-weight: bold;
+                font-family: "Segoe UI", "Arial", sans-serif;
+                letter-spacing: 0.5px;
                 padding: 0px 5px;
             }
             QLineEdit {
                 background-color: #ffffff;
                 color: #000000;
-                border: 1px solid #d0d0d0;
-                border-radius: 4px;
-                padding: 8px 12px;
+                border: 1px solid #cccccc;
+                border-radius: 2px;
+                padding: 7px 10px;
                 font-size: 13px;
-                font-weight: bold;
+                font-weight: 600;
+                selection-background-color: #0066cc;
+                selection-color: #ffffff;
+            }
+            QLineEdit:hover {
+                border: 1px solid #0066cc;
+                background-color: #f9f9f9;
             }
             QLineEdit:focus {
                 border: 1px solid #0066cc;
+                background-color: #ffffff;
             }
             QComboBox {
                 background-color: #ffffff;
                 color: #000000;
-                border: 1px solid #d0d0d0;
-                border-radius: 4px;
-                padding: 8px 12px;
+                border: 1px solid #cccccc;
+                border-radius: 2px;
+                padding: 7px 10px;
                 font-size: 13px;
+                font-weight: 500;
             }
             QComboBox:hover {
                 border: 1px solid #0066cc;
+                background-color: #f9f9f9;
             }
             QComboBox::drop-down {
                 border: none;
@@ -315,15 +378,56 @@ class ThemeManager(QObject):
                 image: none;
                 border-left: 4px solid transparent;
                 border-right: 4px solid transparent;
-                border-top: 5px solid #333333;
+                border-top: 5px solid #555555;
                 margin-right: 5px;
+            }
+            QComboBox::down-arrow:hover {
+                border-top-color: #0066cc;
             }
             QComboBox QAbstractItemView {
                 background-color: #ffffff;
                 color: #000000;
                 selection-background-color: #0066cc;
                 selection-color: #ffffff;
-                border: 1px solid #d0d0d0;
+                border: 1px solid #0066cc;
+            }
+            QPushButton {
+                background-color: #ffffff;
+                color: #000000;
+                border: 1px solid #cccccc;
+                border-radius: 2px;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                border: 1px solid #0066cc;
+                background-color: #f0f0f0;
+            }
+            QPushButton:pressed {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: 1px solid #0066cc;
+            }
+            QPushButton:checked {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: 1px solid #0066cc;
+            }
+            /* Chart settings button - fully transparent */
+            #chartSettingsButton {
+                background-color: transparent;
+                color: #000000;
+                border: 1px solid transparent;
+            }
+            #chartSettingsButton:hover {
+                background-color: rgba(0, 102, 204, 0.15);
+                border: 1px solid #0066cc;
+            }
+            #chartSettingsButton:pressed {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: 1px solid #0066cc;
             }
         """
 
@@ -331,48 +435,49 @@ class ThemeManager(QObject):
         """Get controls stylesheet for current theme."""
         if self._current_theme == "light":
             return self.get_light_controls_style()
+        elif self._current_theme == "bloomberg":
+            return self.get_bloomberg_controls_style()
         return self.get_dark_controls_style()
 
     def get_chart_background_color(self) -> str:
         """Get chart background color for current theme."""
-        return 'w' if self._current_theme == "light" else '#1e1e1e'
+        if self._current_theme == "light":
+            return 'w'
+        elif self._current_theme == "bloomberg":
+            return '#000814'
+        return '#1e1e1e'
 
     def get_chart_line_color(self) -> tuple[int, int, int]:
         """Get chart line color for current theme."""
-        return (0, 0, 0) if self._current_theme == "light" else (76, 175, 80)
+        if self._current_theme == "light":
+            return (0, 0, 0)
+        elif self._current_theme == "bloomberg":
+            return (0, 212, 255)  # Bloomberg cyan
+        return (76, 175, 80)
 
     @staticmethod
     def get_dark_home_button_style() -> str:
         """Get dark theme stylesheet for home button."""
         return """
-            #homeButton {
-                background-color: #00d4ff;
-                color: #000000;
-                border: none;
-                border-radius: 6px;
+            #homeButton, #chartSettingsButton, #settingsButton {
+                background-color: transparent;
+                color: #ffffff;
+                border: 1px solid transparent;
+                border-radius: 2px;
                 font-size: 13px;
                 font-weight: bold;
-            }
-            #homeButton:hover {
-                background-color: #00c4ef;
-            }
-            #homeButton:pressed {
-                background-color: #00b4df;
             }
             #settingsButton {
-                background-color: #00d4ff;
-                color: #000000;
-                border: none;
-                border-radius: 6px;
-                font-size: 13px;
-                font-weight: bold;
                 margin: 5px 10px;
             }
-            #settingsButton:hover {
-                background-color: #00c4ef;
+            #homeButton:hover, #chartSettingsButton:hover, #settingsButton:hover {
+                background-color: rgba(0, 212, 255, 0.15);
+                border: 1px solid #00d4ff;
             }
-            #settingsButton:pressed {
-                background-color: #00b4df;
+            #homeButton:pressed, #chartSettingsButton:pressed, #settingsButton:pressed {
+                background-color: #00d4ff;
+                color: #000000;
+                border: 1px solid #00d4ff;
             }
         """
 
@@ -380,33 +485,245 @@ class ThemeManager(QObject):
     def get_light_home_button_style() -> str:
         """Get light theme stylesheet for home button."""
         return """
-            #homeButton {
-                background-color: #0066cc;
-                color: #ffffff;
-                border: none;
-                border-radius: 6px;
+            #homeButton, #chartSettingsButton, #settingsButton {
+                background-color: transparent;
+                color: #000000;
+                border: 1px solid transparent;
+                border-radius: 2px;
                 font-size: 13px;
                 font-weight: bold;
-            }
-            #homeButton:hover {
-                background-color: #0056b3;
-            }
-            #homeButton:pressed {
-                background-color: #004999;
             }
             #settingsButton {
-                background-color: #0066cc;
-                color: #ffffff;
-                border: none;
-                border-radius: 6px;
-                font-size: 13px;
-                font-weight: bold;
                 margin: 5px 10px;
             }
-            #settingsButton:hover {
-                background-color: #0056b3;
+            #homeButton:hover, #chartSettingsButton:hover, #settingsButton:hover {
+                background-color: rgba(0, 102, 204, 0.15);
+                border: 1px solid #0066cc;
             }
-            #settingsButton:pressed {
-                background-color: #004999;
+            #homeButton:pressed, #chartSettingsButton:pressed, #settingsButton:pressed {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: 1px solid #0066cc;
+            }
+        """
+
+    # Bloomberg theme stylesheets
+    @staticmethod
+    def get_bloomberg_sidebar_style() -> str:
+        """Get Bloomberg theme stylesheet for sidebar."""
+        return """
+            #sidebar {
+                background-color: #0d1420;
+                color: #e8e8e8;
+            }
+
+            #sidebarHeader {
+                background-color: #000814;
+                color: #FF8000;
+                font-size: 14px;
+                font-weight: bold;
+                font-family: "Consolas", "Monaco", "Courier New", monospace;
+                padding: 20px 10px;
+                border-bottom: 2px solid #FF8000;
+            }
+
+            #sidebarFooter {
+                color: #666666;
+                font-size: 10px;
+                font-family: "Consolas", "Monaco", "Courier New", monospace;
+                padding: 10px;
+            }
+
+            #navButton {
+                text-align: left;
+                padding: 15px 20px;
+                border: none;
+                background-color: transparent;
+                color: #b0b0b0;
+                font-size: 13px;
+                font-weight: 500;
+            }
+
+            #navButton:hover {
+                background-color: #162030;
+                color: #e8e8e8;
+                border-left: 3px solid #FF8000;
+            }
+
+            #navButton:checked {
+                background-color: #FF8000;
+                color: #000000;
+                font-weight: bold;
+            }
+        """
+
+    @staticmethod
+    def get_bloomberg_content_style() -> str:
+        """Get Bloomberg theme stylesheet for content area."""
+        return """
+            QStackedWidget {
+                background-color: #000814;
+            }
+
+            QScrollArea {
+                background-color: #000814;
+                border: none;
+            }
+
+            QGroupBox {
+                color: #e8e8e8;
+                background-color: #0a1018;
+                border: 1px solid #1a2332;
+                font-family: "Segoe UI", "Arial", sans-serif;
+            }
+
+            QLabel {
+                color: #b0b0b0;
+            }
+
+            QRadioButton {
+                color: #b0b0b0;
+            }
+
+            QWidget {
+                background-color: #000814;
+                color: #e8e8e8;
+            }
+        """
+
+    @staticmethod
+    def get_bloomberg_controls_style() -> str:
+        """Get Bloomberg theme stylesheet for chart controls."""
+        return """
+            QWidget {
+                background-color: #0d1420;
+                border-bottom: 2px solid #FF8000;
+            }
+            QLabel {
+                color: #b0b0b0;
+                font-size: 11px;
+                font-weight: bold;
+                font-family: "Segoe UI", "Arial", sans-serif;
+                letter-spacing: 0.5px;
+                padding: 0px 5px;
+            }
+            QLineEdit {
+                background-color: #0a1018;
+                color: #e8e8e8;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 6px 10px;
+                font-size: 13px;
+                font-weight: 600;
+                font-family: "Consolas", "Monaco", "Courier New", monospace;
+                selection-background-color: #FF8000;
+                selection-color: #000000;
+            }
+            QLineEdit:hover {
+                border: 1px solid #FF8000;
+                background-color: #0d1420;
+            }
+            QLineEdit:focus {
+                border: 1px solid #FF8000;
+                background-color: #0d1420;
+            }
+            QComboBox {
+                background-color: #0a1018;
+                color: #e8e8e8;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 6px 10px;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            QComboBox:hover {
+                border: 1px solid #FF8000;
+                background-color: #0d1420;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 20px;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-top: 5px solid #b0b0b0;
+                margin-right: 5px;
+            }
+            QComboBox::down-arrow:hover {
+                border-top-color: #FF8000;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #0d1420;
+                color: #e8e8e8;
+                selection-background-color: #FF8000;
+                selection-color: #000000;
+                border: 1px solid #FF8000;
+            }
+            QPushButton {
+                background-color: #0a1018;
+                color: #e8e8e8;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                border: 1px solid #FF8000;
+                background-color: #0d1420;
+            }
+            QPushButton:pressed {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
+            }
+            QPushButton:checked {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
+            }
+            /* Chart settings button - fully transparent */
+            #chartSettingsButton {
+                background-color: transparent;
+                color: #e8e8e8;
+                border: 1px solid transparent;
+            }
+            #chartSettingsButton:hover {
+                background-color: rgba(255, 128, 0, 0.15);
+                border: 1px solid #FF8000;
+            }
+            #chartSettingsButton:pressed {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
+            }
+        """
+
+    @staticmethod
+    def get_bloomberg_home_button_style() -> str:
+        """Get Bloomberg theme stylesheet for home button."""
+        return """
+            #homeButton, #chartSettingsButton, #settingsButton {
+                background-color: transparent;
+                color: #e8e8e8;
+                border: 1px solid transparent;
+                border-radius: 2px;
+                font-size: 13px;
+                font-weight: bold;
+                font-family: "Segoe UI", "Arial", sans-serif;
+            }
+            #settingsButton {
+                margin: 5px 10px;
+            }
+            #homeButton:hover, #chartSettingsButton:hover, #settingsButton:hover {
+                background-color: rgba(255, 128, 0, 0.15);
+                border: 1px solid #FF8000;
+            }
+            #homeButton:pressed, #chartSettingsButton:pressed, #settingsButton:pressed {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
             }
         """

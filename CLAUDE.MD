@@ -120,6 +120,25 @@ Use `=` prefix to write mathematical expressions with tickers:
 - Interactive zoom via axis dragging
 - Real-time data from Yahoo Finance
 
+ ### Overlay Widgets and Event Propagation
+  - Qt doesn't auto-propagate manually-sent events to child widgets
+  - When forwarding events, use `widget.childAt(pos)` to find the actual target widget
+  - Send events to the specific child widget, not its container
+  - `QStackedLayout` widgets are siblings, not parent-child (event.ignore() doesn't propagate between them)
+
+  ### Event API Differences
+  - `QMouseEvent` uses `.pos()` for position
+  - `QWheelEvent` uses `.position().toPoint()` for position
+  - Always check event type when accessing position data
+
+  ### Testing UI Changes
+  When modifying navigation/overlay systems, test:
+  - All button clicks and hover effects
+  - Text input focus and interaction
+  - Dropdown menus
+  - Mouse wheel scrolling/zooming
+  - Chart/widget dragging and panning
+
 ## Development Guidelines
 
 ### Code Style

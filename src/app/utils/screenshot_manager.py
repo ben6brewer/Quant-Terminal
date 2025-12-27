@@ -35,7 +35,7 @@ class ScreenshotManager:
             return QPixmap(str(coming_soon_path))
 
         # Fallback: generate simple placeholder if file missing
-        pixmap = QPixmap(264, 264)
+        pixmap = QPixmap(320, 240)  # 4:3 aspect ratio
         pixmap.fill(QColor("#2d2d2d"))
 
         painter = QPainter(pixmap)
@@ -81,9 +81,9 @@ class ScreenshotManager:
             path = ScreenshotManager.get_screenshot_path(module_id)
             pixmap = QPixmap(str(path))
 
-            # Ensure correct size (264×264)
-            if pixmap.width() != 264 or pixmap.height() != 264:
-                pixmap = pixmap.scaled(264, 264, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+            # Ensure correct size (320×240, 4:3 aspect ratio)
+            if pixmap.width() != 320 or pixmap.height() != 240:
+                pixmap = pixmap.scaled(320, 240, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
 
             return pixmap
         else:

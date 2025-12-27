@@ -46,7 +46,7 @@ class ModuleTile(QFrame):
     def _setup_ui(self) -> None:
         """Setup the tile UI."""
         # Set fixed size
-        self.setFixedSize(280, 344)  # Accommodate 264×264 screenshot + margins
+        self.setFixedSize(360, 308)  # Accommodate 320×240 screenshot (4:3 ratio) + margins
         self.setCursor(Qt.PointingHandCursor)
 
         # Main layout
@@ -62,7 +62,7 @@ class ModuleTile(QFrame):
 
         # Screenshot
         self.screenshot_label = QLabel()
-        self.screenshot_label.setFixedSize(264, 264)  # Square aspect ratio
+        self.screenshot_label.setFixedSize(320, 240)  # 4:3 aspect ratio
         self.screenshot_label.setScaledContents(True)
         self._load_screenshot()
 
@@ -164,6 +164,8 @@ class ModuleTile(QFrame):
                     border-radius: 16px;
                 }
             """)
+        elif theme == "bloomberg":
+            self.setStyleSheet(self._get_bloomberg_stylesheet())
         else:  # light theme
             self.setStyleSheet("""
                 ModuleTile {
@@ -191,3 +193,32 @@ class ModuleTile(QFrame):
                     border-radius: 16px;
                 }
             """)
+
+    def _get_bloomberg_stylesheet(self) -> str:
+        """Get Bloomberg theme stylesheet."""
+        return """
+            ModuleTile {
+                background-color: #0a1018;
+                border: 1px solid #1a2332;
+                border-radius: 4px;
+            }
+            ModuleTile:hover {
+                border: 2px solid #FF8000;
+            }
+            #tileLabel {
+                color: #e8e8e8;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 0px;
+            }
+            #starButton {
+                background-color: transparent;
+                border: none;
+                font-size: 20px;
+                padding: 0px;
+            }
+            #starButton:hover {
+                background-color: rgba(255, 128, 0, 0.2);
+                border-radius: 16px;
+            }
+        """

@@ -408,12 +408,14 @@ class ChartSettingsDialog(QDialog):
     def _apply_theme(self):
         """Apply the current theme to the dialog."""
         theme = self.theme_manager.current_theme
-        
+
         if theme == "light":
             stylesheet = self._get_light_stylesheet()
+        elif theme == "bloomberg":
+            stylesheet = self._get_bloomberg_stylesheet()
         else:
             stylesheet = self._get_dark_stylesheet()
-        
+
         self.setStyleSheet(stylesheet)
 
     def _get_dark_stylesheet(self) -> str:
@@ -432,6 +434,7 @@ class ChartSettingsDialog(QDialog):
             QLabel {
                 color: #cccccc;
                 font-size: 13px;
+                background-color: transparent;
             }
             QGroupBox {
                 color: #ffffff;
@@ -451,6 +454,7 @@ class ChartSettingsDialog(QDialog):
             QCheckBox {
                 color: #cccccc;
                 font-size: 13px;
+                background-color: transparent;
             }
             QComboBox {
                 background-color: #1e1e1e;
@@ -523,6 +527,7 @@ class ChartSettingsDialog(QDialog):
             QLabel {
                 color: #333333;
                 font-size: 13px;
+                background-color: transparent;
             }
             QGroupBox {
                 color: #000000;
@@ -542,6 +547,7 @@ class ChartSettingsDialog(QDialog):
             QCheckBox {
                 color: #333333;
                 font-size: 13px;
+                background-color: transparent;
             }
             QComboBox {
                 background-color: #f5f5f5;
@@ -595,5 +601,98 @@ class ChartSettingsDialog(QDialog):
             }
             QPushButton#defaultButton:hover {
                 background-color: #0052a3;
+            }
+        """
+
+    def _get_bloomberg_stylesheet(self) -> str:
+        """Get Bloomberg theme stylesheet."""
+        return """
+            QDialog {
+                background-color: #0d1420;
+                color: #e8e8e8;
+            }
+            #dialogHeader {
+                color: #FF8000;
+                font-size: 18px;
+                font-weight: bold;
+                padding: 10px;
+            }
+            QLabel {
+                color: #b0b0b0;
+                font-size: 13px;
+                background-color: transparent;
+            }
+            QGroupBox {
+                color: #e8e8e8;
+                background-color: #0d1420;
+                border: 2px solid #1a2332;
+                border-radius: 8px;
+                margin-top: 10px;
+                padding-top: 20px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 15px;
+                padding: 0 5px;
+            }
+            QCheckBox {
+                color: #b0b0b0;
+                font-size: 13px;
+                background-color: transparent;
+            }
+            QComboBox {
+                background-color: transparent;
+                color: #e8e8e8;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 8px;
+                font-size: 13px;
+            }
+            QComboBox:hover {
+                border: 1px solid #FF8000;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #0d1420;
+                color: #e8e8e8;
+                selection-background-color: #FF8000;
+                selection-color: #000000;
+            }
+            QSpinBox, QDoubleSpinBox {
+                background-color: transparent;
+                color: #e8e8e8;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 8px;
+                font-size: 13px;
+            }
+            QSpinBox:hover, QDoubleSpinBox:hover {
+                border: 1px solid #FF8000;
+            }
+            QPushButton {
+                background-color: transparent;
+                color: #e8e8e8;
+                border: 1px solid #1a2332;
+                border-radius: 2px;
+                padding: 10px 20px;
+                font-size: 13px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                border: 1px solid #FF8000;
+                background-color: rgba(255, 128, 0, 0.1);
+            }
+            QPushButton:pressed {
+                background-color: #FF8000;
+                color: #000000;
+            }
+            QPushButton#defaultButton {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
+            }
+            QPushButton#defaultButton:hover {
+                background-color: #FF9520;
             }
         """

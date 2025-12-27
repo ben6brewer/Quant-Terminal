@@ -176,6 +176,16 @@ class ModuleTileGrid(QScrollArea):
                     background-color: #1e1e1e;
                 }
             """)
+        elif theme == "bloomberg":
+            self.setStyleSheet("""
+                QScrollArea {
+                    background-color: #000814;
+                    border: none;
+                }
+                QWidget#container {
+                    background-color: #000814;
+                }
+            """)
         else:  # light theme
             self.setStyleSheet("""
                 QScrollArea {

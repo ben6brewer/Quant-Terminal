@@ -42,6 +42,9 @@ class SectionTabBar(QWidget):
         self.button_group = QButtonGroup(self)
         self.button_group.setExclusive(False)  # Allow deselecting to show all
 
+        # Add stretch before tabs to center them
+        layout.addStretch(1)
+
         # Create tab for each section
         for section_name in MODULE_SECTIONS.keys():
             btn = QPushButton(section_name)
@@ -58,7 +61,7 @@ class SectionTabBar(QWidget):
             self.buttons[section_name] = btn
             self.button_group.addButton(btn)
 
-        # Add stretch to push tabs to left
+        # Add stretch after tabs to center them
         layout.addStretch(1)
 
     def _on_tab_clicked(self, section_name: str, checked: bool) -> None:
@@ -103,7 +106,7 @@ class SectionTabBar(QWidget):
                     background-color: transparent;
                     color: #cccccc;
                     border: none;
-                    border-radius: 4px;
+                    border-radius: 2px;
                     padding: 10px 20px;
                     font-size: 14px;
                     font-weight: 500;
@@ -118,6 +121,8 @@ class SectionTabBar(QWidget):
                     font-weight: bold;
                 }
             """)
+        elif theme == "bloomberg":
+            self.setStyleSheet(self._get_bloomberg_stylesheet())
         else:  # light theme
             self.setStyleSheet("""
                 #sectionTabBar {
@@ -128,7 +133,7 @@ class SectionTabBar(QWidget):
                     background-color: transparent;
                     color: #333333;
                     border: none;
-                    border-radius: 4px;
+                    border-radius: 2px;
                     padding: 10px 20px;
                     font-size: 14px;
                     font-weight: 500;
@@ -143,3 +148,30 @@ class SectionTabBar(QWidget):
                     font-weight: bold;
                 }
             """)
+
+    def _get_bloomberg_stylesheet(self) -> str:
+        """Get Bloomberg theme stylesheet."""
+        return """
+            #sectionTabBar {
+                background-color: #0d1420;
+                border-bottom: 2px solid #FF8000;
+            }
+            #sectionTab {
+                background-color: transparent;
+                color: #b0b0b0;
+                border: none;
+                border-radius: 2px;
+                padding: 10px 20px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            #sectionTab:hover {
+                background-color: #162030;
+                color: #e8e8e8;
+            }
+            #sectionTab:checked {
+                background-color: #FF8000;
+                color: #000000;
+                font-weight: bold;
+            }
+        """
