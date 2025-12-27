@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from PySide6.QtWidgets import (
-    QHBoxLayout,
-    QLabel,
     QMainWindow,
     QPushButton,
+    QSizePolicy,
     QStackedWidget,
+    QStackedLayout,
     QVBoxLayout,
     QWidget,
 )
@@ -17,84 +17,158 @@ from app.core.config import (
     APP_VERSION,
     DEFAULT_WINDOW_WIDTH,
     DEFAULT_WINDOW_HEIGHT,
-    SIDEBAR_WIDTH,
-    NAVIGATION_MODULES,
 )
+from app.ui.widgets.home_screen import HomeScreen
+
+
+class TransparentOverlay(QWidget):
+    """
+    Transparent overlay widget that passes mouse events through except for its children.
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def mousePressEvent(self, event):
+        """Pass mouse events through to widgets below unless clicking on a child widget."""
+        # Check if click is on a child widget
+        child_at_pos = self.childAt(event.pos())
+        if child_at_pos:
+            # Let child handle the event
+            super().mousePressEvent(event)
+        else:
+            # Pass event through to widget below
+            event.ignore()
 
 
 class HubWindow(QMainWindow):
     """
-    Main hub window with sidebar navigation to different modules.
-    Bloomberg terminal-inspired design.
+    Main hub window with home screen and module navigation.
+    Bloomberg terminal-inspired design with tile-based navigation.
     """
 
     def __init__(self, theme_manager: ThemeManager):
         super().__init__()
-        self.setWindowTitle(APP_NAME)
+        self.setWindowTitle(f"{APP_NAME} v{APP_VERSION}")
         self.resize(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
 
         # Theme manager
         self.theme_manager = theme_manager
         self.theme_manager.theme_changed.connect(self._on_theme_changed)
 
-        # Main widget
-        central = QWidget(self)
-        self.setCentralWidget(central)
-
-        # Horizontal layout: sidebar | content
-        main_layout = QHBoxLayout(central)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
-
-        # --- Sidebar ---
-        self.sidebar = self._create_sidebar()
-        main_layout.addWidget(self.sidebar)
-
-        # --- Content area (stacked widget for different modules) ---
-        self.content_stack = QStackedWidget()
-        main_layout.addWidget(self.content_stack, stretch=1)
-
-        # Module widgets will be added here
+        # Module storage
         self.modules = {}
+        self.module_containers = {}
+
+        # Setup navigation
+        self._setup_navigation()
 
         # Apply initial theme
         self._apply_theme()
 
-    def _create_sidebar(self) -> QWidget:
-        """Create the navigation sidebar."""
-        sidebar = QWidget()
-        sidebar.setFixedWidth(SIDEBAR_WIDTH)
-        sidebar.setObjectName("sidebar")
+    def _setup_navigation(self) -> None:
+        """Setup dual-mode navigation (home screen + module views)."""
+        # Main stack: home screen + module containers
+        self.main_stack = QStackedWidget()
+        self.setCentralWidget(self.main_stack)
 
-        layout = QVBoxLayout(sidebar)
+        # Home screen (index 0)
+        self.home_screen = HomeScreen(self.theme_manager)
+        self.main_stack.addWidget(self.home_screen)
+
+        # Connect home screen signals
+        self.home_screen.module_selected.connect(self.open_module)
+        self.home_screen.settings_requested.connect(self._open_settings)
+
+    def add_module(self, module_id: str, widget: QWidget) -> None:
+        """Add a module widget wrapped in container with home button."""
+        # Create container with home button overlay
+        container = self._create_module_container(widget)
+
+        # Store references
+        self.modules[module_id] = widget
+        self.module_containers[module_id] = container
+
+        # Add to stack
+        self.main_stack.addWidget(container)
+
+    def _create_module_container(self, module_widget: QWidget) -> QWidget:
+        """Create container with home button overlay for module."""
+        container = QWidget()
+        layout = QStackedLayout(container)
+        layout.setStackingMode(QStackedLayout.StackAll)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
 
-        # Header
-        header = QLabel(APP_NAME.upper())
-        header.setObjectName("sidebarHeader")
-        header.setAlignment(Qt.AlignCenter)
-        layout.addWidget(header)
+        # Layer 0: Module widget (full screen)
+        layout.addWidget(module_widget)
 
-        # Navigation buttons
-        self.nav_buttons = {}
-        for label, module_id in NAVIGATION_MODULES:
-            btn = QPushButton(label)
-            btn.setCheckable(True)
-            btn.setObjectName("navButton")
-            btn.clicked.connect(lambda checked, mid=module_id: self.switch_module(mid))
-            layout.addWidget(btn)
-            self.nav_buttons[module_id] = btn
+        # Layer 1: Transparent overlay with home button (top-left)
+        overlay = self._create_home_button_overlay()
+        layout.addWidget(overlay)
 
+        # CRITICAL FIX 3: Ensure overlay is on top
+        overlay.raise_()
+
+        return container
+
+    def _create_home_button_overlay(self) -> QWidget:
+        """Create transparent overlay with home button in top-left corner."""
+        overlay = TransparentOverlay()
+
+        # CRITICAL FIX 1: Force overlay to expand and fill container
+        overlay.setSizePolicy(
+            QSizePolicy.Expanding,  # Horizontal
+            QSizePolicy.Expanding   # Vertical
+        )
+
+        # Set minimum size to ensure it's never collapsed
+        overlay.setMinimumSize(100, 40)
+
+        # Transparent background - overlay is invisible but passes events through
+        overlay.setStyleSheet("background: transparent;")
+
+        # Ensure overlay doesn't interfere with focus
+        overlay.setFocusPolicy(Qt.NoFocus)
+
+        # CRITICAL FIX 2: Don't align the layout, align the widget within it
+        layout = QVBoxLayout(overlay)
+        layout.setContentsMargins(10, 10, 0, 0)
+        # REMOVED: layout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # This caused shrinking!
+
+        # Home button
+        home_btn = QPushButton("🏠 Home")
+        home_btn.setObjectName("homeButton")
+        home_btn.setFixedSize(100, 40)
+        home_btn.setCursor(Qt.PointingHandCursor)
+        home_btn.clicked.connect(self.show_home)
+
+        # Add button with alignment to position it top-left within the expanding layout
+        layout.addWidget(home_btn, alignment=Qt.AlignTop | Qt.AlignLeft)
         layout.addStretch(1)
 
-        # Footer info
-        footer = QLabel(f"v{APP_VERSION}")
-        footer.setObjectName("sidebarFooter")
-        footer.setAlignment(Qt.AlignCenter)
-        layout.addWidget(footer)
+        return overlay
 
-        return sidebar
+    def open_module(self, module_id: str) -> None:
+        """Open a module in full screen."""
+        if module_id not in self.module_containers:
+            print(f"Warning: Module '{module_id}' not found")
+            return
+
+        container = self.module_containers[module_id]
+        self.main_stack.setCurrentWidget(container)
+
+    def show_home(self) -> None:
+        """Return to home screen."""
+        self.main_stack.setCurrentWidget(self.home_screen)
+        self.home_screen.refresh()  # Reload favorites
+
+    def show_initial_screen(self) -> None:
+        """Show home screen on startup."""
+        self.show_home()
+
+    def _open_settings(self) -> None:
+        """Open Settings module from home screen button."""
+        self.open_module("settings")
 
     def _on_theme_changed(self, theme: str) -> None:
         """Handle theme change signal."""
@@ -114,36 +188,13 @@ class HubWindow(QMainWindow):
     def _get_dark_stylesheet(self) -> str:
         """Get complete dark theme stylesheet."""
         return (
-            self.theme_manager.get_dark_sidebar_style() +
-            self.theme_manager.get_dark_content_style()
+            self.theme_manager.get_dark_content_style() +
+            self.theme_manager.get_dark_home_button_style()
         )
 
     def _get_light_stylesheet(self) -> str:
         """Get complete light theme stylesheet."""
         return (
-            self.theme_manager.get_light_sidebar_style() +
-            self.theme_manager.get_light_content_style()
+            self.theme_manager.get_light_content_style() +
+            self.theme_manager.get_light_home_button_style()
         )
-
-    def add_module(self, module_id: str, widget: QWidget) -> None:
-        """Add a module widget to the hub."""
-        self.modules[module_id] = widget
-        self.content_stack.addWidget(widget)
-
-    def switch_module(self, module_id: str) -> None:
-        """Switch to a specific module."""
-        if module_id not in self.modules:
-            return
-
-        # Update button states
-        for btn_id, btn in self.nav_buttons.items():
-            btn.setChecked(btn_id == module_id)
-
-        # Switch content
-        widget = self.modules[module_id]
-        self.content_stack.setCurrentWidget(widget)
-
-    def show_initial_module(self, module_id: str = "charts") -> None:
-        """Show a specific module on startup."""
-        if module_id in self.modules:
-            self.switch_module(module_id)

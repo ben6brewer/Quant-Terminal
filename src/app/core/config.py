@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 """
 Central configuration for the Quant Terminal application.
 All application-wide constants and settings should be defined here.
@@ -13,7 +15,6 @@ APP_ORGANIZATION = "QuantApp"
 # Window settings
 DEFAULT_WINDOW_WIDTH = 1400
 DEFAULT_WINDOW_HEIGHT = 900
-SIDEBAR_WIDTH = 200
 
 # Chart settings
 DEFAULT_TICKER = "BTC-USD"
@@ -58,16 +59,33 @@ LIGHT_SIDEBAR_COLOR = "#f5f5f5"
 LIGHT_TEXT_COLOR = "#000000"
 LIGHT_SECONDARY_TEXT_COLOR = "#333333"
 
-# Navigation modules
-NAVIGATION_MODULES = [
-    ("📊 Charts", "charts"),
-    ("💼 Portfolio", "portfolio"),
-    ("👁 Watchlist", "watchlist"),
-    ("📰 News", "news"),
-    ("🔍 Screener", "screener"),
-    ("📈 Analysis", "analysis"),
-    ("⚙️ Settings", "settings"),
-]
+# Module sections and navigation
+MODULE_SECTIONS = {
+    "Charting": [
+        {"id": "charts", "label": "Charts", "emoji": "📊"}
+    ],
+    "Portfolio": [
+        {"id": "portfolio", "label": "Portfolio", "emoji": "💼"},
+        {"id": "watchlist", "label": "Watchlist", "emoji": "👁"}
+    ],
+    "Market Data": [
+        {"id": "news", "label": "News", "emoji": "📰"},
+        {"id": "screener", "label": "Screener", "emoji": "🔍"}
+    ],
+    "Analysis": [
+        {"id": "analysis", "label": "Analysis", "emoji": "📈"}
+    ]
+}
+
+# Flatten all modules for backward compatibility
+ALL_MODULES = [module for section_modules in MODULE_SECTIONS.values() for module in section_modules]
+
+# Tile settings
+TILE_SCREENSHOT_DIR = Path.home() / ".quant_terminal" / "screenshots"
+TILE_WIDTH = 280
+TILE_HEIGHT = 200
+TILE_COLS = 4
+TILE_SPACING = 20
 
 # Chart view settings
 DEFAULT_VIEW_PERIOD_DAYS = 365  # Show last year by default

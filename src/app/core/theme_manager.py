@@ -340,3 +340,73 @@ class ThemeManager(QObject):
     def get_chart_line_color(self) -> tuple[int, int, int]:
         """Get chart line color for current theme."""
         return (0, 0, 0) if self._current_theme == "light" else (76, 175, 80)
+
+    @staticmethod
+    def get_dark_home_button_style() -> str:
+        """Get dark theme stylesheet for home button."""
+        return """
+            #homeButton {
+                background-color: #00d4ff;
+                color: #000000;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: bold;
+            }
+            #homeButton:hover {
+                background-color: #00c4ef;
+            }
+            #homeButton:pressed {
+                background-color: #00b4df;
+            }
+            #settingsButton {
+                background-color: #00d4ff;
+                color: #000000;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: bold;
+                margin: 5px 10px;
+            }
+            #settingsButton:hover {
+                background-color: #00c4ef;
+            }
+            #settingsButton:pressed {
+                background-color: #00b4df;
+            }
+        """
+
+    @staticmethod
+    def get_light_home_button_style() -> str:
+        """Get light theme stylesheet for home button."""
+        return """
+            #homeButton {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: bold;
+            }
+            #homeButton:hover {
+                background-color: #0056b3;
+            }
+            #homeButton:pressed {
+                background-color: #004999;
+            }
+            #settingsButton {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: bold;
+                margin: 5px 10px;
+            }
+            #settingsButton:hover {
+                background-color: #0056b3;
+            }
+            #settingsButton:pressed {
+                background-color: #004999;
+            }
+        """
