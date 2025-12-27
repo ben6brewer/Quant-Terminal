@@ -3,6 +3,7 @@ from __future__ import annotations
 from PySide6.QtWidgets import (
     QMainWindow,
     QPushButton,
+    QSizePolicy,
     QStackedWidget,
     QStackedLayout,
     QVBoxLayout,
@@ -18,6 +19,26 @@ from app.core.config import (
     DEFAULT_WINDOW_HEIGHT,
 )
 from app.ui.widgets.home_screen import HomeScreen
+
+
+class TransparentOverlay(QWidget):
+    """
+    Transparent overlay widget that passes mouse events through except for its children.
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def mousePressEvent(self, event):
+        """Pass mouse events through to widgets below unless clicking on a child widget."""
+        # Check if click is on a child widget
+        child_at_pos = self.childAt(event.pos())
+        if child_at_pos:
+            # Let child handle the event
+            super().mousePressEvent(event)
+        else:
+            # Pass event through to widget below
+            event.ignore()
 
 
 class HubWindow(QMainWindow):
@@ -85,19 +106,34 @@ class HubWindow(QMainWindow):
         overlay = self._create_home_button_overlay()
         layout.addWidget(overlay)
 
+        # CRITICAL FIX 3: Ensure overlay is on top
+        overlay.raise_()
+
         return container
 
     def _create_home_button_overlay(self) -> QWidget:
         """Create transparent overlay with home button in top-left corner."""
-        overlay = QWidget()
-        # Make overlay pass-through for mouse events EXCEPT for children
-        overlay.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        overlay = TransparentOverlay()
+
+        # CRITICAL FIX 1: Force overlay to expand and fill container
+        overlay.setSizePolicy(
+            QSizePolicy.Expanding,  # Horizontal
+            QSizePolicy.Expanding   # Vertical
+        )
+
+        # Set minimum size to ensure it's never collapsed
+        overlay.setMinimumSize(100, 40)
+
+        # Transparent background - overlay is invisible but passes events through
         overlay.setStyleSheet("background: transparent;")
 
-        # Layout for home button
+        # Ensure overlay doesn't interfere with focus
+        overlay.setFocusPolicy(Qt.NoFocus)
+
+        # CRITICAL FIX 2: Don't align the layout, align the widget within it
         layout = QVBoxLayout(overlay)
         layout.setContentsMargins(10, 10, 0, 0)
-        layout.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        # REMOVED: layout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # This caused shrinking!
 
         # Home button
         home_btn = QPushButton("🏠 Home")
@@ -106,10 +142,8 @@ class HubWindow(QMainWindow):
         home_btn.setCursor(Qt.PointingHandCursor)
         home_btn.clicked.connect(self.show_home)
 
-        # CRITICAL: Button must not inherit parent's mouse transparency
-        home_btn.setAttribute(Qt.WA_TransparentForMouseEvents, False)
-
-        layout.addWidget(home_btn)
+        # Add button with alignment to position it top-left within the expanding layout
+        layout.addWidget(home_btn, alignment=Qt.AlignTop | Qt.AlignLeft)
         layout.addStretch(1)
 
         return overlay

@@ -202,9 +202,10 @@ class ChartModule(QWidget):
 
         # Controls bar
         self.controls_widget = QWidget()
-        
+
         controls = QHBoxLayout(self.controls_widget)
-        controls.setContentsMargins(15, 12, 15, 12)
+        # Left margin increased to 125px to leave space for home button (100px + margins)
+        controls.setContentsMargins(125, 12, 15, 12)
         controls.setSpacing(20)
 
         # Ticker input
