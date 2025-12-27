@@ -15,10 +15,14 @@ from app.ui.modules.placeholder_modules import (
 )
 from app.core.theme_manager import ThemeManager
 from app.core.config import DEFAULT_THEME
+from app.services.favorites_service import FavoritesService
 
 
 def main() -> int:
     app = QApplication(sys.argv)
+
+    # Initialize services
+    FavoritesService.initialize()
 
     # Create centralized theme manager
     theme_manager = ThemeManager()
@@ -36,8 +40,8 @@ def main() -> int:
     hub.add_module("analysis", AnalysisModule())
     hub.add_module("settings", SettingsModule(theme_manager))
 
-    # Show charts module by default
-    hub.show_initial_module("charts")
+    # Show home screen on startup
+    hub.show_initial_screen()
 
     hub.show()
     return app.exec()
