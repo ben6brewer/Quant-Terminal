@@ -77,9 +77,7 @@ class ScreenshotManager:
         painter.fillRect(pixmap.rect(), overlay)
 
         # Draw emoji at top center
-        emoji_font = QFont("Seg
-
-oe UI Emoji", 48)
+        emoji_font = QFont("Segoe UI Emoji", 48)
         painter.setFont(emoji_font)
         painter.setPen(QColor("#ffffff"))
         emoji_rect = QRect(0, 40, 280, 60)
