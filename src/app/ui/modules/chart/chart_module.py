@@ -345,7 +345,7 @@ class ChartModule(QWidget):
         controls.addStretch(1)
 
         # Chart settings button (right-aligned)
-        self.chart_settings_btn = QPushButton("⚙️ Settings")
+        self.chart_settings_btn = QPushButton("Settings")
         self.chart_settings_btn.setObjectName("chartSettingsButton")
         self.chart_settings_btn.setMaximumWidth(120)
         self.chart_settings_btn.clicked.connect(self._open_chart_settings)

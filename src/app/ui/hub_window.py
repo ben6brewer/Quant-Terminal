@@ -375,7 +375,7 @@ class HubWindow(QMainWindow):
         # REMOVED: layout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # This caused shrinking!
 
         # Home button
-        home_btn = QPushButton("🏠 Home")
+        home_btn = QPushButton("Home")
         home_btn.setObjectName("homeButton")
         home_btn.setFixedSize(100, 40)
         home_btn.setCursor(Qt.PointingHandCursor)

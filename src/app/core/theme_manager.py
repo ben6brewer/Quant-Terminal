@@ -8,13 +8,14 @@ class ThemeManager(QObject):
     """
     Centralized theme management for the application.
     Provides consistent theming across all modules and widgets.
+    Automatically saves theme preferences to disk.
     """
 
     theme_changed = Signal(str)  # Emits the new theme name
 
     def __init__(self):
         super().__init__()
-        self._current_theme = "dark"
+        self._current_theme = "bloomberg"  # Default if not loaded from preferences
         self._theme_listeners = []
 
     @property
@@ -22,12 +23,13 @@ class ThemeManager(QObject):
         """Get the current active theme."""
         return self._current_theme
 
-    def set_theme(self, theme: str) -> None:
+    def set_theme(self, theme: str, save_preference: bool = True) -> None:
         """
         Set the application theme.
 
         Args:
             theme: Either "dark", "light", or "bloomberg"
+            save_preference: Whether to save the theme preference to disk (default: True)
         """
         if theme not in ("dark", "light", "bloomberg"):
             raise ValueError(f"Unknown theme: {theme}. Must be 'dark', 'light', or 'bloomberg'.")
@@ -37,6 +39,11 @@ class ThemeManager(QObject):
 
         self._current_theme = theme
         self.theme_changed.emit(theme)
+
+        # Save preference to disk
+        if save_preference:
+            from app.services.preferences_service import PreferencesService
+            PreferencesService.set_theme(theme)
 
     def register_listener(self, callback: Callable[[str], None]) -> None:
         """

@@ -43,7 +43,7 @@ class HomeScreen(QWidget):
         top_bar_layout.addWidget(self.tab_bar)
 
         # Settings button (right)
-        self.settings_btn = QPushButton("⚙️ Settings")
+        self.settings_btn = QPushButton("Settings")
         self.settings_btn.setObjectName("settingsButton")
         self.settings_btn.setFixedSize(120, 40)
         self.settings_btn.setCursor(Qt.PointingHandCursor)

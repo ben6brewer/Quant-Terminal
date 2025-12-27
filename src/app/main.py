@@ -19,6 +19,7 @@ from app.ui.modules.placeholder_modules import (
 from app.core.theme_manager import ThemeManager
 from app.core.config import DEFAULT_THEME
 from app.services.favorites_service import FavoritesService
+from app.services.preferences_service import PreferencesService
 
 
 def main() -> int:
@@ -26,10 +27,12 @@ def main() -> int:
 
     # Initialize services
     FavoritesService.initialize()
+    PreferencesService.initialize()
 
-    # Create centralized theme manager
+    # Create centralized theme manager and load saved theme
     theme_manager = ThemeManager()
-    theme_manager.set_theme(DEFAULT_THEME)
+    saved_theme = PreferencesService.get_theme()
+    theme_manager.set_theme(saved_theme, save_preference=False)  # Don't re-save on load
 
     # Create main hub window with theme manager
     hub = HubWindow(theme_manager)

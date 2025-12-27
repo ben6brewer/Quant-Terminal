@@ -36,7 +36,7 @@ class SettingsModule(QWidget):
 
         content = QWidget()
         layout = QVBoxLayout(content)
-        layout.setContentsMargins(40, 40, 40, 40)
+        layout.setContentsMargins(40, 70, 40, 40)  # Extra top margin to avoid home button
         layout.setSpacing(30)
 
         # Header
