@@ -174,13 +174,112 @@ PyQtGraph-based charting widget.
 ## UI/UX Design Guidelines
 
 ### Custom Title Bar Pattern
-**All new windows should use frameless design with custom title bars:**
+**All new windows and dialogs should use frameless design with custom title bars:**
 - Set `self.setWindowFlags(Qt.FramelessWindowHint)` in window constructor
+- For dialogs, use `self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)`
 - Create 32px title bar with app title (left) and window controls (right)
-- Add minimize, maximize/restore, close buttons with theme-aware styling
+- Add minimize, maximize/restore, close buttons with theme-aware styling (main windows only)
+- For dialogs, only include a close button (✕) on the right
 - Title label must have `background-color: transparent` in all themes
 - Implement title bar dragging via `mousePressEvent` and `mouseMoveEvent`
 - Close button should turn red (`#d32f2f`) on hover across all themes
+
+**Dialog Box Implementation Pattern:**
+```python
+class CustomDialog(QDialog):
+    def __init__(self, theme_manager: ThemeManager, parent=None):
+        super().__init__(parent)
+        self.setModal(True)
+        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+        self.theme_manager = theme_manager
+        self._drag_pos = QPoint()  # For window dragging
+        self._setup_ui()
+
+    def _setup_ui(self):
+        """Setup dialog with custom title bar."""
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+        # Custom title bar
+        self.title_bar = self._create_title_bar("Dialog Title")
+        layout.addWidget(self.title_bar)
+
+        # Content container
+        content = QWidget()
+        content_layout = QVBoxLayout(content)
+        content_layout.setContentsMargins(15, 15, 15, 15)
+        # Add content widgets here...
+        layout.addWidget(content)
+
+    def _create_title_bar(self, title: str) -> QWidget:
+        """Create custom title bar with close button."""
+        title_bar = QWidget()
+        title_bar.setObjectName("titleBar")
+        title_bar.setFixedHeight(32)
+
+        bar_layout = QHBoxLayout(title_bar)
+        bar_layout.setContentsMargins(10, 0, 5, 0)
+        bar_layout.setSpacing(5)
+
+        # Dialog title
+        title_label = QLabel(title)
+        title_label.setObjectName("titleLabel")
+        bar_layout.addWidget(title_label)
+        bar_layout.addStretch()
+
+        # Close button
+        close_btn = QPushButton("✕")
+        close_btn.setObjectName("titleBarCloseButton")
+        close_btn.setFixedSize(40, 32)
+        close_btn.setCursor(Qt.PointingHandCursor)
+        close_btn.clicked.connect(self.reject)
+        bar_layout.addWidget(close_btn)
+
+        # Enable dragging
+        title_bar.mousePressEvent = self._title_bar_mouse_press
+        title_bar.mouseMoveEvent = self._title_bar_mouse_move
+
+        return title_bar
+
+    def _title_bar_mouse_press(self, event: QMouseEvent) -> None:
+        """Handle mouse press for dragging."""
+        if event.button() == Qt.LeftButton:
+            self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def _title_bar_mouse_move(self, event: QMouseEvent) -> None:
+        """Handle mouse move for dragging."""
+        if event.buttons() == Qt.LeftButton:
+            self.move(event.globalPosition().toPoint() - self._drag_pos)
+            event.accept()
+```
+
+**Dialog Title Bar Stylesheet Pattern:**
+Include these styles in your dialog's theme-specific stylesheets:
+```css
+#titleBar {
+    background-color: <theme-bg-color>;
+    border-bottom: 1px solid <theme-border-color>;
+}
+#titleLabel {
+    background-color: transparent;  /* Critical: must be transparent */
+    color: <theme-text-color>;
+    font-size: 13px;
+    font-weight: 500;
+}
+#titleBarCloseButton {
+    background-color: transparent;
+    color: <theme-text-color>;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+}
+#titleBarCloseButton:hover {
+    background-color: #d32f2f;  /* Red on all themes */
+    color: #ffffff;  /* White text on light theme */
+}
+```
 
 ### Transparent Overlays with Widget Masking
 **For overlaying UI elements on modules (e.g., Home button):**

@@ -38,7 +38,7 @@ class ModuleTileGrid(QScrollArea):
         """Setup the scroll area and grid."""
         self.setWidgetResizable(True)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         # Container widget
         self.container = QWidget()

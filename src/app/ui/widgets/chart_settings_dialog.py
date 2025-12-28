@@ -8,17 +8,18 @@ from PySide6.QtWidgets import (
     QComboBox,
     QPushButton,
     QFormLayout,
-    QMessageBox,
     QDoubleSpinBox,
     QSpinBox,
     QColorDialog,
     QGroupBox,
     QCheckBox,
+    QWidget,
 )
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QPoint
+from PySide6.QtGui import QColor, QMouseEvent
 
 from app.core.theme_manager import ThemeManager
+from app.ui.widgets.custom_message_box import CustomMessageBox
 
 
 class ChartSettingsDialog(QDialog):
@@ -36,19 +37,24 @@ class ChartSettingsDialog(QDialog):
 
     def __init__(self, theme_manager: ThemeManager, current_settings: dict, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Chart Settings")
         self.setModal(True)
         self.setMinimumWidth(500)
-        
+
+        # Remove native title bar
+        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+
         self.theme_manager = theme_manager
         self.current_settings = current_settings
-        
+
         # Color selections
         self.candle_up_color = current_settings.get("candle_up_color", (76, 153, 0))
         self.candle_down_color = current_settings.get("candle_down_color", (200, 50, 50))
         self.line_color = current_settings.get("line_color", None)
         self.chart_background = current_settings.get("chart_background", None)
-        
+
+        # For window dragging
+        self._drag_pos = QPoint()
+
         self._setup_ui()
         self._apply_theme()
         self._load_current_settings()
@@ -56,48 +62,100 @@ class ChartSettingsDialog(QDialog):
     def _setup_ui(self):
         """Create the dialog UI."""
         layout = QVBoxLayout(self)
-        layout.setSpacing(15)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
 
-        # Header
-        self.header = QLabel("Chart Appearance Settings")
-        self.header.setObjectName("dialogHeader")
-        layout.addWidget(self.header)
+        # Custom title bar
+        self.title_bar = self._create_title_bar("Chart Settings")
+        layout.addWidget(self.title_bar)
+
+        # Content container
+        content_widget = QWidget()
+        content_layout = QVBoxLayout(content_widget)
+        content_layout.setContentsMargins(15, 15, 15, 15)
+        content_layout.setSpacing(15)
 
         # Candlestick settings
         candle_group = self._create_candle_group()
-        layout.addWidget(candle_group)
+        content_layout.addWidget(candle_group)
 
         # Line chart settings
         line_group = self._create_line_group()
-        layout.addWidget(line_group)
+        content_layout.addWidget(line_group)
 
         # Chart background settings
         background_group = self._create_background_group()
-        layout.addWidget(background_group)
+        content_layout.addWidget(background_group)
 
         # General settings
         general_group = self._create_general_group()
-        layout.addWidget(general_group)
+        content_layout.addWidget(general_group)
 
         # Buttons
         button_layout = QHBoxLayout()
         button_layout.addStretch()
-        
+
         self.reset_btn = QPushButton("Reset to Defaults")
         self.reset_btn.clicked.connect(self._reset_to_defaults)
         button_layout.addWidget(self.reset_btn)
-        
+
         self.cancel_btn = QPushButton("Cancel")
         self.cancel_btn.clicked.connect(self.reject)
         button_layout.addWidget(self.cancel_btn)
-        
+
         self.save_btn = QPushButton("Save Settings")
         self.save_btn.setDefault(True)
         self.save_btn.setObjectName("defaultButton")
         self.save_btn.clicked.connect(self._save_settings)
         button_layout.addWidget(self.save_btn)
-        
-        layout.addLayout(button_layout)
+
+        content_layout.addLayout(button_layout)
+
+        # Add content to main layout
+        layout.addWidget(content_widget)
+
+    def _create_title_bar(self, title: str) -> QWidget:
+        """Create custom title bar with window controls."""
+        title_bar = QWidget()
+        title_bar.setObjectName("titleBar")
+        title_bar.setFixedHeight(32)
+
+        bar_layout = QHBoxLayout(title_bar)
+        bar_layout.setContentsMargins(10, 0, 5, 0)
+        bar_layout.setSpacing(5)
+
+        # Dialog title
+        self.title_label = QLabel(title)
+        self.title_label.setObjectName("titleLabel")
+        bar_layout.addWidget(self.title_label)
+
+        bar_layout.addStretch()
+
+        # Close button
+        close_btn = QPushButton("✕")
+        close_btn.setObjectName("titleBarCloseButton")
+        close_btn.setFixedSize(40, 32)
+        close_btn.setCursor(Qt.PointingHandCursor)
+        close_btn.clicked.connect(self.reject)
+        bar_layout.addWidget(close_btn)
+
+        # Enable dragging from title bar
+        title_bar.mousePressEvent = self._title_bar_mouse_press
+        title_bar.mouseMoveEvent = self._title_bar_mouse_move
+
+        return title_bar
+
+    def _title_bar_mouse_press(self, event: QMouseEvent) -> None:
+        """Handle mouse press on title bar for dragging."""
+        if event.button() == Qt.LeftButton:
+            self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def _title_bar_mouse_move(self, event: QMouseEvent) -> None:
+        """Handle mouse move on title bar for dragging."""
+        if event.buttons() == Qt.LeftButton:
+            self.move(event.globalPosition().toPoint() - self._drag_pos)
+            event.accept()
 
     def _create_candle_group(self) -> QGroupBox:
         """Create candlestick settings group."""
@@ -356,15 +414,16 @@ class ChartSettingsDialog(QDialog):
 
     def _reset_to_defaults(self):
         """Reset all settings to defaults."""
-        reply = QMessageBox.question(
+        reply = CustomMessageBox.question(
+            self.theme_manager,
             self,
             "Reset to Defaults",
             "Are you sure you want to reset all chart settings to defaults?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
+            CustomMessageBox.Yes | CustomMessageBox.No,
+            CustomMessageBox.No,
         )
-        
-        if reply == QMessageBox.Yes:
+
+        if reply == CustomMessageBox.Yes:
             # Reset to defaults
             self.candle_up_color = (76, 153, 0)
             self.candle_down_color = (200, 50, 50)
@@ -425,11 +484,25 @@ class ChartSettingsDialog(QDialog):
                 background-color: #2d2d2d;
                 color: #ffffff;
             }
-            #dialogHeader {
-                color: #00d4ff;
-                font-size: 18px;
+            #titleBar {
+                background-color: #2d2d2d;
+                border-bottom: 1px solid #3d3d3d;
+            }
+            #titleLabel {
+                background-color: transparent;
+                color: #ffffff;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            #titleBarCloseButton {
+                background-color: transparent;
+                color: #ffffff;
+                border: none;
+                font-size: 14px;
                 font-weight: bold;
-                padding: 10px;
+            }
+            #titleBarCloseButton:hover {
+                background-color: #d32f2f;
             }
             QLabel {
                 color: #cccccc;
@@ -518,11 +591,26 @@ class ChartSettingsDialog(QDialog):
                 background-color: #ffffff;
                 color: #000000;
             }
-            #dialogHeader {
-                color: #0066cc;
-                font-size: 18px;
+            #titleBar {
+                background-color: #f5f5f5;
+                border-bottom: 1px solid #cccccc;
+            }
+            #titleLabel {
+                background-color: transparent;
+                color: #000000;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            #titleBarCloseButton {
+                background-color: transparent;
+                color: #000000;
+                border: none;
+                font-size: 14px;
                 font-weight: bold;
-                padding: 10px;
+            }
+            #titleBarCloseButton:hover {
+                background-color: #d32f2f;
+                color: #ffffff;
             }
             QLabel {
                 color: #333333;
@@ -611,11 +699,26 @@ class ChartSettingsDialog(QDialog):
                 background-color: #0d1420;
                 color: #e8e8e8;
             }
-            #dialogHeader {
-                color: #FF8000;
-                font-size: 18px;
+            #titleBar {
+                background-color: #0d1420;
+                border-bottom: 1px solid #1a2332;
+            }
+            #titleLabel {
+                background-color: transparent;
+                color: #e8e8e8;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            #titleBarCloseButton {
+                background-color: transparent;
+                color: #e8e8e8;
+                border: none;
+                font-size: 14px;
                 font-weight: bold;
-                padding: 10px;
+            }
+            #titleBarCloseButton:hover {
+                background-color: #d32f2f;
+                color: #ffffff;
             }
             QLabel {
                 color: #b0b0b0;

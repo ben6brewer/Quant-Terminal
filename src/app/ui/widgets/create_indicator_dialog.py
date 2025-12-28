@@ -9,15 +9,16 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QFormLayout,
-    QMessageBox,
     QSpinBox,
     QColorDialog,
     QGroupBox,
+    QWidget,
 )
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QPoint
+from PySide6.QtGui import QColor, QMouseEvent
 
 from app.core.theme_manager import ThemeManager
+from app.ui.widgets.custom_message_box import CustomMessageBox
 
 
 class CreateIndicatorDialog(QDialog):
@@ -129,19 +130,24 @@ class CreateIndicatorDialog(QDialog):
 
     def __init__(self, theme_manager: ThemeManager, parent=None, edit_mode=False, indicator_config=None):
         super().__init__(parent)
-        self.setWindowTitle("Edit Indicator" if edit_mode else "Create Custom Indicator")
         self.setModal(True)
         self.setMinimumWidth(500)
-        
+
+        # Remove native title bar
+        self.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint)
+
         self.theme_manager = theme_manager
         self.edit_mode = edit_mode
         self.indicator_config = indicator_config or {}
         self.param_inputs = {}
         self.selected_color = (0, 150, 255)  # Default blue
-        
+
+        # For window dragging
+        self._drag_pos = QPoint()
+
         self._setup_ui()
         self._apply_theme()
-        
+
         # If in edit mode, populate fields
         if self.edit_mode and self.indicator_config:
             self._populate_from_config()
@@ -149,29 +155,35 @@ class CreateIndicatorDialog(QDialog):
     def _setup_ui(self):
         """Create the dialog UI."""
         layout = QVBoxLayout(self)
-        layout.setSpacing(15)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
 
-        # Header
-        header_text = "Edit Indicator" if self.edit_mode else "Create Custom Indicator"
-        self.header = QLabel(header_text)
-        self.header.setObjectName("dialogHeader")
-        layout.addWidget(self.header)
+        # Custom title bar
+        title_text = "Edit Indicator" if self.edit_mode else "Create Custom Indicator"
+        self.title_bar = self._create_title_bar(title_text)
+        layout.addWidget(self.title_bar)
+
+        # Content container
+        content_widget = QWidget()
+        content_layout = QVBoxLayout(content_widget)
+        content_layout.setContentsMargins(15, 15, 15, 15)
+        content_layout.setSpacing(15)
 
         # Indicator type selector
         type_layout = QHBoxLayout()
         type_layout.addWidget(QLabel("Indicator Type:"))
-        
+
         self.type_combo = QComboBox()
         self.type_combo.addItems(list(self.INDICATOR_TYPES.keys()))
         self.type_combo.currentTextChanged.connect(self._on_type_changed)
-        
+
         # Disable type combo in edit mode
         if self.edit_mode:
             self.type_combo.setEnabled(False)
-        
+
         type_layout.addWidget(self.type_combo, stretch=1)
-        
-        layout.addLayout(type_layout)
+
+        content_layout.addLayout(type_layout)
 
         # Custom name
         name_layout = QHBoxLayout()
@@ -179,22 +191,22 @@ class CreateIndicatorDialog(QDialog):
         self.name_input = QLineEdit()
         self.name_input.setPlaceholderText("Leave empty for auto-generated name")
         name_layout.addWidget(self.name_input, stretch=1)
-        layout.addLayout(name_layout)
+        content_layout.addLayout(name_layout)
 
         # Parameter form
         param_group = QGroupBox("Indicator Parameters")
         param_group.setObjectName("paramGroup")
         param_layout = QVBoxLayout(param_group)
-        
+
         self.param_form = QFormLayout()
         self.param_form.setSpacing(10)
         param_layout.addLayout(self.param_form)
-        
-        layout.addWidget(param_group)
+
+        content_layout.addWidget(param_group)
 
         # Appearance settings
         self.appearance_group = self._create_appearance_group()
-        layout.addWidget(self.appearance_group)
+        content_layout.addWidget(self.appearance_group)
 
         # Initialize with first indicator type
         self._on_type_changed(self.type_combo.currentText())
@@ -202,19 +214,65 @@ class CreateIndicatorDialog(QDialog):
         # Buttons
         button_layout = QHBoxLayout()
         button_layout.addStretch()
-        
+
         self.cancel_btn = QPushButton("Cancel")
         self.cancel_btn.clicked.connect(self.reject)
         button_layout.addWidget(self.cancel_btn)
-        
+
         button_text = "Update Indicator" if self.edit_mode else "Create Indicator"
         self.create_btn = QPushButton(button_text)
         self.create_btn.setDefault(True)
         self.create_btn.setObjectName("defaultButton")
         self.create_btn.clicked.connect(self._create_indicator)
         button_layout.addWidget(self.create_btn)
-        
-        layout.addLayout(button_layout)
+
+        content_layout.addLayout(button_layout)
+
+        # Add content to main layout
+        layout.addWidget(content_widget)
+
+    def _create_title_bar(self, title: str) -> QWidget:
+        """Create custom title bar with window controls."""
+        title_bar = QWidget()
+        title_bar.setObjectName("titleBar")
+        title_bar.setFixedHeight(32)
+
+        bar_layout = QHBoxLayout(title_bar)
+        bar_layout.setContentsMargins(10, 0, 5, 0)
+        bar_layout.setSpacing(5)
+
+        # Dialog title
+        self.title_label = QLabel(title)
+        self.title_label.setObjectName("titleLabel")
+        bar_layout.addWidget(self.title_label)
+
+        bar_layout.addStretch()
+
+        # Close button
+        close_btn = QPushButton("✕")
+        close_btn.setObjectName("titleBarCloseButton")
+        close_btn.setFixedSize(40, 32)
+        close_btn.setCursor(Qt.PointingHandCursor)
+        close_btn.clicked.connect(self.reject)
+        bar_layout.addWidget(close_btn)
+
+        # Enable dragging from title bar
+        title_bar.mousePressEvent = self._title_bar_mouse_press
+        title_bar.mouseMoveEvent = self._title_bar_mouse_move
+
+        return title_bar
+
+    def _title_bar_mouse_press(self, event: QMouseEvent) -> None:
+        """Handle mouse press on title bar for dragging."""
+        if event.button() == Qt.LeftButton:
+            self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def _title_bar_mouse_move(self, event: QMouseEvent) -> None:
+        """Handle mouse move on title bar for dragging."""
+        if event.buttons() == Qt.LeftButton:
+            self.move(event.globalPosition().toPoint() - self._drag_pos)
+            event.accept()
 
     def _populate_from_config(self):
         """Populate dialog fields from existing indicator config."""
@@ -417,11 +475,25 @@ class CreateIndicatorDialog(QDialog):
                 background-color: #2d2d2d;
                 color: #ffffff;
             }
-            #dialogHeader {
-                color: #00d4ff;
-                font-size: 18px;
+            #titleBar {
+                background-color: #2d2d2d;
+                border-bottom: 1px solid #3d3d3d;
+            }
+            #titleLabel {
+                background-color: transparent;
+                color: #ffffff;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            #titleBarCloseButton {
+                background-color: transparent;
+                color: #ffffff;
+                border: none;
+                font-size: 14px;
                 font-weight: bold;
-                padding: 10px;
+            }
+            #titleBarCloseButton:hover {
+                background-color: #d32f2f;
             }
             QLabel {
                 color: #cccccc;
@@ -519,11 +591,26 @@ class CreateIndicatorDialog(QDialog):
                 background-color: #ffffff;
                 color: #000000;
             }
-            #dialogHeader {
-                color: #0066cc;
-                font-size: 18px;
+            #titleBar {
+                background-color: #f5f5f5;
+                border-bottom: 1px solid #cccccc;
+            }
+            #titleLabel {
+                background-color: transparent;
+                color: #000000;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            #titleBarCloseButton {
+                background-color: transparent;
+                color: #000000;
+                border: none;
+                font-size: 14px;
                 font-weight: bold;
-                padding: 10px;
+            }
+            #titleBarCloseButton:hover {
+                background-color: #d32f2f;
+                color: #ffffff;
             }
             QLabel {
                 color: #333333;
@@ -621,11 +708,26 @@ class CreateIndicatorDialog(QDialog):
                 background-color: #0d1420;
                 color: #e8e8e8;
             }
-            #dialogHeader {
-                color: #FF8000;
-                font-size: 18px;
+            #titleBar {
+                background-color: #0d1420;
+                border-bottom: 1px solid #1a2332;
+            }
+            #titleLabel {
+                background-color: transparent;
+                color: #e8e8e8;
+                font-size: 13px;
+                font-weight: 500;
+            }
+            #titleBarCloseButton {
+                background-color: transparent;
+                color: #e8e8e8;
+                border: none;
+                font-size: 14px;
                 font-weight: bold;
-                padding: 10px;
+            }
+            #titleBarCloseButton:hover {
+                background-color: #d32f2f;
+                color: #ffffff;
             }
             QLabel {
                 color: #b0b0b0;
@@ -774,7 +876,8 @@ class CreateIndicatorDialog(QDialog):
                 params[param_name] = value
                 
             except ValueError as e:
-                QMessageBox.warning(
+                CustomMessageBox.warning(
+                    self.theme_manager,
                     self,
                     "Invalid Input",
                     f"Invalid value for {param_name}: {value_str}\n{str(e)}",

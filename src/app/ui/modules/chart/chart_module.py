@@ -6,7 +6,6 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QListWidget,
-    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
@@ -17,6 +16,7 @@ from app.ui.widgets.price_chart import PriceChart
 from app.ui.widgets.create_indicator_dialog import CreateIndicatorDialog
 from app.ui.widgets.chart_settings_dialog import ChartSettingsDialog
 from app.ui.widgets.depth_chart import OrderBookPanel
+from app.ui.widgets.custom_message_box import CustomMessageBox
 from app.services.market_data import fetch_price_history
 from app.services.ticker_equation_parser import TickerEquationParser
 from app.services.indicator_service import IndicatorService
@@ -356,7 +356,6 @@ class ChartModule(QWidget):
         self.depth_btn = self.theme_manager.create_styled_button("Depth", checkable=True)
         self.depth_btn.setMaximumWidth(120)
         self.depth_btn.setEnabled(False)  # Disabled by default, enabled for Binance tickers
-        self.depth_btn.setToolTip("Load a Binance crypto pair (BTC-USD, ETH-USD, etc.) to enable")
         controls.addWidget(self.depth_btn)
 
         # Push settings button to the right
@@ -585,7 +584,8 @@ class ChartModule(QWidget):
         selected = selected_overlay + selected_oscillator
         
         if len(selected) == 0:
-            QMessageBox.information(
+            CustomMessageBox.information(
+                self.theme_manager,
                 self,
                 "No Indicator Selected",
                 "Please select an indicator to edit.",
@@ -593,7 +593,8 @@ class ChartModule(QWidget):
             return
         
         if len(selected) > 1:
-            QMessageBox.information(
+            CustomMessageBox.information(
+                self.theme_manager,
                 self,
                 "Multiple Indicators Selected",
                 "Please select only one indicator to edit.",
@@ -607,7 +608,8 @@ class ChartModule(QWidget):
         """Open the edit dialog for an indicator."""
         # Get the indicator config
         if indicator_name not in IndicatorService.ALL_INDICATORS:
-            QMessageBox.warning(
+            CustomMessageBox.warning(
+                self.theme_manager,
                 self,
                 "Indicator Not Found",
                 f"Indicator '{indicator_name}' not found.",
@@ -618,7 +620,8 @@ class ChartModule(QWidget):
         
         # Check if this is a plugin-based indicator
         if config.get("kind") == "plugin":
-            QMessageBox.information(
+            CustomMessageBox.information(
+                self.theme_manager,
                 self,
                 "Cannot Edit Plugin",
                 f"'{indicator_name}' is a plugin-based indicator and cannot be edited through the UI.\n\n"
@@ -692,8 +695,9 @@ class ChartModule(QWidget):
                 # Refresh lists and re-render
                 self._refresh_indicator_lists()
                 self.render_from_cache()
-                
-                QMessageBox.information(
+
+                CustomMessageBox.information(
+                    self.theme_manager,
                     self,
                     "Indicator Updated",
                     f"Successfully updated indicator.",
@@ -774,7 +778,8 @@ class ChartModule(QWidget):
                 
                 # Check if already exists
                 if name in IndicatorService.ALL_INDICATORS:
-                    QMessageBox.information(
+                    CustomMessageBox.information(
+                        self.theme_manager,
                         self,
                         "Already Exists",
                         f"The indicator '{name}' already exists in the list.",
@@ -786,8 +791,9 @@ class ChartModule(QWidget):
                 
                 # Refresh the lists
                 self._refresh_indicator_lists()
-                
-                QMessageBox.information(
+
+                CustomMessageBox.information(
+                    self.theme_manager,
                     self,
                     "Indicator Created",
                     f"Created custom indicator: {name}",
@@ -803,40 +809,43 @@ class ChartModule(QWidget):
             selected.append(item.text())
         
         if not selected:
-            QMessageBox.information(
+            CustomMessageBox.information(
+                self.theme_manager,
                 self,
                 "No Indicator Selected",
                 "Please select an indicator to delete.",
             )
             return
-        
+
         # Confirm deletion
         indicator_list = "\n".join(selected)
-        reply = QMessageBox.question(
+        reply = CustomMessageBox.question(
+            self.theme_manager,
             self,
             "Delete Indicators",
             f"Are you sure you want to delete these indicators?\n\n{indicator_list}",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
+            CustomMessageBox.Yes | CustomMessageBox.No,
+            CustomMessageBox.No,
         )
         
-        if reply == QMessageBox.Yes:
+        if reply == CustomMessageBox.Yes:
             # Remove from IndicatorService
             for name in selected:
                 IndicatorService.remove_custom_indicator(name)
-            
+
             # Refresh the lists
             self._refresh_indicator_lists()
-            
+
             # Clear from active indicators if present
             for name in selected:
                 if name in self.state["indicators"]:
                     self.state["indicators"].remove(name)
-            
+
             # Re-render
             self.render_from_cache()
-            
-            QMessageBox.information(
+
+            CustomMessageBox.information(
+                self.theme_manager,
                 self,
                 "Indicators Deleted",
                 f"Deleted {len(selected)} indicator(s).",
@@ -917,7 +926,7 @@ class ChartModule(QWidget):
                 indicators=indicators,
             )
         except Exception as e:
-            QMessageBox.critical(self, "Render Error", str(e))
+            CustomMessageBox.critical(self.theme_manager, self, "Render Error", str(e))
 
     def load_ticker_max(self, ticker: str) -> None:
         """Load max history for a ticker or evaluate an equation."""
@@ -954,26 +963,12 @@ class ChartModule(QWidget):
 
             if is_binance:
                 self.depth_btn.setText("Depth")
-                self.depth_btn.setToolTip(
-                    f"✓ Order book depth available for {display_name}\n\n"
-                    f"Click to show live Binance order book with:\n"
-                    f"• Real-time bid/ask levels\n"
-                    f"• Cumulative volume visualization\n"
-                    f"• Spread analysis"
-                )
                 
                 # If depth panel is already visible, update it
                 if self.depth_panel.isVisible():
                     self.depth_panel.set_ticker(display_name)
             else:
                 self.depth_btn.setText("Depth")
-                self.depth_btn.setToolTip(
-                    f"✗ {display_name} is not available on Binance\n\n"
-                    f"Order book depth is only available for crypto pairs.\n\n"
-                    f"Supported tickers include:\n"
-                    f"BTC-USD, ETH-USD, SOL-USD, DOGE-USD, ADA-USD,\n"
-                    f"MATIC-USD, AVAX-USD, DOT-USD, LINK-USD, and more."
-                )
                 
                 # Hide depth panel if it was visible
                 if self.depth_panel.isVisible():
@@ -984,6 +979,6 @@ class ChartModule(QWidget):
             self.render_from_cache()
 
         except Exception as e:
-            QMessageBox.critical(self, "Load Error", str(e))
+            CustomMessageBox.critical(self.theme_manager, self, "Load Error", str(e))
             # Clear the equation parser cache on error
             self.equation_parser.clear_cache()

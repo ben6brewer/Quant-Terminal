@@ -340,8 +340,6 @@ class PriceChart(pg.PlotWidget):
         self.showAxis("right")
         self.hideAxis("left")
 
-        self.setLabel("right", "Price (USD)")
-
         self.price_vb = self.getViewBox()
         self.price_vb.setMouseEnabled(x=True, y=True)
 
@@ -758,8 +756,6 @@ class PriceChart(pg.PlotWidget):
 
         # USD tick formatting for BOTH regular + log
         self.right_axis.set_scale_mode(self._scale_mode)
-
-        self.setLabel("right", "Price (USD)" if self._scale_mode == "regular" else "Price (USD, log scale)")
 
         # Clear chart
         self._clear_chart()
