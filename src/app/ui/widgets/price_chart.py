@@ -525,8 +525,8 @@ class PriceChart(pg.PlotWidget):
         if self._date_label and self.chart_settings.get('show_date_label', True):
             self._update_date_label(ev.pos().x())
 
-        # Update mouse price label position based on mouse y-coordinate
-        self._update_mouse_price_label(ev.pos().y())
+        # Update mouse price label position based on mouse position
+        self._update_mouse_price_label(ev.pos())
 
         # Update crosshair position if enabled
         if self._crosshair_v is not None and self._crosshair_h is not None:
@@ -1040,11 +1040,11 @@ class PriceChart(pg.PlotWidget):
             }}
         """)
 
-    def _update_mouse_price_label(self, mouse_y: int):
-        """Update mouse price label position and text based on mouse y-coordinate.
+    def _update_mouse_price_label(self, mouse_pos: QtCore.QPoint):
+        """Update mouse price label position and text based on mouse position.
 
         Args:
-            mouse_y: Mouse y-coordinate in widget pixels
+            mouse_pos: Mouse position in widget pixels
         """
         # Check if mouse price label is enabled
         if not self.chart_settings.get('show_mouse_price_label', True):
@@ -1054,6 +1054,17 @@ class PriceChart(pg.PlotWidget):
 
         if not self._mouse_price_label:
             self._create_mouse_price_label()
+
+        # Get the right axis geometry to check if mouse is over it
+        axis_rect = self.getAxis('right').geometry()
+
+        # If mouse is over the y-axis area, hide the label and return
+        if axis_rect.contains(mouse_pos):
+            self._mouse_price_label.hide()
+            return
+
+        # Extract y-coordinate for rest of the method
+        mouse_y = mouse_pos.y()
 
         # Map mouse widget coordinates to view coordinates
         view_pos = self.price_vb.mapSceneToView(self.mapToScene(0, mouse_y))
