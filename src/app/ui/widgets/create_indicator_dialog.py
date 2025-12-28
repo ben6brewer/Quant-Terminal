@@ -240,7 +240,7 @@ class CreateIndicatorDialog(QDialog):
         title_bar.setFixedHeight(32)
 
         bar_layout = QHBoxLayout(title_bar)
-        bar_layout.setContentsMargins(10, 0, 5, 0)
+        bar_layout.setContentsMargins(10, 0, 0, 0)
         bar_layout.setSpacing(5)
 
         # Dialog title
@@ -586,11 +586,13 @@ class CreateIndicatorDialog(QDialog):
                 font-weight: 500;
             }
             #titleBarCloseButton {
-                background-color: transparent;
+                background-color: rgba(255, 255, 255, 0.1);
                 color: #ffffff;
                 border: none;
-                font-size: 14px;
+                border-radius: 4px;
+                font-size: 18px;
                 font-weight: bold;
+                padding: 0px;
             }
             #titleBarCloseButton:hover {
                 background-color: #d32f2f;
@@ -702,11 +704,13 @@ class CreateIndicatorDialog(QDialog):
                 font-weight: 500;
             }
             #titleBarCloseButton {
-                background-color: transparent;
+                background-color: rgba(0, 0, 0, 0.08);
                 color: #000000;
                 border: none;
-                font-size: 14px;
+                border-radius: 4px;
+                font-size: 18px;
                 font-weight: bold;
+                padding: 0px;
             }
             #titleBarCloseButton:hover {
                 background-color: #d32f2f;
@@ -819,11 +823,13 @@ class CreateIndicatorDialog(QDialog):
                 font-weight: 500;
             }
             #titleBarCloseButton {
-                background-color: transparent;
+                background-color: rgba(255, 255, 255, 0.08);
                 color: #e8e8e8;
                 border: none;
-                font-size: 14px;
+                border-radius: 4px;
+                font-size: 18px;
                 font-weight: bold;
+                padding: 0px;
             }
             #titleBarCloseButton:hover {
                 background-color: #d32f2f;
