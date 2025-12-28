@@ -290,34 +290,9 @@ class CandlestickItem(pg.GraphicsObject):
 
 
 # -----------------------------
-# Draggable ViewBox for Oscillators
-# -----------------------------
-class DraggableViewBox(pg.ViewBox):
-    """
-    ViewBox for oscillators with independent Y-axis positioning.
-    Dragging is handled at the PlotWidget level for better event routing.
-    """
-    
-    sigVerticalOffsetChanged = QtCore.Signal(float)
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._vertical_offset = 0
-    
-    def get_vertical_offset(self):
-        """Get the current vertical offset."""
-        return self._vertical_offset
-    
-    def set_vertical_offset(self, offset):
-        """Set the vertical offset."""
-        self._vertical_offset = offset
-        self.sigVerticalOffsetChanged.emit(offset)
-
-
-# -----------------------------
 # Chart (with oscillator support)
 # -----------------------------
-class PriceChart(pg.PlotWidget):
+class PriceChart(pg.GraphicsLayoutWidget):
     # Indicator color palette
     INDICATOR_COLORS = [
         (0, 150, 255),    # Blue
@@ -331,57 +306,61 @@ class PriceChart(pg.PlotWidget):
     def __init__(self, parent=None, chart_settings=None):
         super().__init__(parent=parent)
 
-        self.setLabel("bottom", "Time")
+        # Create price plot (row 0, column 0)
+        self.price_plot = self.addPlot(
+            row=0, col=0,
+            axisItems={
+                'bottom': DraggableIndexDateAxisItem(orientation='bottom'),
+                'right': DraggablePriceAxisItem(orientation='right')
+            }
+        )
+        self.price_plot.showAxis("right")
+        self.price_plot.hideAxis("left")
 
-        # Main price ViewBox and axes
-        self.bottom_axis = DraggableIndexDateAxisItem(orientation="bottom")
-        self.right_axis = DraggablePriceAxisItem(orientation="right")
-
-        self.setAxisItems({"bottom": self.bottom_axis, "right": self.right_axis})
-        self.showAxis("right")
-        self.hideAxis("left")
-
-        # Add 10px padding to the right of the right axis
-        self.plotItem.layout.setColumnSpacing(2, 10)  # Column 2 is right axis
-
-        self.price_vb = self.getViewBox()
+        # Store axis references
+        self.bottom_axis = self.price_plot.getAxis('bottom')
+        self.right_axis = self.price_plot.getAxis('right')
+        self.price_vb = self.price_plot.getViewBox()
         self.price_vb.setMouseEnabled(x=True, y=True)
 
-        # Create second ViewBox for oscillators with independent Y-axis
-        self.oscillator_vb = DraggableViewBox()
+        # Add padding to right of price axis
+        self.price_plot.layout.setColumnSpacing(2, 10)
+
+        # Create oscillator plot (row 1, column 0) - initially hidden
+        self.oscillator_plot = self.addPlot(
+            row=1, col=0,
+            axisItems={
+                'bottom': DraggableIndexDateAxisItem(orientation='bottom'),
+                'right': DraggableAxisItem(orientation='right')
+            }
+        )
+        self.oscillator_plot.setLabel("right", "Oscillator")
+        self.oscillator_plot.showAxis("right")
+        self.oscillator_plot.hideAxis("left")
+        self.oscillator_plot.hideAxis('bottom')  # Share X-axis with price
+
+        # Store oscillator references
+        self.oscillator_axis = self.oscillator_plot.getAxis('right')
+        self.oscillator_bottom_axis = self.oscillator_plot.getAxis('bottom')
+        self.oscillator_vb = self.oscillator_plot.getViewBox()
         self.oscillator_vb.setMouseEnabled(x=True, y=True)
-        
-        # Create second right axis for oscillators
-        self.oscillator_axis = DraggableAxisItem(orientation="right")
-        self.oscillator_axis.setLabel("Oscillator")
 
-        # Add the oscillator ViewBox to the plot
-        self.plotItem.scene().addItem(self.oscillator_vb)
-        self.oscillator_axis.linkToView(self.oscillator_vb)
+        # Link X-axes for synchronized pan/zoom
+        self.oscillator_plot.setXLink(self.price_plot)
 
-        # Link X-axes so they pan/zoom together
-        self.oscillator_vb.setXLink(self.price_vb)
+        # Set initial heights (oscillator hidden = 0, price takes full space)
+        self.ci.layout.setRowPreferredHeight(0, 100)  # Price plot
+        self.ci.layout.setRowPreferredHeight(1, 0)    # Oscillator hidden
+        self.ci.layout.setRowStretchFactor(0, 3)      # Price 3x stretch
+        self.ci.layout.setRowStretchFactor(1, 1)      # Oscillator 1x stretch
 
-        # Add axis to layout at row 2, column 3 (to the right of price axis)
-        # This keeps it at full chart height and always visible/functional
-        self.plotItem.layout.addItem(self.oscillator_axis, 2, 3)
-
-        # Connect signals to update ViewBox geometry and axis range when oscillator is moved/zoomed
-        self.oscillator_vb.sigVerticalOffsetChanged.connect(self._update_oscillator_viewbox_geometry)
-        self.oscillator_vb.sigVerticalOffsetChanged.connect(self._update_oscillator_axis_range)
-        self.oscillator_vb.sigRangeChanged.connect(self._update_oscillator_axis_range)
-        
-        # Initially hide oscillator axis
-        self.oscillator_axis.hide()
+        # Track visibility
+        self._oscillator_visible = False
 
         self._candles = None
         self._line = None
         self._price_indicator_lines = []  # Overlay indicators on price chart
         self._oscillator_indicator_lines = []  # Oscillator indicators on separate axis
-
-        # Track if we're dragging the oscillator
-        self._oscillator_drag_active = False
-        self._cursor_over_oscillator = False
 
         # Price label (rightmost visible price)
         self._price_label = None  # Will be created when enabled
@@ -419,111 +398,19 @@ class PriceChart(pg.PlotWidget):
         # Apply initial crosshair
         self._apply_crosshair()
 
-        # Update oscillator ViewBox geometry when price ViewBox changes
-        self.price_vb.sigRangeChanged.connect(self._update_oscillator_viewbox_geometry)
-
         # Update price label when view range changes
         self.price_vb.sigRangeChanged.connect(self._update_price_label)
-
-        # Initialize oscillator ViewBox geometry
-        self._update_oscillator_viewbox_geometry()
 
         # Enable mouse tracking for cursor changes
         self.setMouseTracking(True)
 
-    def _is_mouse_over_oscillator(self, scene_pos):
-        """Check if mouse position is over any oscillator items."""
-        if not self._oscillator_indicator_lines:
-            return False
-        
-        # Map scene position to oscillator view coordinates
-        view_pos = self.oscillator_vb.mapSceneToView(scene_pos)
-        
-        # Get current view range for threshold calculations
-        x_range = self.oscillator_vb.viewRange()[0]
-        y_range = self.oscillator_vb.viewRange()[1]
-        
-        # Use more generous thresholds for easier grabbing
-        x_threshold = (x_range[1] - x_range[0]) * 0.05  # 5% of X range
-        y_threshold = (y_range[1] - y_range[0]) * 0.15  # 15% of Y range
-        
-        # Check each oscillator item
-        for item in self._oscillator_indicator_lines:
-            if isinstance(item, pg.PlotCurveItem):
-                # For line items, check if mouse is near the line
-                data = item.getData()
-                if data and len(data) >= 2:
-                    x_data, y_data = data[0], data[1]
-                    if x_data is not None and y_data is not None:
-                        # Find the closest point on the line
-                        for i in range(len(x_data)):
-                            if np.isfinite([x_data[i], y_data[i]]).all():
-                                dx = abs(view_pos.x() - x_data[i])
-                                dy = abs(view_pos.y() - y_data[i])
-                                
-                                if dx < x_threshold and dy < y_threshold:
-                                    return True
-                                    
-            elif isinstance(item, pg.ScatterPlotItem):
-                # For scatter items, check proximity to any point
-                data = item.getData()
-                if data and len(data) >= 2:
-                    x_data, y_data = data[0], data[1]
-                    if x_data is not None and y_data is not None:
-                        for x, y in zip(x_data, y_data):
-                            if np.isfinite([x, y]).all():
-                                dx = abs(view_pos.x() - x)
-                                dy = abs(view_pos.y() - y)
-                                
-                                if dx < x_threshold and dy < y_threshold:
-                                    return True
-        
-        return False
-
     def mousePressEvent(self, ev):
-        """Override to detect clicks on oscillator."""
-        # Map widget position to scene coordinates directly
-        scene_pos = self.mapToScene(ev.pos())
-        
-        # Check if clicking on oscillator (pass scene position)
-        if self._is_mouse_over_oscillator(scene_pos):
-            self._oscillator_drag_active = True
-            self._drag_start_pos = ev.pos()
-            ev.accept()
-            return
-        
-        # Otherwise use default behavior
+        """Handle mouse press events."""
+        # Use default behavior (no oscillator dragging)
         super().mousePressEvent(ev)
 
     def mouseMoveEvent(self, ev):
-        """Override to handle oscillator dragging and cursor changes."""
-        if self._oscillator_drag_active and hasattr(self, '_drag_start_pos'):
-            # Calculate drag delta
-            delta = ev.pos() - self._drag_start_pos
-            self._drag_start_pos = ev.pos()
-
-            # Update oscillator vertical offset (negate delta to match drag direction)
-            current_offset = self.oscillator_vb.get_vertical_offset()
-            new_offset = current_offset - delta.y()  # Negative sign: drag up = move up
-            self.oscillator_vb.set_vertical_offset(new_offset)
-            
-            ev.accept()
-            return
-        
-        # Check if cursor is over oscillator to change cursor
-        if self._oscillator_indicator_lines:
-            scene_pos = self.mapToScene(ev.pos())
-            is_over = self._is_mouse_over_oscillator(scene_pos)
-            
-            if is_over and not self._cursor_over_oscillator:
-                # Change cursor to indicate draggable
-                self.setCursor(QtCore.Qt.SizeVerCursor)  # Vertical resize cursor
-                self._cursor_over_oscillator = True
-            elif not is_over and self._cursor_over_oscillator:
-                # Restore default cursor
-                self.setCursor(QtCore.Qt.ArrowCursor)
-                self._cursor_over_oscillator = False
-
+        """Handle mouse move events for labels and crosshair."""
         # Update date label position based on mouse x-coordinate
         if self._date_label and self.chart_settings.get('show_date_label', True):
             self._update_date_label(ev.pos().x())
@@ -545,26 +432,12 @@ class PriceChart(pg.PlotWidget):
                 self._crosshair_v.show()
                 self._crosshair_h.show()
 
-        # Otherwise use default behavior
+        # Use default behavior
         super().mouseMoveEvent(ev)
 
     def mouseReleaseEvent(self, ev):
-        """Override to end oscillator dragging."""
-        if self._oscillator_drag_active:
-            self._oscillator_drag_active = False
-            if hasattr(self, '_drag_start_pos'):
-                delattr(self, '_drag_start_pos')
-
-            # Reset cursor if not still over oscillator
-            scene_pos = self.mapToScene(ev.pos())
-            if not self._is_mouse_over_oscillator(scene_pos):
-                self.setCursor(QtCore.Qt.ArrowCursor)
-                self._cursor_over_oscillator = False
-
-            ev.accept()
-            return
-
-        # Otherwise use default behavior
+        """Handle mouse release events."""
+        # Use default behavior (no oscillator dragging)
         super().mouseReleaseEvent(ev)
 
     def leaveEvent(self, ev):
@@ -672,55 +545,24 @@ class PriceChart(pg.PlotWidget):
         if self._crosshair_h is not None:
             self._crosshair_h.hide()
 
-        # Hide oscillator axis when cleared
-        self.oscillator_axis.hide()
+        # Hide oscillator subplot when cleared
+        self._set_oscillator_visibility(False)
 
-        # Reset oscillator position
-        self.oscillator_vb.set_vertical_offset(0)
-
-        # Reset cursor state
-        self._cursor_over_oscillator = False
-        self.setCursor(QtCore.Qt.ArrowCursor)
-
-    def _update_oscillator_viewbox_geometry(self, *args):
-        """Update the oscillator ViewBox to match price ViewBox geometry with offset."""
-        # Get the price ViewBox geometry
-        price_rect = self.price_vb.sceneBoundingRect()
-
-        # Skip if no valid geometry yet (during initialization)
-        if price_rect.width() == 0 or price_rect.height() == 0:
+    def _set_oscillator_visibility(self, visible: bool) -> None:
+        """Show or hide the oscillator subplot."""
+        if visible == self._oscillator_visible:
             return
 
-        # Get vertical offset (in scene coordinates)
-        offset = self.oscillator_vb.get_vertical_offset()
+        self._oscillator_visible = visible
 
-        # Position oscillator ViewBox with the same dimensions but offset vertically
-        # The offset allows the oscillator to be positioned anywhere over the price chart
-        self.oscillator_vb.setGeometry(price_rect.translated(0, offset))
-
-    def _update_oscillator_axis_range(self, *args):
-        """Update the oscillator axis range to match the oscillator ViewBox range.
-
-        The axis is linked to the oscillator ViewBox, so its range should exactly
-        match the ViewBox's Y-range. PyQtGraph handles positioning tick marks at
-        the correct visual location based on ViewBox geometry.
-
-        This ensures tick marks always align with the oscillator's actual data values.
-        """
-        if not self.oscillator_axis.isVisible():
-            return
-
-        # Get the oscillator's actual Y-range (data values)
-        osc_y_min, osc_y_max = self.oscillator_vb.viewRange()[1]
-        osc_y_span = osc_y_max - osc_y_min
-
-        if osc_y_span == 0:
-            return
-
-        # Set axis range to EXACTLY match oscillator ViewBox range
-        # No extension, no geometry-based calculation
-        # Tick marks will align perfectly with oscillator's actual values
-        self.oscillator_axis.setRange(osc_y_min, osc_y_max)
+        if visible:
+            # Expand oscillator row to 150px
+            self.ci.layout.setRowFixedHeight(1, 150)
+            self.oscillator_plot.showAxis('right')
+        else:
+            # Collapse oscillator row to 0
+            self.ci.layout.setRowFixedHeight(1, 0)
+            self.oscillator_plot.hideAxis('right')
 
     def _apply_background(self):
         """Apply background color from settings or theme."""
@@ -812,34 +654,27 @@ class PriceChart(pg.PlotWidget):
         """Apply gridlines with contrasting color based on background."""
         show_gridlines = self.chart_settings.get('show_gridlines', False)
 
-        if show_gridlines:
-            # Get contrasting color
-            grid_color = self._get_contrasting_grid_color()
+        # Apply gridlines to both price and oscillator plots
+        for plot_item in [self.price_plot, self.oscillator_plot]:
+            if show_gridlines:
+                # Get contrasting color
+                grid_color = self._get_contrasting_grid_color()
 
-            # Show gridlines with extremely low alpha for barely visible appearance
-            self.showGrid(x=True, y=True, alpha=0.08)
+                # Create grid pen with contrasting color
+                # Using solid line with extremely low alpha for minimal distraction
+                grid_pen = pg.mkPen(color=grid_color, width=1, alpha=0.08)
 
-            # Create grid pen with contrasting color
-            # Using solid line with extremely low alpha for minimal distraction
-            grid_pen = pg.mkPen(color=grid_color, width=1, alpha=0.08)
-
-            # Set grid pen for each axis
-            # The grid is drawn by the axes, so we need to set it on each axis
-            plot_item = self.getPlotItem()
-            for axis_name in ['bottom', 'left', 'right']:
-                axis = plot_item.getAxis(axis_name)
-                if axis is not None:
-                    axis.setGrid(255)  # Enable grid with full opacity (alpha is in pen)
-        else:
-            # Hide gridlines
-            self.showGrid(x=False, y=False)
-
-            # Disable grid on all axes
-            plot_item = self.getPlotItem()
-            for axis_name in ['bottom', 'left', 'right']:
-                axis = plot_item.getAxis(axis_name)
-                if axis is not None:
-                    axis.setGrid(False)
+                # Set grid pen for each axis
+                for axis_name in ['bottom', 'left', 'right']:
+                    axis = plot_item.getAxis(axis_name)
+                    if axis is not None:
+                        axis.setGrid(255)  # Enable grid with full opacity (alpha is in pen)
+            else:
+                # Disable grid on all axes
+                for axis_name in ['bottom', 'left', 'right']:
+                    axis = plot_item.getAxis(axis_name)
+                    if axis is not None:
+                        axis.setGrid(False)
 
     # -----------------------------
     # Crosshair
@@ -1025,7 +860,7 @@ class PriceChart(pg.PlotWidget):
         widget_point = self.mapFromScene(view_point)
 
         # Get axis geometry to position label on the axis
-        axis_rect = self.getAxis('right').geometry()
+        axis_rect = self.price_plot.getAxis('right').geometry()
 
         # Position label on the y-axis at the price level
         label_height = self._price_label.height()
@@ -1087,7 +922,7 @@ class PriceChart(pg.PlotWidget):
             self._create_mouse_price_label()
 
         # Get the right axis geometry to check if mouse is over it
-        axis_rect = self.getAxis('right').geometry()
+        axis_rect = self.price_plot.getAxis('right').geometry()
 
         # If mouse is over the y-axis area, hide the label and return
         if axis_rect.contains(mouse_pos):
@@ -1117,7 +952,7 @@ class PriceChart(pg.PlotWidget):
         self._mouse_price_label.adjustSize()
 
         # Get axis geometry to position label on the axis
-        axis_rect = self.getAxis('right').geometry()
+        axis_rect = self.price_plot.getAxis('right').geometry()
 
         # Position label on the y-axis at the mouse y-position
         label_height = self._mouse_price_label.height()
@@ -1201,7 +1036,7 @@ class PriceChart(pg.PlotWidget):
         self._date_label.adjustSize()
 
         # Get bottom axis geometry to position label on the axis
-        axis_rect = self.getAxis('bottom').geometry()
+        axis_rect = self.price_plot.getAxis('bottom').geometry()
 
         # Position label on the bottom axis at the mouse x-position
         label_width = self._date_label.width()
@@ -1409,7 +1244,9 @@ class PriceChart(pg.PlotWidget):
         self._price_indicator_lines = []
         self._oscillator_indicator_lines = []
 
+        # Set index for both bottom axes (price and oscillator)
         self.bottom_axis.set_index(df_plot.index)
+        self.oscillator_bottom_axis.set_index(df_plot.index)
         x = np.arange(len(df_plot), dtype=float)
 
         chart_type = (chart_type or "Candles").strip()
@@ -1507,8 +1344,9 @@ class PriceChart(pg.PlotWidget):
             if is_oscillator:
                 has_oscillators = True
 
-            # Select the appropriate ViewBox
-            target_vb = self.oscillator_vb if is_oscillator else self.price_vb
+            # Select the appropriate PlotItem and ViewBox
+            target_plot = self.oscillator_plot if is_oscillator else self.price_plot
+            target_vb = target_plot.getViewBox()
 
             # Plot each column in the indicator dataframe
             for col in indicator_df.columns:
@@ -1638,15 +1476,11 @@ class PriceChart(pg.PlotWidget):
                 
                 color_idx += 1
         
-        # Show/hide oscillator axis based on whether we have oscillators
+        # Show/hide oscillator subplot based on whether we have oscillators
+        self._set_oscillator_visibility(has_oscillators)
         if has_oscillators:
-            self.oscillator_axis.show()
             # Auto-fit oscillator range
             self._auto_fit_oscillator_range()
-            # Update axis range to align with oscillator
-            self._update_oscillator_axis_range()
-        else:
-            self.oscillator_axis.hide()
 
     def _auto_fit_oscillator_range(self):
         """Auto-fit the oscillator Y-range to show all oscillator data."""
