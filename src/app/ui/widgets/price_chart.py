@@ -354,19 +354,22 @@ class PriceChart(pg.PlotWidget):
         # Create second right axis for oscillators
         self.oscillator_axis = DraggableAxisItem(orientation="right")
         self.oscillator_axis.setLabel("Oscillator")
-        
+
         # Add the oscillator ViewBox to the plot
         self.plotItem.scene().addItem(self.oscillator_vb)
         self.oscillator_axis.linkToView(self.oscillator_vb)
-        
+
         # Link X-axes so they pan/zoom together
         self.oscillator_vb.setXLink(self.price_vb)
-        
-        # Position the oscillator axis to the right of the price axis
+
+        # Add axis to layout at row 2, column 3 (to the right of price axis)
+        # This keeps it at full chart height and always visible/functional
         self.plotItem.layout.addItem(self.oscillator_axis, 2, 3)
-        
-        # Connect signal to update geometry when offset changes
-        self.oscillator_vb.sigVerticalOffsetChanged.connect(self._update_oscillator_geometry)
+
+        # Connect signals to update ViewBox geometry and axis range when oscillator is moved/zoomed
+        self.oscillator_vb.sigVerticalOffsetChanged.connect(self._update_oscillator_viewbox_geometry)
+        self.oscillator_vb.sigVerticalOffsetChanged.connect(self._update_oscillator_axis_range)
+        self.oscillator_vb.sigRangeChanged.connect(self._update_oscillator_axis_range)
         
         # Initially hide oscillator axis
         self.oscillator_axis.hide()
@@ -417,13 +420,13 @@ class PriceChart(pg.PlotWidget):
         self._apply_crosshair()
 
         # Update oscillator ViewBox geometry when price ViewBox changes
-        self.price_vb.sigRangeChanged.connect(self._update_oscillator_geometry)
+        self.price_vb.sigRangeChanged.connect(self._update_oscillator_viewbox_geometry)
 
         # Update price label when view range changes
         self.price_vb.sigRangeChanged.connect(self._update_price_label)
 
-        # Initialize oscillator geometry
-        self._update_oscillator_geometry()
+        # Initialize oscillator ViewBox geometry
+        self._update_oscillator_viewbox_geometry()
 
         # Enable mouse tracking for cursor changes
         self.setMouseTracking(True)
@@ -479,8 +482,8 @@ class PriceChart(pg.PlotWidget):
 
     def mousePressEvent(self, ev):
         """Override to detect clicks on oscillator."""
-        # Map widget position to scene coordinates
-        scene_pos = self.plotItem.vb.mapToScene(ev.pos())
+        # Map widget position to scene coordinates directly
+        scene_pos = self.mapToScene(ev.pos())
         
         # Check if clicking on oscillator (pass scene position)
         if self._is_mouse_over_oscillator(scene_pos):
@@ -498,10 +501,10 @@ class PriceChart(pg.PlotWidget):
             # Calculate drag delta
             delta = ev.pos() - self._drag_start_pos
             self._drag_start_pos = ev.pos()
-            
-            # Update oscillator vertical offset
+
+            # Update oscillator vertical offset (negate delta to match drag direction)
             current_offset = self.oscillator_vb.get_vertical_offset()
-            new_offset = current_offset + delta.y()
+            new_offset = current_offset - delta.y()  # Negative sign: drag up = move up
             self.oscillator_vb.set_vertical_offset(new_offset)
             
             ev.accept()
@@ -509,7 +512,7 @@ class PriceChart(pg.PlotWidget):
         
         # Check if cursor is over oscillator to change cursor
         if self._oscillator_indicator_lines:
-            scene_pos = self.plotItem.vb.mapToScene(ev.pos())
+            scene_pos = self.mapToScene(ev.pos())
             is_over = self._is_mouse_over_oscillator(scene_pos)
             
             if is_over and not self._cursor_over_oscillator:
@@ -553,7 +556,7 @@ class PriceChart(pg.PlotWidget):
                 delattr(self, '_drag_start_pos')
 
             # Reset cursor if not still over oscillator
-            scene_pos = self.plotItem.vb.mapToScene(ev.pos())
+            scene_pos = self.mapToScene(ev.pos())
             if not self._is_mouse_over_oscillator(scene_pos):
                 self.setCursor(QtCore.Qt.ArrowCursor)
                 self._cursor_over_oscillator = False
@@ -679,17 +682,45 @@ class PriceChart(pg.PlotWidget):
         self._cursor_over_oscillator = False
         self.setCursor(QtCore.Qt.ArrowCursor)
 
-    def _update_oscillator_geometry(self, *args):
+    def _update_oscillator_viewbox_geometry(self, *args):
         """Update the oscillator ViewBox to match price ViewBox geometry with offset."""
         # Get the price ViewBox geometry
         price_rect = self.price_vb.sceneBoundingRect()
-        
+
+        # Skip if no valid geometry yet (during initialization)
+        if price_rect.width() == 0 or price_rect.height() == 0:
+            return
+
         # Get vertical offset (in scene coordinates)
         offset = self.oscillator_vb.get_vertical_offset()
-        
+
         # Position oscillator ViewBox with the same dimensions but offset vertically
         # The offset allows the oscillator to be positioned anywhere over the price chart
         self.oscillator_vb.setGeometry(price_rect.translated(0, offset))
+
+    def _update_oscillator_axis_range(self, *args):
+        """Update the oscillator axis range to match the oscillator ViewBox range.
+
+        The axis is linked to the oscillator ViewBox, so its range should exactly
+        match the ViewBox's Y-range. PyQtGraph handles positioning tick marks at
+        the correct visual location based on ViewBox geometry.
+
+        This ensures tick marks always align with the oscillator's actual data values.
+        """
+        if not self.oscillator_axis.isVisible():
+            return
+
+        # Get the oscillator's actual Y-range (data values)
+        osc_y_min, osc_y_max = self.oscillator_vb.viewRange()[1]
+        osc_y_span = osc_y_max - osc_y_min
+
+        if osc_y_span == 0:
+            return
+
+        # Set axis range to EXACTLY match oscillator ViewBox range
+        # No extension, no geometry-based calculation
+        # Tick marks will align perfectly with oscillator's actual values
+        self.oscillator_axis.setRange(osc_y_min, osc_y_max)
 
     def _apply_background(self):
         """Apply background color from settings or theme."""
@@ -1612,6 +1643,8 @@ class PriceChart(pg.PlotWidget):
             self.oscillator_axis.show()
             # Auto-fit oscillator range
             self._auto_fit_oscillator_range()
+            # Update axis range to align with oscillator
+            self._update_oscillator_axis_range()
         else:
             self.oscillator_axis.hide()
 
