@@ -696,13 +696,6 @@ class ChartModule(QWidget):
                 self._refresh_indicator_lists()
                 self.render_from_cache()
 
-                CustomMessageBox.information(
-                    self.theme_manager,
-                    self,
-                    "Indicator Updated",
-                    f"Successfully updated indicator.",
-                )
-
     def _generate_auto_name(self, indicator_type: str, params: dict) -> str:
         """Generate auto name for an indicator based on type and params."""
         if not params:
@@ -788,16 +781,9 @@ class ChartModule(QWidget):
                 
                 # Add indicator
                 self._add_indicator_from_config(config)
-                
+
                 # Refresh the lists
                 self._refresh_indicator_lists()
-
-                CustomMessageBox.information(
-                    self.theme_manager,
-                    self,
-                    "Indicator Created",
-                    f"Created custom indicator: {name}",
-                )
 
     def _delete_custom_indicator(self) -> None:
         """Delete indicators from the list."""
@@ -843,13 +829,6 @@ class ChartModule(QWidget):
 
             # Re-render
             self.render_from_cache()
-
-            CustomMessageBox.information(
-                self.theme_manager,
-                self,
-                "Indicators Deleted",
-                f"Deleted {len(selected)} indicator(s).",
-            )
 
     def _refresh_indicator_lists(self) -> None:
         """Refresh the indicator lists to show newly added custom indicators."""
