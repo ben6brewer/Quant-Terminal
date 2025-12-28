@@ -182,15 +182,43 @@ PyQtGraph-based charting widget.
 - Implement title bar dragging via `mousePressEvent` and `mouseMoveEvent`
 - Close button should turn red (`#d32f2f`) on hover across all themes
 
-### Transparent Overlays & Event Forwarding
+### Transparent Overlays with Widget Masking
 **For overlaying UI elements on modules (e.g., Home button):**
 - Use `TransparentOverlay` widget with `QStackedLayout.StackAll` mode
 - Overlay must have `QSizePolicy.Expanding` to fill container
 - Set `background: transparent` stylesheet on overlay itself (not children)
-- **Critical**: Forward events to module below using `childAt(pos)` to find target widget
-- Send events to specific child widget, not container (Qt doesn't auto-propagate)
-- `QMouseEvent` uses `.pos()`, `QWheelEvent` uses `.position().toPoint()`
-- `QStackedLayout` widgets are siblings, not parent-child (event.ignore() doesn't propagate)
+- **Critical**: Use `setMask(QRegion)` to make overlay only "exist" where UI elements are located
+- This allows widgets below to receive events directly from Qt in unmasked areas
+- Update mask dynamically when overlay or its children resize/move using event filters
+- **Why masking works**: Qt's `:hover` pseudo-state detection is based on physical z-order hierarchy - even if you forward events to a button, Qt won't activate `:hover` if another widget is physically on top
+- **Pattern**:
+  ```python
+  class TransparentOverlay(QWidget):
+      def set_home_button(self, button):
+          """Set the home button and update mask."""
+          self._home_button = button
+          button.installEventFilter(self)  # Watch for move/resize
+          self._update_mask()
+
+      def _update_mask(self):
+          """Update the mask to only include the home button area."""
+          if not self._home_button:
+              return
+          button_rect = self._home_button.geometry()
+          region = QRegion(button_rect)
+          self.setMask(region)  # Overlay only exists in this rectangle
+
+      def eventFilter(self, obj, event):
+          """Update mask when home button is moved or resized."""
+          if obj == self._home_button and event.type() in (13, 14):  # Move, Resize
+              self._update_mask()
+          return super().eventFilter(obj, event)
+
+      def resizeEvent(self, event):
+          """Update mask when overlay is resized."""
+          super().resizeEvent(event)
+          self._update_mask()
+  ```
 
 ### Theme Awareness
 **All UI components must respond to theme changes:**
@@ -281,20 +309,14 @@ Use `=` prefix to write mathematical expressions with tickers:
 
 ## Technical Implementation Details
 
-### Overlay Widgets and Event Propagation
+### Overlay Widgets and Widget Masking
 **Critical for home button overlays on modules:**
-- Qt doesn't auto-propagate manually-sent events to child widgets
-- When forwarding events, use `widget.childAt(pos)` to find the actual target widget
-- Send events to the specific child widget, not its container
-- `QStackedLayout` widgets are siblings, not parent-child (event.ignore() doesn't propagate between them)
-- **Pattern**:
-  ```python
-  target_widget = module_widget.childAt(module_pos)
-  if target_widget:
-      child_pos = target_widget.mapFromGlobal(global_pos)
-      new_event = QMouseEvent(...)
-      QCoreApplication.sendEvent(target_widget, new_event)
-  ```
+- Use widget masking (`setMask(QRegion)`) instead of event forwarding for overlays
+- Masking makes the overlay physically transparent in unmasked areas, allowing widgets below to receive events directly from Qt
+- This preserves Qt's built-in hover detection, which is based on physical z-order hierarchy
+- **Why event forwarding doesn't work for hover states**: Qt determines `:hover` pseudo-state based on which widget is physically on top. Even if you manually forward MouseMove events to a button, Qt won't activate the button's `:hover` state if another widget (the overlay) is physically positioned above it in the z-order
+- Update masks dynamically using event filters when overlay children move/resize
+- See "Transparent Overlays with Widget Masking" section above for implementation pattern
 
 ### Event API Differences
 - `QMouseEvent` uses `.pos()` for position
@@ -419,4 +441,4 @@ self._chart_widget = PriceChart()
 - Theme switching is handled via `ThemeManager` signals, not direct stylesheet updates
 - All market data flows through `MarketDataService` for consistency
 - Custom title bar allows seamless theme integration (OS title bars can't be styled)
-- Event forwarding in overlays must target specific child widgets, not containers
+- Widget masking with `setMask(QRegion)` preserves Qt's hover detection for overlays - event forwarding doesn't work for `:hover` pseudo-states

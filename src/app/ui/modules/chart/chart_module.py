@@ -34,56 +34,6 @@ from app.core.config import (
 )
 
 
-class DebugButton(QPushButton):
-    """Button that handles hover manually since overlay blocks Qt's hover system."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.setAttribute(Qt.WA_Hover, True)
-        self.setMouseTracking(True)
-        self._base_style = ""
-        self._is_hovered = False
-        print(f"[DEBUG_BUTTON_INIT] Created DebugButton with manual hover: {self.text() if args else 'unnamed'}")
-
-    def setStyleSheet(self, stylesheet):
-        """Store base stylesheet for hover restoration."""
-        self._base_style = stylesheet
-        super().setStyleSheet(stylesheet)
-
-    def _apply_hover_style(self):
-        """Apply hover effect by modifying background and border."""
-        # Bloomberg theme hover: semi-transparent orange + orange border
-        hover_style = self._base_style + """
-            QPushButton {
-                background-color: rgba(255, 128, 0, 0.15) !important;
-                border: 1px solid #FF8000 !important;
-            }
-        """
-        super().setStyleSheet(hover_style)
-        print(f"[HOVER] Applied hover style to {self.text()}")
-
-    def _remove_hover_style(self):
-        """Remove hover effect, restore base style."""
-        super().setStyleSheet(self._base_style)
-        print(f"[HOVER] Removed hover style from {self.text()}")
-
-    def event(self, event):
-        """Handle all events, including hover events that Qt generates."""
-        event_type = event.type()
-
-        # HoverEnter = 127, HoverLeave = 128, HoverMove = 129
-        if event_type == 127:  # HoverEnter
-            print(f"[HOVER_ENTER] HoverEnter event on {self.text()}")
-            self._is_hovered = True
-            self._apply_hover_style()
-        elif event_type == 128:  # HoverLeave
-            print(f"[HOVER_LEAVE] HoverLeave event on {self.text()}")
-            self._is_hovered = False
-            self._remove_hover_style()
-
-        return super().event(event)
-
-
 class ChartModule(QWidget):
     """
     Charting module with indicator support and order book depth.
@@ -121,24 +71,8 @@ class ChartModule(QWidget):
 
     def _apply_control_bar_theme(self) -> None:
         """Apply theme-specific styling to the control bar."""
-        # DEBUG: Before applying parent stylesheet
-        print(f"\n[BEFORE_PARENT_STYLESHEET]")
-        print(f"  Indicators btn stylesheet: {self.indicators_btn.styleSheet()[:100]}...")
-        print(f"  Depth btn stylesheet: {self.depth_btn.styleSheet()[:100]}...")
-        print(f"  Settings btn stylesheet: {self.chart_settings_btn.styleSheet()[:100]}...")
-
         stylesheet = self.theme_manager.get_controls_stylesheet()
-        print(f"\n[PARENT_STYLESHEET]")
-        print(f"  Applying to controls_widget")
-        print(f"  Has QPushButton rules: {'QPushButton' in stylesheet}")
-
         self.controls_widget.setStyleSheet(stylesheet)
-
-        # DEBUG: After applying parent stylesheet
-        print(f"\n[AFTER_PARENT_STYLESHEET]")
-        print(f"  Indicators btn stylesheet: {self.indicators_btn.styleSheet()[:100]}...")
-        print(f"  Depth btn stylesheet: {self.depth_btn.styleSheet()[:100]}...")
-        print(f"  Settings btn stylesheet: {self.chart_settings_btn.styleSheet()[:100]}...")
 
     def _apply_indicator_panel_theme(self) -> None:
         """Apply theme-specific styling to the indicator panel."""
@@ -413,13 +347,10 @@ class ChartModule(QWidget):
         # Separator
         controls.addSpacing(20)
 
-        # Indicators button (using DebugButton to test event handling)
-        self.indicators_btn = DebugButton("Indicators")
-        self.indicators_btn.setCheckable(True)
-        self.indicators_btn.setStyleSheet(self.theme_manager._get_universal_button_style())
+        # Indicators button
+        self.indicators_btn = self.theme_manager.create_styled_button("Indicators", checkable=True)
         self.indicators_btn.setMaximumWidth(120)
         controls.addWidget(self.indicators_btn)
-        self.indicators_btn.show()
 
         # Depth button
         self.depth_btn = self.theme_manager.create_styled_button("Depth", checkable=True)
@@ -427,7 +358,6 @@ class ChartModule(QWidget):
         self.depth_btn.setEnabled(False)  # Disabled by default, enabled for Binance tickers
         self.depth_btn.setToolTip("Load a Binance crypto pair (BTC-USD, ETH-USD, etc.) to enable")
         controls.addWidget(self.depth_btn)
-        self.depth_btn.show()
 
         # Push settings button to the right
         controls.addStretch(1)
@@ -437,7 +367,7 @@ class ChartModule(QWidget):
         self.chart_settings_btn.setMaximumWidth(120)
         self.chart_settings_btn.clicked.connect(self._open_chart_settings)
         controls.addWidget(self.chart_settings_btn)
-        self.chart_settings_btn.show()
+        
         root.addWidget(self.controls_widget)
 
         # Apply initial theme to control bar

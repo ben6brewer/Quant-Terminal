@@ -654,12 +654,6 @@ class ThemeManager(QObject):
         stylesheet = self._get_universal_button_style()
         button.setStyleSheet(stylesheet)
 
-        # DEBUG: Print button creation info
-        print(f"\n[CREATE_BUTTON] Button: '{text}'")
-        print(f"  Checkable: {checkable}")
-        print(f"  Stylesheet length: {len(stylesheet)} chars")
-        print(f"  Stylesheet preview: {stylesheet[:100]}...")
-
         # Track for theme updates
         self._styled_buttons.append(button)
 
