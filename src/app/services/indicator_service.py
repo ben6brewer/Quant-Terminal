@@ -33,6 +33,12 @@ class IndicatorService:
     # Path to custom indicator plugin files
     _PLUGIN_PATH = Path(__file__).parent.parent / "custom_indicators"
 
+    # Path to save/load plugin indicator appearance overrides
+    _PLUGIN_APPEARANCE_PATH = Path.home() / ".quant_terminal" / "plugin_indicator_appearance.json"
+
+    # Storage for plugin appearance overrides (keyed by plugin NAME)
+    PLUGIN_APPEARANCE_OVERRIDES = {}
+
     # Column metadata for multi-line indicators (for per-line customization)
     INDICATOR_COLUMN_METADATA = {
         "bbands": [
@@ -159,6 +165,7 @@ class IndicatorService:
         """Initialize the service and load saved indicators and plugins."""
         cls.load_indicators()
         cls.load_custom_indicator_plugins()
+        cls.load_plugin_appearance_overrides()
 
     @classmethod
     def load_custom_indicator_plugins(cls) -> None:
@@ -417,6 +424,99 @@ class IndicatorService:
             print(f"Error saving indicators: {e}")
 
     @classmethod
+    def save_plugin_appearance_overrides(cls) -> None:
+        """Save plugin indicator appearance overrides to disk."""
+        try:
+            cls._PLUGIN_APPEARANCE_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+            # Serialize appearance overrides
+            serialized_overrides = {}
+            for plugin_name, per_line_appearance in cls.PLUGIN_APPEARANCE_OVERRIDES.items():
+                serialized_overrides[plugin_name] = cls._serialize_appearance(per_line_appearance)
+
+            # Write to JSON
+            with open(cls._PLUGIN_APPEARANCE_PATH, 'w') as f:
+                json.dump(serialized_overrides, f, indent=2)
+
+            print(f"Saved appearance overrides for {len(serialized_overrides)} plugins")
+        except Exception as e:
+            print(f"Error saving plugin appearance overrides: {e}")
+
+    @classmethod
+    def load_plugin_appearance_overrides(cls) -> None:
+        """Load plugin appearance overrides from disk. Called AFTER plugins are loaded."""
+        try:
+            if not cls._PLUGIN_APPEARANCE_PATH.exists():
+                print(f"No plugin appearance overrides found")
+                return
+
+            with open(cls._PLUGIN_APPEARANCE_PATH, 'r') as f:
+                data = json.load(f)
+
+            cls.PLUGIN_APPEARANCE_OVERRIDES = {}
+            for plugin_name, per_line_appearance in data.items():
+                # Skip if plugin no longer exists
+                if plugin_name not in cls.CUSTOM_INDICATOR_CLASSES:
+                    print(f"  Skipping overrides for removed plugin: {plugin_name}")
+                    continue
+
+                # Get current columns from plugin
+                current_columns = set(cls.preview_indicator_columns(plugin_name))
+                if not current_columns:
+                    print(f"  Could not determine columns for: {plugin_name}")
+                    continue
+
+                # Filter to only matching columns
+                deserialized = cls._deserialize_appearance(per_line_appearance)
+                filtered = {
+                    col: settings
+                    for col, settings in deserialized.items()
+                    if col in current_columns
+                }
+
+                if filtered:
+                    cls.PLUGIN_APPEARANCE_OVERRIDES[plugin_name] = filtered
+                    print(f"  Loaded overrides for '{plugin_name}' ({len(filtered)} columns)")
+
+            print(f"Loaded appearance overrides for {len(cls.PLUGIN_APPEARANCE_OVERRIDES)} plugins")
+        except Exception as e:
+            print(f"Error loading plugin appearance overrides: {e}")
+            import traceback
+            traceback.print_exc()
+            cls.PLUGIN_APPEARANCE_OVERRIDES = {}
+
+    @classmethod
+    def get_plugin_appearance(cls, plugin_name: str) -> Dict[str, Any]:
+        """Get appearance overrides for a plugin (empty dict if none)."""
+        return cls.PLUGIN_APPEARANCE_OVERRIDES.get(plugin_name, {})
+
+    @classmethod
+    def set_plugin_appearance(cls, plugin_name: str, per_line_appearance: Dict[str, Any]) -> None:
+        """Set appearance overrides for a plugin and auto-save."""
+        if plugin_name not in cls.CUSTOM_INDICATOR_CLASSES:
+            print(f"Warning: Unknown plugin: {plugin_name}")
+            return
+
+        # Validate columns
+        current_columns = set(cls.preview_indicator_columns(plugin_name))
+        filtered = {
+            col: settings
+            for col, settings in per_line_appearance.items()
+            if col in current_columns
+        }
+
+        if filtered:
+            cls.PLUGIN_APPEARANCE_OVERRIDES[plugin_name] = filtered
+            cls.save_plugin_appearance_overrides()
+
+            # Update config in ALL_INDICATORS
+            if plugin_name in cls.ALL_INDICATORS:
+                cls.ALL_INDICATORS[plugin_name]["per_line_appearance"] = filtered
+        else:
+            cls.PLUGIN_APPEARANCE_OVERRIDES.pop(plugin_name, None)
+            cls.save_plugin_appearance_overrides()
+
+    @classmethod
     def load_indicators(cls) -> None:
         """Load custom indicators from disk."""
         try:
@@ -562,6 +662,10 @@ class IndicatorService:
                 # Get appearance settings from config if available
                 config = cls.ALL_INDICATORS.get(name, {})
                 per_line_appearance = config.get("per_line_appearance", {})
+
+                # For plugin indicators, use overrides
+                if config.get("kind") == "plugin":
+                    per_line_appearance = cls.get_plugin_appearance(name)
 
                 results[name] = {
                     "data": result_df,

@@ -14,6 +14,7 @@ from PySide6.QtCore import Qt
 
 from app.ui.widgets.price_chart import PriceChart
 from app.ui.widgets.create_indicator_dialog import CreateIndicatorDialog
+from app.ui.widgets.edit_plugin_appearance_dialog import EditPluginAppearanceDialog
 from app.ui.widgets.chart_settings_dialog import ChartSettingsDialog
 from app.ui.widgets.depth_chart import OrderBookPanel
 from app.ui.widgets.custom_message_box import CustomMessageBox
@@ -620,13 +621,17 @@ class ChartModule(QWidget):
         
         # Check if this is a plugin-based indicator
         if config.get("kind") == "plugin":
-            CustomMessageBox.information(
+            # For plugins, only allow appearance editing
+            dialog = EditPluginAppearanceDialog(
                 self.theme_manager,
+                indicator_name,
                 self,
-                "Cannot Edit Plugin",
-                f"'{indicator_name}' is a plugin-based indicator and cannot be edited through the UI.\n\n"
-                "To modify it, edit the plugin file directly.",
             )
+
+            if dialog.exec():
+                # Appearance saved - re-render
+                self.render_from_cache()
+
             return
         
         # Build indicator config for the dialog

@@ -1503,22 +1503,33 @@ class PriceChart(pg.PlotWidget):
                 line_style = line_settings.get("line_style", QtCore.Qt.SolidLine)
                 marker_shape = line_settings.get("marker_shape", "o")
                 marker_size = line_settings.get("marker_size", 10)
+                marker_offset = line_settings.get("marker_offset", 0)
                 y_series = indicator_df[col]
-                
+
                 # Check if this is a sparse signal column
                 non_nan_count = y_series.notna().sum()
                 total_count = len(y_series)
                 is_sparse = non_nan_count < (total_count * 0.1)
-                
+
                 if is_sparse and non_nan_count > 0:
                     # Render as scatter plot (for crossover signals, etc.)
                     mask = y_series.notna()
                     x_points = x[mask]
                     y_points = y_series[mask].to_numpy()
-                    
+
                     # Apply log transform only for price overlays in log mode
                     if self._scale_mode == "log" and not is_oscillator:
                         y_points = self._to_log10_series(pd.Series(y_points)).to_numpy()
+
+                    # Apply marker offset (convert pixels to data units)
+                    if marker_offset != 0:
+                        view_range = target_vb.viewRange()
+                        y_min, y_max = view_range[1]
+                        vb_height = target_vb.height()
+                        if vb_height > 0:
+                            data_per_pixel = (y_max - y_min) / vb_height
+                            offset_in_data_units = marker_offset * data_per_pixel
+                            y_points = y_points + offset_in_data_units
                     
                     # Determine marker color and style
                     if "Golden" in col or "Bull" in col or "Buy" in col:
