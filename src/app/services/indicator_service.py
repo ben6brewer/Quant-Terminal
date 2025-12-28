@@ -31,7 +31,7 @@ class IndicatorService:
     _SAVE_PATH = Path.home() / ".quant_terminal" / "custom_indicators.json"
     
     # Path to custom indicator plugin files
-    _PLUGIN_PATH = Path.home() / ".quant_terminal" / "custom_indicators"
+    _PLUGIN_PATH = Path(__file__).parent.parent / "custom_indicators"
 
     # Qt PenStyle mapping for JSON serialization
     _PENSTYLE_TO_STR = {
