@@ -405,8 +405,10 @@ class PriceChart(pg.PlotWidget):
         # Store chart settings
         self.chart_settings = chart_settings or {}
 
-        # Add legend
-        self.legend = self.addLegend(offset=(10, 10))
+        # Add legend (top-left, fixed position)
+        self.legend = pg.LegendItem(offset=(10, 10))
+        self.legend.setParentItem(self.price_vb)
+        self.legend.anchor(itemPos=(0, 0), parentPos=(0, 0))  # Top-left anchor
 
         # Apply initial background (which also applies gridlines)
         self._apply_background()
@@ -605,13 +607,9 @@ class PriceChart(pg.PlotWidget):
 
     def _clear_chart(self):
         """Custom clear method to properly clean up both price and oscillator ViewBoxes."""
-        # Remove old legend first
+        # Clear legend items (but don't destroy the legend itself)
         if hasattr(self, 'legend') and self.legend is not None:
-            try:
-                self.legend.scene().removeItem(self.legend)
-            except:
-                pass
-            self.legend = None
+            self.legend.clear()
 
         # Remove oscillator indicators - use slice copy to avoid modification during iteration
         for item in self._oscillator_indicator_lines[:]:
@@ -680,9 +678,6 @@ class PriceChart(pg.PlotWidget):
         # Reset cursor state
         self._cursor_over_oscillator = False
         self.setCursor(QtCore.Qt.ArrowCursor)
-
-        # Re-add legend after clear
-        self.legend = self.addLegend(offset=(10, 10))
 
     def _update_oscillator_geometry(self, *args):
         """Update the oscillator ViewBox to match price ViewBox geometry with offset."""
@@ -1438,45 +1433,65 @@ class PriceChart(pg.PlotWidget):
     ) -> None:
         """
         Plot indicators on appropriate ViewBox (price or oscillator).
-        
+
         Args:
             x: Array of x-coordinates (indices)
             df: Original price DataFrame
             indicators: Dict mapping indicator names to dicts containing:
                 - "data": DataFrame with indicator values
                 - "appearance": Appearance settings (or None for defaults)
+                - "per_line_appearance": Per-line appearance settings (or None)
         """
         from app.services.indicator_service import IndicatorService
-        
+
+        # Clear legend before plotting (if it exists)
+        if hasattr(self, 'legend') and self.legend is not None:
+            self.legend.clear()
+
         color_idx = 0
         has_oscillators = False
-        
+
         for indicator_name, indicator_info in indicators.items():
-            # Extract data and appearance
+            # Extract data and per-line appearance
             indicator_df = indicator_info.get("data")
-            appearance = indicator_info.get("appearance", {})
-            
+            per_line_appearance = indicator_info.get("per_line_appearance", {}) or {}  # Safety: never None
+
             if indicator_df is None or indicator_df.empty:
                 continue
-            
+
             # Determine if this is an oscillator or overlay
             is_oscillator = IndicatorService.is_overlay(indicator_name) == False
-            
+
             if is_oscillator:
                 has_oscillators = True
-            
-            # Get appearance settings with defaults
-            custom_color = appearance.get("color", None)
-            line_width = appearance.get("line_width", 2)
-            line_style = appearance.get("line_style", QtCore.Qt.SolidLine)
-            marker_shape = appearance.get("marker_shape", "o")
-            marker_size = appearance.get("marker_size", 10)
-            
+
             # Select the appropriate ViewBox
             target_vb = self.oscillator_vb if is_oscillator else self.price_vb
-            
+
             # Plot each column in the indicator dataframe
             for col in indicator_df.columns:
+                # Get per-line settings
+                line_settings = per_line_appearance.get(col, {})
+
+                # Check visibility
+                if not line_settings.get("visible", True):
+                    continue  # Skip hidden lines
+
+                # Get custom label for legend
+                label = line_settings.get("label", col)
+                if not label.strip():
+                    label = None  # Don't add to legend if empty
+
+                # Get appearance FROM PER-LINE ONLY (no fallback to global)
+                custom_color = line_settings.get("color")
+                if not custom_color:
+                    # Use auto-color if no per-line color specified
+                    custom_color = self.INDICATOR_COLORS[color_idx % len(self.INDICATOR_COLORS)]
+
+                line_width = line_settings.get("line_width", 2)
+                line_style = line_settings.get("line_style", QtCore.Qt.SolidLine)
+                marker_shape = line_settings.get("marker_shape", "o")
+                marker_size = line_settings.get("marker_size", 10)
                 y_series = indicator_df[col]
                 
                 # Check if this is a sparse signal column
@@ -1519,10 +1534,14 @@ class PriceChart(pg.PlotWidget):
                         brush=pg.mkBrush(color),
                         symbol=symbol,
                         size=size,
-                        name=col,
+                        name=label or col,
                     )
                     target_vb.addItem(scatter)
-                    
+
+                    # Add to legend (overlay indicators only)
+                    if label and not is_oscillator and hasattr(self, 'legend') and self.legend is not None:
+                        self.legend.addItem(scatter, label)
+
                     if is_oscillator:
                         self._oscillator_indicator_lines.append(scatter)
                     else:
@@ -1550,11 +1569,15 @@ class PriceChart(pg.PlotWidget):
                             line_style = QtCore.Qt.SolidLine
                     
                     pen = pg.mkPen(color=color, width=line_width, style=line_style)
-                    
+
                     # Plot the indicator
-                    line = pg.PlotCurveItem(x=x, y=y, pen=pen, name=col)
+                    line = pg.PlotCurveItem(x=x, y=y, pen=pen, name=label or col)
                     target_vb.addItem(line)
-                    
+
+                    # Add to legend (overlay indicators only)
+                    if label and not is_oscillator and hasattr(self, 'legend') and self.legend is not None:
+                        self.legend.addItem(line, label)
+
                     if is_oscillator:
                         self._oscillator_indicator_lines.append(line)
                     else:

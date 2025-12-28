@@ -645,24 +645,24 @@ class ChartModule(QWidget):
         kind = config.get("kind")
         indicator_type = indicator_type_map.get(kind, kind)
         
-        # Extract parameters (exclude 'kind' and 'appearance')
-        params = {k: v for k, v in config.items() if k not in ["kind", "appearance"]}
-        
-        # Get appearance settings
-        appearance = config.get("appearance", {})
-        
+        # Extract parameters (exclude 'kind', 'appearance', and 'per_line_appearance')
+        params = {k: v for k, v in config.items() if k not in ["kind", "appearance", "per_line_appearance"]}
+
+        # Get per-line appearance settings
+        per_line_appearance = config.get("per_line_appearance", {})
+
         # Try to extract custom name from the indicator_name
         # If it matches the auto-generated pattern, don't set custom_name
         custom_name = None
         auto_name = self._generate_auto_name(indicator_type, params)
         if indicator_name != auto_name:
             custom_name = indicator_name
-        
+
         edit_config = {
             "type": indicator_type,
             "params": params,
             "custom_name": custom_name,
-            "appearance": appearance,
+            "per_line_appearance": per_line_appearance,  # Only this field
         }
         
         # Open edit dialog
@@ -729,14 +729,14 @@ class ChartModule(QWidget):
         indicator_type = config["type"]
         params = config["params"]
         custom_name = config.get("custom_name")
-        appearance = config.get("appearance", {})
-        
+        per_line_appearance = config.get("per_line_appearance", {})  # Required now
+
         # Use custom name if provided, otherwise auto-generate
         if custom_name:
             name = custom_name
         else:
             name = self._generate_auto_name(indicator_type, params)
-        
+
         # Build config for IndicatorService
         kind_map = {
             "SMA": "sma",
@@ -749,16 +749,16 @@ class ChartModule(QWidget):
             "OBV": "obv",
             "VWAP": "vwap",
         }
-        
+
         indicator_config = {
             "kind": kind_map[indicator_type],
             **params,
-            "appearance": appearance,
+            "per_line_appearance": per_line_appearance,  # Only this field
         }
-        
+
         # Determine if overlay or oscillator
         is_overlay = indicator_type in ["SMA", "EMA", "Bollinger Bands", "VWAP"]
-        
+
         # Add to IndicatorService
         IndicatorService.add_custom_indicator(name, indicator_config, is_overlay)
 

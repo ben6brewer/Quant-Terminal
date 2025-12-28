@@ -33,6 +33,42 @@ class IndicatorService:
     # Path to custom indicator plugin files
     _PLUGIN_PATH = Path(__file__).parent.parent / "custom_indicators"
 
+    # Column metadata for multi-line indicators (for per-line customization)
+    INDICATOR_COLUMN_METADATA = {
+        "bbands": [
+            {"column": "BB_Upper", "label": "Upper Band", "default_color": (255, 100, 100), "default_style": Qt.DashLine},
+            {"column": "BB_Middle", "label": "Middle Band", "default_color": (255, 255, 100), "default_style": Qt.SolidLine},
+            {"column": "BB_Lower", "label": "Lower Band", "default_color": (100, 255, 100), "default_style": Qt.DashLine}
+        ],
+        "macd": [
+            {"column": "MACD", "label": "MACD Line", "default_color": (0, 150, 255), "default_style": Qt.SolidLine},
+            {"column": "MACDs", "label": "Signal Line", "default_color": (255, 150, 0), "default_style": Qt.SolidLine},
+            {"column": "MACDh", "label": "Histogram", "default_color": (150, 150, 150), "default_style": Qt.SolidLine}
+        ],
+        "stochastic": [
+            {"column": "STOCHk", "label": "%K Line", "default_color": (0, 150, 255), "default_style": Qt.SolidLine},
+            {"column": "STOCHd", "label": "%D Line", "default_color": (255, 150, 0), "default_style": Qt.SolidLine}
+        ],
+        "sma": [
+            {"column": "SMA", "label": "SMA", "default_color": (0, 150, 255), "default_style": Qt.SolidLine}
+        ],
+        "ema": [
+            {"column": "EMA", "label": "EMA", "default_color": (255, 150, 0), "default_style": Qt.SolidLine}
+        ],
+        "rsi": [
+            {"column": "RSI", "label": "RSI", "default_color": (150, 0, 255), "default_style": Qt.SolidLine}
+        ],
+        "atr": [
+            {"column": "ATR", "label": "ATR", "default_color": (255, 200, 0), "default_style": Qt.SolidLine}
+        ],
+        "obv": [
+            {"column": "OBV", "label": "OBV", "default_color": (0, 255, 150), "default_style": Qt.SolidLine}
+        ],
+        "vwap": [
+            {"column": "VWAP", "label": "VWAP", "default_color": (255, 0, 150), "default_style": Qt.SolidLine}
+        ]
+    }
+
     # Qt PenStyle mapping for JSON serialization
     _PENSTYLE_TO_STR = {
         Qt.SolidLine: "solid",
@@ -50,35 +86,73 @@ class IndicatorService:
 
     @classmethod
     def _serialize_appearance(cls, appearance: Dict[str, Any]) -> Dict[str, Any]:
-        """Convert appearance dict to JSON-serializable format."""
+        """Convert appearance dict to JSON-serializable format (handles nested dicts)."""
         if not appearance:
             return appearance
-        
-        serialized = appearance.copy()
-        
-        # Convert Qt.PenStyle to string
-        if "line_style" in serialized:
-            pen_style = serialized["line_style"]
-            if isinstance(pen_style, Qt.PenStyle):
-                serialized["line_style"] = cls._PENSTYLE_TO_STR.get(pen_style, "solid")
-        
+
+        serialized = {}
+
+        for key, value in appearance.items():
+            # Recursively serialize nested dicts (for per_line_appearance)
+            if isinstance(value, dict):
+                serialized[key] = cls._serialize_appearance(value)
+            # Convert Qt.PenStyle to string
+            elif key == "line_style" and isinstance(value, Qt.PenStyle):
+                serialized[key] = cls._PENSTYLE_TO_STR.get(value, "solid")
+            else:
+                serialized[key] = value
+
         return serialized
     
     @classmethod
     def _deserialize_appearance(cls, appearance: Dict[str, Any]) -> Dict[str, Any]:
-        """Convert appearance dict from JSON format to runtime format."""
+        """Convert appearance dict from JSON format to runtime format (handles nested dicts)."""
         if not appearance:
             return appearance
-        
-        deserialized = appearance.copy()
-        
-        # Convert string to Qt.PenStyle
-        if "line_style" in deserialized:
-            line_style_str = deserialized["line_style"]
-            if isinstance(line_style_str, str):
-                deserialized["line_style"] = cls._STR_TO_PENSTYLE.get(line_style_str, Qt.SolidLine)
-        
+
+        deserialized = {}
+
+        for key, value in appearance.items():
+            # Recursively deserialize nested dicts (for per_line_appearance)
+            if isinstance(value, dict):
+                deserialized[key] = cls._deserialize_appearance(value)
+            # Convert string to Qt.PenStyle
+            elif key == "line_style" and isinstance(value, str):
+                deserialized[key] = cls._STR_TO_PENSTYLE.get(value, Qt.SolidLine)
+            else:
+                deserialized[key] = value
+
         return deserialized
+
+    @classmethod
+    def _migrate_to_per_line_appearance(cls, config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Migrate old indicator config to per_line_appearance format.
+
+        Creates per_line_appearance from metadata defaults for built-in indicators.
+        For indicators without metadata, returns empty dict.
+        """
+        kind = config.get("kind")
+        metadata_list = cls.INDICATOR_COLUMN_METADATA.get(kind, [])
+
+        if not metadata_list:
+            # No metadata available (plugin or unknown indicator)
+            return {}
+
+        per_line_appearance = {}
+        for meta in metadata_list:
+            column = meta["column"]
+            per_line_appearance[column] = {
+                "label": meta["label"],
+                "visible": True,
+                "color": meta["default_color"],
+                "line_width": 2,
+                "line_style": meta["default_style"],
+                "marker_shape": "o",
+                "marker_size": 10
+            }
+
+        return per_line_appearance
 
     @classmethod
     def initialize(cls) -> None:
@@ -193,6 +267,71 @@ class IndicatorService:
         return indicator_name in cls.OVERLAY_INDICATORS
 
     @classmethod
+    def get_column_metadata(cls, indicator_name: str) -> Optional[List[Dict[str, Any]]]:
+        """
+        Get column metadata for an indicator (for per-line customization).
+
+        Returns list of dicts with keys: column, label, default_color, default_style
+        For plugin indicators, returns None (requires preview calculation).
+
+        Args:
+            indicator_name: Name of the indicator
+
+        Returns:
+            List of column metadata dicts, or None for plugin indicators
+        """
+        if indicator_name not in cls.ALL_INDICATORS:
+            return []
+
+        config = cls.ALL_INDICATORS[indicator_name]
+        kind = config.get("kind")
+
+        # Plugin indicators need preview calculation
+        if kind == "plugin":
+            return None
+
+        # Return metadata for built-in indicators
+        return cls.INDICATOR_COLUMN_METADATA.get(kind, [])
+
+    @classmethod
+    def preview_indicator_columns(cls, indicator_name: str) -> List[str]:
+        """
+        Preview which columns an indicator will produce.
+        For plugins, calculates on sample data. For built-ins, uses metadata.
+
+        Args:
+            indicator_name: Name of the indicator
+
+        Returns:
+            List of column names
+        """
+        metadata = cls.get_column_metadata(indicator_name)
+
+        # If we have metadata, extract column names
+        if metadata is not None:
+            return [m["column"] for m in metadata]
+
+        # Plugin indicator - need to calculate preview
+        try:
+            from app.services.market_data import fetch_price_history
+
+            # Fetch minimal sample data (BTC-USD, last 365 days)
+            df = fetch_price_history("BTC-USD", period="1y", interval="1d")
+            if df is None or df.empty:
+                return []
+
+            # Calculate indicator
+            result_df = cls.calculate(df, indicator_name)
+            if result_df is None or result_df.empty:
+                return []
+
+            return list(result_df.columns)
+
+        except Exception as e:
+            print(f"Error previewing indicator columns: {e}")
+            return []
+
+    @classmethod
     def add_custom_indicator(cls, name: str, config: dict, is_overlay: bool = True) -> None:
         """
         Add a custom indicator to the available indicators.
@@ -247,14 +386,18 @@ class IndicatorService:
                     config = v.copy()
                     if "appearance" in config:
                         config["appearance"] = cls._serialize_appearance(config["appearance"])
+                    if "per_line_appearance" in config:
+                        config["per_line_appearance"] = cls._serialize_appearance(config["per_line_appearance"])
                     overlays_to_save[k] = config
-            
+
             oscillators_to_save = {}
             for k, v in cls.OSCILLATOR_INDICATORS.items():
                 if v.get("kind") != "plugin":
                     config = v.copy()
                     if "appearance" in config:
                         config["appearance"] = cls._serialize_appearance(config["appearance"])
+                    if "per_line_appearance" in config:
+                        config["per_line_appearance"] = cls._serialize_appearance(config["per_line_appearance"])
                     oscillators_to_save[k] = config
             
             # Prepare data to save
@@ -291,14 +434,24 @@ class IndicatorService:
                 config = v.copy()
                 if "appearance" in config:
                     config["appearance"] = cls._deserialize_appearance(config["appearance"])
+                if "per_line_appearance" in config:
+                    config["per_line_appearance"] = cls._deserialize_appearance(config["per_line_appearance"])
+                else:
+                    # MIGRATION: Auto-populate per_line_appearance from metadata if missing
+                    config["per_line_appearance"] = cls._migrate_to_per_line_appearance(config)
                 cls.OVERLAY_INDICATORS[k] = config
-            
+
             # Load oscillators and deserialize appearance
             cls.OSCILLATOR_INDICATORS = {}
             for k, v in data.get("oscillators", {}).items():
                 config = v.copy()
                 if "appearance" in config:
                     config["appearance"] = cls._deserialize_appearance(config["appearance"])
+                if "per_line_appearance" in config:
+                    config["per_line_appearance"] = cls._deserialize_appearance(config["per_line_appearance"])
+                else:
+                    # MIGRATION: Auto-populate per_line_appearance from metadata if missing
+                    config["per_line_appearance"] = cls._migrate_to_per_line_appearance(config)
                 cls.OSCILLATOR_INDICATORS[k] = config
             
             # Rebuild ALL_INDICATORS
@@ -400,7 +553,7 @@ class IndicatorService:
         Returns:
             Dictionary mapping indicator names to dicts containing:
                 - "data": DataFrame with indicator values
-                - "appearance": Appearance settings dict (or empty dict if none)
+                - "per_line_appearance": Per-line appearance settings dict (or empty dict if none)
         """
         results = {}
         for name in indicator_names:
@@ -408,11 +561,11 @@ class IndicatorService:
             if result_df is not None:
                 # Get appearance settings from config if available
                 config = cls.ALL_INDICATORS.get(name, {})
-                appearance = config.get("appearance", {})
-                
+                per_line_appearance = config.get("per_line_appearance", {})
+
                 results[name] = {
                     "data": result_df,
-                    "appearance": appearance,
+                    "per_line_appearance": per_line_appearance,  # Only this field
                 }
         return results
 

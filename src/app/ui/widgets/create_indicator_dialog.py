@@ -13,6 +13,8 @@ from PySide6.QtWidgets import (
     QColorDialog,
     QGroupBox,
     QWidget,
+    QScrollArea,
+    QCheckBox,
 )
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QColor, QMouseEvent
@@ -204,9 +206,15 @@ class CreateIndicatorDialog(QDialog):
 
         content_layout.addWidget(param_group)
 
-        # Appearance settings
-        self.appearance_group = self._create_appearance_group()
-        content_layout.addWidget(self.appearance_group)
+        # Appearance Settings label
+        appearance_label = QLabel("Appearance Settings")
+        appearance_label.setStyleSheet("font-weight: bold; font-size: 13px; margin-top: 10px;")
+        content_layout.addWidget(appearance_label)
+
+        # Per-line settings group (always visible)
+        self.per_line_group = self._create_per_line_settings_group()
+        self.per_line_group.setTitle("")  # No title needed, we have the label above
+        content_layout.addWidget(self.per_line_group)
 
         # Initialize with first indicator type
         self._on_type_changed(self.type_combo.currentText())
@@ -277,183 +285,269 @@ class CreateIndicatorDialog(QDialog):
     def _populate_from_config(self):
         """Populate dialog fields from existing indicator config."""
         config = self.indicator_config
-        
+
+        # Block signals while populating to prevent triggering dialogs
+        self.type_combo.blockSignals(True)
+        self.name_input.blockSignals(True)
+
         # Set indicator type
         indicator_type = config.get("type")
         if indicator_type:
             index = self.type_combo.findText(indicator_type)
             if index >= 0:
                 self.type_combo.setCurrentIndex(index)
-        
+
+        # Re-enable type combo signal and manually trigger type changed to recreate param form
+        self.type_combo.blockSignals(False)
+        if indicator_type:
+            self._on_type_changed(indicator_type)
+
+        # Re-block to continue populating
+        self.type_combo.blockSignals(True)
+
         # Set custom name
         custom_name = config.get("custom_name", "")
         if custom_name:
             self.name_input.setText(custom_name)
-        
-        # Set parameters
+
+        # Set parameters (now that correct param form exists)
         params = config.get("params", {})
         for param_name, value in params.items():
             if param_name in self.param_inputs:
                 self.param_inputs[param_name]["widget"].setText(str(value))
-        
-        # Set appearance
-        appearance = config.get("appearance", {})
-        
-        # Color
-        color = appearance.get("color", (0, 150, 255))
-        self.selected_color = color
-        self.color_preview.setStyleSheet(
-            f"font-size: 24px; color: rgb({color[0]}, {color[1]}, {color[2]});"
-        )
-        
-        # Find matching preset color or set to Custom
-        color_index = len(self.PRESET_COLORS) - 1  # Default to Custom
-        for i, (name, preset_color) in enumerate(self.PRESET_COLORS[:-1]):
-            if preset_color == color:
-                color_index = i
-                break
-        self.color_combo.setCurrentIndex(color_index)
-        
-        # Line width
-        line_width = appearance.get("line_width", 2)
-        self.line_width_spin.setValue(line_width)
-        
-        # Line style
-        line_style = appearance.get("line_style", Qt.SolidLine)
-        for style_name, style_value in self.LINE_STYLES.items():
-            if style_value == line_style:
-                index = self.line_style_combo.findText(style_name)
-                if index >= 0:
-                    self.line_style_combo.setCurrentIndex(index)
-                break
-        
-        # Marker shape
-        marker_shape = appearance.get("marker_shape", "o")
-        for shape_name, shape_value in self.MARKER_SHAPES.items():
-            if shape_value == marker_shape:
-                index = self.marker_shape_combo.findText(shape_name)
-                if index >= 0:
-                    self.marker_shape_combo.setCurrentIndex(index)
-                break
-        
-        # Marker size
-        marker_size = appearance.get("marker_size", 10)
-        self.marker_size_spin.setValue(marker_size)
 
-    def _create_appearance_group(self) -> QGroupBox:
-        """Create appearance settings group."""
-        group = QGroupBox("Appearance Settings")
-        group.setObjectName("appearanceGroup")
-        layout = QFormLayout()
+        # Set per-line appearance (now the only appearance config)
+        per_line_appearance = config.get("per_line_appearance", {})
+        if per_line_appearance and self.line_widgets:
+
+            # Populate each line's settings
+            for col_name, line_settings in per_line_appearance.items():
+                if col_name in self.line_widgets:
+                    widgets = self.line_widgets[col_name]
+
+                    # Block signals for line widgets
+                    widgets["visible"].blockSignals(True)
+                    widgets["label"].blockSignals(True)
+                    widgets["width"].blockSignals(True)
+                    widgets["style"].blockSignals(True)
+                    widgets["marker_shape"].blockSignals(True)
+                    widgets["marker_size"].blockSignals(True)
+
+                    # Set values
+                    widgets["visible"].setChecked(line_settings.get("visible", True))
+                    widgets["label"].setText(line_settings.get("label", col_name))
+                    widgets["width"].setValue(line_settings.get("line_width", 2))
+                    widgets["marker_size"].setValue(line_settings.get("marker_size", 10))
+
+                    # Set color
+                    color = line_settings.get("color", (0, 150, 255))
+                    widgets["color"] = color
+                    widgets["color_btn"].setStyleSheet(
+                        f"background-color: rgb({color[0]}, {color[1]}, {color[2]}); "
+                        f"border: 1px solid #555;"
+                    )
+
+                    # Set line style
+                    line_style = line_settings.get("line_style", Qt.SolidLine)
+                    for style_name, style_val in self.LINE_STYLES.items():
+                        if style_val == line_style:
+                            widgets["style"].setCurrentText(style_name)
+                            break
+
+                    # Set marker shape
+                    marker_shape = line_settings.get("marker_shape", "o")
+                    for shape_name, shape_val in self.MARKER_SHAPES.items():
+                        if shape_val == marker_shape:
+                            widgets["marker_shape"].setCurrentText(shape_name)
+                            break
+
+                    # Re-enable signals for line widgets
+                    widgets["visible"].blockSignals(False)
+                    widgets["label"].blockSignals(False)
+                    widgets["width"].blockSignals(False)
+                    widgets["style"].blockSignals(False)
+                    widgets["marker_shape"].blockSignals(False)
+                    widgets["marker_size"].blockSignals(False)
+
+        # Re-enable signals
+        self.type_combo.blockSignals(False)
+        self.name_input.blockSignals(False)
+
+        # Populate per-line settings based on indicator type
+        # This must be done AFTER setting the type combo
+        if indicator_type:
+            self._populate_per_line_settings(indicator_type)
+
+    def _create_per_line_settings_group(self) -> QGroupBox:
+        """Create the per-line appearance settings group."""
+        group = QGroupBox("Per-Line Customization")
+        group.setObjectName("perLineGroup")
+        layout = QVBoxLayout(group)
+        layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
 
-        # Color selection
-        color_layout = QHBoxLayout()
-        self.color_combo = QComboBox()
-        for color_name, _ in self.PRESET_COLORS:
-            self.color_combo.addItem(color_name)
-        self.color_combo.currentTextChanged.connect(self._on_color_changed)
-        color_layout.addWidget(self.color_combo, stretch=1)
-        
-        self.color_preview = QLabel("●")
-        self.color_preview.setStyleSheet("font-size: 24px; color: rgb(0, 150, 255);")
-        color_layout.addWidget(self.color_preview)
-        
-        layout.addRow("Color:", color_layout)
+        # Scroll area to handle many lines
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setMaximumHeight(400)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        # Line width
-        self.line_width_spin = QSpinBox()
-        self.line_width_spin.setMinimum(1)
-        self.line_width_spin.setMaximum(10)
-        self.line_width_spin.setValue(2)
-        self.line_width_spin.setSuffix(" px")
-        self.line_width_row = layout.rowCount()
-        layout.addRow("Line Width:", self.line_width_spin)
+        # Container for line widgets
+        self.per_line_container = QWidget()
+        self.per_line_layout = QVBoxLayout(self.per_line_container)
+        self.per_line_layout.setContentsMargins(5, 5, 5, 5)
+        self.per_line_layout.setSpacing(5)
+        scroll.setWidget(self.per_line_container)
 
-        # Line style
-        self.line_style_combo = QComboBox()
-        self.line_style_combo.addItems(list(self.LINE_STYLES.keys()))
-        self.line_style_row = layout.rowCount()
-        layout.addRow("Line Style:", self.line_style_combo)
+        layout.addWidget(scroll)
 
-        # Marker shape (for scatter plots)
-        self.marker_shape_combo = QComboBox()
-        self.marker_shape_combo.addItems(list(self.MARKER_SHAPES.keys()))
-        self.marker_shape_row = layout.rowCount()
-        layout.addRow("Marker Shape:", self.marker_shape_combo)
+        # Storage for line widgets
+        self.line_widgets = {}  # column_name -> widget dict
 
-        # Marker size
-        self.marker_size_spin = QSpinBox()
-        self.marker_size_spin.setMinimum(4)
-        self.marker_size_spin.setMaximum(20)
-        self.marker_size_spin.setValue(10)
-        self.marker_size_spin.setSuffix(" px")
-        self.marker_size_row = layout.rowCount()
-        layout.addRow("Marker Size:", self.marker_size_spin)
-
-        group.setLayout(layout)
         return group
 
-    def _update_appearance_visibility(self, indicator_type: str):
-        """Show/hide appearance options based on indicator type."""
-        indicator_info = self.INDICATOR_TYPES.get(indicator_type, {})
-        uses_markers = indicator_info.get("uses_markers", False)
-        
-        # Get the form layout
-        form_layout = self.appearance_group.layout()
-        
-        # Show/hide marker-related fields
-        # Line options are always visible
-        # Marker options only visible if indicator uses markers
-        
-        if hasattr(self, 'marker_shape_row'):
-            # Hide marker shape
-            label_item = form_layout.itemAt(self.marker_shape_row, QFormLayout.LabelRole)
-            field_item = form_layout.itemAt(self.marker_shape_row, QFormLayout.FieldRole)
-            
-            if label_item and label_item.widget():
-                label_item.widget().setVisible(uses_markers)
-            if field_item and field_item.widget():
-                field_item.widget().setVisible(uses_markers)
-        
-        if hasattr(self, 'marker_size_row'):
-            # Hide marker size
-            label_item = form_layout.itemAt(self.marker_size_row, QFormLayout.LabelRole)
-            field_item = form_layout.itemAt(self.marker_size_row, QFormLayout.FieldRole)
-            
-            if label_item and label_item.widget():
-                label_item.widget().setVisible(uses_markers)
-            if field_item and field_item.widget():
-                field_item.widget().setVisible(uses_markers)
+    def _create_line_widget(self, column_name: str, metadata: dict) -> QWidget:
+        """
+        Create a widget for customizing a single line.
 
-    def _on_color_changed(self, color_name: str):
-        """Handle color selection change."""
-        if color_name == "Custom...":
-            # Open color picker
-            current_color = QColor(*self.selected_color)
-            color = QColorDialog.getColor(current_color, self, "Select Indicator Color")
-            
-            if color.isValid():
-                self.selected_color = (color.red(), color.green(), color.blue())
-                self.color_preview.setStyleSheet(
-                    f"font-size: 24px; color: rgb({color.red()}, {color.green()}, {color.blue()});"
-                )
-            else:
-                # User canceled, revert to previous selection
-                # Find the previous color in the preset list
-                for i, (name, rgb) in enumerate(self.PRESET_COLORS[:-1]):
-                    if rgb == self.selected_color:
-                        self.color_combo.setCurrentIndex(i)
-                        break
-        else:
-            # Use preset color
-            for name, rgb in self.PRESET_COLORS:
-                if name == color_name and rgb is not None:
-                    self.selected_color = rgb
-                    self.color_preview.setStyleSheet(
-                        f"font-size: 24px; color: rgb({rgb[0]}, {rgb[1]}, {rgb[2]});"
-                    )
-                    break
+        Args:
+            column_name: Technical column name (e.g., "BB_Upper")
+            metadata: Dict with keys: label, default_color, default_style
+        """
+        widget = QWidget()
+        layout = QHBoxLayout(widget)
+        layout.setContentsMargins(5, 5, 5, 5)
+        layout.setSpacing(8)
+
+        # Visibility checkbox
+        visible_check = QCheckBox()
+        visible_check.setChecked(True)
+        visible_check.setToolTip("Show/hide this line")
+        layout.addWidget(visible_check)
+
+        # Label input (editable)
+        label_input = QLineEdit(metadata.get("label", column_name))
+        label_input.setPlaceholderText("Display label")
+        label_input.setMinimumWidth(120)
+        label_input.setMaximumWidth(150)
+        label_input.setToolTip("Custom label for legend (leave empty to hide from legend)")
+        layout.addWidget(label_input)
+
+        # Color button
+        color = metadata.get("default_color", (0, 150, 255))
+        color_btn = QPushButton()
+        color_btn.setFixedSize(30, 30)
+        color_btn.setStyleSheet(
+            f"background-color: rgb({color[0]}, {color[1]}, {color[2]}); "
+            f"border: 1px solid #555;"
+        )
+        color_btn.setToolTip("Click to change color")
+        color_btn.setCursor(Qt.PointingHandCursor)
+        color_btn.clicked.connect(lambda: self._pick_line_color(column_name))
+        layout.addWidget(color_btn)
+
+        # Line width spinner
+        width_spin = QSpinBox()
+        width_spin.setMinimum(1)
+        width_spin.setMaximum(10)
+        width_spin.setValue(2)
+        width_spin.setPrefix("W: ")
+        width_spin.setMaximumWidth(70)
+        width_spin.setToolTip("Line width in pixels")
+        layout.addWidget(width_spin)
+
+        # Line style combo
+        style_combo = QComboBox()
+        style_combo.addItems(list(self.LINE_STYLES.keys()))
+        style_combo.setMaximumWidth(100)
+        style_combo.setToolTip("Line style")
+        # Set default from metadata
+        default_style = metadata.get("default_style", Qt.SolidLine)
+        for style_name, style_val in self.LINE_STYLES.items():
+            if style_val == default_style:
+                style_combo.setCurrentText(style_name)
+                break
+        layout.addWidget(style_combo)
+
+        # Marker shape combo (for scatter plots)
+        marker_shape_combo = QComboBox()
+        marker_shape_combo.addItems(list(self.MARKER_SHAPES.keys()))
+        marker_shape_combo.setMaximumWidth(100)
+        marker_shape_combo.setToolTip("Marker shape for scatter plots")
+        layout.addWidget(marker_shape_combo)
+
+        # Marker size spinner
+        marker_size_spin = QSpinBox()
+        marker_size_spin.setMinimum(5)
+        marker_size_spin.setMaximum(30)
+        marker_size_spin.setValue(10)
+        marker_size_spin.setPrefix("M: ")
+        marker_size_spin.setMaximumWidth(70)
+        marker_size_spin.setToolTip("Marker size for scatter plots")
+        layout.addWidget(marker_size_spin)
+
+        layout.addStretch()
+
+        # Store references
+        self.line_widgets[column_name] = {
+            "widget": widget,
+            "visible": visible_check,
+            "label": label_input,
+            "color_btn": color_btn,
+            "color": color,
+            "width": width_spin,
+            "style": style_combo,
+            "marker_shape": marker_shape_combo,
+            "marker_size": marker_size_spin
+        }
+
+        return widget
+
+    def _populate_per_line_settings(self, indicator_type: str):
+        """Populate per-line settings based on indicator type."""
+        # Clear existing widgets
+        for col_name, widgets in self.line_widgets.items():
+            widgets["widget"].setParent(None)
+            widgets["widget"].deleteLater()
+        self.line_widgets.clear()
+
+        # Get indicator kind
+        kind_map = {
+            "SMA": "sma", "EMA": "ema", "Bollinger Bands": "bbands",
+            "RSI": "rsi", "MACD": "macd", "ATR": "atr",
+            "Stochastic": "stochastic", "OBV": "obv", "VWAP": "vwap"
+        }
+        kind = kind_map.get(indicator_type, indicator_type.lower())
+
+        # Get column metadata
+        from app.services.indicator_service import IndicatorService
+        metadata_list = IndicatorService.INDICATOR_COLUMN_METADATA.get(kind, [])
+
+        if not metadata_list:
+            # No metadata available (shouldn't happen for built-ins)
+            return
+
+        # Create widgets for each line (even if only 1 line for SMA)
+        for metadata in metadata_list:
+            column_name = metadata["column"]
+            line_widget = self._create_line_widget(column_name, metadata)
+            self.per_line_layout.addWidget(line_widget)
+
+    def _pick_line_color(self, column_name: str):
+        """Open color picker for a specific line."""
+        if column_name not in self.line_widgets:
+            return
+
+        widgets = self.line_widgets[column_name]
+        current_color = QColor(*widgets["color"])
+        color = QColorDialog.getColor(current_color, self, f"Select Color for {column_name}")
+
+        if color.isValid():
+            widgets["color"] = (color.red(), color.green(), color.blue())
+            widgets["color_btn"].setStyleSheet(
+                f"background-color: rgb({color.red()}, {color.green()}, {color.blue()}); "
+                f"border: 1px solid #555;"
+            )
 
     def _apply_theme(self):
         """Apply the current theme to the dialog."""
@@ -847,9 +941,9 @@ class CreateIndicatorDialog(QDialog):
             no_params_label = QLabel("This indicator has no configurable parameters.")
             no_params_label.setStyleSheet("font-style: italic; color: #888888;")
             self.param_form.addRow(no_params_label)
-        
-        # Update appearance field visibility
-        self._update_appearance_visibility(indicator_type)
+
+        # Update per-line settings
+        self._populate_per_line_settings(indicator_type)
 
     def _create_indicator(self):
         """Validate inputs and create/update the indicator."""
@@ -887,23 +981,28 @@ class CreateIndicatorDialog(QDialog):
         # Get custom name if provided
         custom_name = self.name_input.text().strip()
 
-        # Collect appearance settings
-        appearance = {
-            "color": self.selected_color,
-            "line_width": self.line_width_spin.value(),
-            "line_style": self.LINE_STYLES[self.line_style_combo.currentText()],
-            "marker_shape": self.MARKER_SHAPES[self.marker_shape_combo.currentText()],
-            "marker_size": self.marker_size_spin.value(),
-        }
+        # Collect per-line appearance settings (REQUIRED - now the only appearance config)
+        per_line_appearance = {}
+        if self.line_widgets:
+            for col_name, widgets in self.line_widgets.items():
+                per_line_appearance[col_name] = {
+                    "label": widgets["label"].text().strip(),
+                    "visible": widgets["visible"].isChecked(),
+                    "color": widgets["color"],
+                    "line_width": widgets["width"].value(),
+                    "line_style": self.LINE_STYLES[widgets["style"].currentText()],
+                    "marker_shape": self.MARKER_SHAPES[widgets["marker_shape"].currentText()],
+                    "marker_size": widgets["marker_size"].value()
+                }
 
-        # Store the result
+        # Store the result (NO global appearance dict)
         self.result = {
             "type": indicator_type,
             "params": params,
             "custom_name": custom_name or None,
-            "appearance": appearance,
+            "per_line_appearance": per_line_appearance,  # Only this now
         }
-        
+
         self.accept()
 
     def get_indicator_config(self):
