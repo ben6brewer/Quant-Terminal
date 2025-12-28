@@ -34,6 +34,56 @@ from app.core.config import (
 )
 
 
+class DebugButton(QPushButton):
+    """Button that handles hover manually since overlay blocks Qt's hover system."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setAttribute(Qt.WA_Hover, True)
+        self.setMouseTracking(True)
+        self._base_style = ""
+        self._is_hovered = False
+        print(f"[DEBUG_BUTTON_INIT] Created DebugButton with manual hover: {self.text() if args else 'unnamed'}")
+
+    def setStyleSheet(self, stylesheet):
+        """Store base stylesheet for hover restoration."""
+        self._base_style = stylesheet
+        super().setStyleSheet(stylesheet)
+
+    def _apply_hover_style(self):
+        """Apply hover effect by modifying background and border."""
+        # Bloomberg theme hover: semi-transparent orange + orange border
+        hover_style = self._base_style + """
+            QPushButton {
+                background-color: rgba(255, 128, 0, 0.15) !important;
+                border: 1px solid #FF8000 !important;
+            }
+        """
+        super().setStyleSheet(hover_style)
+        print(f"[HOVER] Applied hover style to {self.text()}")
+
+    def _remove_hover_style(self):
+        """Remove hover effect, restore base style."""
+        super().setStyleSheet(self._base_style)
+        print(f"[HOVER] Removed hover style from {self.text()}")
+
+    def event(self, event):
+        """Handle all events, including hover events that Qt generates."""
+        event_type = event.type()
+
+        # HoverEnter = 127, HoverLeave = 128, HoverMove = 129
+        if event_type == 127:  # HoverEnter
+            print(f"[HOVER_ENTER] HoverEnter event on {self.text()}")
+            self._is_hovered = True
+            self._apply_hover_style()
+        elif event_type == 128:  # HoverLeave
+            print(f"[HOVER_LEAVE] HoverLeave event on {self.text()}")
+            self._is_hovered = False
+            self._remove_hover_style()
+
+        return super().event(event)
+
+
 class ChartModule(QWidget):
     """
     Charting module with indicator support and order book depth.
@@ -71,8 +121,24 @@ class ChartModule(QWidget):
 
     def _apply_control_bar_theme(self) -> None:
         """Apply theme-specific styling to the control bar."""
+        # DEBUG: Before applying parent stylesheet
+        print(f"\n[BEFORE_PARENT_STYLESHEET]")
+        print(f"  Indicators btn stylesheet: {self.indicators_btn.styleSheet()[:100]}...")
+        print(f"  Depth btn stylesheet: {self.depth_btn.styleSheet()[:100]}...")
+        print(f"  Settings btn stylesheet: {self.chart_settings_btn.styleSheet()[:100]}...")
+
         stylesheet = self.theme_manager.get_controls_stylesheet()
+        print(f"\n[PARENT_STYLESHEET]")
+        print(f"  Applying to controls_widget")
+        print(f"  Has QPushButton rules: {'QPushButton' in stylesheet}")
+
         self.controls_widget.setStyleSheet(stylesheet)
+
+        # DEBUG: After applying parent stylesheet
+        print(f"\n[AFTER_PARENT_STYLESHEET]")
+        print(f"  Indicators btn stylesheet: {self.indicators_btn.styleSheet()[:100]}...")
+        print(f"  Depth btn stylesheet: {self.depth_btn.styleSheet()[:100]}...")
+        print(f"  Settings btn stylesheet: {self.chart_settings_btn.styleSheet()[:100]}...")
 
     def _apply_indicator_panel_theme(self) -> None:
         """Apply theme-specific styling to the indicator panel."""
@@ -120,24 +186,30 @@ class ChartModule(QWidget):
                 color: #000000;
             }
             QPushButton {
-                background-color: #2d2d2d;
+                background-color: transparent;
                 color: #ffffff;
-                border: 1px solid #3d3d3d;
+                border: 1px solid transparent;
                 border-radius: 2px;
-                padding: 8px;
-                font-weight: bold;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
             }
             QPushButton:hover {
+                background-color: rgba(0, 212, 255, 0.15);
                 border: 1px solid #00d4ff;
-                background-color: #353535;
             }
             QPushButton:pressed {
                 background-color: #00d4ff;
                 color: #000000;
+                border: 1px solid #00d4ff;
             }
             QPushButton:checked {
                 background-color: #00d4ff;
                 color: #000000;
+                border: 1px solid #00d4ff;
+            }
+            QPushButton:disabled {
+                opacity: 0.4;
             }
             QPushButton#createButton {
                 background-color: #00d4ff;
@@ -181,24 +253,30 @@ class ChartModule(QWidget):
                 color: #ffffff;
             }
             QPushButton {
-                background-color: #ffffff;
+                background-color: transparent;
                 color: #000000;
-                border: 1px solid #cccccc;
+                border: 1px solid transparent;
                 border-radius: 2px;
-                padding: 8px;
-                font-weight: bold;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
             }
             QPushButton:hover {
+                background-color: rgba(0, 102, 204, 0.15);
                 border: 1px solid #0066cc;
-                background-color: #f0f0f0;
             }
             QPushButton:pressed {
                 background-color: #0066cc;
                 color: #ffffff;
+                border: 1px solid #0066cc;
             }
             QPushButton:checked {
                 background-color: #0066cc;
                 color: #ffffff;
+                border: 1px solid #0066cc;
+            }
+            QPushButton:disabled {
+                opacity: 0.4;
             }
             QPushButton#createButton {
                 background-color: #0066cc;
@@ -242,20 +320,30 @@ class ChartModule(QWidget):
                 color: #000000;
             }
             QPushButton {
-                background-color: #0a1018;
+                background-color: transparent;
                 color: #e8e8e8;
-                border: 1px solid #1a2332;
+                border: 1px solid transparent;
                 border-radius: 2px;
-                padding: 8px;
-                font-weight: bold;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
             }
             QPushButton:hover {
+                background-color: rgba(255, 128, 0, 0.15);
                 border: 1px solid #FF8000;
-                background-color: #0d1420;
             }
             QPushButton:pressed {
                 background-color: #FF8000;
                 color: #000000;
+                border: 1px solid #FF8000;
+            }
+            QPushButton:checked {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
+            }
+            QPushButton:disabled {
+                opacity: 0.4;
             }
             QPushButton#createButton {
                 background-color: #FF8000;
@@ -325,16 +413,16 @@ class ChartModule(QWidget):
         # Separator
         controls.addSpacing(20)
 
-        # Indicators button
-        self.indicators_btn = QPushButton("📊 Indicators")
+        # Indicators button (using DebugButton to test event handling)
+        self.indicators_btn = DebugButton("Indicators")
         self.indicators_btn.setCheckable(True)
+        self.indicators_btn.setStyleSheet(self.theme_manager._get_universal_button_style())
         self.indicators_btn.setMaximumWidth(120)
         controls.addWidget(self.indicators_btn)
         self.indicators_btn.show()
 
         # Depth button
-        self.depth_btn = QPushButton("📈 Depth")
-        self.depth_btn.setCheckable(True)
+        self.depth_btn = self.theme_manager.create_styled_button("Depth", checkable=True)
         self.depth_btn.setMaximumWidth(120)
         self.depth_btn.setEnabled(False)  # Disabled by default, enabled for Binance tickers
         self.depth_btn.setToolTip("Load a Binance crypto pair (BTC-USD, ETH-USD, etc.) to enable")
@@ -345,8 +433,7 @@ class ChartModule(QWidget):
         controls.addStretch(1)
 
         # Chart settings button (right-aligned)
-        self.chart_settings_btn = QPushButton("Settings")
-        self.chart_settings_btn.setObjectName("chartSettingsButton")
+        self.chart_settings_btn = self.theme_manager.create_styled_button("Settings")
         self.chart_settings_btn.setMaximumWidth(120)
         self.chart_settings_btn.clicked.connect(self._open_chart_settings)
         controls.addWidget(self.chart_settings_btn)
@@ -936,7 +1023,7 @@ class ChartModule(QWidget):
             self.depth_btn.setVisible(is_binance)
 
             if is_binance:
-                self.depth_btn.setText("📈 Depth ✓")
+                self.depth_btn.setText("Depth ✓")
                 self.depth_btn.setToolTip(
                     f"✓ Order book depth available for {display_name}\n\n"
                     f"Click to show live Binance order book with:\n"
@@ -949,7 +1036,7 @@ class ChartModule(QWidget):
                 if self.depth_panel.isVisible():
                     self.depth_panel.set_ticker(display_name)
             else:
-                self.depth_btn.setText("📈 Depth")
+                self.depth_btn.setText("Depth")
                 self.depth_btn.setToolTip(
                     f"✗ {display_name} is not available on Binance\n\n"
                     f"Order book depth is only available for crypto pairs.\n\n"

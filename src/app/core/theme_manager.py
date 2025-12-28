@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Callable
 from PySide6.QtCore import QObject, Signal
+from PySide6.QtWidgets import QPushButton
 
 
 class ThemeManager(QObject):
@@ -17,6 +18,7 @@ class ThemeManager(QObject):
         super().__init__()
         self._current_theme = "bloomberg"  # Default if not loaded from preferences
         self._theme_listeners = []
+        self._styled_buttons = []  # Track buttons for theme updates
 
     @property
     def current_theme(self) -> str:
@@ -38,6 +40,13 @@ class ThemeManager(QObject):
             return
 
         self._current_theme = theme
+
+        # Update all tracked buttons with new theme styling
+        universal_style = self._get_universal_button_style()
+        for button in self._styled_buttons:
+            if button:  # Check button still exists
+                button.setStyleSheet(universal_style)
+
         self.theme_changed.emit(theme)
 
         # Save preference to disk
@@ -209,44 +218,6 @@ class ThemeManager(QObject):
                 selection-color: #000000;
                 border: 1px solid #00d4ff;
             }
-            QPushButton {
-                background-color: #2d2d2d;
-                color: #ffffff;
-                border: 1px solid #3d3d3d;
-                border-radius: 2px;
-                padding: 8px 14px;
-                font-weight: 600;
-                font-size: 13px;
-            }
-            QPushButton:hover {
-                border: 1px solid #00d4ff;
-                background-color: #353535;
-            }
-            QPushButton:pressed {
-                background-color: #00d4ff;
-                color: #000000;
-                border: 1px solid #00d4ff;
-            }
-            QPushButton:checked {
-                background-color: #00d4ff;
-                color: #000000;
-                border: 1px solid #00d4ff;
-            }
-            /* Chart settings button - fully transparent */
-            #chartSettingsButton {
-                background-color: transparent;
-                color: #ffffff;
-                border: 1px solid transparent;
-            }
-            #chartSettingsButton:hover {
-                background-color: rgba(0, 212, 255, 0.15);
-                border: 1px solid #00d4ff;
-            }
-            #chartSettingsButton:pressed {
-                background-color: #00d4ff;
-                color: #000000;
-                border: 1px solid #00d4ff;
-            }
         """
 
     # Light theme stylesheets
@@ -396,44 +367,6 @@ class ThemeManager(QObject):
                 color: #000000;
                 selection-background-color: #0066cc;
                 selection-color: #ffffff;
-                border: 1px solid #0066cc;
-            }
-            QPushButton {
-                background-color: #ffffff;
-                color: #000000;
-                border: 1px solid #cccccc;
-                border-radius: 2px;
-                padding: 8px 14px;
-                font-weight: 600;
-                font-size: 13px;
-            }
-            QPushButton:hover {
-                border: 1px solid #0066cc;
-                background-color: #f0f0f0;
-            }
-            QPushButton:pressed {
-                background-color: #0066cc;
-                color: #ffffff;
-                border: 1px solid #0066cc;
-            }
-            QPushButton:checked {
-                background-color: #0066cc;
-                color: #ffffff;
-                border: 1px solid #0066cc;
-            }
-            /* Chart settings button - fully transparent */
-            #chartSettingsButton {
-                background-color: transparent;
-                color: #000000;
-                border: 1px solid transparent;
-            }
-            #chartSettingsButton:hover {
-                background-color: rgba(0, 102, 204, 0.15);
-                border: 1px solid #0066cc;
-            }
-            #chartSettingsButton:pressed {
-                background-color: #0066cc;
-                color: #ffffff;
                 border: 1px solid #0066cc;
             }
         """
@@ -668,44 +601,6 @@ class ThemeManager(QObject):
                 selection-color: #000000;
                 border: 1px solid #FF8000;
             }
-            QPushButton {
-                background-color: #0a1018;
-                color: #e8e8e8;
-                border: 1px solid #1a2332;
-                border-radius: 2px;
-                padding: 8px 14px;
-                font-weight: 600;
-                font-size: 13px;
-            }
-            QPushButton:hover {
-                border: 1px solid #FF8000;
-                background-color: #0d1420;
-            }
-            QPushButton:pressed {
-                background-color: #FF8000;
-                color: #000000;
-                border: 1px solid #FF8000;
-            }
-            QPushButton:checked {
-                background-color: #FF8000;
-                color: #000000;
-                border: 1px solid #FF8000;
-            }
-            /* Chart settings button - fully transparent */
-            #chartSettingsButton {
-                background-color: transparent;
-                color: #e8e8e8;
-                border: 1px solid transparent;
-            }
-            #chartSettingsButton:hover {
-                background-color: rgba(255, 128, 0, 0.15);
-                border: 1px solid #FF8000;
-            }
-            #chartSettingsButton:pressed {
-                background-color: #FF8000;
-                color: #000000;
-                border: 1px solid #FF8000;
-            }
         """
 
     @staticmethod
@@ -732,5 +627,144 @@ class ThemeManager(QObject):
                 background-color: #FF8000;
                 color: #000000;
                 border: 1px solid #FF8000;
+            }
+        """
+
+    def get_home_button_style(self) -> str:
+        """Get home button stylesheet for current theme."""
+        if self._current_theme == "light":
+            return self.get_light_home_button_style()
+        elif self._current_theme == "bloomberg":
+            return self.get_bloomberg_home_button_style()
+        return self.get_dark_home_button_style()
+
+    def create_styled_button(self, text: str, checkable: bool = False) -> QPushButton:
+        """
+        Create a button with universal styling applied.
+
+        Args:
+            text: Button text
+            checkable: If True, button is checkable (toggle button)
+
+        Returns:
+            QPushButton with styling applied and tracked for theme updates
+        """
+        button = QPushButton(text)
+        button.setCheckable(checkable)
+        stylesheet = self._get_universal_button_style()
+        button.setStyleSheet(stylesheet)
+
+        # DEBUG: Print button creation info
+        print(f"\n[CREATE_BUTTON] Button: '{text}'")
+        print(f"  Checkable: {checkable}")
+        print(f"  Stylesheet length: {len(stylesheet)} chars")
+        print(f"  Stylesheet preview: {stylesheet[:100]}...")
+
+        # Track for theme updates
+        self._styled_buttons.append(button)
+
+        return button
+
+    def _get_universal_button_style(self) -> str:
+        """Get universal button stylesheet for current theme."""
+        if self._current_theme == "light":
+            return self._get_light_button_style()
+        elif self._current_theme == "bloomberg":
+            return self._get_bloomberg_button_style()
+        return self._get_dark_button_style()
+
+    @staticmethod
+    def _get_dark_button_style() -> str:
+        """Universal button style for dark theme."""
+        return """
+            QPushButton {
+                background-color: transparent;
+                color: #ffffff;
+                border: 1px solid transparent;
+                border-radius: 2px;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                background-color: rgba(0, 212, 255, 0.15);
+                border: 1px solid #00d4ff;
+            }
+            QPushButton:pressed {
+                background-color: #00d4ff;
+                color: #000000;
+                border: 1px solid #00d4ff;
+            }
+            QPushButton:checked {
+                background-color: #00d4ff;
+                color: #000000;
+                border: 1px solid #00d4ff;
+            }
+            QPushButton:disabled {
+                opacity: 0.4;
+            }
+        """
+
+    @staticmethod
+    def _get_light_button_style() -> str:
+        """Universal button style for light theme."""
+        return """
+            QPushButton {
+                background-color: transparent;
+                color: #000000;
+                border: 1px solid transparent;
+                border-radius: 2px;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                background-color: rgba(0, 102, 204, 0.15);
+                border: 1px solid #0066cc;
+            }
+            QPushButton:pressed {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: 1px solid #0066cc;
+            }
+            QPushButton:checked {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: 1px solid #0066cc;
+            }
+            QPushButton:disabled {
+                opacity: 0.4;
+            }
+        """
+
+    @staticmethod
+    def _get_bloomberg_button_style() -> str:
+        """Universal button style for Bloomberg theme."""
+        return """
+            QPushButton {
+                background-color: transparent;
+                color: #e8e8e8;
+                border: 1px solid transparent;
+                border-radius: 2px;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                background-color: rgba(255, 128, 0, 0.15);
+                border: 1px solid #FF8000;
+            }
+            QPushButton:pressed {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
+            }
+            QPushButton:checked {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
+            }
+            QPushButton:disabled {
+                opacity: 0.4;
             }
         """

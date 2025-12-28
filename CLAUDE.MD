@@ -200,6 +200,28 @@ PyQtGraph-based charting widget.
 - Title bars, buttons, borders, and backgrounds must match theme colors
 - Hover states should use theme accent colors (cyan, blue, or orange)
 
+### Button Styling Standard
+**All buttons use transparent styling with hover highlights:**
+- **Default**: Transparent background, transparent border
+- **Hover**: 15% opacity theme-colored background, solid theme-colored border
+- **Pressed**: Solid theme-colored background, inverted text color
+- **Checked** (toggle buttons): Solid theme-colored background, inverted text color (same as pressed)
+- **Disabled**: 40% opacity
+
+**Implementation**:
+- All `QPushButton` widgets automatically receive this styling via ThemeManager
+- No need to set custom stylesheets on individual buttons
+- Theme colors automatically adjust: Dark (cyan #00d4ff), Light (blue #0066cc), Bloomberg (orange #FF8000)
+
+**Toggle Buttons**:
+- Use `setCheckable(True)` for toggle behavior
+- Checked state shows solid background to indicate active state
+- Examples: Indicators panel, Depth panel, chart settings
+
+**No Emojis**:
+- Button text should be clean, no emojis (e.g., "Settings" not "⚙️ Settings")
+- Rely on text labels and icon fonts if icons are needed
+
 ### Tile-Based Navigation
 **Module tiles follow consistent sizing and behavior:**
 - **Tile Size**: 453×285px (453×255 screenshot + 30px label)

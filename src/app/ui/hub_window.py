@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from PySide6.QtCore import Qt, QCoreApplication, QPoint
-from PySide6.QtGui import QMouseEvent, QWheelEvent, QCursor
+from PySide6.QtGui import QMouseEvent, QWheelEvent, QCursor, QEnterEvent
 
 from app.core.theme_manager import ThemeManager
 from app.core.config import (
@@ -32,16 +32,25 @@ class TransparentOverlay(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # Enable hover events - Qt doesn't send them by default!
+        self.setAttribute(Qt.WA_Hover, True)
+        self.setMouseTracking(True)
+        # Make the overlay transparent for mouse events EXCEPT for its children
+        self.setAttribute(Qt.WA_TransparentForMouseEvents, False)  # Explicitly not transparent (we handle forwarding)
 
     def _forward_event_to_module(self, event) -> None:
         """Forward event to the module widget below in the stacked layout."""
+        print(f"[FORWARD] Event type: {event.type()}, isinstance QEnterEvent: {isinstance(event, QEnterEvent)}")
+
         container = self.parent()
         if not container:
+            print(f"[FORWARD] No container, ignoring")
             event.ignore()
             return
 
         layout = container.layout()
         if not isinstance(layout, QStackedLayout):
+            print(f"[FORWARD] Not QStackedLayout, ignoring")
             event.ignore()
             return
 
@@ -49,10 +58,16 @@ class TransparentOverlay(QWidget):
         if layout.count() >= 1:
             module_widget = layout.widget(0)
             if module_widget:
+                print(f"[FORWARD] Module widget: {module_widget.__class__.__name__}")
+
                 # Map event position to module coordinates
-                # QMouseEvent uses pos(), QWheelEvent uses position()
+                # QMouseEvent uses pos(), QWheelEvent uses position(), QEnterEvent uses cursor
                 if isinstance(event, QWheelEvent):
                     event_pos = event.position().toPoint()
+                elif isinstance(event, QEnterEvent):
+                    # QEnterEvent doesn't have pos(), use cursor position
+                    event_pos = self.mapFromGlobal(QCursor.pos())
+                    print(f"[FORWARD] QEnterEvent, cursor pos in overlay: {event_pos}")
                 elif hasattr(event, 'pos'):
                     event_pos = event.pos()
                 else:
@@ -61,9 +76,12 @@ class TransparentOverlay(QWidget):
                 if event_pos is not None:
                     global_pos = self.mapToGlobal(event_pos)
                     module_pos = module_widget.mapFromGlobal(global_pos)
+                    print(f"[FORWARD] Module pos: {module_pos}")
 
                     # Find the actual child widget at this position
                     target_widget = module_widget.childAt(module_pos)
+                    print(f"[FORWARD] Target widget: {target_widget.__class__.__name__ if target_widget else 'None'}")
+
                     if target_widget:
                         # Send event to the specific child widget
                         child_pos = target_widget.mapFromGlobal(global_pos)
@@ -88,11 +106,19 @@ class TransparentOverlay(QWidget):
                                 event.phase(),
                                 event.inverted()
                             )
+                        elif isinstance(event, QEnterEvent):
+                            new_event = QEnterEvent(child_pos, child_pos, global_pos)
+                            print(f"[FORWARD] Created QEnterEvent for {target_widget.__class__.__name__}")
                         else:
-                            event.ignore()
+                            # For other event types, send directly to target
+                            print(f"[FORWARD] Sending other event type directly to {target_widget.__class__.__name__}")
+                            QCoreApplication.sendEvent(target_widget, event)
+                            event.accept()
                             return
 
+                        print(f"[FORWARD] Sending event to {target_widget.__class__.__name__}")
                         QCoreApplication.sendEvent(target_widget, new_event)
+                        print(f"[FORWARD] Event sent successfully")
                     else:
                         # No specific child widget, send to module itself
                         if isinstance(event, QMouseEvent):
@@ -170,14 +196,28 @@ class TransparentOverlay(QWidget):
 
     def enterEvent(self, event):
         """Pass enter events through unless entering home button."""
-        pos = self.mapFromGlobal(QCursor.pos())
-        if self.childAt(pos):
+        print(f"[OVERLAY_ENTER] TransparentOverlay received enterEvent")
+
+        # Use the event's position if available, otherwise use cursor
+        if hasattr(event, 'pos') and callable(event.pos):
+            pos = event.pos()
+        else:
+            pos = self.mapFromGlobal(QCursor.pos())
+
+        child = self.childAt(pos)
+        print(f"[OVERLAY_ENTER] Child at pos: {child.__class__.__name__ if child else 'None'}")
+
+        if child:
+            print(f"[OVERLAY_ENTER] Sending to child (Home button)")
             super().enterEvent(event)
         else:
+            print(f"[OVERLAY_ENTER] Forwarding to module below")
             self._forward_event_to_module(event)
 
     def leaveEvent(self, event):
         """Pass leave events through to widgets below."""
+        print(f"[OVERLAY_LEAVE] TransparentOverlay received leaveEvent")
+        print(f"[OVERLAY_LEAVE] Forwarding to module below")
         self._forward_event_to_module(event)
 
     def contextMenuEvent(self, event):
@@ -375,11 +415,16 @@ class HubWindow(QMainWindow):
         # REMOVED: layout.setAlignment(Qt.AlignTop | Qt.AlignLeft)  # This caused shrinking!
 
         # Home button
-        home_btn = QPushButton("Home")
-        home_btn.setObjectName("homeButton")
+        home_btn = self.theme_manager.create_styled_button("Home")
         home_btn.setFixedSize(100, 40)
         home_btn.setCursor(Qt.PointingHandCursor)
         home_btn.clicked.connect(self.show_home)
+
+        # DEBUG: Print home button info
+        print(f"\n[HOME_BUTTON_PARENT]")
+        print(f"  Parent: TransparentOverlay")
+        print(f"  Parent stylesheet: {overlay.styleSheet()}")
+        print(f"  Home button stylesheet: {home_btn.styleSheet()[:100]}...")
 
         # Add button with alignment to position it top-left within the expanding layout
         layout.addWidget(home_btn, alignment=Qt.AlignTop | Qt.AlignLeft)
@@ -430,7 +475,6 @@ class HubWindow(QMainWindow):
         """Get complete dark theme stylesheet."""
         return (
             self.theme_manager.get_dark_content_style() +
-            self.theme_manager.get_dark_home_button_style() +
             self._get_dark_title_bar_style()
         )
 
@@ -438,7 +482,6 @@ class HubWindow(QMainWindow):
         """Get complete light theme stylesheet."""
         return (
             self.theme_manager.get_light_content_style() +
-            self.theme_manager.get_light_home_button_style() +
             self._get_light_title_bar_style()
         )
 
@@ -446,7 +489,6 @@ class HubWindow(QMainWindow):
         """Get complete Bloomberg theme stylesheet."""
         return (
             self.theme_manager.get_bloomberg_content_style() +
-            self.theme_manager.get_bloomberg_home_button_style() +
             self._get_bloomberg_title_bar_style()
         )
 
