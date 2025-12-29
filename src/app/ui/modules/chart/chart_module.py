@@ -105,6 +105,7 @@ class ChartModule(QWidget):
             }
             QLabel {
                 color: #cccccc;
+                background-color: transparent;
             }
             QListWidget {
                 background-color: #1e1e1e;
@@ -172,6 +173,7 @@ class ChartModule(QWidget):
             }
             QLabel {
                 color: #333333;
+                background-color: transparent;
             }
             QListWidget {
                 background-color: #ffffff;
@@ -239,6 +241,7 @@ class ChartModule(QWidget):
             }
             QLabel {
                 color: #b0b0b0;
+                background-color: transparent;
             }
             QListWidget {
                 background-color: #0a1018;
@@ -415,19 +418,20 @@ class ChartModule(QWidget):
                 font-size: 14px;
                 font-weight: bold;
                 padding: 5px;
+                background-color: transparent;
             }
         """)
         layout.addWidget(header)
 
         # Create New Indicator button
-        create_btn = QPushButton("➕ Create New Indicator")
+        create_btn = QPushButton("Create New Indicator")
         create_btn.setObjectName("createButton")
         create_btn.clicked.connect(self._create_custom_indicator)
         layout.addWidget(create_btn)
 
         # Overlay indicators section
-        overlay_label = QLabel("Overlays (plot on price):")
-        overlay_label.setStyleSheet("font-size: 12px; font-weight: bold;")
+        overlay_label = QLabel("Overlays:")
+        overlay_label.setStyleSheet("font-size: 12px; font-weight: bold; background-color: transparent;")
         layout.addWidget(overlay_label)
 
         self.overlay_list = QListWidget()
@@ -439,8 +443,8 @@ class ChartModule(QWidget):
         layout.addWidget(self.overlay_list)
 
         # Oscillator indicators section
-        oscillator_label = QLabel("Oscillators (plot separately):")
-        oscillator_label.setStyleSheet("font-size: 12px; font-weight: bold;")
+        oscillator_label = QLabel("Oscillators")
+        oscillator_label.setStyleSheet("font-size: 12px; font-weight: bold; background-color: transparent;")
         layout.addWidget(oscillator_label)
 
         self.oscillator_list = QListWidget()
@@ -456,18 +460,23 @@ class ChartModule(QWidget):
         apply_btn.clicked.connect(self._apply_indicators)
         layout.addWidget(apply_btn)
 
-        # Clear button
-        clear_btn = QPushButton("Clear All")
+        # Clear Selected button
+        clear_btn = QPushButton("Clear Selected")
         clear_btn.clicked.connect(self._clear_indicators)
         layout.addWidget(clear_btn)
 
+        # Clear All button
+        clear_all_btn = QPushButton("Clear All")
+        clear_all_btn.clicked.connect(self._clear_all_indicators)
+        layout.addWidget(clear_all_btn)
+
         # Edit button
-        edit_btn = QPushButton("✏️ Edit Selected")
+        edit_btn = QPushButton("Edit Selected")
         edit_btn.clicked.connect(self._edit_selected_indicator)
         layout.addWidget(edit_btn)
 
         # Delete selected indicator button
-        delete_btn = QPushButton("🗑 Delete Selected")
+        delete_btn = QPushButton("Delete Selected")
         delete_btn.clicked.connect(self._delete_custom_indicator)
         layout.addWidget(delete_btn)
 
@@ -560,14 +569,37 @@ class ChartModule(QWidget):
         self.render_from_cache()
 
     def _clear_indicators(self) -> None:
+        """Clear selected indicators from the chart."""
+        # Get selected items
+        overlay_items = self.overlay_list.selectedItems()
+        oscillator_items = self.oscillator_list.selectedItems()
+
+        selected = [item.text() for item in overlay_items + oscillator_items]
+
+        if not selected:
+            return
+
+        # Deselect the items
+        self.overlay_list.clearSelection()
+        self.oscillator_list.clearSelection()
+
+        # Remove from state
+        for indicator in selected:
+            if indicator in self.state["indicators"]:
+                self.state["indicators"].remove(indicator)
+
+        # Re-render without the cleared indicators
+        self.render_from_cache()
+
+    def _clear_all_indicators(self) -> None:
         """Clear all indicators from the chart."""
         # Deselect all items
         self.overlay_list.clearSelection()
         self.oscillator_list.clearSelection()
-        
+
         # Clear state
         self.state["indicators"] = []
-        
+
         # Re-render without indicators
         self.render_from_cache()
 

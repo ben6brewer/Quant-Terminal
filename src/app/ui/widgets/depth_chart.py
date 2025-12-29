@@ -18,20 +18,23 @@ class DepthChartWidget(pg.PlotWidget):
     
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        
+
         self.setLabel("left", "Cumulative Volume")
         self.setLabel("bottom", "Price (USD)")
         self.showGrid(x=True, y=True, alpha=0.3)
-        
+
+        # Disable mouse dragging/panning - keep auto-scaling behavior
+        self.setMouseEnabled(x=False, y=False)
+
         # Hide legend initially
         self.legend = None
-        
+
         # Plot items
         self.bid_area = None
         self.ask_area = None
         self.bid_line = None
         self.ask_line = None
-        
+
         # Theme colors
         self._theme = "dark"
         self._apply_theme()
@@ -40,6 +43,8 @@ class DepthChartWidget(pg.PlotWidget):
         """Apply theme colors."""
         if self._theme == "light":
             self.setBackground('w')
+        elif self._theme == "bloomberg":
+            self.setBackground('#0d1420')
         else:
             self.setBackground('#1e1e1e')
     
@@ -285,13 +290,14 @@ class OrderBookPanel(QWidget):
             }
             #depthTitle {
                 color: #ffffff;
+                background-color: transparent;
             }
             #statusLabel {
                 color: #8b92ab;
+                background-color: transparent;
                 font-size: 10px;
                 font-style: italic;
                 padding: 5px;
-                background-color: #232739;
             }
             QPushButton {
                 background-color: #2a2f45;
@@ -325,9 +331,11 @@ class OrderBookPanel(QWidget):
             }
             #depthTitle {
                 color: #0066cc;
+                background-color: transparent;
             }
             #statusLabel {
                 color: #666666;
+                background-color: transparent;
                 font-size: 10px;
                 font-style: italic;
                 padding: 5px;
@@ -364,13 +372,14 @@ class OrderBookPanel(QWidget):
             }
             #depthTitle {
                 color: #FF8000;
+                background-color: transparent;
             }
             #statusLabel {
                 color: #b0b0b0;
+                background-color: transparent;
                 font-size: 10px;
                 font-style: italic;
                 padding: 5px;
-                background-color: #0a1018;
             }
             QPushButton {
                 background-color: #0a1018;

@@ -311,7 +311,7 @@ class ChartSettingsDialog(QDialog):
         layout.setSpacing(10)
 
         # Price label toggle
-        self.show_price_label_check = QCheckBox("Show price label on right axis (rightmost candle)")
+        self.show_price_label_check = QCheckBox("Show price label")
         self.show_price_label_check.setChecked(
             self.current_settings.get("show_price_label", True)
         )
@@ -325,21 +325,21 @@ class ChartSettingsDialog(QDialog):
         layout.addWidget(self.show_mouse_price_label_check)
 
         # Date label toggle
-        self.show_date_label_check = QCheckBox("Show date label on bottom axis (follows mouse)")
+        self.show_date_label_check = QCheckBox("Show date label on bottom axis")
         self.show_date_label_check.setChecked(
             self.current_settings.get("show_date_label", True)
         )
         layout.addWidget(self.show_date_label_check)
 
         # Gridlines toggle
-        self.show_gridlines_check = QCheckBox("Show gridlines (contrasts with background)")
+        self.show_gridlines_check = QCheckBox("Show gridlines")
         self.show_gridlines_check.setChecked(
             self.current_settings.get("show_gridlines", False)
         )
         layout.addWidget(self.show_gridlines_check)
 
         # Crosshair toggle
-        self.show_crosshair_check = QCheckBox("Show crosshair lines (follows mouse)")
+        self.show_crosshair_check = QCheckBox("Show crosshair lines")
         self.show_crosshair_check.setChecked(
             self.current_settings.get("show_crosshair", True)
         )

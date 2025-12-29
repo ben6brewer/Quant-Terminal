@@ -17,7 +17,7 @@ class UnifiedOrderBookTable(QTableWidget):
         self._ask_volume_data = {}  # {row: bar_width_percent}
         self._bid_volume_data = {}  # {row: bar_width_percent}
         self._theme = "dark"
-        self._num_levels = 11  # Number of levels to show on each side
+        self._num_levels = 15  # Number of levels to show on each side
     
     def set_theme(self, theme: str):
         """Set the theme."""
@@ -115,7 +115,7 @@ class OrderBookLadderWidget(QWidget):
         self._theme = theme
         self._max_bid_volume = 0
         self._max_ask_volume = 0
-        self._num_levels = 11  # Show 10 levels on each side
+        self._num_levels = 14  # Show 10 levels on each side
         
         self._setup_ui()
         self._apply_theme()
@@ -203,9 +203,11 @@ class OrderBookLadderWidget(QWidget):
         """Apply theme styling."""
         if self._theme == "light":
             stylesheet = self._get_light_stylesheet()
+        elif self._theme == "bloomberg":
+            stylesheet = self._get_bloomberg_stylesheet()
         else:
             stylesheet = self._get_dark_stylesheet()
-        
+
         self.setStyleSheet(stylesheet)
     
     def _get_dark_stylesheet(self) -> str:
@@ -221,6 +223,7 @@ class OrderBookLadderWidget(QWidget):
             }
             #spreadLabel {
                 color: #8b92ab;
+                background-color: transparent;
             }
             QTableWidget {
                 background-color: #1a1d2e;
@@ -230,6 +233,7 @@ class OrderBookLadderWidget(QWidget):
             QTableWidget::item {
                 border: none;
                 padding: 4px 8px;
+                background-color: transparent;
             }
             QHeaderView::section {
                 background-color: #232739;
@@ -257,6 +261,7 @@ class OrderBookLadderWidget(QWidget):
             }
             #spreadLabel {
                 color: #666666;
+                background-color: transparent;
             }
             QTableWidget {
                 background-color: #ffffff;
@@ -266,6 +271,7 @@ class OrderBookLadderWidget(QWidget):
             QTableWidget::item {
                 border: none;
                 padding: 4px 8px;
+                background-color: transparent;
             }
             QHeaderView::section {
                 background-color: #f5f5f5;
@@ -277,6 +283,44 @@ class OrderBookLadderWidget(QWidget):
             }
             #orderTable {
                 background-color: #ffffff;
+            }
+        """
+
+    def _get_bloomberg_stylesheet(self) -> str:
+        """Bloomberg theme stylesheet."""
+        return """
+            QWidget {
+                background-color: #0d1420;
+                color: #e8e8e8;
+            }
+            #spreadHeader {
+                background-color: #0a1018;
+                border-bottom: 2px solid #FF8000;
+            }
+            #spreadLabel {
+                color: #FF8000;
+                background-color: transparent;
+            }
+            QTableWidget {
+                background-color: #0d1420;
+                border: none;
+                gridline-color: transparent;
+            }
+            QTableWidget::item {
+                border: none;
+                padding: 4px 8px;
+                background-color: transparent;
+            }
+            QHeaderView::section {
+                background-color: #0a1018;
+                color: #b0b0b0;
+                border: none;
+                padding: 6px 8px;
+                font-weight: bold;
+                font-size: 11px;
+            }
+            #orderTable {
+                background-color: #0d1420;
             }
         """
     

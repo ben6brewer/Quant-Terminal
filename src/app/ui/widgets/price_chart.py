@@ -427,6 +427,9 @@ class PriceChart(pg.GraphicsLayoutWidget):
         self.price_vb = self.price_plot.getViewBox()
         self.price_vb.setMouseEnabled(x=True, y=True)
 
+        # Store original bottom axis pen for restoration
+        self._original_bottom_axis_pen = self.bottom_axis.pen()
+
         # Set fixed width for price axis to ensure alignment with oscillator axis
         self.right_axis.setWidth(95)
 
@@ -485,15 +488,18 @@ class PriceChart(pg.GraphicsLayoutWidget):
         self._price_label_positioned = False  # Track if initial positioning is done
 
         # Mouse price label (follows mouse Y position)
-        self._mouse_price_label = None  # Will be created when enabled
+        self._mouse_price_label = None  # Will be created when enabled (price chart)
+        self._mouse_osc_label = None  # Will be created when enabled (oscillator chart)
 
         # Date label (crosshair)
         self._date_label = None  # Will be created when enabled
         self._date_label_positioned = False  # Track if initial positioning is done
 
         # Crosshair lines
-        self._crosshair_v = None  # Vertical line
-        self._crosshair_h = None  # Horizontal line
+        self._crosshair_v = None  # Vertical line (price chart)
+        self._crosshair_h = None  # Horizontal line (price chart)
+        self._crosshair_v_osc = None  # Vertical line (oscillator chart)
+        self._crosshair_h_osc = None  # Horizontal line (oscillator chart)
 
         self.candle_width = CANDLE_BAR_WIDTH
         self._has_initialized_view = False
@@ -508,6 +514,11 @@ class PriceChart(pg.GraphicsLayoutWidget):
         self.legend = pg.LegendItem(offset=(10, 10))
         self.legend.setParentItem(self.price_vb)
         self.legend.anchor(itemPos=(0, 0), parentPos=(0, 0))  # Top-left anchor
+
+        # Add oscillator legend (top-left, fixed position)
+        self.oscillator_legend = pg.LegendItem(offset=(10, 10))
+        self.oscillator_legend.setParentItem(self.oscillator_vb)
+        self.oscillator_legend.anchor(itemPos=(0, 0), parentPos=(0, 0))  # Top-left anchor
 
         # Apply initial background (which also applies gridlines)
         self._apply_background()
@@ -541,12 +552,16 @@ class PriceChart(pg.GraphicsLayoutWidget):
 
     def mouseMoveEvent(self, ev):
         """Handle mouse move events for labels and crosshair."""
-        # Update date label position based on mouse x-coordinate
+        # Update date label position based on mouse position
         if self._date_label and self.chart_settings.get('show_date_label', True):
-            self._update_date_label(ev.pos().x())
+            self._update_date_label(ev.pos())
 
         # Update mouse price label position based on mouse position
         self._update_mouse_price_label(ev.pos())
+
+        # Update mouse oscillator label position based on mouse position
+        if self._oscillator_visible:
+            self._update_mouse_osc_label(ev.pos())
 
         # Update crosshair position if enabled
         if self._crosshair_v is not None and self._crosshair_h is not None:
@@ -554,13 +569,21 @@ class PriceChart(pg.GraphicsLayoutWidget):
                 # Map mouse position to view coordinates
                 mouse_point = self.price_vb.mapSceneToView(self.mapToScene(ev.pos()))
 
-                # Update crosshair positions
+                # Update price chart crosshair positions
                 self._crosshair_v.setPos(mouse_point.x())
                 self._crosshair_h.setPos(mouse_point.y())
 
-                # Show crosshair
+                # Show price chart crosshair
                 self._crosshair_v.show()
                 self._crosshair_h.show()
+
+                # Update oscillator crosshair if visible
+                if self._oscillator_visible and self._crosshair_v_osc is not None and self._crosshair_h_osc is not None:
+                    osc_mouse_point = self.oscillator_vb.mapSceneToView(self.mapToScene(ev.pos()))
+                    self._crosshair_v_osc.setPos(osc_mouse_point.x())
+                    self._crosshair_h_osc.setPos(osc_mouse_point.y())
+                    self._crosshair_v_osc.show()
+                    self._crosshair_h_osc.show()
 
         # Use default behavior
         super().mouseMoveEvent(ev)
@@ -579,12 +602,18 @@ class PriceChart(pg.GraphicsLayoutWidget):
         # Hide mouse price label when mouse leaves
         if self._mouse_price_label:
             self._mouse_price_label.hide()
+        if self._mouse_osc_label:
+            self._mouse_osc_label.hide()
 
         # Hide crosshair when mouse leaves
         if self._crosshair_v is not None:
             self._crosshair_v.hide()
         if self._crosshair_h is not None:
             self._crosshair_h.hide()
+        if self._crosshair_v_osc is not None:
+            self._crosshair_v_osc.hide()
+        if self._crosshair_h_osc is not None:
+            self._crosshair_h_osc.hide()
 
         super().leaveEvent(ev)
 
@@ -620,6 +649,10 @@ class PriceChart(pg.GraphicsLayoutWidget):
         # Clear legend items (but don't destroy the legend itself)
         if hasattr(self, 'legend') and self.legend is not None:
             self.legend.clear()
+
+        # Clear oscillator legend items
+        if hasattr(self, 'oscillator_legend') and self.oscillator_legend is not None:
+            self.oscillator_legend.clear()
 
         # Remove oscillator indicators - use slice copy to avoid modification during iteration
         for item in self._oscillator_indicator_lines[:]:
@@ -668,6 +701,8 @@ class PriceChart(pg.GraphicsLayoutWidget):
         # Hide mouse price label if it exists
         if self._mouse_price_label is not None:
             self._mouse_price_label.hide()
+        if self._mouse_osc_label is not None:
+            self._mouse_osc_label.hide()
 
         # Hide date label if it exists
         if self._date_label is not None:
@@ -678,6 +713,10 @@ class PriceChart(pg.GraphicsLayoutWidget):
             self._crosshair_v.hide()
         if self._crosshair_h is not None:
             self._crosshair_h.hide()
+        if self._crosshair_v_osc is not None:
+            self._crosshair_v_osc.hide()
+        if self._crosshair_h_osc is not None:
+            self._crosshair_h_osc.hide()
 
         # Hide oscillator subplot when cleared
         self._set_oscillator_visibility(False)
@@ -693,15 +732,19 @@ class PriceChart(pg.GraphicsLayoutWidget):
             # Expand oscillator row to 150px
             self.ci.layout.setRowFixedHeight(1, 150)
             self.oscillator_plot.showAxis('right')
-            # Move date axis to bottom: hide price bottom axis, show oscillator bottom axis
-            self.price_plot.hideAxis('bottom')
+            # Move date axis to bottom: keep price bottom axis for gridlines but hide labels and axis line, show oscillator bottom axis
+            self.price_plot.showAxis('bottom')
+            self.bottom_axis.setStyle(showValues=False)  # Hide tick labels but keep gridlines
+            self.bottom_axis.setPen(None)  # Hide axis line but keep gridlines
             self.oscillator_plot.showAxis('bottom')
         else:
             # Collapse oscillator row to 0
             self.ci.layout.setRowFixedHeight(1, 0)
             self.oscillator_plot.hideAxis('right')
-            # Move date axis back to price chart: show price bottom axis, hide oscillator bottom axis
+            # Move date axis back to price chart: show price bottom axis with labels, hide oscillator bottom axis
             self.price_plot.showAxis('bottom')
+            self.bottom_axis.setStyle(showValues=True)  # Show tick labels again
+            self.bottom_axis.setPen(self._original_bottom_axis_pen)  # Restore axis line
             self.oscillator_plot.hideAxis('bottom')
 
         # Update resize handle visibility
@@ -894,14 +937,14 @@ class PriceChart(pg.GraphicsLayoutWidget):
     # Crosshair
     # -----------------------------
     def _create_crosshair(self):
-        """Create crosshair lines."""
+        """Create crosshair lines for both price and oscillator charts."""
         if self._crosshair_v is not None or self._crosshair_h is not None:
             return  # Already exists
 
         # Get crosshair color
         crosshair_color = self._get_crosshair_color()
 
-        # Create vertical line (follows X/time)
+        # Create vertical line for price chart (follows X/time)
         self._crosshair_v = pg.InfiniteLine(
             angle=90,
             movable=False,
@@ -910,7 +953,7 @@ class PriceChart(pg.GraphicsLayoutWidget):
         self.price_vb.addItem(self._crosshair_v)
         self._crosshair_v.hide()
 
-        # Create horizontal line (follows Y/price)
+        # Create horizontal line for price chart (follows Y/price)
         self._crosshair_h = pg.InfiniteLine(
             angle=0,
             movable=False,
@@ -918,6 +961,24 @@ class PriceChart(pg.GraphicsLayoutWidget):
         )
         self.price_vb.addItem(self._crosshair_h)
         self._crosshair_h.hide()
+
+        # Create vertical line for oscillator chart (follows X/time)
+        self._crosshair_v_osc = pg.InfiniteLine(
+            angle=90,
+            movable=False,
+            pen=pg.mkPen(color=crosshair_color, width=1, style=QtCore.Qt.DashLine)
+        )
+        self.oscillator_vb.addItem(self._crosshair_v_osc)
+        self._crosshair_v_osc.hide()
+
+        # Create horizontal line for oscillator chart (follows Y/oscillator value)
+        self._crosshair_h_osc = pg.InfiniteLine(
+            angle=0,
+            movable=False,
+            pen=pg.mkPen(color=crosshair_color, width=1, style=QtCore.Qt.DashLine)
+        )
+        self.oscillator_vb.addItem(self._crosshair_h_osc)
+        self._crosshair_h_osc.hide()
 
     def _get_crosshair_color(self) -> tuple[int, int, int]:
         """
@@ -948,6 +1009,12 @@ class PriceChart(pg.GraphicsLayoutWidget):
         self._crosshair_v.setPen(pen)
         self._crosshair_h.setPen(pen)
 
+        # Update oscillator crosshair colors if they exist
+        if self._crosshair_v_osc is not None:
+            self._crosshair_v_osc.setPen(pen)
+        if self._crosshair_h_osc is not None:
+            self._crosshair_h_osc.setPen(pen)
+
     def _apply_crosshair(self):
         """Apply crosshair settings."""
         show_crosshair = self.chart_settings.get('show_crosshair', True)
@@ -957,7 +1024,7 @@ class PriceChart(pg.GraphicsLayoutWidget):
                 self._create_crosshair()
             # Crosshair visibility is handled by mouseMoveEvent/leaveEvent
         else:
-            # Hide and remove crosshair
+            # Hide and remove price chart crosshair
             if self._crosshair_v is not None:
                 self._crosshair_v.hide()
                 self.price_vb.removeItem(self._crosshair_v)
@@ -966,6 +1033,16 @@ class PriceChart(pg.GraphicsLayoutWidget):
                 self._crosshair_h.hide()
                 self.price_vb.removeItem(self._crosshair_h)
                 self._crosshair_h = None
+
+            # Hide and remove oscillator crosshair
+            if self._crosshair_v_osc is not None:
+                self._crosshair_v_osc.hide()
+                self.oscillator_vb.removeItem(self._crosshair_v_osc)
+                self._crosshair_v_osc = None
+            if self._crosshair_h_osc is not None:
+                self._crosshair_h_osc.hide()
+                self.oscillator_vb.removeItem(self._crosshair_h_osc)
+                self._crosshair_h_osc = None
 
     # -----------------------------
     # Price Label
@@ -1126,7 +1203,7 @@ class PriceChart(pg.GraphicsLayoutWidget):
         else:
             text_color = "rgb(255, 255, 255)"  # White text on dark background
 
-        self._mouse_price_label.setStyleSheet(f"""
+        stylesheet = f"""
             QLabel {{
                 background-color: {bg_color};
                 color: {text_color};
@@ -1135,7 +1212,13 @@ class PriceChart(pg.GraphicsLayoutWidget):
                 font-size: 11px;
                 font-weight: bold;
             }}
-        """)
+        """
+
+        self._mouse_price_label.setStyleSheet(stylesheet)
+
+        # Apply same style to oscillator label if it exists
+        if self._mouse_osc_label:
+            self._mouse_osc_label.setStyleSheet(stylesheet)
 
     def _update_mouse_price_label(self, mouse_pos: QtCore.QPoint):
         """Update mouse price label position and text based on mouse position.
@@ -1152,11 +1235,15 @@ class PriceChart(pg.GraphicsLayoutWidget):
         if not self._mouse_price_label:
             self._create_mouse_price_label()
 
-        # Get the right axis geometry to check if mouse is over it
+        # Check if mouse is over the y-axis background (not just the tick marks)
+        # The axis background starts 11 pixels to the right of the ViewBox edge
+        # (accounting for column spacing + tick mark length)
         axis_rect = self.price_plot.getAxis('right').geometry()
+        left_offset = 11  # Column spacing + tick mark length
+        axis_background_start = axis_rect.left() + left_offset
 
-        # If mouse is over the y-axis area, hide the label and return
-        if axis_rect.contains(mouse_pos):
+        # If mouse X is in the axis background area, hide the label
+        if mouse_pos.x() > axis_background_start:
             self._mouse_price_label.hide()
             return
 
@@ -1213,6 +1300,89 @@ class PriceChart(pg.GraphicsLayoutWidget):
         self._mouse_price_label.move(x_pos, y_pos)
         self._mouse_price_label.show()
 
+    def _update_mouse_osc_label(self, mouse_pos: QtCore.QPoint):
+        """Update mouse oscillator label position and text based on mouse position.
+
+        Args:
+            mouse_pos: Mouse position in widget pixels
+        """
+        # Check if mouse price label is enabled
+        if not self.chart_settings.get('show_mouse_price_label', True):
+            if self._mouse_osc_label:
+                self._mouse_osc_label.hide()
+            return
+
+        if not self._mouse_osc_label:
+            self._create_mouse_osc_label()
+
+        # Check if mouse is over the y-axis background (not just the tick marks)
+        # The axis background starts 11 pixels to the right of the ViewBox edge
+        # (accounting for column spacing + tick mark length)
+        axis_rect = self.oscillator_plot.getAxis('right').geometry()
+        left_offset = 11  # Column spacing + tick mark length
+        axis_background_start = axis_rect.left() + left_offset
+
+        # If mouse X is in the axis background area, hide the label
+        if mouse_pos.x() > axis_background_start:
+            self._mouse_osc_label.hide()
+            return
+
+        # Extract y-coordinate
+        mouse_y = mouse_pos.y()
+
+        # Check if mouse is within the oscillator ViewBox area
+        osc_vb_scene_rect = self.oscillator_vb.sceneBoundingRect()
+        osc_vb_widget_top_left = self.mapFromScene(osc_vb_scene_rect.topLeft())
+        osc_vb_widget_top = osc_vb_widget_top_left.y()
+        osc_vb_widget_bottom = osc_vb_widget_top + osc_vb_scene_rect.height()
+
+        # If mouse is not within oscillator area, hide the label
+        if mouse_y < osc_vb_widget_top or mouse_y > osc_vb_widget_bottom:
+            self._mouse_osc_label.hide()
+            return
+
+        # Map mouse widget coordinates to oscillator view coordinates
+        view_pos = self.oscillator_vb.mapSceneToView(self.mapToScene(0, mouse_y))
+        y_view = view_pos.y()
+
+        # Format the oscillator value (no log transform needed for oscillators)
+        value = float(y_view)
+
+        # Format with 2 decimal places
+        label_text = f"{value:.2f}"
+        self._mouse_osc_label.setText(label_text)
+
+        # Get oscillator axis geometry to position label on the axis
+        axis_rect = self.oscillator_plot.getAxis('right').geometry()
+
+        # Position label on the y-axis at the mouse y-position (fixed-width, left-aligned)
+        left_offset = 11  # Column spacing + tick mark length
+        right_padding = 0
+        axis_width = axis_rect.width() - left_offset + right_padding
+        label_size = self._mouse_osc_label.sizeHint()
+        label_height = label_size.height()
+
+        # Set fixed width
+        self._mouse_osc_label.setFixedWidth(axis_width)
+
+        # Position left edge flush with axis background (after ticks)
+        x_pos = int(axis_rect.left() + left_offset)
+        y_pos = int(mouse_y - label_height / 2)
+
+        self._mouse_osc_label.move(x_pos, y_pos)
+        self._mouse_osc_label.show()
+
+    def _create_mouse_osc_label(self):
+        """Create the mouse oscillator label as a QLabel widget overlay."""
+        if self._mouse_osc_label is not None:
+            return  # Already exists
+
+        self._mouse_osc_label = QLabel(self)
+        self._mouse_osc_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self._mouse_osc_label.setAttribute(Qt.WA_TransparentForMouseEvents)  # Don't block mouse events
+        self._update_mouse_price_label_style()  # Uses same style as price label
+        self._mouse_osc_label.hide()  # Start hidden, show on mouse move
+
     # -----------------------------
     # Date label (crosshair)
     # -----------------------------
@@ -1256,11 +1426,11 @@ class PriceChart(pg.GraphicsLayoutWidget):
             }}
         """)
 
-    def _update_date_label(self, mouse_x: int):
-        """Update date label position and text based on mouse x-coordinate.
+    def _update_date_label(self, mouse_pos: QtCore.QPoint):
+        """Update date label position and text based on mouse position.
 
         Args:
-            mouse_x: Mouse x-coordinate in widget pixels
+            mouse_pos: Mouse position in widget pixels
         """
         if not self._date_label or not self.chart_settings.get('show_date_label', True):
             if self._date_label:
@@ -1270,6 +1440,10 @@ class PriceChart(pg.GraphicsLayoutWidget):
         if self.data is None or self.data.empty:
             self._date_label.hide()
             return
+
+        # Extract mouse coordinates
+        mouse_x = mouse_pos.x()
+        mouse_y = mouse_pos.y()
 
         # Check if mouse is over the Y-axis area (too far right)
         # Use price plot's right axis as the reference
@@ -1315,6 +1489,14 @@ class PriceChart(pg.GraphicsLayoutWidget):
         # Get the plot's scene bounding rect and map to widget
         plot_scene_rect = target_plot.sceneBoundingRect()
         plot_widget_top_left = self.mapFromScene(plot_scene_rect.topLeft())
+
+        # Calculate axis top position in widget coordinates (the x-axis line itself)
+        axis_top_y = plot_widget_top_left.y() + axis_rect.top()
+
+        # If mouse is below the x-axis line, hide the label
+        if mouse_y > axis_top_y:
+            self._date_label.hide()
+            return
 
         # Position label on the bottom axis at the mouse x-position (centered on axis)
         label_width = self._date_label.width()
@@ -1363,6 +1545,10 @@ class PriceChart(pg.GraphicsLayoutWidget):
         # Update mouse price label style if it exists
         if self._mouse_price_label:
             self._update_mouse_price_label_style()
+
+        # Update mouse oscillator label style if it exists
+        if self._mouse_osc_label:
+            self._update_mouse_price_label_style()  # Uses same style
 
         # Update date label style if it exists
         if self._date_label:
@@ -1695,9 +1881,11 @@ class PriceChart(pg.GraphicsLayoutWidget):
             self._set_oscillator_visibility(False)
             return
 
-        # Clear legend before plotting (if it exists)
+        # Clear legends before plotting (if they exist)
         if hasattr(self, 'legend') and self.legend is not None:
             self.legend.clear()
+        if hasattr(self, 'oscillator_legend') and self.oscillator_legend is not None:
+            self.oscillator_legend.clear()
 
         color_idx = 0
         has_oscillators = False
@@ -1801,9 +1989,12 @@ class PriceChart(pg.GraphicsLayoutWidget):
                     )
                     target_vb.addItem(scatter)
 
-                    # Add to legend (overlay indicators only)
-                    if label and not is_oscillator and hasattr(self, 'legend') and self.legend is not None:
-                        self.legend.addItem(scatter, label)
+                    # Add to appropriate legend
+                    if label:
+                        if is_oscillator and hasattr(self, 'oscillator_legend') and self.oscillator_legend is not None:
+                            self.oscillator_legend.addItem(scatter, label)
+                        elif not is_oscillator and hasattr(self, 'legend') and self.legend is not None:
+                            self.legend.addItem(scatter, label)
 
                     if is_oscillator:
                         self._oscillator_indicator_lines.append(scatter)
@@ -1837,9 +2028,12 @@ class PriceChart(pg.GraphicsLayoutWidget):
                     line = pg.PlotCurveItem(x=x, y=y, pen=pen, name=label or col)
                     target_vb.addItem(line)
 
-                    # Add to legend (overlay indicators only)
-                    if label and not is_oscillator and hasattr(self, 'legend') and self.legend is not None:
-                        self.legend.addItem(line, label)
+                    # Add to appropriate legend
+                    if label:
+                        if is_oscillator and hasattr(self, 'oscillator_legend') and self.oscillator_legend is not None:
+                            self.oscillator_legend.addItem(line, label)
+                        elif not is_oscillator and hasattr(self, 'legend') and self.legend is not None:
+                            self.legend.addItem(line, label)
 
                     if is_oscillator:
                         self._oscillator_indicator_lines.append(line)
