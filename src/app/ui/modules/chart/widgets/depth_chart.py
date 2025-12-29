@@ -7,8 +7,8 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushBu
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
 
-from app.services.binance_data import BinanceOrderBook
-from app.ui.widgets.order_book_ladder import OrderBookLadderWidget
+from ..services import BinanceOrderBook
+from .order_book_ladder import OrderBookLadderWidget
 
 class DepthChartWidget(pg.PlotWidget):
     """

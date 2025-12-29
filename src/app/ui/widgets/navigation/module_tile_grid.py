@@ -7,7 +7,7 @@ from PySide6.QtCore import Signal, Qt
 from app.core.theme_manager import ThemeManager
 from app.core.config import MODULE_SECTIONS, TILE_COLS, TILE_SPACING
 from app.services.favorites_service import FavoritesService
-from app.ui.widgets.module_tile import ModuleTile
+from .module_tile import ModuleTile
 
 
 class ModuleTileGrid(QScrollArea):

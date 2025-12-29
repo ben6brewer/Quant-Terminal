@@ -4,8 +4,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QListWi
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
-from app.services.chart_theme_service import ChartThemeService
-from app.services.indicator_service import IndicatorService
+from ..services import ChartThemeService, IndicatorService
 
 
 class IndicatorPanel(QWidget):

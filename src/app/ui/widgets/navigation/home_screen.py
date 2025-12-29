@@ -6,8 +6,8 @@ from PySide6.QtCore import Signal, Qt
 
 from app.core.theme_manager import ThemeManager
 from app.core.config import MODULE_SECTIONS
-from app.ui.widgets.section_tab_bar import SectionTabBar
-from app.ui.widgets.module_tile_grid import ModuleTileGrid
+from .section_tab_bar import SectionTabBar
+from .module_tile_grid import ModuleTileGrid
 
 
 class HomeScreen(QWidget):

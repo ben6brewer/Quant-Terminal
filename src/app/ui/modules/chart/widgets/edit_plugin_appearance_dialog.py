@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QColor, QMouseEvent
 
 from app.core.theme_manager import ThemeManager
-from app.services.indicator_service import IndicatorService
+from ..services import IndicatorService
 
 
 class EditPluginAppearanceDialog(QDialog):

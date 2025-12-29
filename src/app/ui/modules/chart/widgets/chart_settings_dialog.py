@@ -19,7 +19,7 @@ from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QColor, QMouseEvent
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.custom_message_box import CustomMessageBox
+from app.ui.widgets.common import CustomMessageBox
 
 
 class ChartSettingsDialog(QDialog):

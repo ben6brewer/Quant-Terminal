@@ -13,7 +13,7 @@ from PySide6.QtGui import QPainter, QColor
 
 from app.utils.formatters import format_price_usd, format_date
 from app.core.config import CANDLE_BAR_WIDTH, DEFAULT_VIEW_PERIOD_DAYS, VIEW_PADDING_PERCENT
-from app.ui.widgets.oscillator_pane import OscillatorPane
+from .oscillator_pane import OscillatorPane
 from app.ui.widgets.charting.overlays import ResizeHandle
 from app.ui.widgets.charting.axes import (
     DraggableAxisItem,
@@ -1504,7 +1504,7 @@ class PriceChart(pg.GraphicsLayoutWidget):
                 - "appearance": Appearance settings (or None for defaults)
                 - "per_line_appearance": Per-line appearance settings (or None)
         """
-        from app.services.indicator_service import IndicatorService
+        from ..services import IndicatorService
 
         # Early exit for empty indicators - ensure oscillator is hidden
         if not indicators:

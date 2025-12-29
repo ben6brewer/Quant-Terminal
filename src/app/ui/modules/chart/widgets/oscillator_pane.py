@@ -94,7 +94,7 @@ class OscillatorPane(QGraphicsWidget):
         self.title_text.setFont(font)
 
         # PlotItem with right y-axis (simpler approach)
-        from app.ui.widgets.price_chart import DraggableAxisItem
+        from app.ui.widgets.charting.axes import DraggableAxisItem
 
         self.plot_item = pg.PlotItem(
             axisItems={'right': DraggableAxisItem(orientation='right')}

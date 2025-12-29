@@ -22,7 +22,7 @@ from app.core.config import (
     DEFAULT_WINDOW_WIDTH,
     DEFAULT_WINDOW_HEIGHT,
 )
-from app.ui.widgets.home_screen import HomeScreen
+from app.ui.widgets.navigation import HomeScreen
 
 
 class TransparentOverlay(QWidget):

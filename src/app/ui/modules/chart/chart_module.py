@@ -12,20 +12,24 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from app.ui.widgets.price_chart import PriceChart
-from app.ui.widgets.chart_controls import ChartControls
-from app.ui.modules.chart.indicator_panel import IndicatorPanel
-from app.ui.widgets.create_indicator_dialog import CreateIndicatorDialog
-from app.ui.widgets.edit_plugin_appearance_dialog import EditPluginAppearanceDialog
-from app.ui.widgets.chart_settings_dialog import ChartSettingsDialog
-from app.ui.widgets.depth_chart import OrderBookPanel
-from app.ui.widgets.custom_message_box import CustomMessageBox
+from app.ui.modules.chart.widgets import (
+    PriceChart,
+    ChartControls,
+    IndicatorPanel,
+    CreateIndicatorDialog,
+    ChartSettingsDialog,
+)
+from app.ui.modules.chart.widgets.depth_chart import OrderBookPanel
+from app.ui.modules.chart.widgets import EditPluginAppearanceDialog
+from app.ui.widgets.common import CustomMessageBox
 from app.services.market_data import fetch_price_history
-from app.services.ticker_equation_parser import TickerEquationParser
-from app.services.indicator_service import IndicatorService
-from app.services.chart_settings_manager import ChartSettingsManager
-from app.services.chart_theme_service import ChartThemeService
-from app.services.binance_data import BinanceOrderBook
+from .services import (
+    TickerEquationParser,
+    IndicatorService,
+    ChartSettingsManager,
+    ChartThemeService,
+    BinanceOrderBook
+)
 from app.core.theme_manager import ThemeManager
 from app.core.config import (
     DEFAULT_TICKER,
