@@ -12,6 +12,7 @@ from PySide6.QtCore import Qt, QTimer
 
 from app.utils.formatters import format_price_usd, format_date
 from app.core.config import CANDLE_BAR_WIDTH, DEFAULT_VIEW_PERIOD_DAYS, VIEW_PADDING_PERCENT
+from app.ui.widgets.oscillator_pane import OscillatorPane
 
 
 # -----------------------------
@@ -361,6 +362,10 @@ class PriceChart(pg.GraphicsLayoutWidget):
         self._line = None
         self._price_indicator_lines = []  # Overlay indicators on price chart
         self._oscillator_indicator_lines = []  # Oscillator indicators on separate axis
+
+        # Oscillator pane management (new multi-pane system)
+        self._oscillator_panes = {}  # Dict[indicator_name, OscillatorPane]
+        self._next_pane_id = 0
 
         # Price label (rightmost visible price)
         self._price_label = None  # Will be created when enabled
@@ -1306,6 +1311,87 @@ class PriceChart(pg.GraphicsLayoutWidget):
                 self._create_date_label()
             # Reset positioning flag
             self._date_label_positioned = False
+
+    # -------------------------
+    # Oscillator Pane Management
+    # -------------------------
+
+    def _create_oscillator_pane(self, indicator_name: str):
+        """
+        Create a new oscillator pane for the given indicator.
+
+        Args:
+            indicator_name: Name of the indicator (e.g., "RSI(14)")
+
+        Returns:
+            OscillatorPane instance
+        """
+        pane = OscillatorPane(
+            indicator_name=indicator_name,
+            pane_id=self._next_pane_id,
+            theme_manager=None,  # Will be set when applying theme
+            parent=None
+        )
+        self._next_pane_id += 1
+
+        # Set pane width to match chart
+        chart_width = self.price_vb.sceneBoundingRect().width()
+        pane.update_width(chart_width)
+
+        # Link X-axis to price chart
+        pane.set_x_link(self.price_vb)
+
+        # Apply current theme
+        pane.apply_theme(self._theme)
+
+        # Add to scene
+        self.scene().addItem(pane)
+
+        # Position pane
+        self._position_pane(pane)
+
+        return pane
+
+    def _position_pane(self, pane) -> None:
+        """
+        Position pane based on existing panes (stack from bottom-right).
+
+        Args:
+            pane: OscillatorPane to position
+        """
+        # Get price chart bounds in scene coordinates
+        price_rect = self.price_vb.sceneBoundingRect()
+
+        # Calculate base position (bottom-right of chart)
+        margin = 20
+        base_x = price_rect.right() - pane.pane_width - margin
+        base_y = price_rect.bottom() - pane.pane_height - margin
+
+        # Adjust for existing panes (stack upward)
+        pane_count = len(self._oscillator_panes)
+        gap = 10
+
+        y_offset = pane_count * (pane.pane_height + gap)
+
+        pane.setPos(base_x, base_y - y_offset)
+
+    def _remove_oscillator_pane(self, indicator_name: str) -> None:
+        """
+        Remove an oscillator pane.
+
+        Args:
+            indicator_name: Name of the indicator to remove
+        """
+        if indicator_name in self._oscillator_panes:
+            pane = self._oscillator_panes[indicator_name]
+            self.scene().removeItem(pane)
+            del self._oscillator_panes[indicator_name]
+
+    def _clear_all_oscillator_panes(self) -> None:
+        """Clear all oscillator panes."""
+        for pane in list(self._oscillator_panes.values()):
+            self.scene().removeItem(pane)
+        self._oscillator_panes.clear()
 
     def _plot_indicators(
         self, x: np.ndarray, df: pd.DataFrame, indicators: Dict[str, Dict[str, Any]]
