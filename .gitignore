@@ -28,6 +28,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+nul
 
 # Testing
 .pytest_cache/
