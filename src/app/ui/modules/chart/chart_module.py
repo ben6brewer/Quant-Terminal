@@ -14,6 +14,7 @@ from PySide6.QtCore import Qt
 
 from app.ui.widgets.price_chart import PriceChart
 from app.ui.widgets.chart_controls import ChartControls
+from app.ui.modules.chart.indicator_panel import IndicatorPanel
 from app.ui.widgets.create_indicator_dialog import CreateIndicatorDialog
 from app.ui.widgets.edit_plugin_appearance_dialog import EditPluginAppearanceDialog
 from app.ui.widgets.chart_settings_dialog import ChartSettingsDialog
@@ -67,18 +68,8 @@ class ChartModule(QWidget):
 
     def _on_theme_changed(self, theme: str) -> None:
         """Handle theme change signal."""
-        self._apply_indicator_panel_theme()
         self._apply_depth_panel_theme()
         self.chart.set_theme(theme)
-
-    def _apply_indicator_panel_theme(self) -> None:
-        """Apply theme-specific styling to the indicator panel."""
-        if not hasattr(self, 'indicator_panel'):
-            return
-
-        theme = self.theme_manager.current_theme
-        stylesheet = ChartThemeService.get_indicator_panel_stylesheet(theme)
-        self.indicator_panel.setStyleSheet(stylesheet)
 
     def _apply_depth_panel_theme(self) -> None:
         """Apply theme-specific styling to the depth panel."""
@@ -114,99 +105,11 @@ class ChartModule(QWidget):
         content_layout.addWidget(self.depth_panel)
 
         # Indicator selection panel (hidden by default)
-        self.indicator_panel = self._create_indicator_panel()
+        self.indicator_panel = IndicatorPanel(self.theme_manager)
         self.indicator_panel.setVisible(False)
         content_layout.addWidget(self.indicator_panel)
 
         root.addLayout(content_layout, stretch=1)
-
-    def _create_indicator_panel(self) -> QWidget:
-        """Create the indicator selection panel."""
-        panel = QWidget()
-        panel.setFixedWidth(250)
-        panel.setObjectName("indicatorPanel")
-        
-        layout = QVBoxLayout(panel)
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.setSpacing(10)
-
-        # Header
-        header = QLabel("Technical Indicators")
-        header.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                font-weight: bold;
-                padding: 5px;
-                background-color: transparent;
-            }
-        """)
-        layout.addWidget(header)
-
-        # Create New Indicator button
-        create_btn = QPushButton("Create New Indicator")
-        create_btn.setObjectName("createButton")
-        create_btn.clicked.connect(self._create_custom_indicator)
-        layout.addWidget(create_btn)
-
-        # Overlay indicators section
-        overlay_label = QLabel("Overlays:")
-        overlay_label.setStyleSheet("font-size: 12px; font-weight: bold; background-color: transparent;")
-        layout.addWidget(overlay_label)
-
-        self.overlay_list = QListWidget()
-        self.overlay_list.setSelectionMode(QListWidget.MultiSelection)
-        self.overlay_list.addItems(IndicatorService.get_overlay_names())
-        self.overlay_list.setMaximumHeight(200)
-        # Double-click to edit
-        self.overlay_list.itemDoubleClicked.connect(self._edit_indicator_from_list)
-        layout.addWidget(self.overlay_list)
-
-        # Oscillator indicators section
-        oscillator_label = QLabel("Oscillators")
-        oscillator_label.setStyleSheet("font-size: 12px; font-weight: bold; background-color: transparent;")
-        layout.addWidget(oscillator_label)
-
-        self.oscillator_list = QListWidget()
-        self.oscillator_list.setSelectionMode(QListWidget.MultiSelection)
-        self.oscillator_list.addItems(IndicatorService.get_oscillator_names())
-        self.oscillator_list.setMaximumHeight(150)
-        # Double-click to edit
-        self.oscillator_list.itemDoubleClicked.connect(self._edit_indicator_from_list)
-        layout.addWidget(self.oscillator_list)
-
-        # Apply button
-        apply_btn = QPushButton("Apply Indicators")
-        apply_btn.clicked.connect(self._apply_indicators)
-        layout.addWidget(apply_btn)
-
-        # Clear Selected button
-        clear_btn = QPushButton("Clear Selected")
-        clear_btn.clicked.connect(self._clear_indicators)
-        layout.addWidget(clear_btn)
-
-        # Clear All button
-        clear_all_btn = QPushButton("Clear All")
-        clear_all_btn.clicked.connect(self._clear_all_indicators)
-        layout.addWidget(clear_all_btn)
-
-        # Edit button
-        edit_btn = QPushButton("Edit Selected")
-        edit_btn.clicked.connect(self._edit_selected_indicator)
-        layout.addWidget(edit_btn)
-
-        # Delete selected indicator button
-        delete_btn = QPushButton("Delete Selected")
-        delete_btn.clicked.connect(self._delete_custom_indicator)
-        layout.addWidget(delete_btn)
-
-        layout.addStretch(1)
-
-        # Apply initial theme directly to panel
-        theme = self.theme_manager.current_theme
-        stylesheet = ChartThemeService.get_indicator_panel_stylesheet(theme)
-        panel.setStyleSheet(stylesheet)
-
-        return panel
 
     def _setup_state(self) -> None:
         """Initialize state management."""
@@ -227,6 +130,15 @@ class ChartModule(QWidget):
         self.controls.settings_clicked.connect(self._open_chart_settings)
         self.controls.indicators_toggled.connect(self._on_indicators_toggled)
         self.controls.depth_toggled.connect(self._on_depth_toggled)
+
+        # Indicator panel signals
+        self.indicator_panel.create_clicked.connect(self._create_custom_indicator)
+        self.indicator_panel.apply_clicked.connect(self._apply_indicators)
+        self.indicator_panel.clear_clicked.connect(self._clear_indicators)
+        self.indicator_panel.clear_all_clicked.connect(self._clear_all_indicators)
+        self.indicator_panel.edit_clicked.connect(self._edit_selected_indicator)
+        self.indicator_panel.delete_clicked.connect(self._delete_custom_indicator)
+        self.indicator_panel.indicator_double_clicked.connect(self._edit_indicator_from_list)
 
     def _on_indicators_toggled(self, is_checked: bool) -> None:
         """Handle indicators button toggle."""
@@ -258,31 +170,26 @@ class ChartModule(QWidget):
     def _apply_indicators(self) -> None:
         """Apply selected indicators to the chart."""
         # Get selected indicators
-        overlay_items = self.overlay_list.selectedItems()
-        oscillator_items = self.oscillator_list.selectedItems()
-        
-        selected = [item.text() for item in overlay_items + oscillator_items]
-        
+        overlays, oscillators = self.indicator_panel.get_all_selected()
+        selected = overlays + oscillators
+
         # Store in state
         self.state["indicators"] = selected
-        
+
         # Re-render with indicators
         self.render_from_cache()
 
     def _clear_indicators(self) -> None:
         """Clear selected indicators from the chart."""
         # Get selected items
-        overlay_items = self.overlay_list.selectedItems()
-        oscillator_items = self.oscillator_list.selectedItems()
-
-        selected = [item.text() for item in overlay_items + oscillator_items]
+        overlays, oscillators = self.indicator_panel.get_all_selected()
+        selected = overlays + oscillators
 
         if not selected:
             return
 
         # Deselect the items
-        self.overlay_list.clearSelection()
-        self.oscillator_list.clearSelection()
+        self.indicator_panel.clear_selections()
 
         # Remove from state
         for indicator in selected:
@@ -295,8 +202,7 @@ class ChartModule(QWidget):
     def _clear_all_indicators(self) -> None:
         """Clear all indicators from the chart."""
         # Deselect all items
-        self.overlay_list.clearSelection()
-        self.oscillator_list.clearSelection()
+        self.indicator_panel.clear_selections()
 
         # Clear state
         self.state["indicators"] = []
@@ -304,19 +210,16 @@ class ChartModule(QWidget):
         # Re-render without indicators
         self.render_from_cache()
 
-    def _edit_indicator_from_list(self, item) -> None:
+    def _edit_indicator_from_list(self, indicator_name: str) -> None:
         """Edit an indicator that was double-clicked in the sidebar list."""
-        indicator_name = item.text()
         self._edit_indicator(indicator_name)
 
     def _edit_selected_indicator(self) -> None:
         """Edit the currently selected indicator from the sidebar."""
-        # Get selected item from either list
-        selected_overlay = self.overlay_list.selectedItems()
-        selected_oscillator = self.oscillator_list.selectedItems()
-        
-        selected = selected_overlay + selected_oscillator
-        
+        # Get selected items from both lists
+        overlays, oscillators = self.indicator_panel.get_all_selected()
+        selected = overlays + oscillators
+
         if len(selected) == 0:
             CustomMessageBox.information(
                 self.theme_manager,
@@ -325,7 +228,7 @@ class ChartModule(QWidget):
                 "Please select an indicator to edit.",
             )
             return
-        
+
         if len(selected) > 1:
             CustomMessageBox.information(
                 self.theme_manager,
@@ -334,8 +237,8 @@ class ChartModule(QWidget):
                 "Please select only one indicator to edit.",
             )
             return
-        
-        indicator_name = selected[0].text()
+
+        indicator_name = selected[0]
         self._edit_indicator(indicator_name)
 
     def _edit_indicator(self, indicator_name: str) -> None:
@@ -526,12 +429,9 @@ class ChartModule(QWidget):
     def _delete_custom_indicator(self) -> None:
         """Delete indicators from the list."""
         # Get all selected items from both lists
-        selected = []
-        for item in self.overlay_list.selectedItems():
-            selected.append(item.text())
-        for item in self.oscillator_list.selectedItems():
-            selected.append(item.text())
-        
+        overlays, oscillators = self.indicator_panel.get_all_selected()
+        selected = overlays + oscillators
+
         if not selected:
             CustomMessageBox.information(
                 self.theme_manager,
@@ -551,7 +451,7 @@ class ChartModule(QWidget):
             CustomMessageBox.Yes | CustomMessageBox.No,
             CustomMessageBox.No,
         )
-        
+
         if reply == CustomMessageBox.Yes:
             # Remove from IndicatorService
             for name in selected:
@@ -570,27 +470,7 @@ class ChartModule(QWidget):
 
     def _refresh_indicator_lists(self) -> None:
         """Refresh the indicator lists to show newly added custom indicators."""
-        # Store current selections
-        overlay_selected = [item.text() for item in self.overlay_list.selectedItems()]
-        oscillator_selected = [item.text() for item in self.oscillator_list.selectedItems()]
-        
-        # Clear and repopulate lists
-        self.overlay_list.clear()
-        self.overlay_list.addItems(sorted(IndicatorService.get_overlay_names()))
-        
-        self.oscillator_list.clear()
-        self.oscillator_list.addItems(sorted(IndicatorService.get_oscillator_names()))
-        
-        # Restore selections
-        for i in range(self.overlay_list.count()):
-            item = self.overlay_list.item(i)
-            if item.text() in overlay_selected:
-                item.setSelected(True)
-        
-        for i in range(self.oscillator_list.count()):
-            item = self.oscillator_list.item(i)
-            if item.text() in oscillator_selected:
-                item.setSelected(True)
+        self.indicator_panel.refresh_indicators(preserve_selection=True)
 
     def _open_chart_settings(self) -> None:
         """Open the chart settings dialog."""
