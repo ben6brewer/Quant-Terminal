@@ -260,6 +260,9 @@ class PortfolioService:
         """
         Fetch current prices for tickers using MarketDataService.
 
+        Uses period="max" to leverage parquet caching for efficiency.
+        Cache stored at ~/.quant_terminal/cache/{TICKER}.parquet
+
         Args:
             tickers: List of ticker symbols
 
@@ -273,8 +276,8 @@ class PortfolioService:
                 continue
 
             try:
-                # Fetch last 5 days of data to get latest close
-                df = fetch_price_history(ticker, period="5d", interval="1d")
+                # Fetch full history (uses cache if current)
+                df = fetch_price_history(ticker, period="max", interval="1d")
 
                 if df is not None and not df.empty:
                     # Get last close price

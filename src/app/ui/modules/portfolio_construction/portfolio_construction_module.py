@@ -38,8 +38,8 @@ class PortfolioConstructionModule(QWidget):
         self._connect_signals()
         self._apply_theme()
 
-        # Load default portfolio on startup
-        self._load_initial_portfolio()
+        # Initialize portfolio list without loading data
+        self._initialize_portfolio_list()
 
         # Connect theme changes
         self.theme_manager.theme_changed.connect(self._apply_theme)
@@ -95,28 +95,21 @@ class PortfolioConstructionModule(QWidget):
         self.transaction_table.transaction_modified.connect(self._on_transaction_changed)
         self.transaction_table.transaction_deleted.connect(self._on_transaction_changed)
 
-    def _load_initial_portfolio(self):
-        """Load Default portfolio on startup."""
-        # Check if Default exists
-        if not PortfolioPersistence.portfolio_exists("Default"):
-            # Create empty Default portfolio
+    def _initialize_portfolio_list(self):
+        """Initialize portfolio dropdown without loading data."""
+        portfolios = PortfolioPersistence.list_portfolios()
+
+        if not portfolios:
+            # Create empty Default portfolio if none exist
             self.current_portfolio = PortfolioPersistence.create_new_portfolio("Default")
             PortfolioPersistence.save_portfolio(self.current_portfolio)
-        else:
-            # Load Default
-            self.current_portfolio = PortfolioPersistence.load_portfolio("Default")
-
-        # Populate controls
-        portfolios = PortfolioPersistence.list_portfolios()
-        if not portfolios:
             portfolios = ["Default"]
-        self.controls.update_portfolio_list(portfolios, "Default")
 
-        # Populate transaction table
-        self._populate_transaction_table()
+        # Populate dropdown only (no data fetching)
+        self.controls.update_portfolio_list(portfolios, portfolios[0])
 
-        # Fetch prices and update aggregate (don't show message on startup)
-        self._update_aggregate_table()
+        # Show empty state
+        self._show_empty_state()
 
     def _populate_transaction_table(self):
         """Populate transaction table from current portfolio."""
@@ -177,6 +170,13 @@ class PortfolioConstructionModule(QWidget):
         """Handle transaction add/modify/delete."""
         self.unsaved_changes = True
         self._update_aggregate_table()
+
+    def _show_empty_state(self):
+        """Display empty state when no portfolio loaded."""
+        self.current_portfolio = None
+        self.transaction_table.clear_all_transactions()
+        self.aggregate_table.setRowCount(0)
+        self.unsaved_changes = False
 
     def _update_aggregate_table(self):
         """Recalculate and update aggregate table."""
@@ -339,11 +339,18 @@ class PortfolioConstructionModule(QWidget):
 
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio selection change in dropdown."""
-        if not name or (self.current_portfolio and name == self.current_portfolio.get("name")):
+        if not name:
             return
 
-        # Check for unsaved changes
-        if self.unsaved_changes:
+        # Track if this is first load
+        is_first_load = self.current_portfolio is None
+
+        # Skip same-portfolio check on first load
+        if not is_first_load and self.current_portfolio and name == self.current_portfolio.get("name"):
+            return
+
+        # Check for unsaved changes (skip on first load)
+        if not is_first_load and self.unsaved_changes:
             reply = CustomMessageBox.question(
                 self.theme_manager,
                 self,
