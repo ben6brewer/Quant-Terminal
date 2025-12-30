@@ -988,16 +988,10 @@ class TransactionLogTable(QTableWidget):
             else:
                 qty_item.setText("--")
 
-        # Update Principal (col 8)
+        # Principal (col 8) - leave blank for FREE CASH summary
         principal_item = self.item(row, 8)
         if principal_item:
-            principal = summary["principal"]
-            if principal < 0:
-                principal_item.setText(f"-${abs(principal):,.2f}")
-            elif principal > 0:
-                principal_item.setText(f"${principal:,.2f}")
-            else:
-                principal_item.setText("--")
+            principal_item.setText("")
 
         # Update Market Value (col 9)
         mv_item = self.item(row, 9)
@@ -1365,24 +1359,19 @@ class TransactionLogTable(QTableWidget):
         item_8 = self.item(row, 8)
         if item_8:
             if is_free_cash:
-                # FREE CASH principal: qty - fees for Buy, -(qty + fees) for Sell
-                tx_type = transaction.get("transaction_type", "Buy")
-                fees = transaction.get("fees", 0.0)
-                if tx_type == "Buy":
-                    principal = quantity - fees
-                else:
-                    principal = -(quantity + fees)
+                # FREE CASH: leave principal blank (not applicable)
+                item_8.setText("")
             else:
                 principal = PortfolioService.calculate_principal(transaction)
 
-            if principal != 0:
-                # Format with sign: negative for buys, positive for sells
-                if principal < 0:
-                    item_8.setText(f"-${abs(principal):,.2f}")
+                if principal != 0:
+                    # Format with sign: negative for buys, positive for sells
+                    if principal < 0:
+                        item_8.setText(f"-${abs(principal):,.2f}")
+                    else:
+                        item_8.setText(f"${principal:,.2f}")
                 else:
-                    item_8.setText(f"${principal:,.2f}")
-            else:
-                item_8.setText("--")
+                    item_8.setText("--")
 
         # --- Market Value (col 9) ---
         item_9 = self.item(row, 9)
