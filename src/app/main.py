@@ -39,12 +39,17 @@ def main() -> int:
     hub = HubWindow(theme_manager)
 
     # Add modules (pass theme_manager to modules that need it)
-    hub.add_module("charts", ChartModule(theme_manager))
+    # Heavy modules use factory functions for lazy loading (instantiated on first open)
+    hub.add_module("charts", lambda: ChartModule(theme_manager))
     hub.add_module("crypto_dashboard", CryptoDashboardModule())
     hub.add_module("defi", DeFiModule())
     hub.add_module("nft", NFTModule())
     hub.add_module("portfolio", PortfolioModule())
-    hub.add_module("portfolio_construction", PortfolioConstructionModule(theme_manager), has_own_home_button=True)
+    hub.add_module(
+        "portfolio_construction",
+        lambda: PortfolioConstructionModule(theme_manager),
+        has_own_home_button=True,
+    )
     hub.add_module("watchlist", WatchlistModule())
     hub.add_module("news", NewsModule())
     hub.add_module("screener", ScreenerModule())

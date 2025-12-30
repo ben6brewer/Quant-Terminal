@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Callable, Union
+
 from PySide6.QtWidgets import (
     QMainWindow,
     QPushButton,
@@ -97,8 +99,10 @@ class HubWindow(QMainWindow):
         self.theme_manager.theme_changed.connect(self._on_theme_changed)
 
         # Module storage
-        self.modules = {}
-        self.module_containers = {}
+        self.modules = {}  # module_id -> instantiated widget
+        self.module_containers = {}  # module_id -> container widget
+        self._module_factories = {}  # module_id -> factory function (for lazy loading)
+        self._module_options = {}  # module_id -> options dict (has_own_home_button, etc.)
 
         # For window dragging
         self._drag_pos = QPoint()
@@ -274,8 +278,39 @@ class HubWindow(QMainWindow):
         self.home_screen.module_selected.connect(self.open_module)
         self.home_screen.settings_requested.connect(self._open_settings)
 
-    def add_module(self, module_id: str, widget: QWidget, has_own_home_button: bool = False) -> None:
-        """Add a module widget wrapped in container with home button."""
+    def add_module(
+        self,
+        module_id: str,
+        widget_or_factory: Union[QWidget, Callable[[], QWidget]],
+        has_own_home_button: bool = False,
+    ) -> None:
+        """
+        Add a module widget wrapped in container with home button.
+
+        Args:
+            module_id: Unique identifier for the module
+            widget_or_factory: Either an instantiated QWidget or a callable that returns one.
+                               If a callable is provided, the module will be lazily instantiated
+                               when first opened (lazy loading).
+            has_own_home_button: If True, skip adding home button overlay
+        """
+        # Store options for later use
+        self._module_options[module_id] = {"has_own_home_button": has_own_home_button}
+
+        # Check if this is a factory function (lazy loading) or direct widget
+        if callable(widget_or_factory):
+            # Store factory for lazy instantiation
+            self._module_factories[module_id] = widget_or_factory
+            # Don't create container yet - will be created on first open
+        else:
+            # Direct widget - create container immediately
+            self._instantiate_module(module_id, widget_or_factory)
+
+    def _instantiate_module(self, module_id: str, widget: QWidget) -> None:
+        """Create container and register an instantiated module widget."""
+        options = self._module_options.get(module_id, {})
+        has_own_home_button = options.get("has_own_home_button", False)
+
         # Create container with home button overlay
         container = self._create_module_container(widget, has_own_home_button)
 
@@ -285,6 +320,9 @@ class HubWindow(QMainWindow):
 
         # Add to stack
         self.main_stack.addWidget(container)
+
+        # Remove factory if it existed (module is now instantiated)
+        self._module_factories.pop(module_id, None)
 
     def _create_module_container(self, module_widget: QWidget, has_own_home_button: bool = False) -> QWidget:
         """Create container with home button overlay for module."""
@@ -343,6 +381,12 @@ class HubWindow(QMainWindow):
 
     def open_module(self, module_id: str) -> None:
         """Open a module in full screen."""
+        # Check if module needs to be lazily instantiated
+        if module_id in self._module_factories:
+            factory = self._module_factories[module_id]
+            widget = factory()  # Instantiate the module now
+            self._instantiate_module(module_id, widget)
+
         if module_id not in self.module_containers:
             return
 
