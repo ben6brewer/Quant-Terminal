@@ -734,11 +734,15 @@ class PortfolioService:
         """
         Calculate FREE CASH summary values for the summary row.
 
-        Only tracks FREE CASH transaction money flow:
-        - Buy (deposit): adds (qty - fees) to cash position
-        - Sell (withdrawal): removes (qty + fees) from cash position
+        Tracks all transaction money flow to show true cash position:
 
-        Principal = Market Value = Quantity (all same for cash at $1/unit)
+        FREE CASH transactions:
+        - Buy (deposit): adds (qty - fees) to cash
+        - Sell (withdrawal): removes (qty + fees) from cash
+
+        Regular security transactions:
+        - Buy: subtracts (qty * price + fees) from cash
+        - Sell: adds (qty * price - fees) to cash
 
         Args:
             transactions: List of all transactions
@@ -752,15 +756,23 @@ class PortfolioService:
             ticker = tx.get("ticker", "").upper()
             tx_type = tx.get("transaction_type", "")
             qty = float(tx.get("quantity", 0))
+            price = float(tx.get("entry_price", 0))
             fees = float(tx.get("fees", 0))
 
             if ticker == PortfolioService.FREE_CASH_TICKER:
+                # FREE CASH transactions (price is always $1)
                 if tx_type == "Buy":  # Deposit
-                    # Deposit: add qty, subtract fees paid
                     free_cash_balance += qty - fees
                 else:  # Sell = Withdrawal
-                    # Withdrawal: subtract qty, subtract fees paid
                     free_cash_balance -= (qty + fees)
+            else:
+                # Regular security transactions affect cash position
+                if tx_type == "Buy":
+                    # Buying securities costs cash
+                    free_cash_balance -= (qty * price + fees)
+                else:  # Sell
+                    # Selling securities adds cash
+                    free_cash_balance += (qty * price - fees)
 
         return {
             "ticker": PortfolioService.FREE_CASH_TICKER,
