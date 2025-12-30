@@ -14,6 +14,12 @@ from app.utils.validators import (
     validate_price_data,
     validate_theme,
 )
+from app.utils.market_hours import (
+    is_crypto_ticker,
+    is_nyse_trading_day,
+    is_stock_cache_current,
+    get_last_expected_trading_date,
+)
 
 __all__ = [
     "format_price_usd",
@@ -26,4 +32,8 @@ __all__ = [
     "validate_dataframe",
     "validate_price_data",
     "validate_theme",
+    "is_crypto_ticker",
+    "is_nyse_trading_day",
+    "is_stock_cache_current",
+    "get_last_expected_trading_date",
 ]

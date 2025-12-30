@@ -75,27 +75,39 @@ class MarketDataCache:
     
     def is_cache_current(self, ticker: str) -> bool:
         """
-        Check if cached data is current (last date >= today).
-        
+        Check if cached data is current (no new data expected).
+
+        For crypto tickers (-USD suffix): Check if last date >= today
+        For stock tickers: Check if last date >= last expected trading date
+
+        This prevents unnecessary API calls on:
+        - Weekends
+        - NYSE holidays
+        - Before market close on trading days
+
         Args:
             ticker: Ticker symbol
-        
+
         Returns:
             True if cache is current, False otherwise
         """
+        from app.utils.market_hours import is_crypto_ticker, is_stock_cache_current
+
         df = self.get_cached_data(ticker)
-        
+
         if df is None or df.empty:
             return False
-        
+
         # Get the last date in cache
-        last_date = df.index.max()
-        
-        # Get today's date (without time component)
-        today = pd.Timestamp(datetime.now().date())
-        
-        # Cache is current if last date is today or later
-        return last_date >= today
+        last_date = df.index.max().date()
+
+        # Crypto trades 24/7 - use simple today check
+        if is_crypto_ticker(ticker):
+            today = datetime.now().date()
+            return last_date >= today
+
+        # Stocks - use market-aware check
+        return is_stock_cache_current(last_date)
     
     def get_last_cached_date(self, ticker: str) -> pd.Timestamp | None:
         """
