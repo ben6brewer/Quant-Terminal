@@ -1,15 +1,208 @@
 """Transaction Log Table Widget - Editable Transaction Table"""
 
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from PySide6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QHeaderView, QDateEdit,
-    QLineEdit, QComboBox, QDoubleSpinBox
+    QLineEdit, QComboBox, QDoubleSpinBox, QAbstractButton, QWidget, QApplication
 )
-from PySide6.QtCore import Qt, Signal, QDate
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, Signal, QDate, QTimer, QEvent
+from PySide6.QtGui import QColor, QDoubleValidator
 
 from app.core.theme_manager import ThemeManager
 from ..services.portfolio_service import PortfolioService
+from .no_scroll_combobox import NoScrollComboBox
+
+
+class AutoSelectDateEdit(QDateEdit):
+    """QDateEdit that auto-selects text and allows seamless date typing."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setCalendarPopup(True)
+        self.setDisplayFormat("yyyy-MM-dd")
+        # Get the internal line edit for text manipulation
+        self.line_edit = self.lineEdit()
+        if self.line_edit:
+            self.line_edit.installEventFilter(self)
+
+        # Track raw digits for seamless typing
+        self._raw_digits = ""
+        self._is_typing = False
+
+    def eventFilter(self, obj, event):
+        """Handle focus and key events for seamless typing."""
+        if obj == self.line_edit:
+            if event.type() == QEvent.FocusIn:
+                # Select all text when focused
+                QTimer.singleShot(0, self.line_edit.selectAll)
+                self._is_typing = False
+                self._raw_digits = ""
+            elif event.type() == QEvent.MouseButtonPress:
+                # Select all on mouse click
+                QTimer.singleShot(0, self.line_edit.selectAll)
+                self._is_typing = False
+                self._raw_digits = ""
+            elif event.type() == QEvent.KeyPress:
+                # Handle seamless date typing
+                key = event.key()
+                text = event.text()
+
+                # Check if it's a digit
+                if text.isdigit():
+                    # Start fresh if not already typing
+                    if not self._is_typing:
+                        self._raw_digits = ""
+                        self._is_typing = True
+
+                    # Add digit to raw string (max 8 digits for YYYYMMDD)
+                    if len(self._raw_digits) < 8:
+                        self._raw_digits += text
+                        self._format_and_display()
+                    return True  # Consume the event
+
+                # Handle backspace
+                elif key == Qt.Key_Backspace:
+                    if self._is_typing and self._raw_digits:
+                        self._raw_digits = self._raw_digits[:-1]
+                        if self._raw_digits:
+                            self._format_and_display()
+                        else:
+                            # Reset to current date if all digits deleted
+                            self._is_typing = False
+                            self.line_edit.setText("")
+                        return True  # Consume the event
+
+                # Reset typing mode on Enter, Tab, or Escape
+                elif key in (Qt.Key_Return, Qt.Key_Enter, Qt.Key_Tab, Qt.Key_Escape):
+                    self._is_typing = False
+                    self._raw_digits = ""
+
+        return super().eventFilter(obj, event)
+
+    def _format_and_display(self):
+        """Format raw digits as YYYY-MM-DD and display."""
+        if not self._raw_digits:
+            return
+
+        # Pad with zeros to show partial date
+        digits = self._raw_digits.ljust(8, '0')
+
+        # Extract year, month, day
+        year = digits[0:4]
+        month = digits[4:6]
+        day = digits[6:8]
+
+        # Format as YYYY-MM-DD
+        formatted = f"{year}-{month}-{day}"
+
+        # Update the line edit text directly
+        self.line_edit.setText(formatted)
+
+        # Try to parse and set the date if valid
+        try:
+            date = QDate.fromString(formatted, "yyyy-MM-dd")
+            if date.isValid():
+                self.blockSignals(True)
+                self.setDate(date)
+                self.blockSignals(False)
+        except:
+            pass
+
+    def focusInEvent(self, event):
+        """Select all text when date edit receives focus."""
+        super().focusInEvent(event)
+        if self.line_edit:
+            QTimer.singleShot(0, self.line_edit.selectAll)
+        self._is_typing = False
+        self._raw_digits = ""
+
+
+class AutoSelectLineEdit(QLineEdit):
+    """QLineEdit that auto-selects all text on focus or click."""
+
+    def focusInEvent(self, event):
+        super().focusInEvent(event)
+        # Select all text so typing replaces it
+        self.selectAll()
+
+    def mousePressEvent(self, event):
+        # Select all text when clicked (whether already focused or not)
+        super().mousePressEvent(event)
+        self.selectAll()
+
+
+class ValidatedNumericLineEdit(QLineEdit):
+    """QLineEdit with numeric validation and optional prefix."""
+
+    def __init__(self, min_value=0.0, max_value=1000000.0, decimals=2, prefix="", show_dash_for_zero=False, parent=None):
+        super().__init__(parent)
+        self.prefix = prefix
+        self.decimals = decimals
+        self.show_dash_for_zero = show_dash_for_zero
+
+        self.validator = QDoubleValidator(min_value, max_value, decimals, self)
+        self.validator.setNotation(QDoubleValidator.StandardNotation)
+        self.setValidator(self.validator)
+        self.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+
+        if prefix:
+            self.setPlaceholderText(f"{prefix}0.00")
+
+    def value(self) -> float:
+        text = self.text().replace(self.prefix, "").strip()
+        if text == "--":
+            return 0.0
+        try:
+            return float(text)
+        except ValueError:
+            return 0.0
+
+    def setValue(self, value: float):
+        # Show '--' for zero if enabled
+        if self.show_dash_for_zero and value == 0.0:
+            self.setText("--")
+            return
+
+        # Format with specified decimals, then strip trailing zeros
+        formatted = f"{value:.{self.decimals}f}"
+        # Remove trailing zeros and trailing decimal point
+        formatted = formatted.rstrip('0').rstrip('.')
+
+        self.setText(f"{self.prefix}{formatted}" if self.prefix else formatted)
+
+    def focusInEvent(self, event):
+        super().focusInEvent(event)
+        # Select all text so typing replaces it
+        self.selectAll()
+
+    def mousePressEvent(self, event):
+        # Select all text when clicked (whether already focused or not)
+        super().mousePressEvent(event)
+        self.selectAll()
+
+    def focusOutEvent(self, event):
+        super().focusOutEvent(event)
+        text = self.text().strip()
+
+        # Handle '--' display for zero
+        if text == "--" or not text:
+            if self.show_dash_for_zero:
+                self.setText("--")
+            else:
+                formatted = "0"
+                self.setText(f"{self.prefix}{formatted}" if self.prefix else formatted)
+        else:
+            # Remove prefix for validation
+            if self.prefix and text.startswith(self.prefix):
+                text = text.replace(self.prefix, "").strip()
+
+            try:
+                self.setValue(float(text))
+            except ValueError:
+                if self.show_dash_for_zero:
+                    self.setText("--")
+                else:
+                    self.setText(f"{self.prefix}0" if self.prefix else "0")
 
 
 class TransactionLogTable(QTableWidget):
@@ -25,22 +218,33 @@ class TransactionLogTable(QTableWidget):
 
     # Columns
     COLUMNS = [
-        "Date",           # QDateEdit
-        "Ticker",         # QLineEdit
-        "Type",           # QComboBox (Buy/Sell)
-        "Quantity",       # QDoubleSpinBox
-        "Entry Price",    # QDoubleSpinBox
-        "Fees",           # QDoubleSpinBox
-        "Notes",          # QLineEdit
-        "Market Value",   # Read-only label (calculated)
-        "P&L"             # Read-only label (calculated)
+        "Date",              # QDateEdit
+        "Ticker",            # QLineEdit
+        "Type",              # QComboBox (Buy/Sell)
+        "Quantity",          # QDoubleSpinBox
+        "Transaction Price", # QDoubleSpinBox
+        "Fees",              # QDoubleSpinBox
+        "Notes",             # QLineEdit
+        "Market Value",      # Read-only label (calculated)
+        "P&L"                # Read-only label (calculated)
     ]
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
         self.theme_manager = theme_manager
+
+        # UUID-based transaction storage
+        self._transactions_by_id: Dict[str, Dict[str, Any]] = {}  # Map transaction_id -> transaction_dict
+        self._row_to_id: Dict[int, str] = {}  # Map row_index -> transaction_id
+
+        # Legacy field for backwards compatibility (will be phased out)
         self._transactions = {}  # Map row_index -> transaction_dict
-        self._current_prices = {}  # Map ticker -> current_price
+
+        self._current_prices: Dict[str, float] = {}  # Map ticker -> current_price
+
+        # Focus tracking for auto-delete
+        self._current_editing_row: Optional[int] = None
+        self._row_widgets_map: Dict[int, List[QWidget]] = {}
 
         self._setup_table()
         self._apply_theme()
@@ -83,6 +287,220 @@ class TransactionLogTable(QTableWidget):
         # Enable sorting
         self.setSortingEnabled(True)
 
+        # Set corner label
+        self._set_corner_label("Transaction")
+
+    def _set_corner_label(self, text: str):
+        """Set text for table corner button."""
+        corner_button = self.findChild(QAbstractButton)
+        if corner_button:
+            corner_button.setText(text)
+            corner_button.setEnabled(False)
+
+    def _get_transaction_for_row(self, row: int) -> Optional[Dict[str, Any]]:
+        """
+        Get transaction dict for row index using ID mapping.
+
+        Args:
+            row: Row index
+
+        Returns:
+            Transaction dict or None if not found
+        """
+        tx_id = self._row_to_id.get(row)
+        if tx_id:
+            return self._transactions_by_id.get(tx_id)
+        return None
+
+    def _rebuild_transaction_map(self):
+        """Rebuild row→id mapping after row operations."""
+        new_row_to_id = {}
+        for row in range(self.rowCount()):
+            # Extract ID from widgets
+            tx = self._extract_transaction_from_row(row)
+            if tx and "id" in tx:
+                new_row_to_id[row] = tx["id"]
+        self._row_to_id = new_row_to_id
+
+    def _ensure_blank_row(self):
+        """Ensure blank row exists at top of table. Create if missing."""
+        from datetime import datetime
+
+        # Check if blank row already exists
+        if self.rowCount() > 0:
+            first_row_tx = self._get_transaction_for_row(0)
+            if first_row_tx and first_row_tx.get("is_blank"):
+                return  # Blank row already exists
+
+        # Create blank transaction
+        blank_transaction = {
+            "id": "BLANK_ROW",
+            "is_blank": True,
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "ticker": "",
+            "transaction_type": "Buy",
+            "quantity": 0.0,
+            "entry_price": 0.0,
+            "fees": 0.0,
+            "notes": ""
+        }
+
+        # Shift existing row indices down (before inserting at row 0)
+        # Build new mappings with shifted indices
+        new_row_to_id = {}
+        new_transactions = {}
+        new_row_widgets_map = {}
+
+        for old_row in range(self.rowCount()):
+            new_row = old_row + 1  # Shift down by 1
+            if old_row in self._row_to_id:
+                new_row_to_id[new_row] = self._row_to_id[old_row]
+            if old_row in self._transactions:
+                new_transactions[new_row] = self._transactions[old_row]
+            if old_row in self._row_widgets_map:
+                new_row_widgets_map[new_row] = self._row_widgets_map[old_row]
+
+        # Insert at top (row 0)
+        self.setSortingEnabled(False)
+        self.insertRow(0)
+
+        # Apply shifted mappings
+        self._row_to_id = new_row_to_id
+        self._transactions = new_transactions
+        self._row_widgets_map = new_row_widgets_map
+
+        # Store blank row at index 0
+        self._transactions_by_id["BLANK_ROW"] = blank_transaction
+        self._row_to_id[0] = "BLANK_ROW"
+        self._transactions[0] = blank_transaction
+
+        # Create widgets for blank row
+        # Date cell
+        date_edit = AutoSelectDateEdit()
+        date_edit.setDate(QDate.fromString(blank_transaction["date"], "yyyy-MM-dd"))
+        date_edit.setReadOnly(False)
+        date_edit.lineEdit().setPlaceholderText("YYYY-MM-DD")
+        date_edit.dateChanged.connect(self._on_widget_changed)
+        self.setCellWidget(0, 0, date_edit)
+
+        # Ticker cell
+        ticker_edit = AutoSelectLineEdit(blank_transaction["ticker"])
+        ticker_edit.setPlaceholderText("Enter ticker...")
+        ticker_edit.textChanged.connect(self._on_widget_changed)
+        self.setCellWidget(0, 1, ticker_edit)
+
+        # Type cell
+        type_combo = NoScrollComboBox()
+        type_combo.addItems(["Buy", "Sell"])
+        type_combo.setCurrentText(blank_transaction["transaction_type"])
+        type_combo.currentTextChanged.connect(self._on_widget_changed)
+        # Hide dropdown arrow and remove all highlight effects
+        type_combo.setStyleSheet("""
+            QComboBox { border: none; }
+            QComboBox::drop-down { border: none; width: 0px; }
+            QComboBox:focus { border: none; outline: none; }
+            QComboBox:on { border: none; }
+        """)
+        self.setCellWidget(0, 2, type_combo)
+
+        # Quantity cell
+        qty_edit = ValidatedNumericLineEdit(min_value=0.0001, max_value=1000000, decimals=4, prefix="", show_dash_for_zero=True)
+        qty_edit.setValue(blank_transaction["quantity"])
+        qty_edit.textChanged.connect(self._on_widget_changed)
+        self.setCellWidget(0, 3, qty_edit)
+
+        # Transaction Price cell
+        price_edit = ValidatedNumericLineEdit(min_value=0.01, max_value=1000000, decimals=2, prefix="", show_dash_for_zero=True)
+        price_edit.setValue(blank_transaction["entry_price"])
+        price_edit.textChanged.connect(self._on_widget_changed)
+        self.setCellWidget(0, 4, price_edit)
+
+        # Fees cell
+        fees_edit = ValidatedNumericLineEdit(min_value=0, max_value=10000, decimals=2, prefix="", show_dash_for_zero=True)
+        fees_edit.setValue(blank_transaction["fees"])
+        fees_edit.textChanged.connect(self._on_widget_changed)
+        self.setCellWidget(0, 5, fees_edit)
+
+        # Notes cell
+        notes_edit = AutoSelectLineEdit(blank_transaction.get("notes", ""))
+        notes_edit.textChanged.connect(self._on_widget_changed)
+        self.setCellWidget(0, 6, notes_edit)
+
+        # Market Value cell (read-only)
+        market_value_item = QTableWidgetItem("--")
+        market_value_item.setFlags(market_value_item.flags() & ~Qt.ItemIsEditable)
+        market_value_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.setItem(0, 7, market_value_item)
+
+        # P&L cell (read-only)
+        pnl_item = QTableWidgetItem("--")
+        pnl_item.setFlags(pnl_item.flags() & ~Qt.ItemIsEditable)
+        pnl_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.setItem(0, 8, pnl_item)
+
+        # Install focus watchers for auto-delete functionality
+        self._install_focus_watcher(0)
+
+        self.setSortingEnabled(False)  # Keep sorting disabled for manual control
+
+    def _is_transaction_complete(self, transaction: Dict[str, Any]) -> bool:
+        """
+        Check if transaction has all required fields filled.
+
+        Args:
+            transaction: Transaction dict
+
+        Returns:
+            True if ticker, qty > 0, and entry_price > 0 are all filled
+        """
+        ticker = transaction.get("ticker", "").strip()
+        quantity = transaction.get("quantity", 0.0)
+        entry_price = transaction.get("entry_price", 0.0)
+
+        return (
+            ticker != "" and
+            quantity > 0 and
+            entry_price > 0
+        )
+
+    def _transition_blank_to_real(self, row: int, transaction: Dict[str, Any]):
+        """
+        Convert blank row to real transaction and create new blank.
+
+        Args:
+            row: Row index of blank row
+            transaction: Updated transaction data
+        """
+        import uuid
+
+        # Assign new UUID
+        new_id = str(uuid.uuid4())
+        transaction["id"] = new_id
+        transaction["is_blank"] = False
+        transaction["ticker"] = transaction["ticker"].upper().strip()
+
+        # Update UUID-based storage
+        # Remove old blank entry
+        if "BLANK_ROW" in self._transactions_by_id:
+            del self._transactions_by_id["BLANK_ROW"]
+
+        # Add new real transaction
+        self._transactions_by_id[new_id] = transaction
+        self._row_to_id[row] = new_id
+        self._transactions[row] = transaction
+
+        # Update calculated cells
+        self._update_calculated_cells(row)
+
+        # Emit signal
+        self.transaction_added.emit(transaction)
+
+        # Create new blank row at top
+        self._ensure_blank_row()
+
+        # Note: Don't sort here - blank is already at top (row 0)
+        # Sorting happens on portfolio load to order by date
+
     def add_transaction_row(self, transaction: Dict[str, Any]) -> int:
         """
         Add a new transaction row.
@@ -99,58 +517,62 @@ class TransactionLogTable(QTableWidget):
         row = self.rowCount()
         self.insertRow(row)
 
-        # Store transaction
+        # Store transaction in UUID-based storage
+        tx_id = transaction["id"]
+        self._transactions_by_id[tx_id] = transaction
+        self._row_to_id[row] = tx_id
+
+        # Also store in legacy dict for backwards compatibility
         self._transactions[row] = transaction
 
-        # Date cell: QDateEdit widget
-        date_edit = QDateEdit()
-        date_edit.setCalendarPopup(True)
-        date_edit.setDisplayFormat("yyyy-MM-dd")
+        # Date cell: AutoSelectDateEdit widget
+        date_edit = AutoSelectDateEdit()
         date_edit.setDate(QDate.fromString(transaction["date"], "yyyy-MM-dd"))
-        date_edit.dateChanged.connect(lambda: self._on_cell_changed(row, 0))
+        date_edit.setReadOnly(False)  # Explicit (default is False)
+        date_edit.lineEdit().setPlaceholderText("YYYY-MM-DD")  # Add hint
+        date_edit.dateChanged.connect(self._on_widget_changed)
         self.setCellWidget(row, 0, date_edit)
 
-        # Ticker cell: QLineEdit
-        ticker_edit = QLineEdit(transaction["ticker"])
-        ticker_edit.textChanged.connect(lambda: self._on_cell_changed(row, 1))
+        # Ticker cell: AutoSelectLineEdit
+        ticker_edit = AutoSelectLineEdit(transaction["ticker"])
+        ticker_edit.textChanged.connect(self._on_widget_changed)
         self.setCellWidget(row, 1, ticker_edit)
 
-        # Type cell: QComboBox
-        type_combo = QComboBox()
+        # Type cell: NoScrollComboBox (wheel-scroll disabled)
+        type_combo = NoScrollComboBox()
         type_combo.addItems(["Buy", "Sell"])
         type_combo.setCurrentText(transaction["transaction_type"])
-        type_combo.currentTextChanged.connect(lambda: self._on_cell_changed(row, 2))
+        type_combo.currentTextChanged.connect(self._on_widget_changed)
+        # Hide dropdown arrow and remove all highlight effects
+        type_combo.setStyleSheet("""
+            QComboBox { border: none; }
+            QComboBox::drop-down { border: none; width: 0px; }
+            QComboBox:focus { border: none; outline: none; }
+            QComboBox:on { border: none; }
+        """)
         self.setCellWidget(row, 2, type_combo)
 
-        # Quantity cell: QDoubleSpinBox
-        qty_spin = QDoubleSpinBox()
-        qty_spin.setRange(0.0001, 1000000)
-        qty_spin.setDecimals(4)
-        qty_spin.setValue(transaction["quantity"])
-        qty_spin.valueChanged.connect(lambda: self._on_cell_changed(row, 3))
-        self.setCellWidget(row, 3, qty_spin)
+        # Quantity cell: ValidatedNumericLineEdit
+        qty_edit = ValidatedNumericLineEdit(min_value=0.0001, max_value=1000000, decimals=4, prefix="", show_dash_for_zero=True)
+        qty_edit.setValue(transaction["quantity"])
+        qty_edit.textChanged.connect(self._on_widget_changed)
+        self.setCellWidget(row, 3, qty_edit)
 
-        # Entry Price cell: QDoubleSpinBox
-        price_spin = QDoubleSpinBox()
-        price_spin.setRange(0.01, 1000000)
-        price_spin.setDecimals(2)
-        price_spin.setPrefix("$")
-        price_spin.setValue(transaction["entry_price"])
-        price_spin.valueChanged.connect(lambda: self._on_cell_changed(row, 4))
-        self.setCellWidget(row, 4, price_spin)
+        # Transaction Price cell: ValidatedNumericLineEdit
+        price_edit = ValidatedNumericLineEdit(min_value=0.01, max_value=1000000, decimals=2, prefix="", show_dash_for_zero=True)
+        price_edit.setValue(transaction["entry_price"])
+        price_edit.textChanged.connect(self._on_widget_changed)
+        self.setCellWidget(row, 4, price_edit)
 
-        # Fees cell: QDoubleSpinBox
-        fees_spin = QDoubleSpinBox()
-        fees_spin.setRange(0, 10000)
-        fees_spin.setDecimals(2)
-        fees_spin.setPrefix("$")
-        fees_spin.setValue(transaction["fees"])
-        fees_spin.valueChanged.connect(lambda: self._on_cell_changed(row, 5))
-        self.setCellWidget(row, 5, fees_spin)
+        # Fees cell: ValidatedNumericLineEdit
+        fees_edit = ValidatedNumericLineEdit(min_value=0, max_value=10000, decimals=2, prefix="", show_dash_for_zero=True)
+        fees_edit.setValue(transaction["fees"])
+        fees_edit.textChanged.connect(self._on_widget_changed)
+        self.setCellWidget(row, 5, fees_edit)
 
-        # Notes cell: QLineEdit
-        notes_edit = QLineEdit(transaction.get("notes", ""))
-        notes_edit.textChanged.connect(lambda: self._on_cell_changed(row, 6))
+        # Notes cell: AutoSelectLineEdit
+        notes_edit = AutoSelectLineEdit(transaction.get("notes", ""))
+        notes_edit.textChanged.connect(self._on_widget_changed)
         self.setCellWidget(row, 6, notes_edit)
 
         # Market Value cell: Read-only QTableWidgetItem
@@ -165,6 +587,9 @@ class TransactionLogTable(QTableWidget):
         pnl_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.setItem(row, 8, pnl_item)
 
+        # Install focus watchers for auto-delete functionality
+        self._install_focus_watcher(row)
+
         # Re-enable sorting
         self.setSortingEnabled(True)
 
@@ -172,32 +597,33 @@ class TransactionLogTable(QTableWidget):
 
     def _on_cell_changed(self, row: int, col: int):
         """Handle cell value change."""
-        if row not in self._transactions:
+        transaction = self._get_transaction_for_row(row)
+        if not transaction:
             return
-
-        transaction = self._transactions[row]
-        transaction_id = transaction["id"]
 
         # Extract updated values
         updated = self._extract_transaction_from_row(row)
         if not updated:
             return
 
-        # Validate
-        is_valid, error = PortfolioService.validate_transaction(updated)
-        if not is_valid:
-            # TODO: Show validation error in status bar or tooltip
-            print(f"Validation error: {error}")
+        # Check if this is the blank row
+        if transaction.get("is_blank"):
+            # Just update stored values without transitioning
+            # Transition will happen on focus loss or Enter key to avoid lag while typing
+            self._transactions_by_id["BLANK_ROW"].update(updated)
+            self._transactions[row] = updated
             return
 
-        # Update stored transaction
+        # Normal transaction modification (not blank row)
+        transaction_id = transaction["id"]
+
+        # Always update stored transaction (even if invalid)
+        # This allows focus loss detection to see empty tickers and delete the row
+        self._transactions_by_id[transaction_id] = updated
         self._transactions[row] = updated
 
-        # Update calculated cells
-        self._update_calculated_cells(row)
-
-        # Emit signal
-        self.transaction_modified.emit(transaction_id, updated)
+        # DON'T fetch prices here - that happens on focus loss only
+        # This prevents lag when typing/deleting ticker symbols
 
     def _extract_transaction_from_row(self, row: int) -> Dict[str, Any]:
         """
@@ -212,7 +638,9 @@ class TransactionLogTable(QTableWidget):
         if row not in self._transactions:
             return None
 
-        transaction_id = self._transactions[row]["id"]
+        # Get existing transaction to preserve flags like is_blank
+        existing_transaction = self._transactions[row]
+        transaction_id = existing_transaction["id"]
 
         try:
             date_edit = self.cellWidget(row, 0)
@@ -226,7 +654,7 @@ class TransactionLogTable(QTableWidget):
             if not all([date_edit, ticker_edit, type_combo, qty_spin, price_spin, fees_spin, notes_edit]):
                 return None
 
-            return {
+            extracted = {
                 "id": transaction_id,
                 "date": date_edit.date().toString("yyyy-MM-dd"),
                 "ticker": ticker_edit.text().strip().upper(),
@@ -236,6 +664,12 @@ class TransactionLogTable(QTableWidget):
                 "fees": fees_spin.value(),
                 "notes": notes_edit.text().strip()
             }
+
+            # Preserve is_blank flag if it exists
+            if "is_blank" in existing_transaction:
+                extracted["is_blank"] = existing_transaction["is_blank"]
+
+            return extracted
         except Exception as e:
             print(f"Error extracting transaction from row {row}: {e}")
             return None
@@ -247,10 +681,10 @@ class TransactionLogTable(QTableWidget):
         Args:
             row: Row index
         """
-        if row not in self._transactions:
+        transaction = self._get_transaction_for_row(row)
+        if not transaction:
             return
 
-        transaction = self._transactions[row]
         ticker = transaction["ticker"]
 
         # Get current price
@@ -297,7 +731,7 @@ class TransactionLogTable(QTableWidget):
 
     def get_all_transactions(self) -> List[Dict[str, Any]]:
         """
-        Get all transactions from table.
+        Get all transactions from table (excluding blank row).
 
         Returns:
             List of transaction dicts
@@ -305,43 +739,364 @@ class TransactionLogTable(QTableWidget):
         transactions = []
         for row in range(self.rowCount()):
             tx = self._extract_transaction_from_row(row)
-            if tx:
+            if tx and not tx.get("is_blank"):  # Filter out blank row
                 transactions.append(tx)
         return transactions
 
     def clear_all_transactions(self):
         """Clear all transactions from table."""
         self.setRowCount(0)
-        self._transactions.clear()
+        self._transactions_by_id.clear()
+        self._row_to_id.clear()
+        self._transactions.clear()  # Clear legacy storage too
 
     def delete_selected_rows(self):
         """Delete selected rows and emit signals."""
         selected_rows = sorted(set(idx.row() for idx in self.selectedIndexes()), reverse=True)
 
         for row in selected_rows:
-            if row in self._transactions:
-                transaction_id = self._transactions[row]["id"]
-                del self._transactions[row]
+            # Get transaction using UUID-based lookup
+            transaction = self._get_transaction_for_row(row)
+            if transaction:
+                transaction_id = transaction["id"]
+
+                # Remove from UUID-based storage
+                if transaction_id in self._transactions_by_id:
+                    del self._transactions_by_id[transaction_id]
+
+                # Remove from row mapping
+                if row in self._row_to_id:
+                    del self._row_to_id[row]
+
+                # Remove from legacy storage
+                if row in self._transactions:
+                    del self._transactions[row]
+
+                # Remove row from table
                 self.removeRow(row)
+
+                # Emit signal
                 self.transaction_deleted.emit(transaction_id)
 
-        # Rebuild transaction map (row indices shifted)
+        # Rebuild transaction map (row indices shifted after deletion)
+        self._rebuild_transaction_map()
+
+        # Also rebuild legacy map
         new_transactions = {}
         for row in range(self.rowCount()):
-            # Re-extract from widgets
+            tx = self._get_transaction_for_row(row)
+            if tx:
+                new_transactions[row] = tx
+        self._transactions = new_transactions
+
+    def _find_row_for_widget(self, widget: QWidget) -> Optional[int]:
+        """
+        Find the row index for a given widget.
+
+        Args:
+            widget: The widget to find
+
+        Returns:
+            Row index or None if not found
+        """
+        for row, widgets in self._row_widgets_map.items():
+            if widget in widgets:
+                return row
+        return None
+
+    def _find_cell_for_widget(self, widget: QWidget) -> tuple[Optional[int], Optional[int]]:
+        """
+        Find the (row, col) for a given widget by searching all cells.
+
+        Args:
+            widget: The widget to find
+
+        Returns:
+            Tuple of (row, col) or (None, None) if not found
+        """
+        for row in range(self.rowCount()):
+            for col in range(self.columnCount()):
+                cell_widget = self.cellWidget(row, col)
+                if cell_widget == widget:
+                    return (row, col)
+        return (None, None)
+
+    def _on_widget_changed(self):
+        """
+        Generic handler for widget value changes.
+        Uses sender() to find which widget changed, then looks up its position.
+        """
+        widget = self.sender()
+        if not widget:
+            return
+
+        row, col = self._find_cell_for_widget(widget)
+        if row is not None and col is not None:
+            self._on_cell_changed(row, col)
+
+    def _install_focus_watcher(self, row: int):
+        """
+        Install event filters on all widgets in a row for focus tracking.
+
+        Args:
+            row: Row index to install watchers on
+        """
+        widgets = []
+
+        # Date widget (col 0)
+        date_widget = self.cellWidget(row, 0)
+        if date_widget:
+            date_widget.installEventFilter(self)
+            widgets.append(date_widget)
+
+        # Ticker widget (col 1)
+        ticker_widget = self.cellWidget(row, 1)
+        if ticker_widget:
+            ticker_widget.installEventFilter(self)
+            widgets.append(ticker_widget)
+
+        # Type widget (col 2)
+        type_widget = self.cellWidget(row, 2)
+        if type_widget:
+            type_widget.installEventFilter(self)
+            widgets.append(type_widget)
+
+        # Quantity, Entry Price, Fees widgets (cols 3, 4, 5)
+        for col in [3, 4, 5]:
+            widget = self.cellWidget(row, col)
+            if widget:
+                widget.installEventFilter(self)
+                widgets.append(widget)
+
+        # Notes widget (col 6)
+        notes_widget = self.cellWidget(row, 6)
+        if notes_widget:
+            notes_widget.installEventFilter(self)
+            widgets.append(notes_widget)
+
+        # Store widget references for this row
+        self._row_widgets_map[row] = widgets
+
+    def eventFilter(self, obj: QWidget, event: QEvent) -> bool:
+        """
+        Handle focus and key events on row widgets.
+
+        Args:
+            obj: The widget that received the event
+            event: The event
+
+        Returns:
+            False to allow normal event processing
+        """
+        event_type = event.type()
+
+        if event_type == QEvent.FocusIn:
+            # Focus entered a widget - find which row
+            row = self._find_row_for_widget(obj)
+            if row is not None:
+                self._current_editing_row = row
+
+        elif event_type == QEvent.FocusOut:
+            # Focus left a widget - defer check to see if it left the row
+            QTimer.singleShot(0, self._check_row_focus_loss)
+
+        elif event_type == QEvent.KeyPress:
+            # Handle Enter key on any field
+            from PySide6.QtGui import QKeyEvent
+            key_event = event
+            if isinstance(key_event, QKeyEvent):
+                key = key_event.key()
+                # Check for Enter/Return key
+                if key in (Qt.Key_Return, Qt.Key_Enter):
+                    # Find which row this widget belongs to
+                    row = self._find_row_for_widget(obj)
+                    if row is not None:
+                        # Get transaction
+                        transaction = self._get_transaction_for_row(row)
+
+                        # Check if blank row and complete - transition if so
+                        if transaction and transaction.get("is_blank"):
+                            if self._is_transaction_complete(transaction):
+                                self._transition_blank_to_real(row, transaction)
+                                # Move focus to new blank row's ticker field (row 0, col 1)
+                                new_blank_ticker = self.cellWidget(0, 1)
+                                if new_blank_ticker:
+                                    new_blank_ticker.setFocus()
+                                return True  # Consume event
+
+                        # Handle normal rows (not blank)
+                        if transaction and not transaction.get("is_blank"):
+                            ticker = transaction.get("ticker", "").strip()
+                            quantity = transaction.get("quantity", 0.0)
+
+                            if not ticker or quantity == 0.0:
+                                # Empty ticker or zero quantity - delete row
+                                self._delete_empty_row(row)
+                                return True  # Consume event
+                            else:
+                                # Valid data - validate and fetch prices (same as focus loss)
+                                is_valid, error = PortfolioService.validate_transaction(transaction)
+                                if is_valid:
+                                    self._update_calculated_cells(row)
+                                    transaction_id = transaction.get("id")
+                                    if transaction_id:
+                                        self.transaction_modified.emit(transaction_id, transaction)
+                                # Clear selection and focus from the widget
+                                self.clearSelection()
+                                obj.clearFocus()  # Clear focus from the specific widget
+                                return True  # Consume event
+
+        return super().eventFilter(obj, event)
+
+    def _check_row_focus_loss(self):
+        """Check if focus has left the current editing row (deferred check)."""
+        if self._current_editing_row is None:
+            return
+
+        # Get the currently focused widget
+        focused_widget = QApplication.focusWidget()
+
+        if not focused_widget:
+            # Focus lost completely - trigger row focus lost
+            self._on_row_focus_lost(self._current_editing_row)
+            self._current_editing_row = None
+            return
+
+        # Check if focus is still in the same row
+        new_row = self._find_row_for_widget(focused_widget)
+
+        if new_row != self._current_editing_row:
+            # Focus moved to different row - trigger row focus lost
+            self._on_row_focus_lost(self._current_editing_row)
+            self._current_editing_row = new_row
+
+    def _on_row_focus_lost(self, row: int):
+        """
+        Handle when focus leaves a row.
+        Auto-deletes empty rows (except blank row), or validates and fetches prices.
+
+        Args:
+            row: Row index that lost focus
+        """
+        # Get transaction for this row
+        transaction = self._get_transaction_for_row(row)
+        if not transaction:
+            return
+
+        # Check if this is blank row
+        if transaction.get("is_blank"):
+            # Check if it's complete, if so transition to real
+            if self._is_transaction_complete(transaction):
+                self._transition_blank_to_real(row, transaction)
+            return
+
+        # Check if row should be deleted (ticker empty OR quantity is 0/blank)
+        ticker = transaction.get("ticker", "").strip()
+        quantity = transaction.get("quantity", 0.0)
+
+        if not ticker or quantity == 0.0:
+            # Empty ticker or zero quantity - delete this row
+            self._delete_empty_row(row)
+        else:
+            # Has ticker and quantity - validate and fetch prices
+            # Validate transaction
+            is_valid, error = PortfolioService.validate_transaction(transaction)
+            if not is_valid:
+                # Don't fetch prices for invalid transactions
+                return
+
+            # Update calculated cells (fetch prices)
+            self._update_calculated_cells(row)
+
+            # Emit signal that transaction was modified
+            transaction_id = transaction.get("id")
+            if transaction_id:
+                self.transaction_modified.emit(transaction_id, transaction)
+
+    def _delete_empty_row(self, row: int):
+        """
+        Delete a single empty row.
+
+        Args:
+            row: Row index to delete
+        """
+        # Get transaction
+        transaction = self._get_transaction_for_row(row)
+        if not transaction:
+            return
+
+        transaction_id = transaction["id"]
+
+        # Remove from UUID-based storage
+        if transaction_id in self._transactions_by_id:
+            del self._transactions_by_id[transaction_id]
+
+        # Remove row from table first (this shifts all rows below up by 1)
+        self.removeRow(row)
+
+        # Rebuild all mappings to account for shifted row indices
+        new_row_to_id = {}
+        new_transactions = {}
+        new_row_widgets_map = {}
+
+        for old_row in sorted(self._row_to_id.keys()):
+            if old_row < row:
+                # Rows above deleted row keep same index
+                new_row_to_id[old_row] = self._row_to_id[old_row]
+                if old_row in self._transactions:
+                    new_transactions[old_row] = self._transactions[old_row]
+                if old_row in self._row_widgets_map:
+                    new_row_widgets_map[old_row] = self._row_widgets_map[old_row]
+            elif old_row > row:
+                # Rows below deleted row shift up by 1
+                new_index = old_row - 1
+                new_row_to_id[new_index] = self._row_to_id[old_row]
+                if old_row in self._transactions:
+                    new_transactions[new_index] = self._transactions[old_row]
+                if old_row in self._row_widgets_map:
+                    new_row_widgets_map[new_index] = self._row_widgets_map[old_row]
+            # old_row == row is the deleted row, skip it
+
+        self._row_to_id = new_row_to_id
+        self._transactions = new_transactions
+        self._row_widgets_map = new_row_widgets_map
+
+        # Emit signal
+        self.transaction_deleted.emit(transaction_id)
+
+    def _sort_transactions(self):
+        """
+        Sort transactions: blank row at top, completed transactions by date below.
+        """
+        # Get all transactions
+        all_transactions = []
+        blank_transaction = None
+
+        for row in range(self.rowCount()):
             tx = self._extract_transaction_from_row(row)
             if tx:
-                # Keep the original transaction from _transactions if possible
-                old_tx = next((t for t in self._transactions.values() if t["id"] == tx["id"]), None)
-                new_transactions[row] = old_tx if old_tx else tx
-            else:
-                # If extraction failed, try to keep old transaction
-                for old_row, old_tx in self._transactions.items():
-                    if old_row == row:
-                        new_transactions[row] = old_tx
-                        break
+                if tx.get("is_blank"):
+                    blank_transaction = tx
+                else:
+                    all_transactions.append(tx)
 
-        self._transactions = new_transactions
+        # Sort non-blank transactions by date (oldest first)
+        all_transactions.sort(key=lambda t: t.get("date", ""))
+
+        # Rebuild table
+        self.setRowCount(0)
+        self._transactions_by_id.clear()
+        self._row_to_id.clear()
+        self._transactions.clear()
+        self._row_widgets_map.clear()
+
+        # Add blank row first if it exists
+        if blank_transaction:
+            self._ensure_blank_row()
+
+        # Add sorted transactions
+        for tx in all_transactions:
+            self.add_transaction_row(tx)
 
     def _apply_theme(self):
         """Apply theme-specific styling."""
@@ -361,6 +1116,7 @@ class TransactionLogTable(QTableWidget):
         return """
             QTableWidget {
                 background-color: #1e1e1e;
+                alternate-background-color: #232323;
                 color: #ffffff;
                 gridline-color: #3d3d3d;
                 border: 1px solid #3d3d3d;
@@ -381,6 +1137,14 @@ class TransactionLogTable(QTableWidget):
                 font-weight: bold;
                 font-size: 12px;
             }
+            QTableCornerButton::section {
+                background-color: #2d2d2d;
+                color: #cccccc;
+                border: 1px solid #3d3d3d;
+                font-weight: bold;
+                font-size: 11px;
+                padding: 5px;
+            }
         """
 
     def _get_light_stylesheet(self) -> str:
@@ -388,6 +1152,7 @@ class TransactionLogTable(QTableWidget):
         return """
             QTableWidget {
                 background-color: #ffffff;
+                alternate-background-color: #f5f5f5;
                 color: #000000;
                 gridline-color: #cccccc;
                 border: 1px solid #cccccc;
@@ -408,6 +1173,14 @@ class TransactionLogTable(QTableWidget):
                 font-weight: bold;
                 font-size: 12px;
             }
+            QTableCornerButton::section {
+                background-color: #f5f5f5;
+                color: #333333;
+                border: 1px solid #cccccc;
+                font-weight: bold;
+                font-size: 11px;
+                padding: 5px;
+            }
         """
 
     def _get_bloomberg_stylesheet(self) -> str:
@@ -415,6 +1188,7 @@ class TransactionLogTable(QTableWidget):
         return """
             QTableWidget {
                 background-color: #000814;
+                alternate-background-color: #0a0f1c;
                 color: #e8e8e8;
                 gridline-color: #1a2838;
                 border: 1px solid #1a2838;
@@ -434,5 +1208,13 @@ class TransactionLogTable(QTableWidget):
                 border: 1px solid #1a2838;
                 font-weight: bold;
                 font-size: 12px;
+            }
+            QTableCornerButton::section {
+                background-color: #0d1420;
+                color: #a8a8a8;
+                border: 1px solid #1a2838;
+                font-weight: bold;
+                font-size: 11px;
+                padding: 5px;
             }
         """

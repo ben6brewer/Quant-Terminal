@@ -274,10 +274,10 @@ class HubWindow(QMainWindow):
         self.home_screen.module_selected.connect(self.open_module)
         self.home_screen.settings_requested.connect(self._open_settings)
 
-    def add_module(self, module_id: str, widget: QWidget) -> None:
+    def add_module(self, module_id: str, widget: QWidget, has_own_home_button: bool = False) -> None:
         """Add a module widget wrapped in container with home button."""
         # Create container with home button overlay
-        container = self._create_module_container(widget)
+        container = self._create_module_container(widget, has_own_home_button)
 
         # Store references
         self.modules[module_id] = widget
@@ -286,7 +286,7 @@ class HubWindow(QMainWindow):
         # Add to stack
         self.main_stack.addWidget(container)
 
-    def _create_module_container(self, module_widget: QWidget) -> QWidget:
+    def _create_module_container(self, module_widget: QWidget, has_own_home_button: bool = False) -> QWidget:
         """Create container with home button overlay for module."""
         container = QWidget()
         layout = QStackedLayout(container)
@@ -296,12 +296,13 @@ class HubWindow(QMainWindow):
         # Layer 0: Module widget (full screen)
         layout.addWidget(module_widget)
 
-        # Layer 1: Transparent overlay with home button (top-left)
-        overlay = self._create_home_button_overlay()
-        layout.addWidget(overlay)
+        # Layer 1: Transparent overlay with home button (top-left) - only if module doesn't have its own
+        if not has_own_home_button:
+            overlay = self._create_home_button_overlay()
+            layout.addWidget(overlay)
 
-        # Ensure overlay is on top
-        overlay.raise_()
+            # Ensure overlay is on top
+            overlay.raise_()
 
         return container
 

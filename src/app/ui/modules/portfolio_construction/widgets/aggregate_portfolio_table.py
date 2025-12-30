@@ -1,7 +1,7 @@
 """Aggregate Portfolio Table Widget - Read-Only Holdings Display"""
 
 from typing import List, Dict, Any
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView, QAbstractButton
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QFont
 
@@ -54,6 +54,16 @@ class AggregatePortfolioTable(QTableWidget):
 
         # Enable sorting
         self.setSortingEnabled(True)
+
+        # Set corner label
+        self._set_corner_label("Position")
+
+    def _set_corner_label(self, text: str):
+        """Set text for table corner button."""
+        corner_button = self.findChild(QAbstractButton)
+        if corner_button:
+            corner_button.setText(text)
+            corner_button.setEnabled(False)
 
     def update_holdings(self, holdings: List[Dict[str, Any]]):
         """
@@ -211,6 +221,7 @@ class AggregatePortfolioTable(QTableWidget):
         return """
             QTableWidget {
                 background-color: #1e1e1e;
+                alternate-background-color: #232323;
                 color: #ffffff;
                 gridline-color: #3d3d3d;
                 border: 1px solid #3d3d3d;
@@ -231,6 +242,14 @@ class AggregatePortfolioTable(QTableWidget):
                 font-weight: bold;
                 font-size: 12px;
             }
+            QTableCornerButton::section {
+                background-color: #2d2d2d;
+                color: #cccccc;
+                border: 1px solid #3d3d3d;
+                font-weight: bold;
+                font-size: 11px;
+                padding: 5px;
+            }
         """
 
     def _get_light_stylesheet(self) -> str:
@@ -238,6 +257,7 @@ class AggregatePortfolioTable(QTableWidget):
         return """
             QTableWidget {
                 background-color: #ffffff;
+                alternate-background-color: #f5f5f5;
                 color: #000000;
                 gridline-color: #cccccc;
                 border: 1px solid #cccccc;
@@ -258,6 +278,14 @@ class AggregatePortfolioTable(QTableWidget):
                 font-weight: bold;
                 font-size: 12px;
             }
+            QTableCornerButton::section {
+                background-color: #f5f5f5;
+                color: #333333;
+                border: 1px solid #cccccc;
+                font-weight: bold;
+                font-size: 11px;
+                padding: 5px;
+            }
         """
 
     def _get_bloomberg_stylesheet(self) -> str:
@@ -265,6 +293,7 @@ class AggregatePortfolioTable(QTableWidget):
         return """
             QTableWidget {
                 background-color: #000814;
+                alternate-background-color: #0a0f1c;
                 color: #e8e8e8;
                 gridline-color: #1a2838;
                 border: 1px solid #1a2838;
@@ -284,5 +313,13 @@ class AggregatePortfolioTable(QTableWidget):
                 border: 1px solid #1a2838;
                 font-weight: bold;
                 font-size: 12px;
+            }
+            QTableCornerButton::section {
+                background-color: #0d1420;
+                color: #a8a8a8;
+                border: 1px solid #1a2838;
+                font-weight: bold;
+                font-size: 11px;
+                padding: 5px;
             }
         """

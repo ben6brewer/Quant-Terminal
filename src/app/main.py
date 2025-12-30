@@ -44,7 +44,7 @@ def main() -> int:
     hub.add_module("defi", DeFiModule())
     hub.add_module("nft", NFTModule())
     hub.add_module("portfolio", PortfolioModule())
-    hub.add_module("portfolio_construction", PortfolioConstructionModule(theme_manager))
+    hub.add_module("portfolio_construction", PortfolioConstructionModule(theme_manager), has_own_home_button=True)
     hub.add_module("watchlist", WatchlistModule())
     hub.add_module("news", NewsModule())
     hub.add_module("screener", ScreenerModule())

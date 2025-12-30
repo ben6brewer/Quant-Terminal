@@ -10,17 +10,14 @@ from app.core.theme_manager import ThemeManager
 class PortfolioControls(QWidget):
     """
     Control bar at top of portfolio module.
-    Contains: Portfolio selector, Add/Delete row, Save/Load, Refresh prices.
+    Contains: Home button, Portfolio selector, New/Save (transaction view only).
     """
 
     # Signals
+    home_clicked = Signal()
     portfolio_changed = Signal(str)       # Portfolio name changed
-    add_transaction_clicked = Signal()
-    delete_transactions_clicked = Signal()
     save_clicked = Signal()
-    load_clicked = Signal()
     new_portfolio_clicked = Signal()
-    refresh_prices_clicked = Signal()
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
@@ -36,6 +33,15 @@ class PortfolioControls(QWidget):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
+
+        # Home button (leftmost)
+        self.home_btn = QPushButton("⌂ Home")
+        self.home_btn.setFixedSize(100, 40)
+        self.home_btn.setObjectName("home_btn")
+        self.home_btn.clicked.connect(self.home_clicked.emit)
+        layout.addWidget(self.home_btn)
+
+        layout.addSpacing(40)
 
         # Portfolio selector
         layout.addWidget(QLabel("Portfolio:"))
@@ -53,34 +59,21 @@ class PortfolioControls(QWidget):
 
         layout.addSpacing(20)
 
-        # Transaction controls
-        self.add_btn = QPushButton("Add Row")
-        self.add_btn.clicked.connect(self.add_transaction_clicked.emit)
-        layout.addWidget(self.add_btn)
-
-        self.delete_btn = QPushButton("Delete Row")
-        self.delete_btn.clicked.connect(self.delete_transactions_clicked.emit)
-        layout.addWidget(self.delete_btn)
-
-        layout.addSpacing(20)
-
-        # Save/Load
+        # Save button
         self.save_btn = QPushButton("Save")
         self.save_btn.clicked.connect(self.save_clicked.emit)
         layout.addWidget(self.save_btn)
 
-        self.load_btn = QPushButton("Load")
-        self.load_btn.clicked.connect(self.load_clicked.emit)
-        layout.addWidget(self.load_btn)
+    def set_view_mode(self, is_transaction_view: bool):
+        """
+        Show/hide buttons based on active view.
 
-        layout.addSpacing(20)
-
-        # Refresh prices
-        self.refresh_btn = QPushButton("Refresh Prices")
-        self.refresh_btn.clicked.connect(self.refresh_prices_clicked.emit)
-        layout.addWidget(self.refresh_btn)
-
-        layout.addStretch()
+        Args:
+            is_transaction_view: True for Transaction Log (show New/Save buttons),
+                                False for Portfolio Holdings (hide editing buttons)
+        """
+        self.new_btn.setVisible(is_transaction_view)
+        self.save_btn.setVisible(is_transaction_view)
 
     def update_portfolio_list(self, portfolios: List[str], current: str = None):
         """
@@ -166,6 +159,19 @@ class PortfolioControls(QWidget):
             QPushButton:pressed {
                 background-color: #1a1a1a;
             }
+            QPushButton#home_btn {
+                background-color: transparent;
+                border: 1px solid transparent;
+                font-weight: bold;
+            }
+            QPushButton#home_btn:hover {
+                background-color: rgba(0, 212, 255, 0.15);
+                border: 1px solid #00d4ff;
+            }
+            QPushButton#home_btn:pressed {
+                background-color: #00d4ff;
+                color: #000000;
+            }
         """
 
     def _get_light_stylesheet(self) -> str:
@@ -215,6 +221,19 @@ class PortfolioControls(QWidget):
             QPushButton:pressed {
                 background-color: #d0d0d0;
             }
+            QPushButton#home_btn {
+                background-color: transparent;
+                border: 1px solid transparent;
+                font-weight: bold;
+            }
+            QPushButton#home_btn:hover {
+                background-color: rgba(0, 102, 204, 0.15);
+                border: 1px solid #0066cc;
+            }
+            QPushButton#home_btn:pressed {
+                background-color: #0066cc;
+                color: #ffffff;
+            }
         """
 
     def _get_bloomberg_stylesheet(self) -> str:
@@ -263,5 +282,18 @@ class PortfolioControls(QWidget):
             }
             QPushButton:pressed {
                 background-color: #060a10;
+            }
+            QPushButton#home_btn {
+                background-color: transparent;
+                border: 1px solid transparent;
+                font-weight: bold;
+            }
+            QPushButton#home_btn:hover {
+                background-color: rgba(255, 128, 0, 0.15);
+                border: 1px solid #FF8000;
+            }
+            QPushButton#home_btn:pressed {
+                background-color: #FF8000;
+                color: #000000;
             }
         """

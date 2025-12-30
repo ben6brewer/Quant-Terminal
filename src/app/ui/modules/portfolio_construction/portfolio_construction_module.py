@@ -1,7 +1,7 @@
 """Portfolio Construction Module - Main Orchestrator"""
 
 from datetime import datetime
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSplitter
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
 from PySide6.QtCore import Qt
 
 from app.core.theme_manager import ThemeManager
@@ -13,7 +13,8 @@ from .widgets import (
     TransactionLogTable,
     AggregatePortfolioTable,
     NewPortfolioDialog,
-    LoadPortfolioDialog
+    LoadPortfolioDialog,
+    ViewTabBar
 )
 
 
@@ -41,6 +42,9 @@ class PortfolioConstructionModule(QWidget):
         # Initialize portfolio list without loading data
         self._initialize_portfolio_list()
 
+        # Set initial view mode (Transaction Log by default)
+        self.controls.set_view_mode(is_transaction_view=True)
+
         # Connect theme changes
         self.theme_manager.theme_changed.connect(self._apply_theme)
 
@@ -50,50 +54,51 @@ class PortfolioConstructionModule(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        # Controls bar
+        # Controls bar at top
         self.controls = PortfolioControls(self.theme_manager)
         layout.addWidget(self.controls)
 
-        # Splitter for side-by-side tables
-        self.splitter = QSplitter(Qt.Horizontal)
+        # View tab bar
+        self.view_tab_bar = ViewTabBar(self.theme_manager)
+        layout.addWidget(self.view_tab_bar)
 
-        # Left: Transaction log
-        left_container = QWidget()
-        left_layout = QVBoxLayout(left_container)
-        left_layout.setContentsMargins(5, 5, 5, 5)
-        left_layout.addWidget(QLabel("Transaction Log"))
+        # Stacked widget for switching between tables
+        self.table_stack = QStackedWidget()
+
+        # Index 0: Transaction Log (full screen, no label)
         self.transaction_table = TransactionLogTable(self.theme_manager)
-        left_layout.addWidget(self.transaction_table)
+        self.table_stack.addWidget(self.transaction_table)
 
-        # Right: Aggregate portfolio
-        right_container = QWidget()
-        right_layout = QVBoxLayout(right_container)
-        right_layout.setContentsMargins(5, 5, 5, 5)
-        right_layout.addWidget(QLabel("Portfolio Holdings"))
+        # Index 1: Portfolio Holdings (full screen, no label)
         self.aggregate_table = AggregatePortfolioTable(self.theme_manager)
-        right_layout.addWidget(self.aggregate_table)
+        self.table_stack.addWidget(self.aggregate_table)
 
-        self.splitter.addWidget(left_container)
-        self.splitter.addWidget(right_container)
-        self.splitter.setSizes([600, 400])  # 60/40 split
+        # Default to Transaction Log
+        self.table_stack.setCurrentIndex(0)
 
-        layout.addWidget(self.splitter)
+        layout.addWidget(self.table_stack)
 
     def _connect_signals(self):
         """Connect all signals."""
         # Controls
         self.controls.portfolio_changed.connect(self._on_portfolio_changed)
-        self.controls.add_transaction_clicked.connect(self._add_transaction_row)
-        self.controls.delete_transactions_clicked.connect(self._delete_selected_transactions)
         self.controls.save_clicked.connect(self._save_portfolio)
-        self.controls.load_clicked.connect(self._load_portfolio_dialog)
         self.controls.new_portfolio_clicked.connect(self._new_portfolio_dialog)
-        self.controls.refresh_prices_clicked.connect(self._refresh_prices)
+        self.controls.home_clicked.connect(self._on_home_clicked)
 
         # Transaction table
         self.transaction_table.transaction_added.connect(self._on_transaction_changed)
         self.transaction_table.transaction_modified.connect(self._on_transaction_changed)
         self.transaction_table.transaction_deleted.connect(self._on_transaction_changed)
+
+        # View tab bar
+        self.view_tab_bar.view_changed.connect(self._on_view_changed)
+
+    def _on_view_changed(self, index: int):
+        """Handle view tab change."""
+        self.table_stack.setCurrentIndex(index)
+        # Show editing buttons only on Transaction Log view (index 0)
+        self.controls.set_view_mode(is_transaction_view=(index == 0))
 
     def _initialize_portfolio_list(self):
         """Initialize portfolio dropdown without loading data."""
@@ -111,6 +116,9 @@ class PortfolioConstructionModule(QWidget):
         # Show empty state
         self._show_empty_state()
 
+        # Ensure blank row exists for immediate editing
+        self.transaction_table._ensure_blank_row()
+
     def _populate_transaction_table(self):
         """Populate transaction table from current portfolio."""
         self.transaction_table.clear_all_transactions()
@@ -121,50 +129,13 @@ class PortfolioConstructionModule(QWidget):
         for transaction in self.current_portfolio.get("transactions", []):
             self.transaction_table.add_transaction_row(transaction)
 
+        # Ensure blank row exists for adding new transactions
+        self.transaction_table._ensure_blank_row()
+
+        # Sort to maintain blank at top, transactions by date
+        self.transaction_table._sort_transactions()
+
         self.unsaved_changes = False
-
-    def _add_transaction_row(self):
-        """Add a new empty transaction row."""
-        # Create empty transaction
-        new_transaction = PortfolioService.create_transaction(
-            date=datetime.now().strftime("%Y-%m-%d"),
-            ticker="",
-            transaction_type="Buy",
-            quantity=0.0,
-            entry_price=0.0,
-            fees=0.0,
-            notes=""
-        )
-
-        self.transaction_table.add_transaction_row(new_transaction)
-        self.unsaved_changes = True
-
-    def _delete_selected_transactions(self):
-        """Delete selected transactions from table."""
-        selected_count = len(set(idx.row() for idx in self.transaction_table.selectedIndexes()))
-
-        if selected_count == 0:
-            CustomMessageBox.information(
-                self.theme_manager,
-                self,
-                "No Selection",
-                "Please select transactions to delete."
-            )
-            return
-
-        reply = CustomMessageBox.question(
-            self.theme_manager,
-            self,
-            "Delete Transactions",
-            f"Delete {selected_count} selected transaction(s)?",
-            CustomMessageBox.Yes | CustomMessageBox.No,
-            CustomMessageBox.No
-        )
-
-        if reply == CustomMessageBox.Yes:
-            self.transaction_table.delete_selected_rows()
-            self.unsaved_changes = True
-            self._update_aggregate_table()
 
     def _on_transaction_changed(self, *args):
         """Handle transaction add/modify/delete."""
@@ -373,28 +344,28 @@ class PortfolioConstructionModule(QWidget):
 
         self._load_portfolio(name)
 
+    def _on_home_clicked(self):
+        """Handle home button click."""
+        parent = self.parent()
+        while parent:
+            if hasattr(parent, 'show_home'):
+                parent.show_home()
+                break
+            parent = parent.parent()
+
     def _apply_theme(self):
         """Apply theme to module."""
         theme = self.theme_manager.current_theme
 
         if theme == "light":
             bg_color = "#ffffff"
-            label_color = "#333333"
         elif theme == "bloomberg":
             bg_color = "#000814"
-            label_color = "#a8a8a8"
         else:
             bg_color = "#1e1e1e"
-            label_color = "#cccccc"
 
         self.setStyleSheet(f"""
             QWidget {{
                 background-color: {bg_color};
-            }}
-            QLabel {{
-                color: {label_color};
-                font-size: 14px;
-                font-weight: bold;
-                padding: 5px;
             }}
         """)
