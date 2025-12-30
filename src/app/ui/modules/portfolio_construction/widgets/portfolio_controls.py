@@ -17,6 +17,7 @@ class PortfolioControls(QWidget):
     home_clicked = Signal()
     portfolio_changed = Signal(str)       # Portfolio name changed
     save_clicked = Signal()
+    import_clicked = Signal()
     new_portfolio_clicked = Signal()
     rename_portfolio_clicked = Signal()
     delete_portfolio_clicked = Signal()
@@ -64,6 +65,14 @@ class PortfolioControls(QWidget):
         self.save_btn.setFixedSize(80, 40)
         self.save_btn.clicked.connect(self.save_clicked.emit)
         layout.addWidget(self.save_btn)
+
+        layout.addSpacing(8)
+
+        # Import button
+        self.import_btn = QPushButton("Import")
+        self.import_btn.setFixedSize(80, 40)
+        self.import_btn.clicked.connect(self.import_clicked.emit)
+        layout.addWidget(self.import_btn)
 
         layout.addSpacing(8)
 
@@ -121,10 +130,11 @@ class PortfolioControls(QWidget):
         Show/hide buttons based on active view.
 
         Args:
-            is_transaction_view: True for Transaction Log (show Save/Rename/Delete buttons),
+            is_transaction_view: True for Transaction Log (show Save/Import/Rename/Delete buttons),
                                 False for Portfolio Holdings (hide editing buttons)
         """
         self.save_btn.setVisible(is_transaction_view)
+        self.import_btn.setVisible(is_transaction_view)
         self.rename_btn.setVisible(is_transaction_view)
         self.delete_btn.setVisible(is_transaction_view)
 
@@ -161,6 +171,7 @@ class PortfolioControls(QWidget):
             portfolio_loaded: True if a portfolio is currently loaded
         """
         self.save_btn.setEnabled(portfolio_loaded)
+        self.import_btn.setEnabled(portfolio_loaded)
         self.rename_btn.setEnabled(portfolio_loaded)
         self.delete_btn.setEnabled(portfolio_loaded)
 

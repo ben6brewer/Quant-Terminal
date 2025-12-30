@@ -516,6 +516,115 @@ class PortfolioService:
             # Money received (negative)
             return -(quantity * execution_price - fees)
 
+    # Import functionality
+
+    @staticmethod
+    def generate_imported_transactions(
+        transactions: List[Dict[str, Any]],
+        include_fees: bool
+    ) -> List[Dict[str, Any]]:
+        """
+        Clone transactions with new UUIDs for full history import.
+
+        Args:
+            transactions: Source portfolio transactions
+            include_fees: Whether to include original fees
+
+        Returns:
+            List of cloned transactions with new UUIDs
+        """
+        result = []
+        for tx in transactions:
+            new_tx = {
+                "id": str(uuid.uuid4()),
+                "date": tx.get("date", ""),
+                "ticker": tx.get("ticker", "").strip().upper(),
+                "transaction_type": tx.get("transaction_type", "Buy"),
+                "quantity": float(tx.get("quantity", 0)),
+                "entry_price": float(tx.get("entry_price", 0)),
+                "fees": float(tx.get("fees", 0)) if include_fees else 0.0
+            }
+            result.append(new_tx)
+        return result
+
+    @staticmethod
+    def process_flat_import(
+        transactions: List[Dict[str, Any]],
+        include_fees: bool,
+        skip_zero_positions: bool = False
+    ) -> List[Dict[str, Any]]:
+        """
+        Consolidate transactions into flat positions with average cost basis.
+
+        Args:
+            transactions: Source portfolio transactions
+            include_fees: Whether to sum fees for each ticker
+            skip_zero_positions: Whether to skip tickers with net zero quantity
+
+        Returns:
+            List of consolidated transactions (one per ticker)
+        """
+        from datetime import datetime
+
+        # Group transactions by ticker
+        by_ticker: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+        for tx in transactions:
+            ticker = tx.get("ticker", "").strip().upper()
+            if ticker:
+                by_ticker[ticker].append(tx)
+
+        result = []
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        for ticker, txs in by_ticker.items():
+            # Calculate net quantity
+            buy_qty = sum(
+                float(tx.get("quantity", 0))
+                for tx in txs
+                if tx.get("transaction_type") == "Buy"
+            )
+            sell_qty = sum(
+                float(tx.get("quantity", 0))
+                for tx in txs
+                if tx.get("transaction_type") == "Sell"
+            )
+            net_qty = buy_qty - sell_qty
+
+            # Skip zero positions if flag is set
+            if skip_zero_positions and abs(net_qty) < 0.0001:
+                continue
+
+            # Calculate average cost basis (BUY prices only, weighted)
+            buy_txs = [tx for tx in txs if tx.get("transaction_type") == "Buy"]
+            if buy_txs:
+                total_cost = sum(
+                    float(tx.get("quantity", 0)) * float(tx.get("entry_price", 0))
+                    for tx in buy_txs
+                )
+                total_buy_qty = sum(float(tx.get("quantity", 0)) for tx in buy_txs)
+                avg_cost = total_cost / total_buy_qty if total_buy_qty > 0 else 0
+            else:
+                avg_cost = 0
+
+            # Sum fees if requested
+            total_fees = (
+                sum(float(tx.get("fees", 0)) for tx in txs)
+                if include_fees
+                else 0
+            )
+
+            result.append({
+                "id": str(uuid.uuid4()),
+                "date": today,
+                "ticker": ticker,
+                "transaction_type": "Buy" if net_qty > 0 else "Sell",
+                "quantity": abs(net_qty),
+                "entry_price": avg_cost,
+                "fees": total_fees
+            })
+
+        return result
+
     # Export API for other modules
 
     @staticmethod

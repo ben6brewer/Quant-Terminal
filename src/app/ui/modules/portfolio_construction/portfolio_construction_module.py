@@ -15,6 +15,7 @@ from .widgets import (
     NewPortfolioDialog,
     LoadPortfolioDialog,
     RenamePortfolioDialog,
+    ImportPortfolioDialog,
     ViewTabBar
 )
 from .widgets.portfolio_settings_dialog import PortfolioSettingsDialog
@@ -95,6 +96,7 @@ class PortfolioConstructionModule(QWidget):
         # Controls
         self.controls.portfolio_changed.connect(self._on_portfolio_changed)
         self.controls.save_clicked.connect(self._save_portfolio)
+        self.controls.import_clicked.connect(self._import_portfolio_dialog)
         self.controls.new_portfolio_clicked.connect(self._new_portfolio_dialog)
         self.controls.rename_portfolio_clicked.connect(self._rename_portfolio_dialog)
         self.controls.delete_portfolio_clicked.connect(self._delete_portfolio_dialog)
@@ -433,6 +435,107 @@ class PortfolioConstructionModule(QWidget):
                 "Delete Error",
                 f"Failed to delete portfolio '{portfolio_name}'."
             )
+
+    def _import_portfolio_dialog(self):
+        """Show import dialog and process import."""
+        # Validate portfolio is loaded
+        if not self.current_portfolio:
+            CustomMessageBox.warning(
+                self.theme_manager,
+                self,
+                "No Portfolio",
+                "Please load or create a portfolio first."
+            )
+            return
+
+        # Get available portfolios (exclude current)
+        current_name = self.current_portfolio.get("name", "")
+        all_portfolios = PortfolioPersistence.list_portfolios()
+        available = [p for p in all_portfolios if p != current_name]
+
+        if not available:
+            CustomMessageBox.warning(
+                self.theme_manager,
+                self,
+                "No Portfolios",
+                "No other portfolios available to import from."
+            )
+            return
+
+        # Show dialog
+        dialog = ImportPortfolioDialog(self.theme_manager, available, self)
+        if dialog.exec() != 1:  # QDialog.Accepted = 1
+            return
+
+        config = dialog.get_import_config()
+        if not config:
+            return
+
+        # Load source transactions
+        source_data = PortfolioPersistence.load_portfolio(config["source_portfolio"])
+        if not source_data:
+            CustomMessageBox.critical(
+                self.theme_manager,
+                self,
+                "Load Error",
+                f"Failed to load source portfolio '{config['source_portfolio']}'."
+            )
+            return
+
+        source_txs = source_data.get("transactions", [])
+
+        if not source_txs:
+            CustomMessageBox.information(
+                self.theme_manager,
+                self,
+                "Empty Portfolio",
+                "Source portfolio has no transactions to import."
+            )
+            return
+
+        # Process based on mode
+        if config["import_mode"] == "flat":
+            new_txs = PortfolioService.process_flat_import(
+                source_txs,
+                config["include_fees"],
+                config["skip_zero_positions"]
+            )
+        else:
+            new_txs = PortfolioService.generate_imported_transactions(
+                source_txs,
+                config["include_fees"]
+            )
+
+        if not new_txs:
+            CustomMessageBox.information(
+                self.theme_manager,
+                self,
+                "No Transactions",
+                "No transactions to import after processing."
+            )
+            return
+
+        # Add to current portfolio
+        for tx in new_txs:
+            self.transaction_table.add_transaction_row(tx)
+
+        self.unsaved_changes = True
+
+        # Update aggregate table
+        self._update_aggregate_table()
+
+        # Fetch historical prices for new transactions
+        self.transaction_table.fetch_historical_prices_batch()
+
+        # Show success message
+        count = len(new_txs)
+        mode_desc = "consolidated positions" if config["import_mode"] == "flat" else "transactions"
+        CustomMessageBox.information(
+            self.theme_manager,
+            self,
+            "Import Complete",
+            f"Successfully imported {count} {mode_desc} from '{config['source_portfolio']}'."
+        )
 
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio selection change in dropdown."""
