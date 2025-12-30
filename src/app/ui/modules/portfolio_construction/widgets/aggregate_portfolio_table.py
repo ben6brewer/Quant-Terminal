@@ -94,6 +94,22 @@ class AggregatePortfolioTable(QTableWidget):
         self._holdings_data = holdings.copy() if holdings else []
         self._free_cash_summary = free_cash_summary
 
+        # Recalculate weight percentages to include FREE CASH in total
+        # This fixes the bug where holdings sum to 100% even when FREE CASH is present
+        if self._holdings_data and free_cash_summary:
+            free_cash_value = free_cash_summary.get("market_value", 0) or 0
+            if free_cash_value != 0:
+                holdings_market_value = sum(
+                    h.get("market_value", 0) or 0 for h in self._holdings_data
+                )
+                total_market_value = holdings_market_value + free_cash_value
+                if total_market_value > 0:
+                    for holding in self._holdings_data:
+                        if holding.get("market_value") is not None:
+                            holding["weight_pct"] = (
+                                holding["market_value"] / total_market_value
+                            ) * 100
+
         # Clear existing
         self.setRowCount(0)
 
@@ -105,7 +121,7 @@ class AggregatePortfolioTable(QTableWidget):
             self._add_free_cash_row(free_cash_summary, holdings)
 
         # Add holdings starting after TOTAL (and FREE CASH if present)
-        self._populate_holdings(holdings)
+        self._populate_holdings(self._holdings_data)
 
     def _populate_holdings(self, holdings: List[Dict[str, Any]]):
         """

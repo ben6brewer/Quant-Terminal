@@ -651,7 +651,7 @@ class TransactionLogTable(QTableWidget):
             "is_blank": True,
             "date": datetime.now().strftime("%Y-%m-%d"),
             "ticker": "",
-            "transaction_type": "Buy",
+            "transaction_type": "",  # Empty until user selects Buy/Sell
             "quantity": 0.0,
             "entry_price": 0.0,
             "fees": 0.0
@@ -745,7 +745,8 @@ class TransactionLogTable(QTableWidget):
         # Type cell - column 5
         type_combo = NoScrollComboBox()
         type_combo.addItems(["Buy", "Sell"])
-        type_combo.setCurrentText(blank_transaction["transaction_type"])
+        type_combo.setCurrentIndex(-1)  # No selection initially
+        type_combo.setPlaceholderText("Buy/Sell")
         type_combo.currentTextChanged.connect(self._on_widget_changed)
         type_combo.setStyleSheet(combo_style)
         self._set_widget_position(type_combo, 0, 5)
@@ -778,6 +779,9 @@ class TransactionLogTable(QTableWidget):
 
         # Install focus watchers for auto-delete functionality
         self._install_focus_watcher(0)
+
+        # Set up tab order for keyboard navigation
+        self._setup_tab_order(0)
 
         # Update row positions for all shifted rows (rows 1+)
         self._update_row_positions(1)
@@ -1010,16 +1014,18 @@ class TransactionLogTable(QTableWidget):
             transaction: Transaction dict
 
         Returns:
-            True if ticker, qty > 0, and entry_price >= 0 are all filled
+            True if ticker, qty > 0, entry_price >= 0, and valid transaction_type
         """
         ticker = transaction.get("ticker", "").strip()
         quantity = transaction.get("quantity", 0.0)
         entry_price = transaction.get("entry_price", 0.0)
+        transaction_type = transaction.get("transaction_type", "")
 
         return (
             ticker != "" and
             quantity > 0 and
-            entry_price >= 0  # Allow 0 for gifts
+            entry_price >= 0 and  # Allow 0 for gifts
+            transaction_type in ("Buy", "Sell")  # Must select a valid type
         )
 
     def _transition_blank_to_real(self, row: int, transaction: Dict[str, Any]) -> bool:
@@ -1253,6 +1259,9 @@ class TransactionLogTable(QTableWidget):
 
         # Install focus watchers for auto-delete functionality
         self._install_focus_watcher(row)
+
+        # Set up tab order for keyboard navigation
+        self._setup_tab_order(row)
 
         # Update FREE CASH summary if this is a FREE CASH transaction
         if transaction.get("ticker", "").upper() == PortfolioService.FREE_CASH_TICKER:
@@ -1655,6 +1664,24 @@ class TransactionLogTable(QTableWidget):
         # Store widget references for this row
         self._row_widgets_map[row] = widgets
 
+    def _setup_tab_order(self, row: int):
+        """
+        Set up tab order for widgets in a row.
+
+        Args:
+            row: Row index to set up tab order for
+        """
+        # Get inner widgets for columns 0-5 (editable fields)
+        widgets = []
+        for col in range(6):
+            inner = self._get_inner_widget(row, col)
+            if inner:
+                widgets.append(inner)
+
+        # Set up tab order: date -> ticker -> qty -> price -> fees -> type
+        for i in range(len(widgets) - 1):
+            self.setTabOrder(widgets[i], widgets[i + 1])
+
     def eventFilter(self, obj: QWidget, event: QEvent) -> bool:
         """
         Handle focus and key events on row widgets.
@@ -1681,12 +1708,31 @@ class TransactionLogTable(QTableWidget):
             QTimer.singleShot(0, self._check_row_focus_loss)
 
         elif event_type == QEvent.KeyPress:
-            # Handle Enter key on any field
+            # Handle keyboard navigation
             from PySide6.QtGui import QKeyEvent
             key_event = event
             if isinstance(key_event, QKeyEvent):
                 key = key_event.key()
                 modifiers = key_event.modifiers()
+
+                # Handle Tab key for field navigation
+                if key == Qt.Key_Tab or key == Qt.Key_Backtab:
+                    row, col = self._find_cell_for_widget(obj)
+                    if row is not None and col is not None:
+                        # Determine direction: Tab = forward, Shift+Tab = backward
+                        if key == Qt.Key_Backtab or (modifiers & Qt.ShiftModifier):
+                            next_col = col - 1
+                        else:
+                            next_col = col + 1
+
+                        # Stay within editable columns (0-5)
+                        if 0 <= next_col <= 5:
+                            next_widget = self._get_inner_widget(row, next_col)
+                            if next_widget:
+                                next_widget.setFocus()
+                                return True  # Consume event
+                        # If out of range, let default tab behavior happen
+                    return False
 
                 # Check for Enter/Return key (but NOT Shift+Enter - let that through for newlines)
                 if key in (Qt.Key_Return, Qt.Key_Enter) and not (modifiers & Qt.ShiftModifier):
