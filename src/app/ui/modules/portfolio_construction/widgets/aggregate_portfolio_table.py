@@ -22,7 +22,7 @@ class AggregatePortfolioTable(QTableWidget):
         "Avg Cost Basis",
         "Current Price",
         "Market Value",
-        "Total P&L",
+        "P&L",
         "Weight %"
     ]
 
@@ -44,6 +44,13 @@ class AggregatePortfolioTable(QTableWidget):
         header = self.horizontalHeader()
         for i in range(len(self.COLUMNS)):
             header.setSectionResizeMode(i, QHeaderView.Stretch)
+
+        # Left-align column headers
+        header.setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
+        # Fixed row height (matching Transaction Log)
+        v_header = self.verticalHeader()
+        v_header.setDefaultSectionSize(48)
 
         # Read-only
         self.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -90,17 +97,17 @@ class AggregatePortfolioTable(QTableWidget):
 
             # Ticker
             ticker_item = QTableWidgetItem(holding["ticker"])
-            ticker_item.setTextAlignment(Qt.AlignCenter)
+            ticker_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.setItem(row, 0, ticker_item)
 
             # Total Quantity
             qty_item = QTableWidgetItem(f"{holding['total_quantity']:.4f}")
-            qty_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            qty_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.setItem(row, 1, qty_item)
 
             # Avg Cost Basis
             cost_item = QTableWidgetItem(f"${holding['avg_cost_basis']:.2f}")
-            cost_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            cost_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.setItem(row, 2, cost_item)
 
             # Current Price
@@ -109,7 +116,7 @@ class AggregatePortfolioTable(QTableWidget):
                 price_item = QTableWidgetItem(f"${price:.2f}")
             else:
                 price_item = QTableWidgetItem("N/A")
-            price_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            price_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.setItem(row, 3, price_item)
 
             # Market Value
@@ -118,26 +125,29 @@ class AggregatePortfolioTable(QTableWidget):
                 mv_item = QTableWidgetItem(f"${market_value:,.2f}")
             else:
                 mv_item = QTableWidgetItem("N/A")
-            mv_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            mv_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.setItem(row, 4, mv_item)
 
-            # Total P&L
+            # P&L
             pnl = holding.get("total_pnl")
             if pnl is not None:
-                pnl_item = QTableWidgetItem(f"${pnl:+,.2f}")
-                # Color coding
-                if pnl > 0:
-                    pnl_item.setForeground(QColor(76, 153, 0))  # Green
-                elif pnl < 0:
-                    pnl_item.setForeground(QColor(200, 50, 50))  # Red
+                if pnl == 0:
+                    pnl_item = QTableWidgetItem("--")
+                else:
+                    pnl_item = QTableWidgetItem(f"${abs(pnl):,.2f}")
+                    # Color coding
+                    if pnl > 0:
+                        pnl_item.setForeground(QColor(76, 153, 0))  # Green
+                    elif pnl < 0:
+                        pnl_item.setForeground(QColor(200, 50, 50))  # Red
             else:
                 pnl_item = QTableWidgetItem("N/A")
-            pnl_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            pnl_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.setItem(row, 5, pnl_item)
 
             # Weight %
             weight_item = QTableWidgetItem(f"{holding['weight_pct']:.2f}%")
-            weight_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            weight_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             self.setItem(row, 6, weight_item)
 
         # Add totals row (last row, bold)
@@ -163,7 +173,7 @@ class AggregatePortfolioTable(QTableWidget):
 
         # "TOTAL" label
         total_label = QTableWidgetItem("TOTAL")
-        total_label.setTextAlignment(Qt.AlignCenter)
+        total_label.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         font = QFont()
         font.setBold(True)
         total_label.setFont(font)
@@ -176,28 +186,32 @@ class AggregatePortfolioTable(QTableWidget):
 
         # Total Market Value
         mv_item = QTableWidgetItem(f"${totals['total_market_value']:,.2f}")
-        mv_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        mv_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         font = QFont()
         font.setBold(True)
         mv_item.setFont(font)
         self.setItem(row, 4, mv_item)
 
         # Total P&L
-        pnl_item = QTableWidgetItem(f"${totals['total_pnl']:+,.2f}")
-        pnl_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        total_pnl = totals['total_pnl']
+        if total_pnl == 0:
+            pnl_item = QTableWidgetItem("--")
+        else:
+            pnl_item = QTableWidgetItem(f"${abs(total_pnl):,.2f}")
+            # Color coding
+            if total_pnl > 0:
+                pnl_item.setForeground(QColor(76, 153, 0))  # Green
+            elif total_pnl < 0:
+                pnl_item.setForeground(QColor(200, 50, 50))  # Red
+        pnl_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         font = QFont()
         font.setBold(True)
         pnl_item.setFont(font)
-        # Color coding
-        if totals['total_pnl'] > 0:
-            pnl_item.setForeground(QColor(76, 153, 0))  # Green
-        elif totals['total_pnl'] < 0:
-            pnl_item.setForeground(QColor(200, 50, 50))  # Red
         self.setItem(row, 5, pnl_item)
 
         # Weight is always 100%
         weight_item = QTableWidgetItem("100.00%")
-        weight_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        weight_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         font = QFont()
         font.setBold(True)
         weight_item.setFont(font)
@@ -225,10 +239,10 @@ class AggregatePortfolioTable(QTableWidget):
                 color: #ffffff;
                 gridline-color: #3d3d3d;
                 border: 1px solid #3d3d3d;
-                font-size: 12px;
+                font-size: 14px;
             }
             QTableWidget::item {
-                padding: 5px;
+                padding: 0px;
             }
             QTableWidget::item:selected {
                 background-color: #00d4ff;
@@ -237,10 +251,11 @@ class AggregatePortfolioTable(QTableWidget):
             QHeaderView::section {
                 background-color: #2d2d2d;
                 color: #cccccc;
-                padding: 5px;
+                padding: 8px;
                 border: 1px solid #3d3d3d;
                 font-weight: bold;
-                font-size: 12px;
+                font-size: 14px;
+                text-align: left;
             }
             QTableCornerButton::section {
                 background-color: #2d2d2d;
@@ -248,7 +263,7 @@ class AggregatePortfolioTable(QTableWidget):
                 border: 1px solid #3d3d3d;
                 font-weight: bold;
                 font-size: 11px;
-                padding: 5px;
+                padding: 8px;
             }
         """
 
@@ -261,10 +276,10 @@ class AggregatePortfolioTable(QTableWidget):
                 color: #000000;
                 gridline-color: #cccccc;
                 border: 1px solid #cccccc;
-                font-size: 12px;
+                font-size: 14px;
             }
             QTableWidget::item {
-                padding: 5px;
+                padding: 0px;
             }
             QTableWidget::item:selected {
                 background-color: #0066cc;
@@ -273,10 +288,11 @@ class AggregatePortfolioTable(QTableWidget):
             QHeaderView::section {
                 background-color: #f5f5f5;
                 color: #333333;
-                padding: 5px;
+                padding: 8px;
                 border: 1px solid #cccccc;
                 font-weight: bold;
-                font-size: 12px;
+                font-size: 14px;
+                text-align: left;
             }
             QTableCornerButton::section {
                 background-color: #f5f5f5;
@@ -284,7 +300,7 @@ class AggregatePortfolioTable(QTableWidget):
                 border: 1px solid #cccccc;
                 font-weight: bold;
                 font-size: 11px;
-                padding: 5px;
+                padding: 8px;
             }
         """
 
@@ -297,10 +313,10 @@ class AggregatePortfolioTable(QTableWidget):
                 color: #e8e8e8;
                 gridline-color: #1a2838;
                 border: 1px solid #1a2838;
-                font-size: 12px;
+                font-size: 14px;
             }
             QTableWidget::item {
-                padding: 5px;
+                padding: 0px;
             }
             QTableWidget::item:selected {
                 background-color: #FF8000;
@@ -309,10 +325,11 @@ class AggregatePortfolioTable(QTableWidget):
             QHeaderView::section {
                 background-color: #0d1420;
                 color: #a8a8a8;
-                padding: 5px;
+                padding: 8px;
                 border: 1px solid #1a2838;
                 font-weight: bold;
-                font-size: 12px;
+                font-size: 14px;
+                text-align: left;
             }
             QTableCornerButton::section {
                 background-color: #0d1420;
@@ -320,6 +337,6 @@ class AggregatePortfolioTable(QTableWidget):
                 border: 1px solid #1a2838;
                 font-weight: bold;
                 font-size: 11px;
-                padding: 5px;
+                padding: 8px;
             }
         """
