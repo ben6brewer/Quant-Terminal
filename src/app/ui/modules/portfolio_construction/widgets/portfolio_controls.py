@@ -89,15 +89,23 @@ class PortfolioControls(QWidget):
         if name == "Create New Portfolio":
             # Reset to previous selection before emitting new portfolio signal
             self.portfolio_combo.blockSignals(True)
-            # Find first real portfolio (not "Create New Portfolio")
+            # Find first real portfolio (not special items)
+            found_portfolio = False
             for i in range(self.portfolio_combo.count()):
                 item_text = self.portfolio_combo.itemText(i)
-                if item_text != "Create New Portfolio":
+                if item_text not in ("Create New Portfolio", "Select Portfolio..."):
                     self.portfolio_combo.setCurrentIndex(i)
+                    found_portfolio = True
                     break
+            if not found_portfolio:
+                # No portfolios exist, reset to placeholder
+                self.portfolio_combo.setCurrentIndex(0)
             self.portfolio_combo.blockSignals(False)
             # Emit signal to create new portfolio
             self.new_portfolio_clicked.emit()
+        elif name == "Select Portfolio...":
+            # Placeholder selected, do nothing
+            pass
         elif name:
             self.portfolio_changed.emit(name)
 
@@ -119,19 +127,35 @@ class PortfolioControls(QWidget):
 
         Args:
             portfolios: List of portfolio names
-            current: Currently selected portfolio name
+            current: Currently selected portfolio name (None to show placeholder)
         """
         self.portfolio_combo.blockSignals(True)
         self.portfolio_combo.clear()
-        # Add "Create New Portfolio" as first option
+        # Add placeholder as first option
+        self.portfolio_combo.addItem("Select Portfolio...")
+        # Add "Create New Portfolio" as second option
         self.portfolio_combo.addItem("Create New Portfolio")
         self.portfolio_combo.addItems(portfolios)
         if current and current in portfolios:
             self.portfolio_combo.setCurrentText(current)
-        elif portfolios:
-            # Default to first real portfolio
-            self.portfolio_combo.setCurrentIndex(1)
+        else:
+            # Default to placeholder (no portfolio selected)
+            self.portfolio_combo.setCurrentIndex(0)
         self.portfolio_combo.blockSignals(False)
+
+        # Update button states based on whether a portfolio is selected
+        self._update_button_states(current is not None and current in portfolios)
+
+    def _update_button_states(self, portfolio_loaded: bool):
+        """
+        Enable/disable buttons based on whether a portfolio is loaded.
+
+        Args:
+            portfolio_loaded: True if a portfolio is currently loaded
+        """
+        self.save_btn.setEnabled(portfolio_loaded)
+        self.rename_btn.setEnabled(portfolio_loaded)
+        self.delete_btn.setEnabled(portfolio_loaded)
 
     def get_current_portfolio(self) -> str:
         """
@@ -140,7 +164,11 @@ class PortfolioControls(QWidget):
         Returns:
             Portfolio name or empty string
         """
-        return self.portfolio_combo.currentText()
+        current = self.portfolio_combo.currentText()
+        # Return empty string for placeholder/special items
+        if current in ("Select Portfolio...", "Create New Portfolio"):
+            return ""
+        return current
 
     def _apply_theme(self):
         """Apply theme-specific styling."""
@@ -237,6 +265,11 @@ class PortfolioControls(QWidget):
                 background-color: #d32f2f;
                 color: #ffffff;
             }
+            QPushButton:disabled {
+                background-color: #1a1a1a;
+                color: #666666;
+                border-color: #2d2d2d;
+            }
         """
 
     def _get_light_stylesheet(self) -> str:
@@ -321,6 +354,11 @@ class PortfolioControls(QWidget):
                 background-color: #d32f2f;
                 color: #ffffff;
             }
+            QPushButton:disabled {
+                background-color: #e0e0e0;
+                color: #999999;
+                border-color: #cccccc;
+            }
         """
 
     def _get_bloomberg_stylesheet(self) -> str:
@@ -404,5 +442,10 @@ class PortfolioControls(QWidget):
             QPushButton#delete_btn:pressed {
                 background-color: #d32f2f;
                 color: #ffffff;
+            }
+            QPushButton:disabled {
+                background-color: #060a10;
+                color: #555555;
+                border-color: #1a2838;
             }
         """

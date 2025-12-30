@@ -82,11 +82,11 @@ class PortfolioService:
         except (ValueError, TypeError):
             return False, "Invalid quantity"
 
-        # Check entry price
+        # Check entry price (0 is allowed for gifts)
         try:
             entry_price = float(transaction.get("entry_price", 0))
-            if entry_price <= 0:
-                return False, "Entry price must be greater than 0"
+            if entry_price < 0:
+                return False, "Entry price cannot be negative"
         except (ValueError, TypeError):
             return False, "Invalid entry price"
 
@@ -289,6 +289,232 @@ class PortfolioService:
                 prices[ticker] = None
 
         return prices
+
+    @staticmethod
+    def is_valid_ticker(ticker: str) -> Tuple[bool, Optional[str]]:
+        """
+        Check if a ticker is valid by attempting to fetch data from Yahoo Finance.
+
+        Args:
+            ticker: Ticker symbol to validate
+
+        Returns:
+            Tuple of (is_valid, error_message)
+        """
+        if not ticker or not ticker.strip():
+            return False, "Ticker cannot be empty"
+
+        ticker = ticker.strip().upper()
+
+        try:
+            df = fetch_price_history(ticker, period="max", interval="1d")
+
+            if df is None or df.empty:
+                return False, f"No data found for ticker '{ticker}'"
+
+            return True, None
+
+        except Exception as e:
+            return False, f"Failed to fetch data for '{ticker}': {str(e)}"
+
+    @staticmethod
+    def is_valid_trading_day(ticker: str, date_str: str) -> Tuple[bool, Optional[str]]:
+        """
+        Check if a date is a valid trading day for a stock ticker.
+        Crypto tickers (ending in -USD) are exempt from this check.
+
+        Args:
+            ticker: Ticker symbol
+            date_str: Date in ISO format (YYYY-MM-DD)
+
+        Returns:
+            Tuple of (is_valid, error_message)
+        """
+        import pandas as pd
+        from datetime import datetime
+
+        if not ticker or not date_str:
+            return True, None  # Skip validation if missing data
+
+        ticker = ticker.strip().upper()
+
+        # Crypto tickers (ending in -USD) trade 24/7, skip validation
+        if ticker.endswith("-USD"):
+            return True, None
+
+        try:
+            target_date = pd.to_datetime(date_str)
+
+            # Check if it's a weekend
+            if target_date.weekday() >= 5:  # Saturday = 5, Sunday = 6
+                day_name = "Saturday" if target_date.weekday() == 5 else "Sunday"
+                return False, f"{date_str} is a {day_name}. Stock markets are closed on weekends."
+
+            # Fetch historical data to check if it's a trading day
+            df = fetch_price_history(ticker, period="max", interval="1d")
+
+            if df is None or df.empty:
+                # Can't validate without data, allow it
+                return True, None
+
+            # Check if the exact date exists in the data (meaning it was a trading day)
+            # Only check for dates that should have data (not future dates)
+            today = pd.Timestamp.now().normalize()
+            if target_date > today:
+                return False, f"{date_str} is in the future."
+
+            # Check if this date exists in the trading data
+            if target_date in df.index:
+                return True, None
+
+            # Date not found - could be a holiday
+            # Check if there are trading days before and after this date
+            prior_dates = df.index[df.index < target_date]
+            future_dates = df.index[df.index > target_date]
+
+            if len(prior_dates) > 0 and len(future_dates) > 0:
+                # There's data before and after, so this was likely a holiday
+                return False, f"{date_str} appears to be a market holiday. Please select a valid trading day."
+
+            # If date is before the first available data point
+            if len(prior_dates) == 0 and len(future_dates) > 0:
+                first_date = df.index.min().strftime("%Y-%m-%d")
+                return False, f"No trading data available before {first_date} for '{ticker}'."
+
+            return True, None
+
+        except Exception as e:
+            # On error, allow the date (don't block user due to technical issues)
+            print(f"Error validating trading day: {e}")
+            return True, None
+
+    @staticmethod
+    def fetch_historical_close_price(ticker: str, date_str: str) -> Optional[float]:
+        """
+        Fetch the closing price for a ticker on a specific date.
+
+        Args:
+            ticker: Ticker symbol
+            date_str: Date in ISO format (YYYY-MM-DD)
+
+        Returns:
+            Closing price on that date, or None if not available
+        """
+        import pandas as pd
+
+        if not ticker or not date_str:
+            return None
+
+        try:
+            # Fetch full history (uses cache if current)
+            df = fetch_price_history(ticker, period="max", interval="1d")
+
+            if df is None or df.empty:
+                return None
+
+            # Convert date string to datetime for lookup
+            target_date = pd.to_datetime(date_str)
+
+            # Find the exact date or the closest previous trading day
+            if target_date in df.index:
+                return float(df.loc[target_date, "Close"])
+
+            # If exact date not found, find closest previous date
+            prior_dates = df.index[df.index <= target_date]
+            if len(prior_dates) > 0:
+                closest_date = prior_dates.max()
+                return float(df.loc[closest_date, "Close"])
+
+            return None
+
+        except Exception as e:
+            print(f"Error fetching historical price for {ticker} on {date_str}: {e}")
+            return None
+
+    @staticmethod
+    def fetch_historical_closes_batch(
+        ticker_dates: List[Tuple[str, str]]
+    ) -> Dict[str, Dict[str, Optional[float]]]:
+        """
+        Batch fetch historical closing prices for multiple ticker/date pairs.
+
+        Args:
+            ticker_dates: List of (ticker, date_str) tuples
+
+        Returns:
+            Dict of ticker -> {date -> close_price}
+        """
+        import pandas as pd
+
+        results: Dict[str, Dict[str, Optional[float]]] = {}
+
+        # Group by ticker to minimize fetches
+        ticker_groups: Dict[str, List[str]] = {}
+        for ticker, date_str in ticker_dates:
+            if ticker not in ticker_groups:
+                ticker_groups[ticker] = []
+            if date_str not in ticker_groups[ticker]:
+                ticker_groups[ticker].append(date_str)
+
+        # Fetch each ticker once and extract all needed dates
+        for ticker, dates in ticker_groups.items():
+            if ticker not in results:
+                results[ticker] = {}
+
+            try:
+                df = fetch_price_history(ticker, period="max", interval="1d")
+
+                if df is None or df.empty:
+                    for date_str in dates:
+                        results[ticker][date_str] = None
+                    continue
+
+                for date_str in dates:
+                    target_date = pd.to_datetime(date_str)
+
+                    if target_date in df.index:
+                        results[ticker][date_str] = float(df.loc[target_date, "Close"])
+                    else:
+                        prior_dates = df.index[df.index <= target_date]
+                        if len(prior_dates) > 0:
+                            closest_date = prior_dates.max()
+                            results[ticker][date_str] = float(df.loc[closest_date, "Close"])
+                        else:
+                            results[ticker][date_str] = None
+
+            except Exception as e:
+                print(f"Error fetching historical prices for {ticker}: {e}")
+                for date_str in dates:
+                    results[ticker][date_str] = None
+
+        return results
+
+    @staticmethod
+    def calculate_principal(transaction: Dict[str, Any]) -> float:
+        """
+        Calculate principal for a transaction.
+
+        Principal = quantity * execution_price, signed by transaction type:
+        - Buy: (quantity * execution_price + fees) [money spent, positive]
+        - Sell: -(quantity * execution_price - fees) [money received, negative]
+
+        Args:
+            transaction: Transaction dict with quantity, entry_price, fees, transaction_type
+
+        Returns:
+            Principal value (positive for Buy, negative for Sell)
+        """
+        quantity = float(transaction.get("quantity", 0))
+        execution_price = float(transaction.get("entry_price", 0))
+        fees = float(transaction.get("fees", 0))
+        transaction_type = transaction.get("transaction_type", "Buy")
+
+        if transaction_type == "Buy":
+            # Money spent (positive)
+            return (quantity * execution_price + fees)
+        else:
+            # Money received (negative)
+            return -(quantity * execution_price - fees)
 
     # Export API for other modules
 

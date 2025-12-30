@@ -108,23 +108,14 @@ class PortfolioConstructionModule(QWidget):
         self.controls.set_view_mode(is_transaction_view=(index == 0))
 
     def _initialize_portfolio_list(self):
-        """Initialize portfolio dropdown without loading data."""
+        """Initialize portfolio dropdown without loading any portfolio."""
         portfolios = PortfolioPersistence.list_portfolios()
 
-        if not portfolios:
-            # Create empty Default portfolio if none exist
-            self.current_portfolio = PortfolioPersistence.create_new_portfolio("Default")
-            PortfolioPersistence.save_portfolio(self.current_portfolio)
-            portfolios = ["Default"]
+        # Populate dropdown with no portfolio selected (shows placeholder)
+        self.controls.update_portfolio_list(portfolios, None)
 
-        # Populate dropdown only (no data fetching)
-        self.controls.update_portfolio_list(portfolios, portfolios[0])
-
-        # Show empty state
+        # Show empty state - user must explicitly select a portfolio
         self._show_empty_state()
-
-        # Ensure blank row exists for immediate editing
-        self.transaction_table._ensure_blank_row()
 
     def _populate_transaction_table(self):
         """Populate transaction table from current portfolio."""
@@ -142,6 +133,9 @@ class PortfolioConstructionModule(QWidget):
         # Sort to maintain blank at top, transactions by date
         self.transaction_table._sort_transactions()
 
+        # Fetch historical prices for all transactions in batch
+        self.transaction_table.fetch_historical_prices_batch()
+
         self.unsaved_changes = False
 
     def _on_transaction_changed(self, *args):
@@ -158,6 +152,8 @@ class PortfolioConstructionModule(QWidget):
         # Clear price cache
         self._cached_prices.clear()
         self._cached_tickers.clear()
+        # Update button states (disable Save/Rename/Delete)
+        self.controls._update_button_states(False)
 
     def _update_aggregate_table(self, force_fetch: bool = False):
         """
@@ -203,8 +199,12 @@ class PortfolioConstructionModule(QWidget):
         # Use cached prices for calculations
         current_prices = {t: self._cached_prices.get(t) for t in tickers}
 
-        # Update transaction table with prices
+        # Update transaction table with current prices
         self.transaction_table.update_current_prices(current_prices)
+
+        # Also fetch historical prices for new ticker/date combinations
+        # (batch fetch handles caching internally)
+        self.transaction_table.fetch_historical_prices_batch()
 
         # Calculate holdings
         holdings = PortfolioService.calculate_aggregate_holdings(transactions, current_prices)
@@ -310,9 +310,10 @@ class PortfolioConstructionModule(QWidget):
         # Force fetch all prices on portfolio load
         self._update_aggregate_table(force_fetch=True)
 
-        # Update controls
+        # Update controls and enable buttons
         portfolios = PortfolioPersistence.list_portfolios()
         self.controls.update_portfolio_list(portfolios, name)
+        self.controls._update_button_states(True)
 
     def _new_portfolio_dialog(self):
         """Open new portfolio dialog."""
@@ -348,9 +349,13 @@ class PortfolioConstructionModule(QWidget):
             self._cached_prices.clear()
             self._cached_tickers.clear()
 
-            # Update controls
+            # Ensure blank row exists for immediate editing
+            self.transaction_table._ensure_blank_row()
+
+            # Update controls and enable buttons
             portfolios = PortfolioPersistence.list_portfolios()
             self.controls.update_portfolio_list(portfolios, name)
+            self.controls._update_button_states(True)
 
             self.unsaved_changes = False
 
@@ -408,15 +413,11 @@ class PortfolioConstructionModule(QWidget):
             # Get remaining portfolios
             portfolios = PortfolioPersistence.list_portfolios()
 
-            if not portfolios:
-                # Create new Default portfolio if none left
-                self.current_portfolio = PortfolioPersistence.create_new_portfolio("Default")
-                PortfolioPersistence.save_portfolio(self.current_portfolio)
-                portfolios = ["Default"]
+            # Update dropdown (no portfolio selected)
+            self.controls.update_portfolio_list(portfolios, None)
 
-            # Load first available portfolio
-            self.controls.update_portfolio_list(portfolios, portfolios[0])
-            self._load_portfolio(portfolios[0])
+            # Show empty state - user must select another portfolio
+            self._show_empty_state()
         else:
             CustomMessageBox.critical(
                 self.theme_manager,
@@ -452,7 +453,7 @@ class PortfolioConstructionModule(QWidget):
                 self._save_portfolio()
             elif reply == CustomMessageBox.Cancel:
                 # Revert dropdown
-                current_name = self.current_portfolio.get("name") if self.current_portfolio else "Default"
+                current_name = self.current_portfolio.get("name") if self.current_portfolio else None
                 self.controls.update_portfolio_list(
                     PortfolioPersistence.list_portfolios(),
                     current_name

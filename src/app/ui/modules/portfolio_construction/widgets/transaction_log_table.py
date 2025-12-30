@@ -3,12 +3,14 @@
 from typing import Dict, List, Any, Optional
 from PySide6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QHeaderView,
-    QLineEdit, QComboBox, QDoubleSpinBox, QAbstractButton, QWidget, QApplication
+    QLineEdit, QComboBox, QDoubleSpinBox, QAbstractButton, QWidget, QApplication,
+    QHBoxLayout
 )
 from PySide6.QtCore import Qt, Signal, QDate, QTimer, QEvent
 from PySide6.QtGui import QDoubleValidator, QKeySequence
 
 from app.core.theme_manager import ThemeManager
+from app.ui.widgets.common import CustomMessageBox
 from ..services.portfolio_service import PortfolioService
 from .no_scroll_combobox import NoScrollComboBox
 
@@ -369,7 +371,23 @@ class DateInputWidget(QLineEdit):
 
 
 class AutoSelectLineEdit(QLineEdit):
-    """QLineEdit that auto-selects all text on focus or click."""
+    """QLineEdit that auto-selects all text on focus or click and auto-capitalizes."""
+
+    def __init__(self, text="", parent=None):
+        super().__init__(text, parent)
+        # Connect to textEdited to auto-capitalize (textEdited only fires on user input)
+        self.textEdited.connect(self._on_text_edited)
+
+    def _on_text_edited(self, text: str):
+        """Convert text to uppercase while preserving cursor position."""
+        if text != text.upper():
+            cursor_pos = self.cursorPosition()
+            self.blockSignals(True)
+            self.setText(text.upper())
+            self.setCursorPosition(cursor_pos)
+            self.blockSignals(False)
+            # Emit textChanged manually since we blocked signals
+            self.textChanged.emit(self.text())
 
     def focusInEvent(self, event):
         super().focusInEvent(event)
@@ -469,13 +487,16 @@ class TransactionLogTable(QTableWidget):
 
     # Columns
     COLUMNS = [
-        "Date",              # QDateEdit
-        "Ticker",            # QLineEdit
-        "Type",              # QComboBox (Buy/Sell)
-        "Quantity",          # QDoubleSpinBox
-        "Transaction Price", # QDoubleSpinBox
-        "Fees",              # QDoubleSpinBox
-        "Market Value"       # Read-only label (calculated)
+        "Date",                # col 0 - DateInputWidget
+        "Ticker",              # col 1 - AutoSelectLineEdit
+        "Quantity",            # col 2 - ValidatedNumericLineEdit
+        "Execution Price",     # col 3 - ValidatedNumericLineEdit
+        "Fees",                # col 4 - ValidatedNumericLineEdit
+        "Type",                # col 5 - NoScrollComboBox (Buy/Sell)
+        "Daily Closing Price", # col 6 - Read-only (historical close on tx date)
+        "Live Price",          # col 7 - Read-only (last daily close)
+        "Principal",           # col 8 - Read-only (calculated)
+        "Market Value"         # col 9 - Read-only (calculated)
     ]
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
@@ -490,10 +511,16 @@ class TransactionLogTable(QTableWidget):
         self._transactions = {}  # Map row_index -> transaction_dict
 
         self._current_prices: Dict[str, float] = {}  # Map ticker -> current_price
+        self._historical_prices: Dict[str, Dict[str, float]] = {}  # Map ticker -> {date -> close_price}
+
+        # Track original values for existing rows (for revert on invalid)
+        # Map transaction_id -> {"ticker": str, "date": str}
+        self._original_values: Dict[str, Dict[str, str]] = {}
 
         # Focus tracking for auto-delete
         self._current_editing_row: Optional[int] = None
         self._row_widgets_map: Dict[int, List[QWidget]] = {}
+        self._skip_focus_validation: bool = False  # Prevent double validation dialogs
 
         self._setup_table()
         self._apply_theme()
@@ -506,21 +533,8 @@ class TransactionLogTable(QTableWidget):
         self.setColumnCount(len(self.COLUMNS))
         self.setHorizontalHeaderLabels(self.COLUMNS)
 
-        # Column widths
-        header = self.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.Fixed)  # Date
-        self.setColumnWidth(0, 130)
-        header.setSectionResizeMode(1, QHeaderView.Interactive)  # Ticker
-        self.setColumnWidth(1, 110)
-        header.setSectionResizeMode(2, QHeaderView.Fixed)  # Type
-        self.setColumnWidth(2, 80)
-        header.setSectionResizeMode(3, QHeaderView.Interactive)  # Quantity
-        self.setColumnWidth(3, 110)
-        header.setSectionResizeMode(4, QHeaderView.Interactive)  # Transaction Price
-        self.setColumnWidth(4, 140)
-        header.setSectionResizeMode(5, QHeaderView.Interactive)  # Fees
-        self.setColumnWidth(5, 100)
-        header.setSectionResizeMode(6, QHeaderView.Stretch)  # Market Value (stretches)
+        # Set column resize modes and widths
+        self._reset_column_widths()
 
         # Table properties - fixed row heights
         v_header = self.verticalHeader()
@@ -531,11 +545,39 @@ class TransactionLogTable(QTableWidget):
         self.setAlternatingRowColors(True)
         self.setShowGrid(True)
 
+        # Hide vertical scrollbar but keep scroll functionality
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        # Enable smooth pixel-based scrolling instead of item-based
+        self.setVerticalScrollMode(QTableWidget.ScrollPerPixel)
+
         # Enable sorting
         self.setSortingEnabled(True)
 
         # Set corner label
         self._set_corner_label("Transaction")
+
+    def _reset_column_widths(self):
+        """Reset column widths to fixed values. Called after table content changes."""
+        header = self.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.Interactive)  # Date
+        self.setColumnWidth(0, 200)
+        header.setSectionResizeMode(1, QHeaderView.Interactive)  # Ticker
+        self.setColumnWidth(1, 300)
+        header.setSectionResizeMode(2, QHeaderView.Interactive)  # Quantity
+        self.setColumnWidth(2, 125)
+        header.setSectionResizeMode(3, QHeaderView.Interactive)  # Execution Price
+        self.setColumnWidth(3, 175)
+        header.setSectionResizeMode(4, QHeaderView.Interactive)  # Fees
+        self.setColumnWidth(4, 125)
+        header.setSectionResizeMode(5, QHeaderView.Interactive)  # Type
+        self.setColumnWidth(5, 125)
+        header.setSectionResizeMode(6, QHeaderView.Interactive)  # Daily Closing Price
+        self.setColumnWidth(6, 175)
+        header.setSectionResizeMode(7, QHeaderView.Interactive)  # Live Price
+        self.setColumnWidth(7, 175)
+        header.setSectionResizeMode(8, QHeaderView.Stretch)  # Principal
+        header.setSectionResizeMode(9, QHeaderView.Stretch)  # Market Value
 
     def _set_corner_label(self, text: str):
         """Set text for table corner button."""
@@ -609,6 +651,7 @@ class TransactionLogTable(QTableWidget):
         # Insert at top (row 0)
         self.setSortingEnabled(False)
         self.insertRow(0)
+        self.setRowHeight(0, 48)  # Ensure consistent row height
 
         # Apply shifted mappings
         self._row_to_id = new_row_to_id
@@ -620,63 +663,90 @@ class TransactionLogTable(QTableWidget):
         self._row_to_id[0] = "BLANK_ROW"
         self._transactions[0] = blank_transaction
 
+        # Get current theme stylesheets
+        widget_style = self._get_current_widget_stylesheet()
+        combo_style = self._get_combo_stylesheet()
+
         # Create widgets for blank row
         # Date cell
         date_edit = DateInputWidget()
         date_edit._parent_table = self  # Pass reference for validation dialogs
         date_edit.setDate(QDate.fromString(blank_transaction["date"], "yyyy-MM-dd"))
+        date_edit.setStyleSheet(widget_style)
         date_edit.date_changed.connect(self._on_widget_changed)
         self._set_widget_position(date_edit, 0, 0)
-        self.setCellWidget(0, 0, date_edit)
+        date_container = self._wrap_widget_in_cell(date_edit)
+        self.setCellWidget(0, 0, date_container)
 
-        # Ticker cell
+        # Ticker cell - column 1
         ticker_edit = AutoSelectLineEdit(blank_transaction["ticker"])
         ticker_edit.setPlaceholderText("Enter ticker...")
+        ticker_edit.setStyleSheet(widget_style)
         ticker_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(ticker_edit, 0, 1)
-        self.setCellWidget(0, 1, ticker_edit)
+        ticker_container = self._wrap_widget_in_cell(ticker_edit)
+        self.setCellWidget(0, 1, ticker_container)
 
-        # Type cell
+        # Quantity cell - column 2
+        qty_edit = ValidatedNumericLineEdit(min_value=0.0001, max_value=1000000, decimals=4, prefix="", show_dash_for_zero=True)
+        qty_edit.setValue(blank_transaction["quantity"])
+        qty_edit.setStyleSheet(widget_style)
+        qty_edit.textChanged.connect(self._on_widget_changed)
+        self._set_widget_position(qty_edit, 0, 2)
+        qty_container = self._wrap_widget_in_cell(qty_edit)
+        self.setCellWidget(0, 2, qty_container)
+
+        # Execution Price cell - column 3
+        price_edit = ValidatedNumericLineEdit(min_value=0, max_value=1000000, decimals=2, prefix="", show_dash_for_zero=True)
+        price_edit.setValue(blank_transaction["entry_price"])
+        price_edit.setStyleSheet(widget_style)
+        price_edit.textChanged.connect(self._on_widget_changed)
+        self._set_widget_position(price_edit, 0, 3)
+        price_container = self._wrap_widget_in_cell(price_edit)
+        self.setCellWidget(0, 3, price_container)
+
+        # Fees cell - column 4
+        fees_edit = ValidatedNumericLineEdit(min_value=0, max_value=10000, decimals=2, prefix="", show_dash_for_zero=True)
+        fees_edit.setValue(blank_transaction["fees"])
+        fees_edit.setStyleSheet(widget_style)
+        fees_edit.textChanged.connect(self._on_widget_changed)
+        self._set_widget_position(fees_edit, 0, 4)
+        fees_container = self._wrap_widget_in_cell(fees_edit)
+        self.setCellWidget(0, 4, fees_container)
+
+        # Type cell - column 5
         type_combo = NoScrollComboBox()
         type_combo.addItems(["Buy", "Sell"])
         type_combo.setCurrentText(blank_transaction["transaction_type"])
         type_combo.currentTextChanged.connect(self._on_widget_changed)
-        # Hide dropdown arrow and remove all highlight effects
-        type_combo.setStyleSheet("""
-            QComboBox { border: none; font-size: 14px; }
-            QComboBox::drop-down { border: none; width: 0px; }
-            QComboBox:focus { border: none; outline: none; }
-            QComboBox:on { border: none; }
-        """)
-        self._set_widget_position(type_combo, 0, 2)
-        self.setCellWidget(0, 2, type_combo)
+        type_combo.setStyleSheet(combo_style)
+        self._set_widget_position(type_combo, 0, 5)
+        type_container = self._wrap_widget_in_cell(type_combo)
+        self.setCellWidget(0, 5, type_container)
 
-        # Quantity cell
-        qty_edit = ValidatedNumericLineEdit(min_value=0.0001, max_value=1000000, decimals=4, prefix="", show_dash_for_zero=True)
-        qty_edit.setValue(blank_transaction["quantity"])
-        qty_edit.textChanged.connect(self._on_widget_changed)
-        self._set_widget_position(qty_edit, 0, 3)
-        self.setCellWidget(0, 3, qty_edit)
+        # Daily Closing Price cell (read-only) - column 6
+        daily_close_item = QTableWidgetItem("--")
+        daily_close_item.setFlags(daily_close_item.flags() & ~Qt.ItemIsEditable)
+        daily_close_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.setItem(0, 6, daily_close_item)
 
-        # Transaction Price cell
-        price_edit = ValidatedNumericLineEdit(min_value=0.01, max_value=1000000, decimals=2, prefix="", show_dash_for_zero=True)
-        price_edit.setValue(blank_transaction["entry_price"])
-        price_edit.textChanged.connect(self._on_widget_changed)
-        self._set_widget_position(price_edit, 0, 4)
-        self.setCellWidget(0, 4, price_edit)
+        # Live Price cell (read-only) - column 7
+        live_price_item = QTableWidgetItem("--")
+        live_price_item.setFlags(live_price_item.flags() & ~Qt.ItemIsEditable)
+        live_price_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.setItem(0, 7, live_price_item)
 
-        # Fees cell
-        fees_edit = ValidatedNumericLineEdit(min_value=0, max_value=10000, decimals=2, prefix="", show_dash_for_zero=True)
-        fees_edit.setValue(blank_transaction["fees"])
-        fees_edit.textChanged.connect(self._on_widget_changed)
-        self._set_widget_position(fees_edit, 0, 5)
-        self.setCellWidget(0, 5, fees_edit)
+        # Principal cell (read-only) - column 8
+        principal_item = QTableWidgetItem("--")
+        principal_item.setFlags(principal_item.flags() & ~Qt.ItemIsEditable)
+        principal_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.setItem(0, 8, principal_item)
 
-        # Market Value cell (read-only) - column 6
+        # Market Value cell (read-only) - column 9
         market_value_item = QTableWidgetItem("--")
         market_value_item.setFlags(market_value_item.flags() & ~Qt.ItemIsEditable)
         market_value_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.setItem(0, 6, market_value_item)
+        self.setItem(0, 9, market_value_item)
 
         # Install focus watchers for auto-delete functionality
         self._install_focus_watcher(0)
@@ -694,7 +764,7 @@ class TransactionLogTable(QTableWidget):
             transaction: Transaction dict
 
         Returns:
-            True if ticker, qty > 0, and entry_price > 0 are all filled
+            True if ticker, qty > 0, and entry_price >= 0 are all filled
         """
         ticker = transaction.get("ticker", "").strip()
         quantity = transaction.get("quantity", 0.0)
@@ -703,7 +773,7 @@ class TransactionLogTable(QTableWidget):
         return (
             ticker != "" and
             quantity > 0 and
-            entry_price > 0
+            entry_price >= 0  # Allow 0 for gifts
         )
 
     def _transition_blank_to_real(self, row: int, transaction: Dict[str, Any]):
@@ -759,6 +829,7 @@ class TransactionLogTable(QTableWidget):
 
         row = self.rowCount()
         self.insertRow(row)
+        self.setRowHeight(row, 48)  # Ensure consistent row height
 
         # Store transaction in UUID-based storage
         tx_id = transaction["id"]
@@ -768,61 +839,94 @@ class TransactionLogTable(QTableWidget):
         # Also store in legacy dict for backwards compatibility
         self._transactions[row] = transaction
 
-        # Date cell
+        # Store original values for revert on invalid edit
+        self._original_values[tx_id] = {
+            "ticker": transaction.get("ticker", ""),
+            "date": transaction.get("date", "")
+        }
+
+        # Get current theme stylesheets
+        widget_style = self._get_current_widget_stylesheet()
+        combo_style = self._get_combo_stylesheet()
+
+        # Date cell - column 0
         date_edit = DateInputWidget()
         date_edit._parent_table = self  # Pass reference for validation dialogs
         date_edit.setDate(QDate.fromString(transaction["date"], "yyyy-MM-dd"))
+        date_edit.setStyleSheet(widget_style)
         date_edit.date_changed.connect(self._on_widget_changed)
         self._set_widget_position(date_edit, row, 0)
-        self.setCellWidget(row, 0, date_edit)
+        date_container = self._wrap_widget_in_cell(date_edit)
+        self.setCellWidget(row, 0, date_container)
 
-        # Ticker cell
+        # Ticker cell - column 1
         ticker_edit = AutoSelectLineEdit(transaction["ticker"])
+        ticker_edit.setStyleSheet(widget_style)
         ticker_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(ticker_edit, row, 1)
-        self.setCellWidget(row, 1, ticker_edit)
+        ticker_container = self._wrap_widget_in_cell(ticker_edit)
+        self.setCellWidget(row, 1, ticker_container)
 
-        # Type cell
+        # Quantity cell - column 2
+        qty_edit = ValidatedNumericLineEdit(min_value=0.0001, max_value=1000000, decimals=4, prefix="", show_dash_for_zero=True)
+        qty_edit.setValue(transaction["quantity"])
+        qty_edit.setStyleSheet(widget_style)
+        qty_edit.textChanged.connect(self._on_widget_changed)
+        self._set_widget_position(qty_edit, row, 2)
+        qty_container = self._wrap_widget_in_cell(qty_edit)
+        self.setCellWidget(row, 2, qty_container)
+
+        # Execution Price cell - column 3
+        price_edit = ValidatedNumericLineEdit(min_value=0, max_value=1000000, decimals=2, prefix="", show_dash_for_zero=True)
+        price_edit.setValue(transaction["entry_price"])
+        price_edit.setStyleSheet(widget_style)
+        price_edit.textChanged.connect(self._on_widget_changed)
+        self._set_widget_position(price_edit, row, 3)
+        price_container = self._wrap_widget_in_cell(price_edit)
+        self.setCellWidget(row, 3, price_container)
+
+        # Fees cell - column 4
+        fees_edit = ValidatedNumericLineEdit(min_value=0, max_value=10000, decimals=2, prefix="", show_dash_for_zero=True)
+        fees_edit.setValue(transaction["fees"])
+        fees_edit.setStyleSheet(widget_style)
+        fees_edit.textChanged.connect(self._on_widget_changed)
+        self._set_widget_position(fees_edit, row, 4)
+        fees_container = self._wrap_widget_in_cell(fees_edit)
+        self.setCellWidget(row, 4, fees_container)
+
+        # Type cell - column 5
         type_combo = NoScrollComboBox()
         type_combo.addItems(["Buy", "Sell"])
         type_combo.setCurrentText(transaction["transaction_type"])
         type_combo.currentTextChanged.connect(self._on_widget_changed)
-        # Hide dropdown arrow and remove all highlight effects
-        type_combo.setStyleSheet("""
-            QComboBox { border: none; font-size: 14px; }
-            QComboBox::drop-down { border: none; width: 0px; }
-            QComboBox:focus { border: none; outline: none; }
-            QComboBox:on { border: none; }
-        """)
-        self._set_widget_position(type_combo, row, 2)
-        self.setCellWidget(row, 2, type_combo)
+        type_combo.setStyleSheet(combo_style)
+        self._set_widget_position(type_combo, row, 5)
+        type_container = self._wrap_widget_in_cell(type_combo)
+        self.setCellWidget(row, 5, type_container)
 
-        # Quantity cell
-        qty_edit = ValidatedNumericLineEdit(min_value=0.0001, max_value=1000000, decimals=4, prefix="", show_dash_for_zero=True)
-        qty_edit.setValue(transaction["quantity"])
-        qty_edit.textChanged.connect(self._on_widget_changed)
-        self._set_widget_position(qty_edit, row, 3)
-        self.setCellWidget(row, 3, qty_edit)
+        # Daily Closing Price cell (read-only) - column 6
+        daily_close_item = QTableWidgetItem("--")
+        daily_close_item.setFlags(daily_close_item.flags() & ~Qt.ItemIsEditable)
+        daily_close_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.setItem(row, 6, daily_close_item)
 
-        # Transaction Price cell
-        price_edit = ValidatedNumericLineEdit(min_value=0.01, max_value=1000000, decimals=2, prefix="", show_dash_for_zero=True)
-        price_edit.setValue(transaction["entry_price"])
-        price_edit.textChanged.connect(self._on_widget_changed)
-        self._set_widget_position(price_edit, row, 4)
-        self.setCellWidget(row, 4, price_edit)
+        # Live Price cell (read-only) - column 7
+        live_price_item = QTableWidgetItem("--")
+        live_price_item.setFlags(live_price_item.flags() & ~Qt.ItemIsEditable)
+        live_price_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.setItem(row, 7, live_price_item)
 
-        # Fees cell
-        fees_edit = ValidatedNumericLineEdit(min_value=0, max_value=10000, decimals=2, prefix="", show_dash_for_zero=True)
-        fees_edit.setValue(transaction["fees"])
-        fees_edit.textChanged.connect(self._on_widget_changed)
-        self._set_widget_position(fees_edit, row, 5)
-        self.setCellWidget(row, 5, fees_edit)
+        # Principal cell (read-only) - column 8
+        principal_item = QTableWidgetItem("--")
+        principal_item.setFlags(principal_item.flags() & ~Qt.ItemIsEditable)
+        principal_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.setItem(row, 8, principal_item)
 
-        # Market Value cell (read-only) - column 6
+        # Market Value cell (read-only) - column 9
         market_value_item = QTableWidgetItem("--")
         market_value_item.setFlags(market_value_item.flags() & ~Qt.ItemIsEditable)
         market_value_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        self.setItem(row, 6, market_value_item)
+        self.setItem(row, 9, market_value_item)
 
         # Install focus watchers for auto-delete functionality
         self._install_focus_watcher(row)
@@ -880,14 +984,14 @@ class TransactionLogTable(QTableWidget):
         transaction_id = existing_transaction["id"]
 
         try:
-            # Get widgets directly from cells
-            date_edit = self.cellWidget(row, 0)
-            ticker_edit = self.cellWidget(row, 1)
-            type_combo = self.cellWidget(row, 2)
-            qty_spin = self.cellWidget(row, 3)
-            price_spin = self.cellWidget(row, 4)
-            fees_spin = self.cellWidget(row, 5)
-            # Column 6 is Market Value (read-only item, not widget)
+            # Get inner widgets from cells (unwrap containers)
+            date_edit = self._get_inner_widget(row, 0)
+            ticker_edit = self._get_inner_widget(row, 1)
+            qty_spin = self._get_inner_widget(row, 2)
+            price_spin = self._get_inner_widget(row, 3)
+            fees_spin = self._get_inner_widget(row, 4)
+            type_combo = self._get_inner_widget(row, 5)
+            # Columns 6-9 are read-only items, not widgets
 
             if not all([date_edit, ticker_edit, type_combo, qty_spin, price_spin, fees_spin]):
                 return None
@@ -913,7 +1017,7 @@ class TransactionLogTable(QTableWidget):
 
     def _update_calculated_cells(self, row: int):
         """
-        Update Market Value cell.
+        Update calculated cells: Daily Closing Price, Live Price, Principal, Market Value.
 
         Args:
             row: Row index
@@ -922,20 +1026,54 @@ class TransactionLogTable(QTableWidget):
         if not transaction:
             return
 
-        ticker = transaction["ticker"]
+        ticker = transaction.get("ticker", "")
+        tx_date = transaction.get("date", "")
+        quantity = transaction.get("quantity", 0.0)
 
-        # Get current price
-        current_price = self._current_prices.get(ticker)
+        # --- Daily Closing Price (col 6) ---
+        daily_close = None
+        if ticker and tx_date:
+            # Check cache first
+            if ticker in self._historical_prices:
+                daily_close = self._historical_prices[ticker].get(tx_date)
 
-        if current_price is None:
-            self.item(row, 6).setText("--")  # Market Value is now column 6
-            return
+        item_6 = self.item(row, 6)
+        if item_6:
+            if daily_close is not None:
+                item_6.setText(f"${daily_close:,.2f}")
+            else:
+                item_6.setText("--")
 
-        # Calculate market value
-        market_value = current_price * transaction["quantity"]
+        # --- Live Price (col 7) ---
+        live_price = self._current_prices.get(ticker)
+        item_7 = self.item(row, 7)
+        if item_7:
+            if live_price is not None:
+                item_7.setText(f"${live_price:,.2f}")
+            else:
+                item_7.setText("--")
 
-        # Update cell
-        self.item(row, 6).setText(f"${market_value:,.2f}")  # Market Value is now column 6
+        # --- Principal (col 8) ---
+        principal = PortfolioService.calculate_principal(transaction)
+        item_8 = self.item(row, 8)
+        if item_8:
+            if principal != 0:
+                # Format with sign: negative for buys, positive for sells
+                if principal < 0:
+                    item_8.setText(f"-${abs(principal):,.2f}")
+                else:
+                    item_8.setText(f"${principal:,.2f}")
+            else:
+                item_8.setText("--")
+
+        # --- Market Value (col 9) ---
+        item_9 = self.item(row, 9)
+        if item_9:
+            if live_price is not None and quantity > 0:
+                market_value = live_price * quantity
+                item_9.setText(f"${market_value:,.2f}")
+            else:
+                item_9.setText("--")
 
     def update_current_prices(self, prices: Dict[str, float]):
         """
@@ -945,6 +1083,50 @@ class TransactionLogTable(QTableWidget):
             prices: Dict mapping ticker -> price
         """
         self._current_prices = prices
+        for row in range(self.rowCount()):
+            self._update_calculated_cells(row)
+
+    def update_historical_prices(self, historical_prices: Dict[str, Dict[str, float]]):
+        """
+        Update historical prices cache and recalculate all rows.
+
+        Args:
+            historical_prices: Dict mapping ticker -> {date -> close_price}
+        """
+        self._historical_prices = historical_prices
+        for row in range(self.rowCount()):
+            self._update_calculated_cells(row)
+
+    def fetch_historical_prices_batch(self):
+        """
+        Fetch historical closing prices for all transactions in batch.
+        Called on portfolio load and when transactions change.
+        Only fetches prices for ticker/date pairs not already cached.
+        """
+        from typing import List, Tuple
+
+        # Collect all ticker/date pairs that need fetching
+        ticker_dates_to_fetch: List[Tuple[str, str]] = []
+        for row in range(self.rowCount()):
+            tx = self._get_transaction_for_row(row)
+            if tx and not tx.get("is_blank"):
+                ticker = tx.get("ticker", "")
+                tx_date = tx.get("date", "")
+                if ticker and tx_date:
+                    # Only fetch if not already cached
+                    if ticker not in self._historical_prices or tx_date not in self._historical_prices.get(ticker, {}):
+                        ticker_dates_to_fetch.append((ticker, tx_date))
+
+        # Fetch only new ticker/date pairs
+        if ticker_dates_to_fetch:
+            new_prices = PortfolioService.fetch_historical_closes_batch(ticker_dates_to_fetch)
+            # Merge into existing cache
+            for ticker, dates in new_prices.items():
+                if ticker not in self._historical_prices:
+                    self._historical_prices[ticker] = {}
+                self._historical_prices[ticker].update(dates)
+
+        # Update all calculated cells
         for row in range(self.rowCount()):
             self._update_calculated_cells(row)
 
@@ -968,6 +1150,10 @@ class TransactionLogTable(QTableWidget):
         self._transactions_by_id.clear()
         self._row_to_id.clear()
         self._transactions.clear()  # Clear legacy storage too
+        self._current_prices.clear()  # Clear current prices cache
+        self._historical_prices.clear()  # Clear historical prices cache
+        self._original_values.clear()  # Clear original values tracking
+        self._reset_column_widths()  # Ensure consistent column widths
 
     def delete_selected_rows(self):
         """Delete selected rows and emit signals."""
@@ -982,6 +1168,10 @@ class TransactionLogTable(QTableWidget):
                 # Remove from UUID-based storage
                 if transaction_id in self._transactions_by_id:
                     del self._transactions_by_id[transaction_id]
+
+                # Remove from original values tracking
+                if transaction_id in self._original_values:
+                    del self._original_values[transaction_id]
 
                 # Remove from row mapping
                 if row in self._row_to_id:
@@ -1143,9 +1333,37 @@ class TransactionLogTable(QTableWidget):
                         # Get transaction
                         transaction = self._get_transaction_for_row(row)
 
-                        # Check if blank row and complete - transition if so
+                        # Check if blank row and complete - validate and transition if so
                         if transaction and transaction.get("is_blank"):
                             if self._is_transaction_complete(transaction):
+                                # Validate ticker before transitioning
+                                ticker = transaction.get("ticker", "").strip().upper()
+                                tx_date = transaction.get("date", "")
+
+                                # Validate ticker exists in Yahoo Finance
+                                is_valid_ticker, ticker_error = PortfolioService.is_valid_ticker(ticker)
+                                if not is_valid_ticker:
+                                    self._skip_focus_validation = True  # Prevent double dialog
+                                    CustomMessageBox.warning(
+                                        self.theme_manager,
+                                        self,
+                                        "Invalid Ticker",
+                                        ticker_error
+                                    )
+                                    return True  # Consume event, don't transition
+
+                                # Validate trading day for stocks (non-crypto)
+                                is_valid_day, day_error = PortfolioService.is_valid_trading_day(ticker, tx_date)
+                                if not is_valid_day:
+                                    self._skip_focus_validation = True  # Prevent double dialog
+                                    CustomMessageBox.warning(
+                                        self.theme_manager,
+                                        self,
+                                        "Invalid Trading Day",
+                                        day_error
+                                    )
+                                    return True  # Consume event, don't transition
+
                                 self._transition_blank_to_real(row, transaction)
                                 # Move focus to new blank row's ticker field (row 0, col 1)
                                 new_blank_ticker = self.cellWidget(0, 1)
@@ -1157,17 +1375,58 @@ class TransactionLogTable(QTableWidget):
                         if transaction and not transaction.get("is_blank"):
                             ticker = transaction.get("ticker", "").strip()
                             quantity = transaction.get("quantity", 0.0)
+                            tx_date = transaction.get("date", "")
+                            transaction_id = transaction.get("id")
 
                             if not ticker or quantity == 0.0:
                                 # Empty ticker or zero quantity - delete row
                                 self._delete_empty_row(row)
                                 return True  # Consume event
                             else:
-                                # Valid data - validate and fetch prices (same as focus loss)
+                                # Validate ticker and trading day
+                                original = self._original_values.get(transaction_id, {})
+                                original_ticker = original.get("ticker", "")
+                                original_date = original.get("date", "")
+                                ticker_upper = ticker.upper()
+
+                                # Check if ticker changed
+                                if ticker_upper != original_ticker.upper():
+                                    is_valid_ticker, ticker_error = PortfolioService.is_valid_ticker(ticker_upper)
+                                    if not is_valid_ticker:
+                                        self._skip_focus_validation = True  # Prevent double dialog
+                                        CustomMessageBox.warning(
+                                            self.theme_manager,
+                                            self,
+                                            "Invalid Ticker",
+                                            ticker_error
+                                        )
+                                        self._revert_ticker(row, original_ticker)
+                                        return True  # Consume event
+
+                                # Check if date or ticker changed
+                                if tx_date != original_date or ticker_upper != original_ticker.upper():
+                                    is_valid_day, day_error = PortfolioService.is_valid_trading_day(ticker_upper, tx_date)
+                                    if not is_valid_day:
+                                        self._skip_focus_validation = True  # Prevent double dialog
+                                        CustomMessageBox.warning(
+                                            self.theme_manager,
+                                            self,
+                                            "Invalid Trading Day",
+                                            day_error
+                                        )
+                                        self._revert_date(row, original_date)
+                                        return True  # Consume event
+
+                                # Valid data - validate and fetch prices
                                 is_valid, error = PortfolioService.validate_transaction(transaction)
                                 if is_valid:
+                                    # Update original values
+                                    if transaction_id:
+                                        self._original_values[transaction_id] = {
+                                            "ticker": ticker_upper,
+                                            "date": tx_date
+                                        }
                                     self._update_calculated_cells(row)
-                                    transaction_id = transaction.get("id")
                                     if transaction_id:
                                         self.transaction_modified.emit(transaction_id, transaction)
                                 # Clear selection and focus from the widget
@@ -1203,10 +1462,16 @@ class TransactionLogTable(QTableWidget):
         """
         Handle when focus leaves a row.
         Auto-deletes empty rows (except blank row), or validates and fetches prices.
+        Validates ticker existence and trading day for stocks.
 
         Args:
             row: Row index that lost focus
         """
+        # Check if we should skip validation (already handled by Enter key)
+        if self._skip_focus_validation:
+            self._skip_focus_validation = False
+            return
+
         # Get transaction for this row
         transaction = self._get_transaction_for_row(row)
         if not transaction:
@@ -1214,33 +1479,149 @@ class TransactionLogTable(QTableWidget):
 
         # Check if this is blank row
         if transaction.get("is_blank"):
-            # Check if it's complete, if so transition to real
+            # Check if it's complete, if so validate and transition to real
             if self._is_transaction_complete(transaction):
+                # Validate ticker before transitioning
+                ticker = transaction.get("ticker", "").strip().upper()
+                tx_date = transaction.get("date", "")
+
+                # Validate ticker exists in Yahoo Finance
+                is_valid_ticker, ticker_error = PortfolioService.is_valid_ticker(ticker)
+                if not is_valid_ticker:
+                    CustomMessageBox.warning(
+                        self.theme_manager,
+                        self,
+                        "Invalid Ticker",
+                        ticker_error
+                    )
+                    # Don't transition - keep as blank row
+                    return
+
+                # Validate trading day for stocks (non-crypto)
+                is_valid_day, day_error = PortfolioService.is_valid_trading_day(ticker, tx_date)
+                if not is_valid_day:
+                    CustomMessageBox.warning(
+                        self.theme_manager,
+                        self,
+                        "Invalid Trading Day",
+                        day_error
+                    )
+                    # Don't transition - keep as blank row
+                    return
+
                 self._transition_blank_to_real(row, transaction)
             return
 
-        # Check if row should be deleted (ticker empty OR quantity is 0/blank)
+        # Existing row - check if row should be deleted (ticker empty OR quantity is 0/blank)
         ticker = transaction.get("ticker", "").strip()
         quantity = transaction.get("quantity", 0.0)
+        tx_date = transaction.get("date", "")
+        transaction_id = transaction.get("id")
 
         if not ticker or quantity == 0.0:
             # Empty ticker or zero quantity - delete this row
             self._delete_empty_row(row)
         else:
-            # Has ticker and quantity - validate and fetch prices
+            # Has ticker and quantity - validate ticker and date, then fetch prices
+            original = self._original_values.get(transaction_id, {})
+            original_ticker = original.get("ticker", "")
+            original_date = original.get("date", "")
+
+            ticker_upper = ticker.upper()
+
+            # Check if ticker changed
+            if ticker_upper != original_ticker.upper():
+                # Validate new ticker
+                is_valid_ticker, ticker_error = PortfolioService.is_valid_ticker(ticker_upper)
+                if not is_valid_ticker:
+                    CustomMessageBox.warning(
+                        self.theme_manager,
+                        self,
+                        "Invalid Ticker",
+                        ticker_error
+                    )
+                    # Revert to original ticker
+                    self._revert_ticker(row, original_ticker)
+                    return
+
+            # Check if date changed or ticker changed (need to revalidate trading day)
+            if tx_date != original_date or ticker_upper != original_ticker.upper():
+                # Validate trading day for stocks
+                is_valid_day, day_error = PortfolioService.is_valid_trading_day(ticker_upper, tx_date)
+                if not is_valid_day:
+                    CustomMessageBox.warning(
+                        self.theme_manager,
+                        self,
+                        "Invalid Trading Day",
+                        day_error
+                    )
+                    # Revert to original date
+                    self._revert_date(row, original_date)
+                    return
+
             # Validate transaction
             is_valid, error = PortfolioService.validate_transaction(transaction)
             if not is_valid:
                 # Don't fetch prices for invalid transactions
                 return
 
+            # Update original values since validation passed
+            if transaction_id:
+                self._original_values[transaction_id] = {
+                    "ticker": ticker_upper,
+                    "date": tx_date
+                }
+
             # Update calculated cells (fetch prices)
             self._update_calculated_cells(row)
 
             # Emit signal that transaction was modified
-            transaction_id = transaction.get("id")
             if transaction_id:
                 self.transaction_modified.emit(transaction_id, transaction)
+
+    def _revert_ticker(self, row: int, original_ticker: str):
+        """
+        Revert ticker field to original value.
+
+        Args:
+            row: Row index
+            original_ticker: Original ticker value to restore
+        """
+        ticker_widget = self._get_inner_widget(row, 1)
+        if ticker_widget and isinstance(ticker_widget, QLineEdit):
+            ticker_widget.blockSignals(True)
+            ticker_widget.setText(original_ticker)
+            ticker_widget.blockSignals(False)
+
+        # Update stored transaction
+        transaction = self._get_transaction_for_row(row)
+        if transaction:
+            transaction["ticker"] = original_ticker
+            tx_id = transaction.get("id")
+            if tx_id and tx_id in self._transactions_by_id:
+                self._transactions_by_id[tx_id]["ticker"] = original_ticker
+
+    def _revert_date(self, row: int, original_date: str):
+        """
+        Revert date field to original value.
+
+        Args:
+            row: Row index
+            original_date: Original date value to restore (YYYY-MM-DD)
+        """
+        date_widget = self._get_inner_widget(row, 0)
+        if date_widget and isinstance(date_widget, DateInputWidget):
+            date_widget.blockSignals(True)
+            date_widget.setDate(QDate.fromString(original_date, "yyyy-MM-dd"))
+            date_widget.blockSignals(False)
+
+        # Update stored transaction
+        transaction = self._get_transaction_for_row(row)
+        if transaction:
+            transaction["date"] = original_date
+            tx_id = transaction.get("id")
+            if tx_id and tx_id in self._transactions_by_id:
+                self._transactions_by_id[tx_id]["date"] = original_date
 
     def _delete_empty_row(self, row: int):
         """
@@ -1259,6 +1640,10 @@ class TransactionLogTable(QTableWidget):
         # Remove from UUID-based storage
         if transaction_id in self._transactions_by_id:
             del self._transactions_by_id[transaction_id]
+
+        # Remove from original values tracking
+        if transaction_id in self._original_values:
+            del self._original_values[transaction_id]
 
         # Remove row from table first (this shifts all rows below up by 1)
         self.removeRow(row)
@@ -1330,18 +1715,99 @@ class TransactionLogTable(QTableWidget):
         for tx in all_transactions:
             self.add_transaction_row(tx)
 
+        # Reset column widths after rebuilding table
+        self._reset_column_widths()
+
     def _apply_theme(self):
         """Apply theme-specific styling."""
         theme = self.theme_manager.current_theme
 
         if theme == "light":
             stylesheet = self._get_light_stylesheet()
+            widget_stylesheet = self._get_light_widget_stylesheet()
         elif theme == "bloomberg":
             stylesheet = self._get_bloomberg_stylesheet()
+            widget_stylesheet = self._get_bloomberg_widget_stylesheet()
         else:
             stylesheet = self._get_dark_stylesheet()
+            widget_stylesheet = self._get_dark_widget_stylesheet()
 
         self.setStyleSheet(stylesheet)
+
+        # Apply styling to all editable cell widgets
+        self._apply_widget_theme(widget_stylesheet)
+
+    def _apply_widget_theme(self, widget_stylesheet: str):
+        """Apply theme styling to all editable cell widgets."""
+        bg_color = self._get_cell_background_color()
+        combo_style = self._get_combo_stylesheet()
+
+        for row in range(self.rowCount()):
+            # Columns 0-5 have container widgets with inner widgets
+            for col in range(6):
+                container = self.cellWidget(row, col)
+                if container:
+                    # Update container background
+                    container.setStyleSheet(f"background-color: {bg_color};")
+
+                    # Update inner widget style
+                    inner = container.property("_inner_widget")
+                    if inner:
+                        if col == 5:  # Combo box
+                            inner.setStyleSheet(combo_style)
+                        else:  # QLineEdit-based widgets
+                            inner.setStyleSheet(widget_stylesheet)
+
+    def _get_current_widget_stylesheet(self) -> str:
+        """Get the current theme's widget stylesheet."""
+        theme = self.theme_manager.current_theme
+        if theme == "light":
+            return self._get_light_widget_stylesheet()
+        elif theme == "bloomberg":
+            return self._get_bloomberg_widget_stylesheet()
+        else:
+            return self._get_dark_widget_stylesheet()
+
+    def _get_cell_background_color(self) -> str:
+        """Get the current theme's cell background color."""
+        theme = self.theme_manager.current_theme
+        if theme == "light":
+            return "#0066cc"
+        elif theme == "bloomberg":
+            return "#FF8000"
+        else:
+            return "#00d4ff"
+
+    def _wrap_widget_in_cell(self, widget: QWidget) -> QWidget:
+        """Wrap a widget in a container that fills the cell with themed background."""
+        bg_color = self._get_cell_background_color()
+
+        container = QWidget()
+        container.setStyleSheet(f"background-color: {bg_color};")
+
+        layout = QHBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        layout.addWidget(widget)
+
+        # Store reference to inner widget for later access
+        container.setProperty("_inner_widget", widget)
+
+        return container
+
+    def _get_inner_widget(self, row: int, col: int) -> Optional[QWidget]:
+        """Get the inner widget from a cell (unwraps container if needed)."""
+        cell_widget = self.cellWidget(row, col)
+        if cell_widget is None:
+            return None
+
+        # Check if it's a container with an inner widget
+        inner = cell_widget.property("_inner_widget")
+        if inner is not None:
+            return inner
+
+        # Otherwise return the cell widget directly
+        return cell_widget
 
     def _get_dark_stylesheet(self) -> str:
         """Dark theme stylesheet."""
@@ -1355,7 +1821,7 @@ class TransactionLogTable(QTableWidget):
                 font-size: 14px;
             }
             QTableWidget::item {
-                padding: 8px;
+                padding: 0px;
             }
             QTableWidget::item:selected {
                 background-color: #00d4ff;
@@ -1391,7 +1857,7 @@ class TransactionLogTable(QTableWidget):
                 font-size: 14px;
             }
             QTableWidget::item {
-                padding: 8px;
+                padding: 0px;
             }
             QTableWidget::item:selected {
                 background-color: #0066cc;
@@ -1427,7 +1893,7 @@ class TransactionLogTable(QTableWidget):
                 font-size: 14px;
             }
             QTableWidget::item {
-                padding: 8px;
+                padding: 0px;
             }
             QTableWidget::item:selected {
                 background-color: #FF8000;
@@ -1450,3 +1916,107 @@ class TransactionLogTable(QTableWidget):
                 padding: 8px;
             }
         """
+
+    def _get_dark_widget_stylesheet(self) -> str:
+        """Dark theme stylesheet for editable cell widgets."""
+        return """
+            QLineEdit {
+                background-color: #00d4ff;
+                color: #000000;
+                border: none;
+                margin: 0px;
+                padding: 0px 8px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                background-color: #00e5ff;
+            }
+        """
+
+    def _get_light_widget_stylesheet(self) -> str:
+        """Light theme stylesheet for editable cell widgets."""
+        return """
+            QLineEdit {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: none;
+                margin: 0px;
+                padding: 0px 8px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                background-color: #0077dd;
+            }
+        """
+
+    def _get_bloomberg_widget_stylesheet(self) -> str:
+        """Bloomberg theme stylesheet for editable cell widgets."""
+        return """
+            QLineEdit {
+                background-color: #FF8000;
+                color: #000000;
+                border: none;
+                margin: 0px;
+                padding: 0px 8px;
+                font-size: 14px;
+            }
+            QLineEdit:focus {
+                background-color: #FF9020;
+            }
+        """
+
+    def _get_combo_stylesheet(self) -> str:
+        """Get theme-aware stylesheet for combo box."""
+        theme = self.theme_manager.current_theme
+
+        if theme == "bloomberg":
+            return """
+                QComboBox {
+                    background-color: #FF8000;
+                    color: #000000;
+                    border: none;
+                    padding: 4px 8px;
+                    font-size: 14px;
+                }
+                QComboBox::drop-down { border: none; width: 0px; }
+                QComboBox:focus { background-color: #FF9020; }
+                QComboBox QAbstractItemView {
+                    background-color: #FF8000;
+                    color: #000000;
+                    selection-background-color: #FFa040;
+                }
+            """
+        elif theme == "light":
+            return """
+                QComboBox {
+                    background-color: #0066cc;
+                    color: #ffffff;
+                    border: none;
+                    padding: 4px 8px;
+                    font-size: 14px;
+                }
+                QComboBox::drop-down { border: none; width: 0px; }
+                QComboBox:focus { background-color: #0077dd; }
+                QComboBox QAbstractItemView {
+                    background-color: #0066cc;
+                    color: #ffffff;
+                    selection-background-color: #0088ee;
+                }
+            """
+        else:  # dark
+            return """
+                QComboBox {
+                    background-color: #00d4ff;
+                    color: #000000;
+                    border: none;
+                    padding: 4px 8px;
+                    font-size: 14px;
+                }
+                QComboBox::drop-down { border: none; width: 0px; }
+                QComboBox:focus { background-color: #00e5ff; }
+                QComboBox QAbstractItemView {
+                    background-color: #00d4ff;
+                    color: #000000;
+                    selection-background-color: #40e0ff;
+                }
+            """
