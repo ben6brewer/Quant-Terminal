@@ -2326,11 +2326,13 @@ class TransactionLogTable(QTableWidget):
             ticker = tx.get("ticker", "")
             tx_date = tx.get("date", "")
 
-            if column == 0:  # Date - use sequence as secondary sort for same-day transactions
-                # Lower sequence = earlier in day, should appear first within same date
-                # Negate sequence so that when date is descending, lower sequences still appear first
+            if column == 0:  # Date - use priority then sequence for same-day transactions
+                # Priority order: FREE CASH Buy (0), Regular Sell (1), Regular Buy (2), FREE CASH Sell (3)
+                # Negate priority and sequence so lower values appear first when date is descending
+                tx_type = tx.get("transaction_type", "Buy")
+                priority = PortfolioService.get_transaction_priority(ticker, tx_type)
                 sequence = tx.get("sequence", 0)
-                return (tx_date, -sequence)
+                return (tx_date, -priority, -sequence)
             elif column == 1:  # Ticker
                 return ticker.lower()
             elif column == 2:  # Quantity
@@ -2491,15 +2493,18 @@ class TransactionLogTable(QTableWidget):
         if not sortable_transactions:
             return
 
-        # Sort by date descending, then by sequence ascending for same-day
-        # Lower sequence = happened earlier in day = should appear first (top of same-day group)
+        # Sort by date descending, then by priority ascending, then by sequence ascending
+        # Priority order: FREE CASH Buy (0), Regular Sell (1), Regular Buy (2), FREE CASH Sell (3)
         def sort_key(tx: Dict[str, Any]):
             date = tx.get("date", "")
+            ticker = tx.get("ticker", "")
+            tx_type = tx.get("transaction_type", "Buy")
+            priority = PortfolioService.get_transaction_priority(ticker, tx_type)
             sequence = tx.get("sequence", 0)
-            # Negate sequence to get ascending order while date is descending
-            return (date, -sequence)
+            # Negate priority and sequence to get ascending order while date is descending
+            return (date, -priority, -sequence)
 
-        # Reverse=True for descending order on date, but sequence is negated for ascending
+        # Reverse=True for descending order on date, but priority/sequence are negated for ascending
         sorted_transactions = sorted(sortable_transactions, key=sort_key, reverse=True)
 
         # Rebuild table

@@ -897,6 +897,70 @@ class PortfolioService:
         return position
 
     @staticmethod
+    def get_transaction_priority(ticker: str, transaction_type: str) -> int:
+        """
+        Get processing priority for a transaction.
+
+        Priority order (lower = processed first):
+        0: FREE CASH Buy (deposit) - happens at start of day
+        1: Regular Sell - sell first to free up cash
+        2: Regular Buy - buy with available cash
+        3: FREE CASH Sell (withdrawal) - happens at end of day
+
+        Args:
+            ticker: Transaction ticker
+            transaction_type: "Buy" or "Sell"
+
+        Returns:
+            Priority value 0-3
+        """
+        is_free_cash = ticker.upper() == PortfolioService.FREE_CASH_TICKER
+        if is_free_cash:
+            return 0 if transaction_type == "Buy" else 3
+        else:
+            return 1 if transaction_type == "Sell" else 2
+
+    @staticmethod
+    def resequence_same_day_transactions(
+        transactions: List[Dict[str, Any]],
+        target_date: str
+    ) -> Dict[str, int]:
+        """
+        Calculate new sequences for all transactions on a given date based on priority.
+
+        Priority order:
+        1. FREE CASH Buy (deposit)
+        2. Regular Sells
+        3. Regular Buys
+        4. FREE CASH Sell (withdrawal)
+
+        Within same priority, original sequence order is preserved.
+
+        Args:
+            transactions: All transactions to consider
+            target_date: Date to resequence
+
+        Returns:
+            Dict mapping transaction_id -> new_sequence
+        """
+        same_day_txs = [t for t in transactions if t.get("date") == target_date]
+        if not same_day_txs:
+            return {}
+
+        # Sort by (priority, original_sequence) to maintain order within priority
+        def sort_key(tx):
+            ticker = tx.get("ticker", "")
+            tx_type = tx.get("transaction_type", "Buy")
+            priority = PortfolioService.get_transaction_priority(ticker, tx_type)
+            sequence = tx.get("sequence", 0)
+            return (priority, sequence)
+
+        sorted_txs = sorted(same_day_txs, key=sort_key)
+
+        # Assign new sequences 0, 1, 2, ...
+        return {tx.get("id"): idx for idx, tx in enumerate(sorted_txs)}
+
+    @staticmethod
     def get_sequence_for_date_edit(
         transactions: List[Dict[str, Any]],
         target_date: str,
@@ -906,16 +970,17 @@ class PortfolioService:
         """
         Get appropriate sequence for a transaction whose date was edited.
 
-        When a transaction's date is changed:
-        - FREE CASH Buy (deposit): Gets minimum sequence for the new date (processes first)
-        - FREE CASH Sell (withdrawal): Gets maximum sequence for the new date (processes last)
-        - Other tickers: Gets maximum sequence for the new date (processes last)
+        Sequences are assigned based on transaction priority:
+        - FREE CASH Buy (deposit): Priority 0 (first)
+        - Regular Sell: Priority 1 (second)
+        - Regular Buy: Priority 2 (third)
+        - FREE CASH Sell (withdrawal): Priority 3 (last)
 
         Args:
             transactions: All transactions (excluding the one being edited)
             target_date: The new date being set
             is_free_cash: Whether this is a FREE CASH transaction
-            transaction_type: "Buy" or "Sell" - determines sequencing for FREE CASH
+            transaction_type: "Buy" or "Sell"
 
         Returns:
             Sequence number for the transaction
@@ -924,12 +989,46 @@ class PortfolioService:
         if not same_day_txs:
             return 0
 
-        sequences = [t.get("sequence", 0) for t in same_day_txs]
-        # FREE CASH Buy (deposit) goes first, everything else (including FREE CASH Sell) goes last
-        if is_free_cash and transaction_type == "Buy":
-            return min(sequences) - 1  # Before all existing (deposit at start of day)
+        # Get this transaction's priority
+        ticker = PortfolioService.FREE_CASH_TICKER if is_free_cash else "OTHER"
+        my_priority = PortfolioService.get_transaction_priority(ticker, transaction_type)
+
+        # Find sequences grouped by priority
+        priority_sequences = {0: [], 1: [], 2: [], 3: []}
+        for tx in same_day_txs:
+            tx_ticker = tx.get("ticker", "")
+            tx_type = tx.get("transaction_type", "Buy")
+            tx_priority = PortfolioService.get_transaction_priority(tx_ticker, tx_type)
+            priority_sequences[tx_priority].append(tx.get("sequence", 0))
+
+        # Determine sequence based on priority
+        # We want to slot in after all transactions with lower priority
+        # and before all transactions with higher priority
+        if my_priority == 0:
+            # FREE CASH Buy: before everything
+            all_seqs = [s for seqs in priority_sequences.values() for s in seqs]
+            return min(all_seqs) - 1 if all_seqs else 0
+        elif my_priority == 3:
+            # FREE CASH Sell: after everything
+            all_seqs = [s for seqs in priority_sequences.values() for s in seqs]
+            return max(all_seqs) + 1 if all_seqs else 0
         else:
-            return max(sequences) + 1  # After all existing (withdrawal at end of day)
+            # Regular Sell (1) or Regular Buy (2)
+            # Find max sequence of same or lower priority
+            lower_or_same = []
+            for p in range(my_priority + 1):
+                lower_or_same.extend(priority_sequences[p])
+
+            if lower_or_same:
+                return max(lower_or_same) + 1
+            else:
+                # No lower priority transactions, go before higher priority
+                higher = []
+                for p in range(my_priority + 1, 4):
+                    higher.extend(priority_sequences[p])
+                if higher:
+                    return min(higher) - 1
+                return 0
 
     @staticmethod
     def validate_transaction_safeguards(
