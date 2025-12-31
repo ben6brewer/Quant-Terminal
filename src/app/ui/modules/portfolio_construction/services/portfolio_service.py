@@ -814,10 +814,6 @@ class PortfolioService:
             key=lambda t: (t.get("date", ""), t.get("sequence", 0))
         )
 
-        print(f"[DEBUG] calculate_free_cash_at_date for target_date={target_date}, exclude_id={exclude_transaction_id[:8] if exclude_transaction_id else None}")
-        print(f"[DEBUG] Sorted transactions (date, seq, ticker):")
-        for tx in sorted_txs:
-            print(f"[DEBUG]   ({tx.get('date')}, seq={tx.get('sequence')}, {tx.get('ticker')}) id={tx.get('id')[:8]}...")
 
         for tx in sorted_txs:
             # Skip excluded transaction
@@ -969,7 +965,6 @@ class PortfolioService:
         cash_before = PortfolioService.calculate_free_cash_at_date(
             test_transactions, tx_date
         )
-        print(f"[DEBUG] validate_transaction_safeguards: cash_before={cash_before} for {ticker} {tx_type} on {tx_date}")
 
         # Validate based on transaction type
         if ticker == PortfolioService.FREE_CASH_TICKER:
@@ -1075,14 +1070,13 @@ class PortfolioService:
         # This ensures we validate transactions between old and new dates
         check_from_date = validation_start_date if validation_start_date else edit_date
 
-        # Build list with edited transaction
-        all_transactions = [
-            tx if tx.get("id") != edit_id else edited_transaction
-            for tx in transactions
-        ]
+        # Build list: remove old version, add edited version
+        # This ensures the edited transaction is at its NEW date, not OLD date
+        filtered_transactions = [tx for tx in transactions if tx.get("id") != edit_id]
+        all_transactions = filtered_transactions + [edited_transaction]
 
-        # Sort by date
-        sorted_txs = sorted(all_transactions, key=lambda x: x.get("date", ""))
+        # Sort by date, then sequence for same-day ordering
+        sorted_txs = sorted(all_transactions, key=lambda x: (x.get("date", ""), x.get("sequence", 0)))
 
         # Track running balances
         cash_balance = 0.0

@@ -1519,10 +1519,22 @@ class TransactionLogTable(QTableWidget):
                                 original_date = original.get("date", "")
                                 ticker_upper = ticker.upper()
 
-                                # Read date from widget (not storage) to get current value
+                                # Read date from widget TEXT (not _current_date) to get what user typed
+                                # This is important because _current_date only updates on focusOut,
+                                # but Enter key fires before focusOut
                                 date_edit = self._get_inner_widget(row, 0)
                                 if date_edit:
-                                    tx_date = date_edit.date().toString("yyyy-MM-dd")
+                                    # Read text directly and parse it
+                                    date_text = date_edit.text() if hasattr(date_edit, 'text') else ""
+                                    parsed_date = QDate.fromString(date_text, "yyyy-MM-dd")
+                                    if parsed_date.isValid():
+                                        tx_date = parsed_date.toString("yyyy-MM-dd")
+                                        # Also update the widget's internal _current_date so that
+                                        # subsequent reads (e.g., during sort) get the correct date
+                                        date_edit.setDate(parsed_date)
+                                    else:
+                                        # Fallback to stored date if text is invalid/incomplete
+                                        tx_date = date_edit.date().toString("yyyy-MM-dd")
                                     # Update transaction dict with current date for validation
                                     transaction["date"] = tx_date
                                 else:
@@ -1606,6 +1618,9 @@ class TransactionLogTable(QTableWidget):
                                         # Revert all fields to original values
                                         original = self._original_values.get(transaction_id, {})
                                         self._revert_all_fields(row, original)
+                                        # Increment focus generation to invalidate any pending
+                                        # deferred focus callbacks that were scheduled before this revert
+                                        self._focus_generation += 1
                                         return True  # Consume event
 
                                     # Update original values
@@ -1635,11 +1650,13 @@ class TransactionLogTable(QTableWidget):
                                         # from processing stale row data after the sort
                                         self._current_editing_row = None
                                 else:
-                                    # Validation failed - revert sequence if we changed it
+                                    # Basic validation failed - revert sequence if we changed it
                                     if tx_date != original_date:
                                         transaction["sequence"] = old_sequence
                                         if transaction_id in self._transactions_by_id:
                                             self._transactions_by_id[transaction_id]["sequence"] = old_sequence
+                                    # Increment focus generation to invalidate pending deferred callbacks
+                                    self._focus_generation += 1
                                 # Clear selection and focus from the widget
                                 self.clearSelection()
                                 obj.clearFocus()  # Clear focus from the specific widget
@@ -1657,14 +1674,10 @@ class TransactionLogTable(QTableWidget):
         """
         # Skip if generation changed (sort or successful edit invalidated this callback)
         if expected_generation != self._focus_generation:
-            if self._debug_original_values:
-                print(f"[DEBUG] _check_row_focus_loss: SKIPPED (generation {expected_generation} != {self._focus_generation})")
             return
 
         # Skip if we're in the middle of validation/sorting
         if self._validating:
-            if self._debug_original_values:
-                print(f"[DEBUG] _check_row_focus_loss: SKIPPED (_validating=True)")
             return
 
         if self._current_editing_row is None:
@@ -1708,8 +1721,6 @@ class TransactionLogTable(QTableWidget):
 
         # Check if we should skip validation (already handled by Enter key)
         if self._skip_focus_validation:
-            if self._debug_original_values:
-                print(f"[DEBUG] _on_row_focus_lost({row}): SKIPPED (skip_flag was True)")
             self._skip_focus_validation = False
             return
 
@@ -1817,6 +1828,8 @@ class TransactionLogTable(QTableWidget):
             original_ticker = original.get("ticker", "")
             original_date = original.get("date", "")
 
+            print(f"[DEBUG] _on_row_focus_lost({row}): original_date={original_date}, tx_date={tx_date}, date_changed={tx_date != original_date}")
+
             ticker_upper = ticker.upper()
 
             # Check if ticker changed
@@ -1875,6 +1888,7 @@ class TransactionLogTable(QTableWidget):
 
             # Validate transaction safeguards (cash balance, position, chain)
             # Set _validating to prevent _on_cell_changed from corrupting sequences
+            print(f"[DEBUG] _on_row_focus_lost({row}): calling safeguard validation with original_date={original_date}")
             self._validating = True
             try:
                 safeguard_valid, safeguard_error = self._validate_transaction_safeguards(
@@ -1882,6 +1896,7 @@ class TransactionLogTable(QTableWidget):
                 )
             finally:
                 self._validating = False
+            print(f"[DEBUG] _on_row_focus_lost({row}): safeguard validation result: valid={safeguard_valid}")
             if not safeguard_valid:
                 CustomMessageBox.warning(
                     self.theme_manager,
