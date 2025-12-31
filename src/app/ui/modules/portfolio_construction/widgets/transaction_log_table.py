@@ -882,9 +882,9 @@ class TransactionLogTable(QTableWidget):
         # Set up tab order for keyboard navigation
         self._setup_tab_order(row)
 
-        # Update FREE CASH summary if this is a FREE CASH transaction
-        if transaction.get("ticker", "").upper() == PortfolioService.FREE_CASH_TICKER:
-            self._update_free_cash_summary_row()
+        # Update FREE CASH summary - all transactions affect cash balance
+        # (Buy costs cash, Sell adds cash, FREE CASH deposits/withdrawals)
+        self._update_free_cash_summary_row()
 
         return row
 

@@ -13,6 +13,7 @@ class PortfolioPersistence:
     """
 
     _PORTFOLIOS_DIR = Path.home() / ".quant_terminal" / "portfolios"
+    _RECENT_FILE = Path.home() / ".quant_terminal" / "recent_portfolios.json"
     _DEFAULT_PORTFOLIO = "Default"
 
     @classmethod
@@ -188,7 +189,101 @@ class PortfolioPersistence:
 
             # Delete old file
             old_path.unlink()
+
+            # Update recent visits to use new name
+            cls._rename_recent_entry(old_name, new_name)
             return True
         except (json.JSONDecodeError, IOError, OSError) as e:
             print(f"Error renaming portfolio {old_name} to {new_name}: {e}")
             return False
+
+    @classmethod
+    def record_visit(cls, name: str) -> None:
+        """
+        Record a portfolio visit for recent ordering.
+
+        Args:
+            name: Portfolio name that was visited
+        """
+        recent = cls._load_recent()
+        recent[name] = datetime.now().isoformat()
+        cls._save_recent(recent)
+
+    @classmethod
+    def list_portfolios_by_recent(cls) -> List[str]:
+        """
+        List all portfolios sorted by most recently visited.
+
+        Returns:
+            List of portfolio names, most recently visited first
+        """
+        all_portfolios = cls.list_portfolios()
+        if not all_portfolios:
+            return []
+
+        recent = cls._load_recent()
+
+        # Sort: portfolios with recent visits first (by timestamp desc),
+        # then unvisited portfolios alphabetically
+        def sort_key(name: str):
+            if name in recent:
+                # Visited portfolios: sort by timestamp descending (negate for desc)
+                # Use tuple: (0, negative_timestamp) to sort visited first
+                try:
+                    ts = datetime.fromisoformat(recent[name])
+                    return (0, -ts.timestamp())
+                except (ValueError, TypeError):
+                    return (1, name.lower())
+            else:
+                # Unvisited portfolios: sort alphabetically after visited ones
+                return (1, name.lower())
+
+        return sorted(all_portfolios, key=sort_key)
+
+    @classmethod
+    def remove_from_recent(cls, name: str) -> None:
+        """
+        Remove a portfolio from recent visits (e.g., when deleted).
+
+        Args:
+            name: Portfolio name to remove
+        """
+        recent = cls._load_recent()
+        if name in recent:
+            del recent[name]
+            cls._save_recent(recent)
+
+    @classmethod
+    def _rename_recent_entry(cls, old_name: str, new_name: str) -> None:
+        """
+        Update recent visits when a portfolio is renamed.
+
+        Args:
+            old_name: Old portfolio name
+            new_name: New portfolio name
+        """
+        recent = cls._load_recent()
+        if old_name in recent:
+            recent[new_name] = recent.pop(old_name)
+            cls._save_recent(recent)
+
+    @classmethod
+    def _load_recent(cls) -> Dict[str, str]:
+        """Load recent visits from disk."""
+        if not cls._RECENT_FILE.exists():
+            return {}
+        try:
+            with open(cls._RECENT_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            return {}
+
+    @classmethod
+    def _save_recent(cls, recent: Dict[str, str]) -> None:
+        """Save recent visits to disk."""
+        try:
+            cls._RECENT_FILE.parent.mkdir(parents=True, exist_ok=True)
+            with open(cls._RECENT_FILE, "w", encoding="utf-8") as f:
+                json.dump(recent, f, indent=2, ensure_ascii=False)
+        except IOError as e:
+            print(f"Error saving recent portfolios: {e}")

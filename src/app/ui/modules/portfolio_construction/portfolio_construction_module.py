@@ -119,7 +119,7 @@ class PortfolioConstructionModule(QWidget):
 
     def _initialize_portfolio_list(self):
         """Initialize portfolio dropdown without loading any portfolio."""
-        portfolios = PortfolioPersistence.list_portfolios()
+        portfolios = PortfolioPersistence.list_portfolios_by_recent()
 
         # Populate dropdown with no portfolio selected (shows placeholder)
         self.controls.update_portfolio_list(portfolios, None)
@@ -289,7 +289,7 @@ class PortfolioConstructionModule(QWidget):
                 return
 
         # Open dialog
-        portfolios = PortfolioPersistence.list_portfolios()
+        portfolios = PortfolioPersistence.list_portfolios_by_recent()
         if not portfolios:
             CustomMessageBox.information(
                 self.theme_manager,
@@ -328,8 +328,11 @@ class PortfolioConstructionModule(QWidget):
         # Force fetch all prices on portfolio load
         self._update_aggregate_table(force_fetch=True)
 
-        # Update controls and enable buttons
-        portfolios = PortfolioPersistence.list_portfolios()
+        # Record visit for recent ordering
+        PortfolioPersistence.record_visit(name)
+
+        # Update controls and enable buttons (with recent ordering)
+        portfolios = PortfolioPersistence.list_portfolios_by_recent()
         self.controls.update_portfolio_list(portfolios, name)
         self.controls._update_button_states(True)
 
@@ -370,8 +373,11 @@ class PortfolioConstructionModule(QWidget):
             # Ensure blank row exists for immediate editing
             self.transaction_table._ensure_blank_row()
 
-            # Update controls and enable buttons
-            portfolios = PortfolioPersistence.list_portfolios()
+            # Record visit for recent ordering
+            PortfolioPersistence.record_visit(name)
+
+            # Update controls and enable buttons (with recent ordering)
+            portfolios = PortfolioPersistence.list_portfolios_by_recent()
             self.controls.update_portfolio_list(portfolios, name)
             self.controls._update_button_states(True)
 
@@ -393,8 +399,8 @@ class PortfolioConstructionModule(QWidget):
                 if success:
                     # Update current portfolio name
                     self.current_portfolio["name"] = new_name
-                    # Refresh dropdown
-                    portfolios = PortfolioPersistence.list_portfolios()
+                    # Refresh dropdown (with recent ordering)
+                    portfolios = PortfolioPersistence.list_portfolios_by_recent()
                     self.controls.update_portfolio_list(portfolios, new_name)
                 else:
                     CustomMessageBox.critical(
@@ -428,8 +434,11 @@ class PortfolioConstructionModule(QWidget):
         success = PortfolioPersistence.delete_portfolio(portfolio_name)
 
         if success:
-            # Get remaining portfolios
-            portfolios = PortfolioPersistence.list_portfolios()
+            # Remove from recent visits
+            PortfolioPersistence.remove_from_recent(portfolio_name)
+
+            # Get remaining portfolios (with recent ordering)
+            portfolios = PortfolioPersistence.list_portfolios_by_recent()
 
             # Update dropdown (no portfolio selected)
             self.controls.update_portfolio_list(portfolios, None)
@@ -571,10 +580,10 @@ class PortfolioConstructionModule(QWidget):
             if reply == CustomMessageBox.Yes:
                 self._save_portfolio()
             elif reply == CustomMessageBox.Cancel:
-                # Revert dropdown
+                # Revert dropdown (with recent ordering)
                 current_name = self.current_portfolio.get("name") if self.current_portfolio else None
                 self.controls.update_portfolio_list(
-                    PortfolioPersistence.list_portfolios(),
+                    PortfolioPersistence.list_portfolios_by_recent(),
                     current_name
                 )
                 return
