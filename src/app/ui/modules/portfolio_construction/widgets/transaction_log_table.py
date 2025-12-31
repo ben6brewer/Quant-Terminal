@@ -3,475 +3,20 @@
 from typing import Dict, List, Any, Optional, Tuple
 from PySide6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QHeaderView,
-    QLineEdit, QComboBox, QDoubleSpinBox, QAbstractButton, QWidget, QApplication,
-    QHBoxLayout
+    QAbstractButton, QWidget, QHBoxLayout
 )
 from PySide6.QtCore import Qt, Signal, QDate, QTimer, QEvent
-from PySide6.QtGui import QDoubleValidator, QKeySequence
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common import CustomMessageBox
+from app.services.theme_stylesheet_service import ThemeStylesheetService
+from app.ui.widgets.common import (
+    CustomMessageBox,
+    DateInputWidget,
+    AutoSelectLineEdit,
+    ValidatedNumericLineEdit,
+    NoScrollComboBox
+)
 from ..services.portfolio_service import PortfolioService
-from .no_scroll_combobox import NoScrollComboBox
-
-
-class DateInputWidget(QLineEdit):
-    """Free-form date input widget with live dash formatting and validation."""
-
-    # Signal for QDateEdit compatibility
-    date_changed = Signal(QDate)
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setPlaceholderText("YYYY-MM-DD")
-        self.setMaxLength(10)  # "2025-01-15" = 10 chars
-
-        # Parent reference for validation dialogs
-        self._parent_table = None
-
-        # Current valid date (or None if invalid/incomplete)
-        self._current_date = QDate.currentDate()
-
-    def keyPressEvent(self, event):
-        """Handle key press for live dash formatting."""
-        key = event.key()
-        text_input = event.text()
-
-        # Handle digit input
-        if text_input.isdigit():
-            current = self.text()
-            cursor = self.cursorPosition()
-
-            # If text is selected, replace selection with digit
-            if self.hasSelectedText():
-                start = self.selectionStart()
-                end = start + len(self.selectedText())
-                # Remove selected text
-                new_text = current[:start] + text_input + current[end:]
-                # Format with dashes
-                formatted = self._format_with_dashes(new_text)
-                # Cursor should be after the inserted digit
-                digits_before = start  # Count of characters before selection
-                # Find position after first digit in formatted text
-                digit_count = 0
-                new_cursor = 0
-                for i, char in enumerate(formatted):
-                    if char.isdigit():
-                        digit_count += 1
-                        if digit_count == 1:  # Position after first digit
-                            new_cursor = i + 1
-                            break
-                self.setText(formatted)
-                self.setCursorPosition(new_cursor)
-                return
-
-            # Insert digit at cursor (no selection)
-            new_text = current[:cursor] + text_input + current[cursor:]
-
-            # Format with dashes
-            formatted = self._format_with_dashes(new_text)
-
-            # Calculate new cursor position
-            new_cursor = self._calculate_cursor_after_insert(cursor, formatted, current)
-
-            # Update
-            self.setText(formatted)
-            self.setCursorPosition(new_cursor)
-            return  # Consume event
-
-        # Handle dash or slash input - accept but just reformat
-        elif text_input in ('-', '/'):
-            current = self.text()
-            cursor = self.cursorPosition()
-
-            # Just reformat current text (dash/slash gets ignored in formatting)
-            # This allows typing "2025-01" naturally
-            formatted = self._format_with_dashes(current)
-
-            # If cursor is at a dash position after reformatting, move past it
-            if cursor < len(formatted) and formatted[cursor:cursor+1] == '-':
-                self.setCursorPosition(cursor + 1)
-
-            return  # Consume event
-
-        # Handle backspace
-        elif key == Qt.Key_Backspace:
-            self._handle_backspace()
-            return
-
-        # Handle Delete key
-        elif key == Qt.Key_Delete:
-            self._handle_delete()
-            return
-
-        # Handle Enter/Return (validate)
-        elif key in (Qt.Key_Return, Qt.Key_Enter):
-            if self._trigger_validation():
-                self.clearFocus()
-            return
-
-        # Handle Tab (validate and move)
-        elif key == Qt.Key_Tab:
-            self._trigger_validation()
-            super().keyPressEvent(event)  # Let Tab propagate
-            return
-
-        # Handle Escape (revert)
-        elif key == Qt.Key_Escape:
-            self._revert_to_last_valid()
-            return
-
-        # Handle Paste
-        elif event.matches(QKeySequence.Paste):
-            clipboard = QApplication.clipboard()
-            pasted_text = clipboard.text()
-
-            # Extract digits only (handles 2025/01/01, 2025-01-01, or any format)
-            digits = ''.join(c for c in pasted_text if c.isdigit())[:8]
-            formatted = self._format_with_dashes(digits)
-
-            self.setText(formatted)
-            self.setCursorPosition(len(formatted))
-            return
-
-        # Block all other keys (letters, symbols, etc.)
-        return  # Consume event
-
-    def _format_with_dashes(self, text: str) -> str:
-        """Format text with dashes, allowing incomplete dates."""
-        # Extract digits only
-        digits = ''.join(c for c in text if c.isdigit())[:8]
-
-        # Return empty if no digits
-        if not digits:
-            return ""
-
-        # Format based on length
-        if len(digits) <= 4:
-            return digits
-        elif len(digits) <= 6:
-            return f"{digits[:4]}-{digits[4:]}"
-        else:
-            return f"{digits[:4]}-{digits[4:6]}-{digits[6:]}"
-
-    def _calculate_cursor_after_insert(self, old_cursor: int, new_text: str, old_text: str) -> int:
-        """Calculate cursor position after inserting digit and auto-dashes."""
-        old_dashes_before = old_text[:old_cursor].count('-')
-        new_cursor = old_cursor + 1
-        new_dashes_before = new_text[:new_cursor].count('-')
-
-        if new_dashes_before > old_dashes_before:
-            new_cursor += (new_dashes_before - old_dashes_before)
-
-        return new_cursor
-
-    def _find_cursor_after_n_digits(self, text: str, n: int) -> int:
-        """Find cursor position after n digits (accounting for dashes)."""
-        digit_count = 0
-        for i, char in enumerate(text):
-            if char.isdigit():
-                digit_count += 1
-                if digit_count == n:
-                    return i + 1
-        return len(text)
-
-    def _handle_backspace(self):
-        """Handle backspace with dash auto-removal."""
-        current = self.text()
-        cursor = self.cursorPosition()
-
-        # If text is selected, delete selection
-        if self.hasSelectedText():
-            start = self.selectionStart()
-            end = start + len(self.selectedText())
-            new_text = current[:start] + current[end:]
-
-            # Format remaining text
-            formatted = self._format_with_dashes(new_text)
-            self.setText(formatted)
-            self.setCursorPosition(min(start, len(formatted)))
-            return
-
-        # Nothing to delete
-        if cursor == 0:
-            return
-
-        # Get character before cursor
-        char_before = current[cursor - 1]
-
-        # If dash, skip it and delete digit before
-        if char_before == '-':
-            if cursor >= 2:
-                # Delete digit before dash
-                new_text = current[:cursor - 2] + current[cursor:]
-                formatted = self._format_with_dashes(new_text)
-
-                # Calculate cursor position
-                digits_before = current[:cursor - 2].replace("-", "")
-                new_cursor = self._find_cursor_after_n_digits(formatted, len(digits_before))
-
-                self.setText(formatted)
-                self.setCursorPosition(new_cursor)
-            else:
-                # Clear field (only 1 digit + dash)
-                self.clear()
-        else:
-            # Delete digit
-            new_text = current[:cursor - 1] + current[cursor:]
-            formatted = self._format_with_dashes(new_text)
-
-            # Calculate cursor position
-            digits_before = current[:cursor - 1].replace("-", "")
-            new_cursor = self._find_cursor_after_n_digits(formatted, len(digits_before))
-
-            self.setText(formatted)
-            self.setCursorPosition(new_cursor)
-
-    def _handle_delete(self):
-        """Handle Delete key (forward delete)."""
-        current = self.text()
-        cursor = self.cursorPosition()
-
-        # If text is selected, delete selection (same as backspace)
-        if self.hasSelectedText():
-            self._handle_backspace()
-            return
-
-        # Nothing to delete
-        if cursor >= len(current):
-            return
-
-        # Get character at cursor
-        char_at_cursor = current[cursor]
-
-        # If dash, skip it and delete digit after
-        if char_at_cursor == '-':
-            if cursor + 1 < len(current):
-                # Delete digit after dash
-                new_text = current[:cursor + 1] + current[cursor + 2:]
-                formatted = self._format_with_dashes(new_text)
-
-                # Keep cursor at same position
-                digits_before = current[:cursor].replace("-", "")
-                new_cursor = self._find_cursor_after_n_digits(formatted, len(digits_before))
-
-                self.setText(formatted)
-                self.setCursorPosition(new_cursor)
-            else:
-                # Dash at end, just remove it
-                self.setText(current[:cursor])
-        else:
-            # Delete digit at cursor
-            new_text = current[:cursor] + current[cursor + 1:]
-            formatted = self._format_with_dashes(new_text)
-
-            # Keep cursor at same position
-            digits_before = current[:cursor].replace("-", "")
-            new_cursor = self._find_cursor_after_n_digits(formatted, len(digits_before))
-
-            self.setText(formatted)
-            self.setCursorPosition(new_cursor)
-
-    def _trigger_validation(self) -> bool:
-        """Validate the current date and show error dialog if needed."""
-        current = self.text()
-
-        # Empty field is allowed (no error)
-        if not current:
-            self._current_date = None
-            return True
-
-        # Extract digits
-        digits = current.replace("-", "")
-
-        # Incomplete date (less than 8 digits)
-        if len(digits) < 8:
-            if self._parent_table:
-                self._show_validation_error(
-                    "Incomplete Date",
-                    f"Please enter a complete date in YYYY-MM-DD format.\nCurrent input: {current}"
-                )
-                self.setFocus()
-                self.selectAll()
-            return False
-
-        # Parse as QDate
-        parsed_date = QDate.fromString(current, "yyyy-MM-dd")
-
-        if not parsed_date.isValid():
-            if self._parent_table:
-                self._show_validation_error(
-                    "Invalid Date",
-                    f"The date '{current}' is not valid.\nPlease check the month and day values."
-                )
-                self.setFocus()
-                self.selectAll()
-            return False
-
-        # Check future date
-        if parsed_date > QDate.currentDate():
-            if self._parent_table:
-                self._show_validation_error(
-                    "Future Date Not Allowed",
-                    f"Transaction dates cannot be after today ({QDate.currentDate().toString('yyyy-MM-dd')})."
-                )
-                self.setFocus()
-                self.selectAll()
-            return False
-
-        # Valid date - store and emit signal
-        self._current_date = parsed_date
-        self.date_changed.emit(parsed_date)
-        return True
-
-    def _show_validation_error(self, title: str, message: str):
-        """Show validation error dialog."""
-        from app.ui.widgets.common import CustomMessageBox
-
-        if self._parent_table and hasattr(self._parent_table, 'theme_manager'):
-            CustomMessageBox.warning(
-                self._parent_table.theme_manager,
-                self._parent_table,
-                title,
-                message
-            )
-
-    def _revert_to_last_valid(self):
-        """Revert to last valid date (Escape key)."""
-        if self._current_date and self._current_date.isValid():
-            self.setText(self._current_date.toString("yyyy-MM-dd"))
-        else:
-            self.clear()
-        self.clearFocus()
-
-    def focusInEvent(self, event):
-        """Select all text when focused."""
-        super().focusInEvent(event)
-        QTimer.singleShot(0, self.selectAll)
-
-    def focusOutEvent(self, event):
-        """Validate when focus leaves."""
-        self._trigger_validation()
-        super().focusOutEvent(event)
-
-    # QDateEdit compatibility methods
-    def setDate(self, date: QDate):
-        """Set the date (for compatibility with QDateEdit)."""
-        if date.isValid():
-            self.setText(date.toString("yyyy-MM-dd"))
-            self._current_date = date
-
-    def date(self) -> QDate:
-        """Get the current date (for compatibility with QDateEdit)."""
-        return self._current_date if self._current_date and self._current_date.isValid() else QDate()
-
-    def dateChanged(self):
-        """For compatibility with QDateEdit signal."""
-        return self.date_changed
-
-
-class AutoSelectLineEdit(QLineEdit):
-    """QLineEdit that auto-selects all text on focus or click and auto-capitalizes."""
-
-    def __init__(self, text="", parent=None):
-        super().__init__(text, parent)
-        # Connect to textEdited to auto-capitalize (textEdited only fires on user input)
-        self.textEdited.connect(self._on_text_edited)
-
-    def _on_text_edited(self, text: str):
-        """Convert text to uppercase while preserving cursor position."""
-        if text != text.upper():
-            cursor_pos = self.cursorPosition()
-            self.blockSignals(True)
-            self.setText(text.upper())
-            self.setCursorPosition(cursor_pos)
-            self.blockSignals(False)
-            # Emit textChanged manually since we blocked signals
-            self.textChanged.emit(self.text())
-
-    def focusInEvent(self, event):
-        super().focusInEvent(event)
-        # Select all text so typing replaces it
-        self.selectAll()
-
-    def mousePressEvent(self, event):
-        # Select all text when clicked (whether already focused or not)
-        super().mousePressEvent(event)
-        self.selectAll()
-
-
-class ValidatedNumericLineEdit(QLineEdit):
-    """QLineEdit with numeric validation and optional prefix."""
-
-    def __init__(self, min_value=0.0, max_value=1000000.0, decimals=2, prefix="", show_dash_for_zero=False, parent=None):
-        super().__init__(parent)
-        self.prefix = prefix
-        self.decimals = decimals
-        self.show_dash_for_zero = show_dash_for_zero
-
-        self.validator = QDoubleValidator(min_value, max_value, decimals, self)
-        self.validator.setNotation(QDoubleValidator.StandardNotation)
-        self.setValidator(self.validator)
-        self.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-
-        if prefix:
-            self.setPlaceholderText(f"{prefix}0.00")
-
-    def value(self) -> float:
-        text = self.text().replace(self.prefix, "").strip()
-        if text == "--":
-            return 0.0
-        try:
-            return float(text)
-        except ValueError:
-            return 0.0
-
-    def setValue(self, value: float):
-        # Show '--' for zero if enabled
-        if self.show_dash_for_zero and value == 0.0:
-            self.setText("--")
-            return
-
-        # Format with specified decimals, then strip trailing zeros
-        formatted = f"{value:.{self.decimals}f}"
-        # Remove trailing zeros and trailing decimal point
-        formatted = formatted.rstrip('0').rstrip('.')
-
-        self.setText(f"{self.prefix}{formatted}" if self.prefix else formatted)
-
-    def focusInEvent(self, event):
-        super().focusInEvent(event)
-        # Select all text so typing replaces it
-        self.selectAll()
-
-    def mousePressEvent(self, event):
-        # Select all text when clicked (whether already focused or not)
-        super().mousePressEvent(event)
-        self.selectAll()
-
-    def focusOutEvent(self, event):
-        super().focusOutEvent(event)
-        text = self.text().strip()
-
-        # Handle '--' display for zero
-        if text == "--" or not text:
-            if self.show_dash_for_zero:
-                self.setText("--")
-            else:
-                formatted = "0"
-                self.setText(f"{self.prefix}{formatted}" if self.prefix else formatted)
-        else:
-            # Remove prefix for validation
-            if self.prefix and text.startswith(self.prefix):
-                text = text.replace(self.prefix, "").strip()
-
-            try:
-                self.setValue(float(text))
-            except ValueError:
-                if self.show_dash_for_zero:
-                    self.setText("--")
-                else:
-                    self.setText(f"{self.prefix}0" if self.prefix else "0")
 
 
 class TransactionLogTable(QTableWidget):
@@ -722,7 +267,7 @@ class TransactionLogTable(QTableWidget):
         # Create widgets for blank row
         # Date cell
         date_edit = DateInputWidget()
-        date_edit._parent_table = self  # Pass reference for validation dialogs
+        date_edit.validation_error.connect(self._on_date_validation_error)
         date_edit.setDate(QDate.fromString(blank_transaction["date"], "yyyy-MM-dd"))
         date_edit.setStyleSheet(widget_style)
         date_edit.date_changed.connect(self._on_widget_changed)
@@ -1211,7 +756,7 @@ class TransactionLogTable(QTableWidget):
 
         # Date cell - column 0
         date_edit = DateInputWidget()
-        date_edit._parent_table = self  # Pass reference for validation dialogs
+        date_edit.validation_error.connect(self._on_date_validation_error)
         date_edit.setDate(QDate.fromString(transaction["date"], "yyyy-MM-dd"))
         date_edit.setStyleSheet(widget_style)
         date_edit.date_changed.connect(self._on_widget_changed)
@@ -1698,6 +1243,15 @@ class TransactionLogTable(QTableWidget):
         row, col = self._find_cell_for_widget(widget)
         if row is not None and col is not None:
             self._on_cell_changed(row, col)
+
+    def _on_date_validation_error(self, title: str, message: str):
+        """Handle date validation errors from DateInputWidget."""
+        CustomMessageBox.warning(
+            self.theme_manager,
+            self,
+            title,
+            message
+        )
 
     def _install_focus_watcher(self, row: int):
         """
@@ -2640,15 +2194,11 @@ class TransactionLogTable(QTableWidget):
         """Apply theme-specific styling."""
         theme = self.theme_manager.current_theme
 
-        if theme == "light":
-            stylesheet = self._get_light_stylesheet()
-            widget_stylesheet = self._get_light_widget_stylesheet()
-        elif theme == "bloomberg":
-            stylesheet = self._get_bloomberg_stylesheet()
-            widget_stylesheet = self._get_bloomberg_widget_stylesheet()
-        else:
-            stylesheet = self._get_dark_stylesheet()
-            widget_stylesheet = self._get_dark_widget_stylesheet()
+        # Use centralized stylesheet service
+        stylesheet = ThemeStylesheetService.get_table_stylesheet(theme)
+        widget_stylesheet = ThemeStylesheetService.get_line_edit_stylesheet(
+            theme, highlighted=self._highlight_editable
+        )
 
         self.setStyleSheet(stylesheet)
 
@@ -2679,12 +2229,9 @@ class TransactionLogTable(QTableWidget):
     def _get_current_widget_stylesheet(self) -> str:
         """Get the current theme's widget stylesheet."""
         theme = self.theme_manager.current_theme
-        if theme == "light":
-            return self._get_light_widget_stylesheet()
-        elif theme == "bloomberg":
-            return self._get_bloomberg_widget_stylesheet()
-        else:
-            return self._get_dark_widget_stylesheet()
+        return ThemeStylesheetService.get_line_edit_stylesheet(
+            theme, highlighted=self._highlight_editable
+        )
 
     def _get_cell_background_color(self) -> str:
         """Get the current theme's cell background color (or transparent if highlighting disabled)."""
@@ -2692,12 +2239,8 @@ class TransactionLogTable(QTableWidget):
             return "transparent"
 
         theme = self.theme_manager.current_theme
-        if theme == "light":
-            return "#0066cc"
-        elif theme == "bloomberg":
-            return "#FF8000"
-        else:
-            return "#00d4ff"
+        colors = ThemeStylesheetService.get_colors(theme)
+        return colors["accent"]
 
     def set_highlight_editable(self, enabled: bool):
         """
@@ -2741,298 +2284,9 @@ class TransactionLogTable(QTableWidget):
         # Otherwise return the cell widget directly
         return cell_widget
 
-    def _get_dark_stylesheet(self) -> str:
-        """Dark theme stylesheet."""
-        return """
-            QTableWidget {
-                background-color: #1e1e1e;
-                alternate-background-color: #232323;
-                color: #ffffff;
-                gridline-color: #3d3d3d;
-                border: 1px solid #3d3d3d;
-                font-size: 14px;
-            }
-            QTableWidget::item {
-                padding: 0px;
-            }
-            QTableWidget::item:selected {
-                background-color: #00d4ff;
-                color: #000000;
-            }
-            QHeaderView::section {
-                background-color: #2d2d2d;
-                color: #cccccc;
-                padding: 8px;
-                border: 1px solid #3d3d3d;
-                font-weight: bold;
-                font-size: 14px;
-            }
-            QTableCornerButton::section {
-                background-color: #2d2d2d;
-                color: #cccccc;
-                border: 1px solid #3d3d3d;
-                font-weight: bold;
-                font-size: 13px;
-                padding: 8px;
-            }
-        """
-
-    def _get_light_stylesheet(self) -> str:
-        """Light theme stylesheet."""
-        return """
-            QTableWidget {
-                background-color: #ffffff;
-                alternate-background-color: #f5f5f5;
-                color: #000000;
-                gridline-color: #cccccc;
-                border: 1px solid #cccccc;
-                font-size: 14px;
-            }
-            QTableWidget::item {
-                padding: 0px;
-            }
-            QTableWidget::item:selected {
-                background-color: #0066cc;
-                color: #ffffff;
-            }
-            QHeaderView::section {
-                background-color: #f5f5f5;
-                color: #333333;
-                padding: 8px;
-                border: 1px solid #cccccc;
-                font-weight: bold;
-                font-size: 14px;
-            }
-            QTableCornerButton::section {
-                background-color: #f5f5f5;
-                color: #333333;
-                border: 1px solid #cccccc;
-                font-weight: bold;
-                font-size: 13px;
-                padding: 8px;
-            }
-        """
-
-    def _get_bloomberg_stylesheet(self) -> str:
-        """Bloomberg theme stylesheet."""
-        return """
-            QTableWidget {
-                background-color: #000814;
-                alternate-background-color: #0a0f1c;
-                color: #e8e8e8;
-                gridline-color: #1a2838;
-                border: 1px solid #1a2838;
-                font-size: 14px;
-            }
-            QTableWidget::item {
-                padding: 0px;
-            }
-            QTableWidget::item:selected {
-                background-color: #FF8000;
-                color: #000000;
-            }
-            QHeaderView::section {
-                background-color: #0d1420;
-                color: #a8a8a8;
-                padding: 8px;
-                border: 1px solid #1a2838;
-                font-weight: bold;
-                font-size: 14px;
-            }
-            QTableCornerButton::section {
-                background-color: #0d1420;
-                color: #a8a8a8;
-                border: 1px solid #1a2838;
-                font-weight: bold;
-                font-size: 13px;
-                padding: 8px;
-            }
-        """
-
-    def _get_dark_widget_stylesheet(self) -> str:
-        """Dark theme stylesheet for editable cell widgets."""
-        if not self._highlight_editable:
-            return """
-                QLineEdit {
-                    background-color: transparent;
-                    color: #ffffff;
-                    border: none;
-                    margin: 0px;
-                    padding: 0px 8px;
-                    font-size: 14px;
-                }
-            """
-        return """
-            QLineEdit {
-                background-color: #00d4ff;
-                color: #000000;
-                border: none;
-                margin: 0px;
-                padding: 0px 8px;
-                font-size: 14px;
-            }
-            QLineEdit:focus {
-                background-color: #00e5ff;
-            }
-        """
-
-    def _get_light_widget_stylesheet(self) -> str:
-        """Light theme stylesheet for editable cell widgets."""
-        if not self._highlight_editable:
-            return """
-                QLineEdit {
-                    background-color: transparent;
-                    color: #000000;
-                    border: none;
-                    margin: 0px;
-                    padding: 0px 8px;
-                    font-size: 14px;
-                }
-            """
-        return """
-            QLineEdit {
-                background-color: #0066cc;
-                color: #ffffff;
-                border: none;
-                margin: 0px;
-                padding: 0px 8px;
-                font-size: 14px;
-            }
-            QLineEdit:focus {
-                background-color: #0077dd;
-            }
-        """
-
-    def _get_bloomberg_widget_stylesheet(self) -> str:
-        """Bloomberg theme stylesheet for editable cell widgets."""
-        if not self._highlight_editable:
-            return """
-                QLineEdit {
-                    background-color: transparent;
-                    color: #e8e8e8;
-                    border: none;
-                    margin: 0px;
-                    padding: 0px 8px;
-                    font-size: 14px;
-                }
-            """
-        return """
-            QLineEdit {
-                background-color: #FF8000;
-                color: #000000;
-                border: none;
-                margin: 0px;
-                padding: 0px 8px;
-                font-size: 14px;
-            }
-            QLineEdit:focus {
-                background-color: #FF9020;
-            }
-        """
-
     def _get_combo_stylesheet(self) -> str:
         """Get theme-aware stylesheet for combo box."""
         theme = self.theme_manager.current_theme
-
-        if not self._highlight_editable:
-            # Transparent combo styling when highlight is disabled
-            if theme == "bloomberg":
-                return """
-                    QComboBox {
-                        background-color: transparent;
-                        color: #e8e8e8;
-                        border: none;
-                        padding: 4px 8px;
-                        font-size: 14px;
-                    }
-                    QComboBox::drop-down { border: none; width: 0px; }
-                    QComboBox QAbstractItemView {
-                        background-color: #0d1420;
-                        color: #e8e8e8;
-                        selection-background-color: #FF8000;
-                    }
-                """
-            elif theme == "light":
-                return """
-                    QComboBox {
-                        background-color: transparent;
-                        color: #000000;
-                        border: none;
-                        padding: 4px 8px;
-                        font-size: 14px;
-                    }
-                    QComboBox::drop-down { border: none; width: 0px; }
-                    QComboBox QAbstractItemView {
-                        background-color: #ffffff;
-                        color: #000000;
-                        selection-background-color: #0066cc;
-                    }
-                """
-            else:  # dark
-                return """
-                    QComboBox {
-                        background-color: transparent;
-                        color: #ffffff;
-                        border: none;
-                        padding: 4px 8px;
-                        font-size: 14px;
-                    }
-                    QComboBox::drop-down { border: none; width: 0px; }
-                    QComboBox QAbstractItemView {
-                        background-color: #2d2d2d;
-                        color: #ffffff;
-                        selection-background-color: #00d4ff;
-                    }
-                """
-
-        if theme == "bloomberg":
-            return """
-                QComboBox {
-                    background-color: #FF8000;
-                    color: #000000;
-                    border: none;
-                    padding: 4px 8px;
-                    font-size: 14px;
-                }
-                QComboBox::drop-down { border: none; width: 0px; }
-                QComboBox:focus { background-color: #FF9020; }
-                QComboBox QAbstractItemView {
-                    background-color: #FF8000;
-                    color: #000000;
-                    selection-background-color: #FFa040;
-                }
-            """
-        elif theme == "light":
-            return """
-                QComboBox {
-                    background-color: #0066cc;
-                    color: #ffffff;
-                    border: none;
-                    padding: 4px 8px;
-                    font-size: 14px;
-                }
-                QComboBox::drop-down { border: none; width: 0px; }
-                QComboBox:focus { background-color: #0077dd; }
-                QComboBox QAbstractItemView {
-                    background-color: #0066cc;
-                    color: #ffffff;
-                    selection-background-color: #0088ee;
-                }
-            """
-        else:  # dark
-            return """
-                QComboBox {
-                    background-color: #00d4ff;
-                    color: #000000;
-                    border: none;
-                    padding: 4px 8px;
-                    font-size: 14px;
-                }
-                QComboBox::drop-down { border: none; width: 0px; }
-                QComboBox:focus { background-color: #00e5ff; }
-                QComboBox QAbstractItemView {
-                    background-color: #00d4ff;
-                    color: #000000;
-                    selection-background-color: #40e0ff;
-                }
-            """
+        return ThemeStylesheetService.get_combobox_stylesheet(
+            theme, highlighted=self._highlight_editable
+        )
