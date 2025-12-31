@@ -47,15 +47,12 @@ class ScreenshotManager:
         return pixmap
 
     @staticmethod
-    def generate_placeholder(module_id: str, label: str, emoji: str, section: str = "Settings") -> QPixmap:
+    def generate_placeholder(module_id: str) -> QPixmap:
         """
         Generate a placeholder image (delegates to default).
 
         Args:
             module_id: The module's unique ID
-            label: Display label (unused, kept for compatibility)
-            emoji: Emoji icon (unused, kept for compatibility)
-            section: Section name (unused, kept for compatibility)
 
         Returns:
             QPixmap with generated placeholder
@@ -63,15 +60,12 @@ class ScreenshotManager:
         return ScreenshotManager.get_default_screenshot()
 
     @staticmethod
-    def load_or_generate(module_id: str, label: str, emoji: str, section: str = "Settings") -> QPixmap:
+    def load_or_generate(module_id: str) -> QPixmap:
         """
         Load screenshot from project assets or use coming_soon placeholder.
 
         Args:
             module_id: The module's unique ID
-            label: Display label (unused, kept for compatibility)
-            emoji: Emoji icon (unused, kept for compatibility)
-            section: Section name (unused, kept for compatibility)
 
         Returns:
             QPixmap with screenshot or placeholder

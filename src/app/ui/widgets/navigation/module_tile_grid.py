@@ -64,13 +64,11 @@ class ModuleTileGrid(QScrollArea):
             for module in modules:
                 module_id = module["id"]
                 label = module["label"]
-                emoji = module["emoji"]
 
                 # Create tile
                 tile = ModuleTile(
                     module_id=module_id,
                     label=label,
-                    emoji=emoji,
                     section=section_name,
                     theme_manager=self.theme_manager
                 )

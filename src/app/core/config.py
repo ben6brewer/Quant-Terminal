@@ -77,24 +77,24 @@ BLOOMBERG_CHART_LINE = "#00D4FF"             # Cyan line charts
 # Module sections and navigation
 MODULE_SECTIONS = {
     "Charting": [
-        {"id": "charts", "label": "Charts", "emoji": "📊"}
+        {"id": "charts", "label": "Charts"}
     ],
     "Crypto": [
-        {"id": "crypto_dashboard", "label": "Crypto Dashboard", "emoji": "₿"},
-        {"id": "defi", "label": "DeFi", "emoji": "🏦"},
-        {"id": "nft", "label": "NFT Tracker", "emoji": "🖼️"}
+        {"id": "crypto_dashboard", "label": "Crypto Dashboard"},
+        {"id": "defi", "label": "DeFi"},
+        {"id": "nft", "label": "NFT Tracker"}
     ],
     "Portfolio": [
-        {"id": "portfolio", "label": "Portfolio", "emoji": "💼"},
-        {"id": "portfolio_construction", "label": "Portfolio Builder", "emoji": "🏗️"},
-        {"id": "watchlist", "label": "Watchlist", "emoji": "👁"}
+        {"id": "portfolio", "label": "Portfolio"},
+        {"id": "portfolio_construction", "label": "Portfolio Construction"},
+        {"id": "watchlist", "label": "Watchlist"}
     ],
     "Market Data": [
-        {"id": "news", "label": "News", "emoji": "📰"},
-        {"id": "screener", "label": "Screener", "emoji": "🔍"}
+        {"id": "news", "label": "News"},
+        {"id": "screener", "label": "Screener"}
     ],
     "Analysis": [
-        {"id": "analysis", "label": "Analysis", "emoji": "📈"}
+        {"id": "analysis", "label": "Analysis"}
     ]
 }
 

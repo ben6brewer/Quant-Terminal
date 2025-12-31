@@ -22,7 +22,6 @@ class ModuleTile(QFrame):
         self,
         module_id: str,
         label: str,
-        emoji: str,
         section: str,
         theme_manager: ThemeManager,
         parent: Optional[QWidget] = None
@@ -31,7 +30,6 @@ class ModuleTile(QFrame):
 
         self.module_id = module_id
         self.label = label
-        self.emoji = emoji
         self.section = section
         self.theme_manager = theme_manager
 
@@ -88,12 +86,7 @@ class ModuleTile(QFrame):
 
     def _load_screenshot(self) -> None:
         """Load screenshot from ScreenshotManager."""
-        pixmap = ScreenshotManager.load_or_generate(
-            self.module_id,
-            self.label,
-            self.emoji,
-            self.section
-        )
+        pixmap = ScreenshotManager.load_or_generate(self.module_id)
         self.screenshot_label.setPixmap(pixmap)
 
     def _update_star_icon(self) -> None:
