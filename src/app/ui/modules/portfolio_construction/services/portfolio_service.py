@@ -900,19 +900,22 @@ class PortfolioService:
     def get_sequence_for_date_edit(
         transactions: List[Dict[str, Any]],
         target_date: str,
-        is_free_cash: bool
+        is_free_cash: bool,
+        transaction_type: str = "Buy"
     ) -> int:
         """
         Get appropriate sequence for a transaction whose date was edited.
 
         When a transaction's date is changed:
-        - FREE CASH: Gets minimum sequence for the new date (processes first)
+        - FREE CASH Buy (deposit): Gets minimum sequence for the new date (processes first)
+        - FREE CASH Sell (withdrawal): Gets maximum sequence for the new date (processes last)
         - Other tickers: Gets maximum sequence for the new date (processes last)
 
         Args:
             transactions: All transactions (excluding the one being edited)
             target_date: The new date being set
             is_free_cash: Whether this is a FREE CASH transaction
+            transaction_type: "Buy" or "Sell" - determines sequencing for FREE CASH
 
         Returns:
             Sequence number for the transaction
@@ -922,10 +925,11 @@ class PortfolioService:
             return 0
 
         sequences = [t.get("sequence", 0) for t in same_day_txs]
-        if is_free_cash:
-            return min(sequences) - 1  # Before all existing
+        # FREE CASH Buy (deposit) goes first, everything else (including FREE CASH Sell) goes last
+        if is_free_cash and transaction_type == "Buy":
+            return min(sequences) - 1  # Before all existing (deposit at start of day)
         else:
-            return max(sequences) + 1  # After all existing
+            return max(sequences) + 1  # After all existing (withdrawal at end of day)
 
     @staticmethod
     def validate_transaction_safeguards(

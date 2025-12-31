@@ -1568,14 +1568,20 @@ class TransactionLogTable(QTableWidget):
                                         self._revert_date(row, original_date)
                                         return True  # Consume event
 
-                                # If date changed, reassign sequence BEFORE validation
+                                # If date changed OR type changed for FREE CASH, reassign sequence BEFORE validation
+                                # FREE CASH Buy (deposit) goes first, FREE CASH Sell (withdrawal) goes last
                                 old_sequence = transaction.get("sequence", 0)
-                                if tx_date != original_date:
-                                    is_free_cash = ticker_upper == PortfolioService.FREE_CASH_TICKER
+                                is_free_cash = ticker_upper == PortfolioService.FREE_CASH_TICKER
+                                tx_type = transaction.get("transaction_type", "Buy")
+                                original_type = original.get("transaction_type", "Buy")
+                                type_changed = tx_type != original_type
+
+                                # Resequence if date changed OR if FREE CASH type changed
+                                if tx_date != original_date or (is_free_cash and type_changed):
                                     all_transactions = self.get_all_transactions()
                                     other_txs = [t for t in all_transactions if t.get("id") != transaction_id]
                                     new_sequence = PortfolioService.get_sequence_for_date_edit(
-                                        other_txs, tx_date, is_free_cash
+                                        other_txs, tx_date, is_free_cash, tx_type
                                     )
                                     transaction["sequence"] = new_sequence
                                     if transaction_id in self._transactions_by_id:
@@ -1729,14 +1735,6 @@ class TransactionLogTable(QTableWidget):
         if not transaction:
             return
 
-        if self._debug_original_values:
-            tx_id_debug = transaction.get("id", "?")
-            tx_ticker_debug = transaction.get("ticker", "?")
-            tx_date_debug = transaction.get("date", "?")
-            is_blank = transaction.get("is_blank", False)
-            print(f"[DEBUG] _on_row_focus_lost({row}): processing tx_id={tx_id_debug[:8] if len(tx_id_debug) > 8 else tx_id_debug}... "
-                  f"ticker={tx_ticker_debug} date={tx_date_debug} is_blank={is_blank}")
-
         # Check if this is blank row
         if transaction.get("is_blank"):
             # Try to auto-fill execution price when date and ticker are filled
@@ -1827,9 +1825,6 @@ class TransactionLogTable(QTableWidget):
             original = self._original_values.get(transaction_id, {})
             original_ticker = original.get("ticker", "")
             original_date = original.get("date", "")
-
-            print(f"[DEBUG] _on_row_focus_lost({row}): original_date={original_date}, tx_date={tx_date}, date_changed={tx_date != original_date}")
-
             ticker_upper = ticker.upper()
 
             # Check if ticker changed
@@ -1862,15 +1857,20 @@ class TransactionLogTable(QTableWidget):
                     self._revert_date(row, original_date)
                     return
 
-            # If date changed, reassign sequence BEFORE validation
-            # This ensures validation uses the correct order
+            # If date changed OR type changed for FREE CASH, reassign sequence BEFORE validation
+            # FREE CASH Buy (deposit) goes first, FREE CASH Sell (withdrawal) goes last
             old_sequence = transaction.get("sequence", 0)
-            if tx_date != original_date:
-                is_free_cash = ticker_upper == PortfolioService.FREE_CASH_TICKER
+            is_free_cash = ticker_upper == PortfolioService.FREE_CASH_TICKER
+            tx_type = transaction.get("transaction_type", "Buy")
+            original_type = original.get("transaction_type", "Buy")
+            type_changed = tx_type != original_type
+            needs_resequence = tx_date != original_date or (is_free_cash and type_changed)
+
+            if needs_resequence:
                 all_transactions = self.get_all_transactions()
                 other_txs = [t for t in all_transactions if t.get("id") != transaction_id]
                 new_sequence = PortfolioService.get_sequence_for_date_edit(
-                    other_txs, tx_date, is_free_cash
+                    other_txs, tx_date, is_free_cash, tx_type
                 )
                 transaction["sequence"] = new_sequence
                 if transaction_id in self._transactions_by_id:
@@ -1880,7 +1880,7 @@ class TransactionLogTable(QTableWidget):
             is_valid, error = PortfolioService.validate_transaction(transaction)
             if not is_valid:
                 # Revert sequence if we changed it
-                if tx_date != original_date:
+                if needs_resequence:
                     transaction["sequence"] = old_sequence
                     if transaction_id in self._transactions_by_id:
                         self._transactions_by_id[transaction_id]["sequence"] = old_sequence
@@ -1888,7 +1888,6 @@ class TransactionLogTable(QTableWidget):
 
             # Validate transaction safeguards (cash balance, position, chain)
             # Set _validating to prevent _on_cell_changed from corrupting sequences
-            print(f"[DEBUG] _on_row_focus_lost({row}): calling safeguard validation with original_date={original_date}")
             self._validating = True
             try:
                 safeguard_valid, safeguard_error = self._validate_transaction_safeguards(
@@ -1896,7 +1895,6 @@ class TransactionLogTable(QTableWidget):
                 )
             finally:
                 self._validating = False
-            print(f"[DEBUG] _on_row_focus_lost({row}): safeguard validation result: valid={safeguard_valid}")
             if not safeguard_valid:
                 CustomMessageBox.warning(
                     self.theme_manager,
@@ -2329,8 +2327,10 @@ class TransactionLogTable(QTableWidget):
             tx_date = tx.get("date", "")
 
             if column == 0:  # Date - use sequence as secondary sort for same-day transactions
+                # Lower sequence = earlier in day, should appear first within same date
+                # Negate sequence so that when date is descending, lower sequences still appear first
                 sequence = tx.get("sequence", 0)
-                return (tx_date, sequence)
+                return (tx_date, -sequence)
             elif column == 1:  # Ticker
                 return ticker.lower()
             elif column == 2:  # Quantity
@@ -2491,13 +2491,15 @@ class TransactionLogTable(QTableWidget):
         if not sortable_transactions:
             return
 
-        # Sort by date descending, then by sequence descending for same-day
+        # Sort by date descending, then by sequence ascending for same-day
+        # Lower sequence = happened earlier in day = should appear first (top of same-day group)
         def sort_key(tx: Dict[str, Any]):
             date = tx.get("date", "")
             sequence = tx.get("sequence", 0)
-            return (date, sequence)
+            # Negate sequence to get ascending order while date is descending
+            return (date, -sequence)
 
-        # Reverse=True for descending order on both fields
+        # Reverse=True for descending order on date, but sequence is negated for ascending
         sorted_transactions = sorted(sortable_transactions, key=sort_key, reverse=True)
 
         # Rebuild table
