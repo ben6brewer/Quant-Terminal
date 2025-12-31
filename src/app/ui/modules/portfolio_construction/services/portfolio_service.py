@@ -808,7 +808,18 @@ class PortfolioService:
         """
         free_cash_balance = 0.0
 
-        for tx in transactions:
+        # Sort by date then sequence to ensure correct processing order
+        sorted_txs = sorted(
+            transactions,
+            key=lambda t: (t.get("date", ""), t.get("sequence", 0))
+        )
+
+        print(f"[DEBUG] calculate_free_cash_at_date for target_date={target_date}, exclude_id={exclude_transaction_id[:8] if exclude_transaction_id else None}")
+        print(f"[DEBUG] Sorted transactions (date, seq, ticker):")
+        for tx in sorted_txs:
+            print(f"[DEBUG]   ({tx.get('date')}, seq={tx.get('sequence')}, {tx.get('ticker')}) id={tx.get('id')[:8]}...")
+
+        for tx in sorted_txs:
             # Skip excluded transaction
             if exclude_transaction_id and tx.get("id") == exclude_transaction_id:
                 continue
@@ -859,7 +870,13 @@ class PortfolioService:
         position = 0.0
         ticker_upper = ticker.upper()
 
-        for tx in transactions:
+        # Sort by date then sequence to ensure correct processing order
+        sorted_txs = sorted(
+            transactions,
+            key=lambda t: (t.get("date", ""), t.get("sequence", 0))
+        )
+
+        for tx in sorted_txs:
             # Skip excluded transaction
             if exclude_transaction_id and tx.get("id") == exclude_transaction_id:
                 continue
@@ -882,6 +899,37 @@ class PortfolioService:
                 position -= qty
 
         return position
+
+    @staticmethod
+    def get_sequence_for_date_edit(
+        transactions: List[Dict[str, Any]],
+        target_date: str,
+        is_free_cash: bool
+    ) -> int:
+        """
+        Get appropriate sequence for a transaction whose date was edited.
+
+        When a transaction's date is changed:
+        - FREE CASH: Gets minimum sequence for the new date (processes first)
+        - Other tickers: Gets maximum sequence for the new date (processes last)
+
+        Args:
+            transactions: All transactions (excluding the one being edited)
+            target_date: The new date being set
+            is_free_cash: Whether this is a FREE CASH transaction
+
+        Returns:
+            Sequence number for the transaction
+        """
+        same_day_txs = [t for t in transactions if t.get("date") == target_date]
+        if not same_day_txs:
+            return 0
+
+        sequences = [t.get("sequence", 0) for t in same_day_txs]
+        if is_free_cash:
+            return min(sequences) - 1  # Before all existing
+        else:
+            return max(sequences) + 1  # After all existing
 
     @staticmethod
     def validate_transaction_safeguards(
@@ -921,6 +969,7 @@ class PortfolioService:
         cash_before = PortfolioService.calculate_free_cash_at_date(
             test_transactions, tx_date
         )
+        print(f"[DEBUG] validate_transaction_safeguards: cash_before={cash_before} for {ticker} {tx_type} on {tx_date}")
 
         # Validate based on transaction type
         if ticker == PortfolioService.FREE_CASH_TICKER:

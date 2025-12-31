@@ -3,7 +3,7 @@
 from typing import Dict, List, Any, Optional, Tuple
 from PySide6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QHeaderView,
-    QAbstractButton, QWidget, QHBoxLayout, QApplication, QLineEdit
+    QAbstractButton, QWidget, QHBoxLayout, QApplication, QLineEdit, QComboBox
 )
 from PySide6.QtCore import Qt, Signal, QDate, QTimer, QEvent
 
@@ -29,6 +29,7 @@ class TransactionLogTable(QTableWidget):
     transaction_added = Signal(dict)           # Emitted when row added
     transaction_modified = Signal(str, dict)   # (transaction_id, updated_transaction)
     transaction_deleted = Signal(str)          # (transaction_id)
+    _price_autofill_ready = Signal(int, float) # (row, price) - internal signal for thread-safe UI update
 
     # Columns
     COLUMNS = [
@@ -66,6 +67,10 @@ class TransactionLogTable(QTableWidget):
         self._current_editing_row: Optional[int] = None
         self._row_widgets_map: Dict[int, List[QWidget]] = {}
         self._skip_focus_validation: bool = False  # Prevent double validation dialogs
+        self._validating: bool = False  # Prevent _on_cell_changed from corrupting sequences during validation
+
+        # Debug flag for tracking _original_values changes (set to True to enable debugging)
+        self._debug_original_values = False
 
         # Highlight editable fields setting (default True)
         self._highlight_editable = True
@@ -80,11 +85,29 @@ class TransactionLogTable(QTableWidget):
         # Sequence counter for same-day transaction ordering (higher = newer)
         self._next_sequence: int = 0
 
+        # Focus generation counter - increments on sort/successful edit to invalidate
+        # any pending deferred focus callbacks that were queued before the operation
+        self._focus_generation: int = 0
+
         self._setup_table()
         self._apply_theme()
 
         # Connect theme changes
         self.theme_manager.theme_changed.connect(self._apply_theme)
+
+        # Connect internal signal for thread-safe price auto-fill
+        self._price_autofill_ready.connect(self._apply_autofill_price)
+
+    def _debug_set_original_values(self, tx_id: str, values: dict, caller: str):
+        """Debug helper: log when _original_values is set."""
+        if self._debug_original_values:
+            ticker = values.get("ticker", "?")
+            date = values.get("date", "?")
+            old_values = self._original_values.get(tx_id, {})
+            old_date = old_values.get("date", "NOT_SET")
+            print(f"[ORIGINAL_VALUES] {caller}: tx_id={tx_id[:8]}... ticker={ticker} "
+                  f"date: {old_date} -> {date}")
+        self._original_values[tx_id] = values
 
     def _setup_table(self):
         """Configure table structure."""
@@ -624,7 +647,12 @@ class TransactionLogTable(QTableWidget):
             temp_transaction["entry_price"] = 1.0
 
         # Validate transaction safeguards (cash balance, position)
-        is_valid, error_msg = self._validate_transaction_safeguards(row, temp_transaction, is_new=True)
+        # Set _validating to prevent _on_cell_changed from corrupting sequences
+        self._validating = True
+        try:
+            is_valid, error_msg = self._validate_transaction_safeguards(row, temp_transaction, is_new=True)
+        finally:
+            self._validating = False
         if not is_valid:
             # Set flag to prevent double dialog from focus loss
             self._skip_focus_validation = True
@@ -740,15 +768,22 @@ class TransactionLogTable(QTableWidget):
         self._transactions[row] = transaction
 
         # Store original values for revert on invalid edit
-        self._original_values[tx_id] = {
-            "ticker": transaction.get("ticker", ""),
-            "date": transaction.get("date", ""),
-            "quantity": transaction.get("quantity", 0.0),
-            "entry_price": transaction.get("entry_price", 0.0),
-            "fees": transaction.get("fees", 0.0),
-            "transaction_type": transaction.get("transaction_type", "Buy"),
-            "sequence": transaction.get("sequence", 0)
-        }
+        # Only set if not already tracked - preserves values from successful edits
+        # (sort_by_date_descending calls add_transaction_row but shouldn't overwrite
+        # the _original_values that were just set after a successful edit)
+        if tx_id not in self._original_values:
+            self._debug_set_original_values(tx_id, {
+                "ticker": transaction.get("ticker", ""),
+                "date": transaction.get("date", ""),
+                "quantity": transaction.get("quantity", 0.0),
+                "entry_price": transaction.get("entry_price", 0.0),
+                "fees": transaction.get("fees", 0.0),
+                "transaction_type": transaction.get("transaction_type", "Buy"),
+                "sequence": transaction.get("sequence", 0)
+            }, "add_transaction_row")
+        elif self._debug_original_values:
+            print(f"[ORIGINAL_VALUES] add_transaction_row: SKIPPED tx_id={tx_id[:8]}... "
+                  f"(already tracked with date={self._original_values[tx_id].get('date')})")
 
         # Get current theme stylesheets
         widget_style = self._get_current_widget_stylesheet()
@@ -847,6 +882,10 @@ class TransactionLogTable(QTableWidget):
 
     def _on_cell_changed(self, row: int, col: int):
         """Handle cell value change."""
+        # Skip during validation to prevent sequence corruption from stale data
+        if self._validating:
+            return
+
         transaction = self._get_transaction_for_row(row)
         if not transaction:
             return
@@ -855,6 +894,7 @@ class TransactionLogTable(QTableWidget):
         updated = self._extract_transaction_from_row(row)
         if not updated:
             return
+
 
         # Check if this is the blank row
         if transaction.get("is_blank"):
@@ -919,8 +959,10 @@ class TransactionLogTable(QTableWidget):
             if "is_blank" in existing_transaction:
                 extracted["is_blank"] = existing_transaction["is_blank"]
 
-            # Preserve sequence for same-day ordering
-            if "sequence" in existing_transaction:
+            # Preserve sequence for same-day ordering - use _transactions_by_id as source of truth
+            if transaction_id in self._transactions_by_id:
+                extracted["sequence"] = self._transactions_by_id[transaction_id].get("sequence", 0)
+            elif "sequence" in existing_transaction:
                 extracted["sequence"] = existing_transaction["sequence"]
 
             return extracted
@@ -1319,8 +1361,18 @@ class TransactionLogTable(QTableWidget):
                 self.selectRow(row)
 
         elif event_type == QEvent.FocusOut:
+            # Check if ticker field (col 1) in blank row lost focus - trigger auto-fill
+            row, col = self._find_cell_for_widget(obj)
+            if row is not None and col == 1:  # Ticker column
+                transaction = self._get_transaction_for_row(row)
+                if transaction and transaction.get("is_blank"):
+                    # Defer to allow focus to settle, then auto-fill
+                    QTimer.singleShot(0, lambda r=row: self._try_autofill_execution_price(r))
+
             # Focus left a widget - defer check to see if it left the row
-            QTimer.singleShot(0, self._check_row_focus_loss)
+            # Capture current generation so we can detect if a sort/edit invalidated this callback
+            gen = self._focus_generation
+            QTimer.singleShot(0, lambda g=gen: self._check_row_focus_loss(g))
 
         elif event_type == QEvent.KeyPress:
             # Handle keyboard navigation
@@ -1402,6 +1454,9 @@ class TransactionLogTable(QTableWidget):
 
                         # Handle normal rows (not blank)
                         if transaction and not transaction.get("is_blank"):
+                            # Prevent _on_row_focus_lost from double-processing after clearFocus()
+                            self._skip_focus_validation = True
+
                             ticker = transaction.get("ticker", "").strip()
                             quantity = transaction.get("quantity", 0.0)
                             tx_date = transaction.get("date", "")
@@ -1448,6 +1503,15 @@ class TransactionLogTable(QTableWidget):
                                 original_date = original.get("date", "")
                                 ticker_upper = ticker.upper()
 
+                                # Read date from widget (not storage) to get current value
+                                date_edit = self._get_inner_widget(row, 0)
+                                if date_edit:
+                                    tx_date = date_edit.date().toString("yyyy-MM-dd")
+                                    # Update transaction dict with current date for validation
+                                    transaction["date"] = tx_date
+                                else:
+                                    tx_date = transaction.get("date", "")
+
                                 # Check if ticker changed
                                 if ticker_upper != original_ticker.upper():
                                     is_valid_ticker, ticker_error = PortfolioService.is_valid_ticker(ticker_upper)
@@ -1476,6 +1540,19 @@ class TransactionLogTable(QTableWidget):
                                         self._revert_date(row, original_date)
                                         return True  # Consume event
 
+                                # If date changed, reassign sequence BEFORE validation
+                                old_sequence = transaction.get("sequence", 0)
+                                if tx_date != original_date:
+                                    is_free_cash = ticker_upper == PortfolioService.FREE_CASH_TICKER
+                                    all_transactions = self.get_all_transactions()
+                                    other_txs = [t for t in all_transactions if t.get("id") != transaction_id]
+                                    new_sequence = PortfolioService.get_sequence_for_date_edit(
+                                        other_txs, tx_date, is_free_cash
+                                    )
+                                    transaction["sequence"] = new_sequence
+                                    if transaction_id in self._transactions_by_id:
+                                        self._transactions_by_id[transaction_id]["sequence"] = new_sequence
+
                                 # Valid data - validate and fetch prices
                                 is_valid, error = PortfolioService.validate_transaction(transaction)
                                 if is_valid:
@@ -1489,9 +1566,14 @@ class TransactionLogTable(QTableWidget):
                                                 inner_widget.setValue(1.0)
 
                                     # Validate transaction safeguards (cash balance, position, chain)
-                                    safeguard_valid, safeguard_error = self._validate_transaction_safeguards(
-                                        row, transaction, is_new=False, original_date=original_date
-                                    )
+                                    # Set _validating to prevent _on_cell_changed from corrupting sequences
+                                    self._validating = True
+                                    try:
+                                        safeguard_valid, safeguard_error = self._validate_transaction_safeguards(
+                                            row, transaction, is_new=False, original_date=original_date
+                                        )
+                                    finally:
+                                        self._validating = False
                                     if not safeguard_valid:
                                         self._skip_focus_validation = True
                                         CustomMessageBox.warning(
@@ -1500,6 +1582,11 @@ class TransactionLogTable(QTableWidget):
                                             "Transaction Error",
                                             safeguard_error
                                         )
+                                        # Revert sequence if we changed it
+                                        if tx_date != original_date:
+                                            transaction["sequence"] = old_sequence
+                                            if transaction_id in self._transactions_by_id:
+                                                self._transactions_by_id[transaction_id]["sequence"] = old_sequence
                                         # Revert all fields to original values
                                         original = self._original_values.get(transaction_id, {})
                                         self._revert_all_fields(row, original)
@@ -1507,19 +1594,36 @@ class TransactionLogTable(QTableWidget):
 
                                     # Update original values
                                     if transaction_id:
-                                        self._original_values[transaction_id] = {
+                                        self._debug_set_original_values(transaction_id, {
                                             "ticker": ticker_upper,
                                             "date": tx_date,
                                             "quantity": transaction.get("quantity", 0.0),
                                             "entry_price": transaction.get("entry_price", 0.0),
                                             "fees": transaction.get("fees", 0.0),
-                                            "transaction_type": transaction.get("transaction_type", "Buy")
-                                        }
+                                            "transaction_type": transaction.get("transaction_type", "Buy"),
+                                            "sequence": transaction.get("sequence", 0)
+                                        }, "eventFilter_success")
+                                        # Increment focus generation to invalidate any pending
+                                        # deferred focus callbacks from before this successful edit
+                                        self._focus_generation += 1
                                     self._update_calculated_cells(row)
                                     if transaction_id:
                                         self.transaction_modified.emit(transaction_id, transaction)
                                     # Update FREE CASH summary row
                                     self._update_free_cash_summary_row()
+
+                                    # Re-sort if date was changed (sequence already reassigned)
+                                    if tx_date != original_date:
+                                        self.sort_by_date_descending()
+                                        # Clear _current_editing_row to prevent deferred focus checks
+                                        # from processing stale row data after the sort
+                                        self._current_editing_row = None
+                                else:
+                                    # Validation failed - revert sequence if we changed it
+                                    if tx_date != original_date:
+                                        transaction["sequence"] = old_sequence
+                                        if transaction_id in self._transactions_by_id:
+                                            self._transactions_by_id[transaction_id]["sequence"] = old_sequence
                                 # Clear selection and focus from the widget
                                 self.clearSelection()
                                 obj.clearFocus()  # Clear focus from the specific widget
@@ -1527,8 +1631,26 @@ class TransactionLogTable(QTableWidget):
 
         return super().eventFilter(obj, event)
 
-    def _check_row_focus_loss(self):
-        """Check if focus has left the current editing row (deferred check)."""
+    def _check_row_focus_loss(self, expected_generation: int):
+        """Check if focus has left the current editing row (deferred check).
+
+        Args:
+            expected_generation: The focus generation when this callback was queued.
+                If it doesn't match current generation, a sort or successful edit
+                happened and this callback should be ignored.
+        """
+        # Skip if generation changed (sort or successful edit invalidated this callback)
+        if expected_generation != self._focus_generation:
+            if self._debug_original_values:
+                print(f"[DEBUG] _check_row_focus_loss: SKIPPED (generation {expected_generation} != {self._focus_generation})")
+            return
+
+        # Skip if we're in the middle of validation/sorting
+        if self._validating:
+            if self._debug_original_values:
+                print(f"[DEBUG] _check_row_focus_loss: SKIPPED (_validating=True)")
+            return
+
         if self._current_editing_row is None:
             return
 
@@ -1537,6 +1659,9 @@ class TransactionLogTable(QTableWidget):
 
         if not focused_widget:
             # Focus lost completely - trigger row focus lost
+            if self._debug_original_values:
+                print(f"[DEBUG] _check_row_focus_loss: calling _on_row_focus_lost({self._current_editing_row}) "
+                      f"- no focused widget, skip_flag={self._skip_focus_validation}")
             self._on_row_focus_lost(self._current_editing_row)
             self._current_editing_row = None
             return
@@ -1546,6 +1671,9 @@ class TransactionLogTable(QTableWidget):
 
         if new_row != self._current_editing_row:
             # Focus moved to different row - trigger row focus lost
+            if self._debug_original_values:
+                print(f"[DEBUG] _check_row_focus_loss: calling _on_row_focus_lost({self._current_editing_row}) "
+                      f"- focus moved to row {new_row}, skip_flag={self._skip_focus_validation}")
             self._on_row_focus_lost(self._current_editing_row)
             self._current_editing_row = new_row
 
@@ -1558,8 +1686,14 @@ class TransactionLogTable(QTableWidget):
         Args:
             row: Row index that lost focus
         """
+        # Skip if we're in the middle of validation/sorting (prevents interference)
+        if self._validating:
+            return
+
         # Check if we should skip validation (already handled by Enter key)
         if self._skip_focus_validation:
+            if self._debug_original_values:
+                print(f"[DEBUG] _on_row_focus_lost({row}): SKIPPED (skip_flag was True)")
             self._skip_focus_validation = False
             return
 
@@ -1568,8 +1702,19 @@ class TransactionLogTable(QTableWidget):
         if not transaction:
             return
 
+        if self._debug_original_values:
+            tx_id_debug = transaction.get("id", "?")
+            tx_ticker_debug = transaction.get("ticker", "?")
+            tx_date_debug = transaction.get("date", "?")
+            is_blank = transaction.get("is_blank", False)
+            print(f"[DEBUG] _on_row_focus_lost({row}): processing tx_id={tx_id_debug[:8] if len(tx_id_debug) > 8 else tx_id_debug}... "
+                  f"ticker={tx_ticker_debug} date={tx_date_debug} is_blank={is_blank}")
+
         # Check if this is blank row
         if transaction.get("is_blank"):
+            # Try to auto-fill execution price when date and ticker are filled
+            self._try_autofill_execution_price(row)
+
             # Check if it's complete, if so validate and transition to real
             if self._is_transaction_complete(transaction):
                 # Validate ticker before transitioning
@@ -1607,8 +1752,16 @@ class TransactionLogTable(QTableWidget):
         # Existing row - check if row should be deleted (ticker empty OR quantity is 0/blank)
         ticker = transaction.get("ticker", "").strip()
         quantity = transaction.get("quantity", 0.0)
-        tx_date = transaction.get("date", "")
         transaction_id = transaction.get("id")
+
+        # Read date from widget to get current value (stored data might be stale after sort)
+        date_edit = self._get_inner_widget(row, 0)
+        if date_edit:
+            tx_date = date_edit.date().toString("yyyy-MM-dd")
+            # Update transaction dict with current date
+            transaction["date"] = tx_date
+        else:
+            tx_date = transaction.get("date", "")
 
         if not ticker or quantity == 0.0:
             # Empty ticker or zero quantity - validate before deleting
@@ -1680,16 +1833,39 @@ class TransactionLogTable(QTableWidget):
                     self._revert_date(row, original_date)
                     return
 
+            # If date changed, reassign sequence BEFORE validation
+            # This ensures validation uses the correct order
+            old_sequence = transaction.get("sequence", 0)
+            if tx_date != original_date:
+                is_free_cash = ticker_upper == PortfolioService.FREE_CASH_TICKER
+                all_transactions = self.get_all_transactions()
+                other_txs = [t for t in all_transactions if t.get("id") != transaction_id]
+                new_sequence = PortfolioService.get_sequence_for_date_edit(
+                    other_txs, tx_date, is_free_cash
+                )
+                transaction["sequence"] = new_sequence
+                if transaction_id in self._transactions_by_id:
+                    self._transactions_by_id[transaction_id]["sequence"] = new_sequence
+
             # Validate transaction
             is_valid, error = PortfolioService.validate_transaction(transaction)
             if not is_valid:
-                # Don't fetch prices for invalid transactions
+                # Revert sequence if we changed it
+                if tx_date != original_date:
+                    transaction["sequence"] = old_sequence
+                    if transaction_id in self._transactions_by_id:
+                        self._transactions_by_id[transaction_id]["sequence"] = old_sequence
                 return
 
             # Validate transaction safeguards (cash balance, position, chain)
-            safeguard_valid, safeguard_error = self._validate_transaction_safeguards(
-                row, transaction, is_new=False, original_date=original_date
-            )
+            # Set _validating to prevent _on_cell_changed from corrupting sequences
+            self._validating = True
+            try:
+                safeguard_valid, safeguard_error = self._validate_transaction_safeguards(
+                    row, transaction, is_new=False, original_date=original_date
+                )
+            finally:
+                self._validating = False
             if not safeguard_valid:
                 CustomMessageBox.warning(
                     self.theme_manager,
@@ -1697,22 +1873,38 @@ class TransactionLogTable(QTableWidget):
                     "Transaction Error",
                     safeguard_error
                 )
+                # Revert sequence if we changed it
+                if tx_date != original_date:
+                    transaction["sequence"] = old_sequence
+                    if transaction_id in self._transactions_by_id:
+                        self._transactions_by_id[transaction_id]["sequence"] = old_sequence
                 # Revert all fields to original values
                 original = self._original_values.get(transaction_id, {})
                 self._revert_all_fields(row, original)
                 return
 
             # Update original values since validation passed
+            # BUT only if we're actually making a change - don't overwrite with stale data
+            # (eventFilter may have already updated _original_values before sort)
             if transaction_id:
-                self._original_values[transaction_id] = {
-                    "ticker": ticker_upper,
-                    "date": tx_date,
-                    "quantity": transaction.get("quantity", 0.0),
-                    "entry_price": transaction.get("entry_price", 0.0),
-                    "fees": transaction.get("fees", 0.0),
-                    "transaction_type": transaction.get("transaction_type", "Buy"),
-                    "sequence": transaction.get("sequence", 0)
-                }
+                current_original = self._original_values.get(transaction_id, {})
+                # Only update if the widget date differs from current original
+                # This prevents overwriting correct values with stale stored data
+                if tx_date != current_original.get("date", ""):
+                    self._debug_set_original_values(transaction_id, {
+                        "ticker": ticker_upper,
+                        "date": tx_date,
+                        "quantity": transaction.get("quantity", 0.0),
+                        "entry_price": transaction.get("entry_price", 0.0),
+                        "fees": transaction.get("fees", 0.0),
+                        "transaction_type": transaction.get("transaction_type", "Buy"),
+                        "sequence": transaction.get("sequence", 0)
+                    }, "_on_row_focus_lost")
+                    # Increment focus generation to invalidate any pending callbacks
+                    self._focus_generation += 1
+                elif self._debug_original_values:
+                    print(f"[DEBUG] _on_row_focus_lost: SKIPPED update for tx_id={transaction_id[:8]}... "
+                          f"(widget date {tx_date} matches current original)")
 
             # Update calculated cells (fetch prices)
             self._update_calculated_cells(row)
@@ -1725,8 +1917,96 @@ class TransactionLogTable(QTableWidget):
             self._update_free_cash_summary_row()
 
             # Re-sort if date was changed to maintain chronological order
+            # (sequence was already reassigned before validation)
             if tx_date != original_date:
                 self.sort_by_date_descending()
+                # Clear _current_editing_row to prevent deferred focus checks
+                # from processing stale row data after the sort
+                self._current_editing_row = None
+
+    def _try_autofill_execution_price(self, row: int) -> None:
+        """
+        Auto-fill execution price for blank row when date and ticker are filled.
+        Only fills if execution price is currently empty/zero.
+        Fetches price in background thread to avoid UI lag.
+
+        Args:
+            row: Row index (should be 0 for blank row)
+        """
+        import threading
+        from datetime import datetime
+
+        transaction = self._get_transaction_for_row(row)
+        if not transaction or not transaction.get("is_blank"):
+            return
+
+        # Get date and ticker values
+        ticker = transaction.get("ticker", "").strip().upper()
+        tx_date = transaction.get("date", "")
+        entry_price = transaction.get("entry_price", 0.0)
+
+        # Only proceed if date AND ticker are filled AND execution price is empty
+        if not ticker or not tx_date or entry_price > 0:
+            return
+
+        # FREE CASH is always $1.00 - no network call needed
+        if ticker == PortfolioService.FREE_CASH_TICKER:
+            self._apply_autofill_price(row, 1.0)
+            return
+
+        # Determine if today or historical
+        today_str = datetime.now().strftime("%Y-%m-%d")
+
+        def fetch_and_apply():
+            """Background thread: fetch price, then emit signal for main thread."""
+            try:
+                if tx_date == today_str:
+                    prices = PortfolioService.fetch_current_prices([ticker])
+                    price = prices.get(ticker)
+                else:
+                    results = PortfolioService.fetch_historical_closes_batch([(ticker, tx_date)])
+                    price = results.get(ticker, {}).get(tx_date)
+
+                if price is not None:
+                    # Emit signal to update UI on main thread (thread-safe)
+                    self._price_autofill_ready.emit(row, price)
+            except Exception:
+                pass  # Silently fail
+
+        # Start background thread for price fetch
+        thread = threading.Thread(target=fetch_and_apply, daemon=True)
+        thread.start()
+
+    def _apply_autofill_price(self, row: int, price: float) -> None:
+        """
+        Apply auto-filled price to the execution price widget.
+        Must be called from the main thread.
+
+        Args:
+            row: Row index
+            price: Price to set
+        """
+        # Verify row is still the blank row (user might have submitted already)
+        transaction = self._get_transaction_for_row(row)
+        if not transaction or not transaction.get("is_blank"):
+            return
+
+        # Don't overwrite if user has entered a value
+        current_price = transaction.get("entry_price", 0.0)
+        if current_price > 0:
+            return
+
+        price_widget = self._get_inner_widget(row, 3)
+        if price_widget and isinstance(price_widget, ValidatedNumericLineEdit):
+            price_widget.blockSignals(True)
+            price_widget.setValue(price)
+            price_widget.blockSignals(False)
+            price_widget.repaint()
+            # Update stored transaction
+            transaction["entry_price"] = price
+            self._transactions_by_id["BLANK_ROW"]["entry_price"] = price
+            if row in self._transactions:
+                self._transactions[row]["entry_price"] = price
 
     def _revert_ticker(self, row: int, original_ticker: str):
         """
@@ -2047,6 +2327,9 @@ class TransactionLogTable(QTableWidget):
         # Sort the transactions
         sorted_transactions = sorted(sortable_transactions, key=get_sort_key, reverse=reverse)
 
+        # Increment focus generation to invalidate any pending deferred focus callbacks
+        self._focus_generation += 1
+
         # Rebuild table
         self.setRowCount(0)
         self._transactions_by_id.clear()
@@ -2101,6 +2384,9 @@ class TransactionLogTable(QTableWidget):
         # Sort transactions by date (oldest first)
         sortable_transactions.sort(key=lambda t: t.get("date", ""))
 
+        # Increment focus generation to invalidate any pending deferred focus callbacks
+        self._focus_generation += 1
+
         # Rebuild table
         self.setRowCount(0)
         self._transactions_by_id.clear()
@@ -2130,6 +2416,30 @@ class TransactionLogTable(QTableWidget):
         This is the default sort applied on load and after adding transactions.
         Keeps blank row pinned at row 0 and FREE CASH summary at row 1.
         """
+        # Increment focus generation BEFORE sort to invalidate any pending
+        # deferred focus callbacks that were queued before this sort
+        self._focus_generation += 1
+
+        if self._debug_original_values:
+            print(f"[DEBUG] sort_by_date_descending: START (gen={self._focus_generation})")
+            for tx_id, vals in self._original_values.items():
+                if tx_id != "BLANK_ROW" and not tx_id.startswith("FREE_CASH"):
+                    print(f"  _original_values[{tx_id[:8]}...] = date={vals.get('date')}")
+        # Set _validating to prevent _on_cell_changed from running during sort
+        # (widget signals fire when recreating widgets, could corrupt sequences)
+        self._validating = True
+        try:
+            self._sort_by_date_descending_impl()
+        finally:
+            self._validating = False
+        if self._debug_original_values:
+            print(f"[DEBUG] sort_by_date_descending: END")
+            for tx_id, vals in self._original_values.items():
+                if tx_id != "BLANK_ROW" and not tx_id.startswith("FREE_CASH"):
+                    print(f"  _original_values[{tx_id[:8]}...] = date={vals.get('date')}")
+
+    def _sort_by_date_descending_impl(self):
+        """Internal implementation of sort_by_date_descending."""
         # Collect all sortable transactions (exclude blank and FREE CASH summary)
         sortable_transactions = []
         blank_transaction = None
