@@ -86,6 +86,54 @@ class Widget(QWidget):
         theme_manager.theme_changed.connect(self._on_theme_changed)
 ```
 
+### 6. Lazy Loading for Fast Startup
+
+**Critical**: Heavy libraries (numpy, pandas, scipy, yfinance) must be imported inside functions, not at module level. This keeps startup under 0.5 seconds.
+
+**Pattern 1 - Lazy Module Imports in main.py**:
+```python
+# In main.py - module imports inside factory functions
+def _create_chart_module(theme_manager):
+    from app.ui.modules.chart.chart_module import ChartModule
+    return ChartModule(theme_manager)
+
+hub.add_module("charts", lambda: _create_chart_module(theme_manager))
+```
+
+**Pattern 2 - Function-Level Heavy Imports**:
+```python
+# In services - import heavy libraries inside methods
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import pandas as pd  # For type hints only
+
+class MyService:
+    @staticmethod
+    def calculate(data: "pd.DataFrame") -> "pd.DataFrame":
+        import numpy as np
+        import pandas as pd
+        # ... use np and pd here
+```
+
+**Pattern 3 - Lazy `__init__.py` with `__getattr__`**:
+```python
+# In services/__init__.py
+def __getattr__(name: str):
+    if name == "ReturnsDataService":
+        from app.services.returns_data_service import ReturnsDataService
+        globals()["ReturnsDataService"] = ReturnsDataService
+        return ReturnsDataService
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+```
+
+**Files using lazy loading**:
+- `main.py` - All module factory functions
+- `services/__init__.py` - PEP 562 `__getattr__`
+- `services/market_data.py`, `services/returns_data_service.py`
+- Module services: `indicator_service.py`, `monte_carlo_service.py`, `portfolio_service.py`
+- Widgets: `distribution_chart.py` (scipy)
+
 ---
 
 ## Directory Structure (Simplified)

@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 import threading
-from typing import Dict, Optional
-
-import pandas as pd
-import yfinance as yf
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from app.core.config import (
     INTERVAL_MAP,
@@ -15,6 +12,9 @@ from app.core.config import (
     ERROR_NO_DATA,
 )
 
+if TYPE_CHECKING:
+    import pandas as pd
+
 # Import the cache manager
 from app.services.market_data_cache import MarketDataCache
 
@@ -23,17 +23,17 @@ _cache = MarketDataCache()
 
 # In-memory session cache to avoid repeated parquet reads
 # Key: ticker (uppercase), Value: DataFrame
-_memory_cache: Dict[str, pd.DataFrame] = {}
+_memory_cache: Dict[str, Any] = {}
 _memory_cache_lock = threading.Lock()
 
 
-def _get_from_memory_cache(ticker: str) -> Optional[pd.DataFrame]:
+def _get_from_memory_cache(ticker: str) -> Optional["pd.DataFrame"]:
     """Get DataFrame from memory cache (thread-safe)."""
     with _memory_cache_lock:
         return _memory_cache.get(ticker)
 
 
-def _set_memory_cache(ticker: str, df: pd.DataFrame) -> None:
+def _set_memory_cache(ticker: str, df: "pd.DataFrame") -> None:
     """Set DataFrame in memory cache (thread-safe)."""
     with _memory_cache_lock:
         _memory_cache[ticker] = df
@@ -43,7 +43,7 @@ def fetch_price_history(
     ticker: str,
     period: str = DEFAULT_PERIOD,
     interval: str = "1d",
-) -> pd.DataFrame:
+) -> "pd.DataFrame":
     """
     Fetch historical price data for a ticker with two-level caching.
 
@@ -69,6 +69,9 @@ def fetch_price_history(
     Raises:
         ValueError: If ticker is empty or no data is available
     """
+    import pandas as pd
+    import yfinance as yf
+
     ticker = ticker.strip().upper()
     if not ticker:
         raise ValueError(ERROR_EMPTY_TICKER)
@@ -175,14 +178,14 @@ def fetch_price_history(
         raise ValueError(ERROR_NO_DATA.format(ticker=ticker))
 
 
-def _resample_data(df: pd.DataFrame, interval_key: str) -> pd.DataFrame:
+def _resample_data(df: "pd.DataFrame", interval_key: str) -> "pd.DataFrame":
     """
     Resample daily data to the requested interval.
-    
+
     Args:
         df: DataFrame with daily OHLCV data
         interval_key: Interval key (e.g., "weekly", "monthly", "yearly")
-    
+
     Returns:
         Resampled DataFrame
     """

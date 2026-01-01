@@ -5,10 +5,11 @@ Supports both historical bootstrap and parametric simulation methods.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
-import numpy as np
-import pandas as pd
+if TYPE_CHECKING:
+    import numpy as np
+    import pandas as pd
 
 
 @dataclass
@@ -26,33 +27,36 @@ class SimulationResult:
         n_periods: Number of time periods simulated
     """
 
-    paths: np.ndarray
-    terminal_values: np.ndarray
-    dates: pd.DatetimeIndex
-    percentiles: Dict[int, np.ndarray] = field(default_factory=dict)
+    paths: Any  # np.ndarray
+    terminal_values: Any  # np.ndarray
+    dates: Any  # pd.DatetimeIndex
+    percentiles: Dict[int, Any] = field(default_factory=dict)
     method: str = "bootstrap"
     initial_value: float = 100.0
     n_simulations: int = 1000
     n_periods: int = 252
 
     @property
-    def mean_path(self) -> np.ndarray:
+    def mean_path(self) -> Any:
         """Average portfolio value path across all simulations."""
         return self.paths.mean(axis=0)
 
     @property
-    def median_path(self) -> np.ndarray:
+    def median_path(self) -> Any:
         """Median portfolio value path across all simulations."""
+        import numpy as np
         return np.median(self.paths, axis=0)
 
     @property
     def median_terminal(self) -> float:
         """Median final portfolio value."""
+        import numpy as np
         return float(np.median(self.terminal_values))
 
     @property
     def mean_terminal(self) -> float:
         """Mean final portfolio value."""
+        import numpy as np
         return float(np.mean(self.terminal_values))
 
     @property
@@ -63,7 +67,7 @@ class SimulationResult:
             return float("nan")
         return (self.median_terminal / self.initial_value) ** (1 / years) - 1
 
-    def get_percentile(self, p: int) -> np.ndarray:
+    def get_percentile(self, p: int) -> Any:
         """Get or compute a percentile path.
 
         Args:
@@ -72,6 +76,7 @@ class SimulationResult:
         Returns:
             Array of portfolio values at the given percentile for each time step
         """
+        import numpy as np
         if p not in self.percentiles:
             self.percentiles[p] = np.percentile(self.paths, p, axis=0)
         return self.percentiles[p]
@@ -89,7 +94,7 @@ class MonteCarloService:
 
     @staticmethod
     def simulate_historical_bootstrap(
-        returns: pd.Series,
+        returns: "pd.Series",
         n_simulations: int = 1000,
         n_periods: int = 252,
         initial_value: float = 100.0,
@@ -116,6 +121,9 @@ class MonteCarloService:
         Returns:
             SimulationResult with simulated paths and statistics
         """
+        import numpy as np
+        import pandas as pd
+
         if percentiles is None:
             percentiles = [5, 10, 25, 50, 75, 90, 95]
 
@@ -216,6 +224,9 @@ class MonteCarloService:
         Returns:
             SimulationResult with simulated paths and statistics
         """
+        import numpy as np
+        import pandas as pd
+
         if percentiles is None:
             percentiles = [5, 10, 25, 50, 75, 90, 95]
 
@@ -256,7 +267,7 @@ class MonteCarloService:
 
     @staticmethod
     def calculate_var_cvar(
-        terminal_values: np.ndarray,
+        terminal_values: Any,  # np.ndarray
         initial_value: float = 100.0,
         confidence_levels: Optional[List[float]] = None,
     ) -> Dict[str, Dict[str, float]]:
@@ -278,6 +289,8 @@ class MonteCarloService:
                 "0.99": {...}
             }
         """
+        import numpy as np
+
         if confidence_levels is None:
             confidence_levels = [0.90, 0.95, 0.99]
 
@@ -310,7 +323,7 @@ class MonteCarloService:
 
     @staticmethod
     def calculate_probability_metrics(
-        terminal_values: np.ndarray,
+        terminal_values: Any,  # np.ndarray
         initial_value: float = 100.0,
         thresholds: Optional[List[float]] = None,
     ) -> Dict[str, float]:

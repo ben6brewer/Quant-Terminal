@@ -1,11 +1,8 @@
 """Distribution Chart Widget - Histogram visualization with statistics panel."""
 
-from typing import Any, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
 
-import numpy as np
-import pandas as pd
 import pyqtgraph as pg
-from scipy import stats as scipy_stats
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -19,6 +16,11 @@ from PySide6.QtCore import Qt
 from app.core.theme_manager import ThemeManager
 from app.services.returns_data_service import ReturnsDataService
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+
+if TYPE_CHECKING:
+    import numpy as np
+    import pandas as pd
+    from scipy import stats as scipy_stats
 
 
 # Qt PenStyle mapping
@@ -176,6 +178,7 @@ class StatisticsPanel(LazyThemeMixin, QWidget):
 
     def update_benchmark_statistics(self, stats: Dict[str, float]):
         """Update the benchmark statistics display."""
+        import numpy as np
         is_time_under_water = self._current_metric == "Time Under Water"
 
         def fmt_value(val, decimals=2):
@@ -230,6 +233,7 @@ class StatisticsPanel(LazyThemeMixin, QWidget):
             show_cash_drag: If False (exclude_cash is True), show "--" for cash drag
             is_ticker_mode: If True, this is a ticker not a portfolio, show "--" for cash drag
         """
+        import numpy as np
         is_time_under_water = self._current_metric == "Time Under Water"
 
         def fmt_value(val, decimals=2):
@@ -607,8 +611,9 @@ class DistributionChart(LazyThemeMixin, QWidget):
         self.cdf_curve = None
         self.benchmark_cdf_curve = None
 
-    def _draw_histogram(self, returns_pct: pd.Series, num_bins: int):
+    def _draw_histogram(self, returns_pct: "pd.Series", num_bins: int):
         """Draw histogram bars."""
+        import numpy as np
         counts, bin_edges = np.histogram(returns_pct, bins=num_bins)
         bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
         bin_width = bin_edges[1] - bin_edges[0]
@@ -622,8 +627,9 @@ class DistributionChart(LazyThemeMixin, QWidget):
         )
         self.plot_widget.addItem(self.bar_graph)
 
-    def _draw_benchmark_histogram(self, benchmark_pct: pd.Series, num_bins: int):
+    def _draw_benchmark_histogram(self, benchmark_pct: "pd.Series", num_bins: int):
         """Draw semi-transparent benchmark histogram overlay."""
+        import numpy as np
         counts, bin_edges = np.histogram(benchmark_pct, bins=num_bins)
         bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
         bin_width = bin_edges[1] - bin_edges[0]
@@ -638,9 +644,12 @@ class DistributionChart(LazyThemeMixin, QWidget):
         self.plot_widget.addItem(self.benchmark_bar_graph)
 
     def _draw_kde_curve(
-        self, returns_pct: pd.Series, num_bins: int, is_portfolio: bool = True
+        self, returns_pct: "pd.Series", num_bins: int, is_portfolio: bool = True
     ):
         """Draw KDE (Kernel Density Estimation) curve overlay."""
+        import numpy as np
+        from scipy import stats as scipy_stats
+
         if len(returns_pct) < 3:
             return
 
@@ -672,8 +681,11 @@ class DistributionChart(LazyThemeMixin, QWidget):
         except Exception as e:
             print(f"Error drawing KDE curve: {e}")
 
-    def _draw_normal_distribution(self, returns_pct: pd.Series, num_bins: int):
+    def _draw_normal_distribution(self, returns_pct: "pd.Series", num_bins: int):
         """Draw normal distribution overlay (dashed line)."""
+        import numpy as np
+        from scipy import stats as scipy_stats
+
         if len(returns_pct) < 3:
             return
 
@@ -753,8 +765,9 @@ class DistributionChart(LazyThemeMixin, QWidget):
                 self.median_line = pg.InfiniteLine(pos=median_val, angle=90, pen=median_pen)
                 self.plot_widget.addItem(self.median_line)
 
-    def _draw_cdf(self, returns_pct: pd.Series, is_portfolio: bool = True):
+    def _draw_cdf(self, returns_pct: "pd.Series", is_portfolio: bool = True):
         """Draw cumulative distribution function."""
+        import numpy as np
         # Sort values for CDF
         sorted_returns = np.sort(returns_pct.values)
         cdf_y = np.arange(1, len(sorted_returns) + 1) / len(sorted_returns)

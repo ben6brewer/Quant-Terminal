@@ -7,10 +7,11 @@ for analysis modules like Risk Analysis, Monte Carlo, and Return Distributions.
 import threading
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
-import numpy as np
-import pandas as pd
+if TYPE_CHECKING:
+    import numpy as np
+    import pandas as pd
 
 from app.services.market_data import fetch_price_history
 from app.services.portfolio_data_service import PortfolioDataService
@@ -31,7 +32,7 @@ class ReturnsDataService:
     _cache_lock = threading.Lock()
 
     # In-memory cache for session performance
-    _memory_cache: Dict[str, pd.DataFrame] = {}
+    _memory_cache: Dict[str, Any] = {}
     _memory_cache_timestamps: Dict[str, datetime] = {}
 
     @classmethod
@@ -79,7 +80,7 @@ class ReturnsDataService:
         portfolio_name: str,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         """
         Get daily returns for all tickers in a portfolio.
 
@@ -96,6 +97,8 @@ class ReturnsDataService:
         Returns:
             DataFrame of daily returns, or empty DataFrame if portfolio not found
         """
+        import pandas as pd
+
         with cls._cache_lock:
             # Check memory cache first
             if portfolio_name in cls._memory_cache:
@@ -131,18 +134,20 @@ class ReturnsDataService:
             return cls._filter_date_range(df, start_date, end_date)
 
     @classmethod
-    def _compute_returns(cls, portfolio_name: str) -> pd.DataFrame:
+    def _compute_returns(cls, portfolio_name: str) -> "pd.DataFrame":
         """
         Compute daily returns for all tickers in a portfolio.
 
         Returns:
             DataFrame with daily returns for each ticker
         """
+        import pandas as pd
+
         tickers = PortfolioDataService.get_tickers(portfolio_name)
         if not tickers:
             return pd.DataFrame()
 
-        returns_dict: Dict[str, pd.Series] = {}
+        returns_dict: Dict[str, Any] = {}
 
         for ticker in tickers:
             try:
@@ -175,11 +180,13 @@ class ReturnsDataService:
     @classmethod
     def _filter_date_range(
         cls,
-        df: pd.DataFrame,
+        df: "pd.DataFrame",
         start_date: Optional[str],
         end_date: Optional[str],
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         """Filter DataFrame to date range."""
+        import pandas as pd
+
         if df.empty:
             return df
 
@@ -200,7 +207,7 @@ class ReturnsDataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         weights: Optional[Dict[str, float]] = None,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Get weighted portfolio daily returns.
 
@@ -214,6 +221,8 @@ class ReturnsDataService:
         Returns:
             Series of daily portfolio returns
         """
+        import pandas as pd
+
         returns = cls.get_daily_returns(portfolio_name, start_date, end_date)
         if returns.empty:
             return pd.Series(dtype=float)
@@ -246,7 +255,7 @@ class ReturnsDataService:
         portfolio_name: str,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         """
         Get cumulative returns for all tickers.
 
@@ -258,6 +267,8 @@ class ReturnsDataService:
         Returns:
             DataFrame with cumulative returns (1.0 = 100% gain)
         """
+        import pandas as pd
+
         returns = cls.get_daily_returns(portfolio_name, start_date, end_date)
         if returns.empty:
             return pd.DataFrame()
@@ -307,7 +318,7 @@ class ReturnsDataService:
         portfolio_name: str,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         """
         Get correlation matrix of daily returns.
 
@@ -321,6 +332,8 @@ class ReturnsDataService:
         Returns:
             Correlation matrix DataFrame
         """
+        import pandas as pd
+
         returns = cls.get_daily_returns(portfolio_name, start_date, end_date)
         if returns.empty:
             return pd.DataFrame()
@@ -334,7 +347,7 @@ class ReturnsDataService:
         window: int = 252,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         """
         Get annualized rolling volatility for each ticker.
 
@@ -347,6 +360,9 @@ class ReturnsDataService:
         Returns:
             DataFrame with rolling annualized volatility
         """
+        import numpy as np
+        import pandas as pd
+
         returns = cls.get_daily_returns(portfolio_name, start_date, end_date)
         if returns.empty:
             return pd.DataFrame()
@@ -366,7 +382,7 @@ class ReturnsDataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         include_cash: bool = True,
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         """
         Reconstruct position quantities for each date from transaction history.
 
@@ -385,6 +401,8 @@ class ReturnsDataService:
             - Columns: ticker symbols
             - Values: position quantities (shares/units held at end of each day)
         """
+        import pandas as pd
+
         transactions = PortfolioDataService.get_transactions(portfolio_name)
         if not transactions:
             return pd.DataFrame()
@@ -468,7 +486,7 @@ class ReturnsDataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         include_cash: bool = True,
-    ) -> pd.DataFrame:
+    ) -> "pd.DataFrame":
         """
         Calculate portfolio weights for each date based on market values.
 
@@ -487,6 +505,9 @@ class ReturnsDataService:
             - Columns: ticker symbols
             - Values: weights (0.0 to 1.0, summing to ~1.0 per row)
         """
+        import numpy as np
+        import pandas as pd
+
         # Get position quantities over time
         positions = cls.get_position_history(
             portfolio_name, start_date, end_date, include_cash
@@ -497,7 +518,7 @@ class ReturnsDataService:
         tickers = positions.columns.tolist()
 
         # Fetch daily close prices for all tickers (except FREE CASH)
-        price_data: Dict[str, pd.Series] = {}
+        price_data: Dict[str, Any] = {}
 
         for ticker in tickers:
             if ticker.upper() == "FREE CASH":
@@ -553,7 +574,7 @@ class ReturnsDataService:
         end_date: Optional[str] = None,
         include_cash: bool = True,
         interval: str = "daily",
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate portfolio returns using time-varying weights from transactions.
 
@@ -570,6 +591,8 @@ class ReturnsDataService:
         Returns:
             Series of portfolio returns at the specified interval
         """
+        import pandas as pd
+
         # Get time-varying weights
         weights = cls.get_daily_weights(
             portfolio_name, start_date, end_date, include_cash
@@ -617,7 +640,7 @@ class ReturnsDataService:
         return portfolio_returns
 
     @classmethod
-    def _resample_returns(cls, returns: pd.Series, interval: str) -> pd.Series:
+    def _resample_returns(cls, returns: "pd.Series", interval: str) -> "pd.Series":
         """
         Resample daily returns to a different interval using geometric linking.
 
@@ -786,7 +809,7 @@ class ReturnsDataService:
         end_date: Optional[str] = None,
         include_cash: bool = False,
         interval: str = "daily",
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate annualized volatility series for the portfolio.
 
@@ -802,6 +825,9 @@ class ReturnsDataService:
         Returns:
             Series of annualized volatility values (as decimals, e.g., 0.20 = 20%)
         """
+        import numpy as np
+        import pandas as pd
+
         # Get daily portfolio returns
         returns = cls.get_time_varying_portfolio_returns(
             portfolio_name, start_date, end_date, include_cash, interval="daily"
@@ -823,7 +849,7 @@ class ReturnsDataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         include_cash: bool = False,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate rolling volatility with specified window.
 
@@ -837,6 +863,9 @@ class ReturnsDataService:
         Returns:
             Series of annualized volatility values (as decimals)
         """
+        import numpy as np
+        import pandas as pd
+
         # Get daily portfolio returns
         returns = cls.get_time_varying_portfolio_returns(
             portfolio_name, start_date, end_date, include_cash, interval="daily"
@@ -857,7 +886,7 @@ class ReturnsDataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         include_cash: bool = False,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate drawdown series (distance from all-time high).
 
@@ -870,6 +899,8 @@ class ReturnsDataService:
         Returns:
             Series of drawdown values (as negative decimals, e.g., -0.15 = -15%)
         """
+        import pandas as pd
+
         # Get daily portfolio returns
         returns = cls.get_time_varying_portfolio_returns(
             portfolio_name, start_date, end_date, include_cash, interval="daily"
@@ -897,7 +928,7 @@ class ReturnsDataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         include_cash: bool = False,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate rolling returns with specified window.
 
@@ -911,6 +942,8 @@ class ReturnsDataService:
         Returns:
             Series of rolling return values (as decimals, e.g., 0.10 = 10%)
         """
+        import pandas as pd
+
         # Get daily portfolio returns
         returns = cls.get_time_varying_portfolio_returns(
             portfolio_name, start_date, end_date, include_cash, interval="daily"
@@ -937,7 +970,7 @@ class ReturnsDataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         include_cash: bool = False,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate time under water (days since last all-time high).
 
@@ -950,6 +983,8 @@ class ReturnsDataService:
         Returns:
             Series of days under water (integer values)
         """
+        import pandas as pd
+
         # Get daily portfolio returns
         returns = cls.get_time_varying_portfolio_returns(
             portfolio_name, start_date, end_date, include_cash, interval="daily"
@@ -988,7 +1023,7 @@ class ReturnsDataService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         interval: str = "daily",
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Get returns for a single ticker.
 
@@ -1001,6 +1036,8 @@ class ReturnsDataService:
         Returns:
             Series of returns (as decimals, e.g., 0.05 = 5%)
         """
+        import pandas as pd
+
         df = fetch_price_history(ticker, period="max", interval="1d")
         if df.empty:
             return pd.Series(dtype=float)
@@ -1027,7 +1064,7 @@ class ReturnsDataService:
         ticker: str,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate annualized volatility series for a single ticker.
 
@@ -1041,6 +1078,9 @@ class ReturnsDataService:
         Returns:
             Series of annualized volatility values (as decimals, e.g., 0.20 = 20%)
         """
+        import numpy as np
+        import pandas as pd
+
         returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
 
         if returns.empty or len(returns) < 21:
@@ -1058,7 +1098,7 @@ class ReturnsDataService:
         window_days: int,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate rolling volatility with specified window for a single ticker.
 
@@ -1071,6 +1111,9 @@ class ReturnsDataService:
         Returns:
             Series of annualized volatility values (as decimals)
         """
+        import numpy as np
+        import pandas as pd
+
         returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
 
         if returns.empty or len(returns) < window_days:
@@ -1087,7 +1130,7 @@ class ReturnsDataService:
         ticker: str,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate drawdown series for a single ticker.
 
@@ -1099,6 +1142,8 @@ class ReturnsDataService:
         Returns:
             Series of drawdown values (as negative decimals, e.g., -0.15 = -15%)
         """
+        import pandas as pd
+
         returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
 
         if returns.empty:
@@ -1122,7 +1167,7 @@ class ReturnsDataService:
         window_days: int,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate rolling returns with specified window for a single ticker.
 
@@ -1135,6 +1180,8 @@ class ReturnsDataService:
         Returns:
             Series of rolling return values (as decimals, e.g., 0.10 = 10%)
         """
+        import pandas as pd
+
         returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
 
         if returns.empty or len(returns) < window_days:
@@ -1156,7 +1203,7 @@ class ReturnsDataService:
         ticker: str,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Calculate time under water for a single ticker.
 
@@ -1168,6 +1215,8 @@ class ReturnsDataService:
         Returns:
             Series of days under water (integer values)
         """
+        import pandas as pd
+
         returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
 
         if returns.empty:
@@ -1199,7 +1248,7 @@ class ReturnsDataService:
     @classmethod
     def get_sharpe_ratio(
         cls,
-        returns: pd.Series,
+        returns: "pd.Series",
         risk_free_rate: float = 0.0,
     ) -> float:
         """
@@ -1215,6 +1264,8 @@ class ReturnsDataService:
         Returns:
             Annualized Sharpe ratio, or NaN if insufficient data
         """
+        import numpy as np
+
         if returns is None or returns.empty:
             return float("nan")
 
@@ -1239,7 +1290,7 @@ class ReturnsDataService:
     @classmethod
     def get_sortino_ratio(
         cls,
-        returns: pd.Series,
+        returns: "pd.Series",
         risk_free_rate: float = 0.0,
         target_return: float = 0.0,
     ) -> float:
@@ -1257,6 +1308,8 @@ class ReturnsDataService:
         Returns:
             Annualized Sortino ratio, or NaN if insufficient data
         """
+        import numpy as np
+
         if returns is None or returns.empty:
             return float("nan")
 
@@ -1291,8 +1344,8 @@ class ReturnsDataService:
     @classmethod
     def get_beta(
         cls,
-        portfolio_returns: pd.Series,
-        benchmark_returns: pd.Series,
+        portfolio_returns: "pd.Series",
+        benchmark_returns: "pd.Series",
     ) -> float:
         """
         Calculate portfolio beta relative to a benchmark.
@@ -1307,6 +1360,9 @@ class ReturnsDataService:
         Returns:
             Beta coefficient, or NaN if insufficient data
         """
+        import numpy as np
+        import pandas as pd
+
         if portfolio_returns is None or benchmark_returns is None:
             return float("nan")
 
@@ -1330,8 +1386,8 @@ class ReturnsDataService:
     @classmethod
     def get_alpha(
         cls,
-        portfolio_returns: pd.Series,
-        benchmark_returns: pd.Series,
+        portfolio_returns: "pd.Series",
+        benchmark_returns: "pd.Series",
         risk_free_rate: float = 0.0,
     ) -> float:
         """
@@ -1348,6 +1404,9 @@ class ReturnsDataService:
         Returns:
             Annualized alpha, or NaN if insufficient data
         """
+        import numpy as np
+        import pandas as pd
+
         beta = cls.get_beta(portfolio_returns, benchmark_returns)
         if np.isnan(beta):
             return float("nan")
@@ -1372,8 +1431,8 @@ class ReturnsDataService:
     @classmethod
     def get_tracking_error(
         cls,
-        portfolio_returns: pd.Series,
-        benchmark_returns: pd.Series,
+        portfolio_returns: "pd.Series",
+        benchmark_returns: "pd.Series",
     ) -> float:
         """
         Calculate annualized tracking error.
@@ -1388,6 +1447,9 @@ class ReturnsDataService:
         Returns:
             Annualized tracking error, or NaN if insufficient data
         """
+        import numpy as np
+        import pandas as pd
+
         if portfolio_returns is None or benchmark_returns is None:
             return float("nan")
 
@@ -1408,8 +1470,8 @@ class ReturnsDataService:
     @classmethod
     def get_information_ratio(
         cls,
-        portfolio_returns: pd.Series,
-        benchmark_returns: pd.Series,
+        portfolio_returns: "pd.Series",
+        benchmark_returns: "pd.Series",
     ) -> float:
         """
         Calculate the information ratio.
@@ -1424,6 +1486,9 @@ class ReturnsDataService:
         Returns:
             Information ratio, or NaN if insufficient data
         """
+        import numpy as np
+        import pandas as pd
+
         tracking_error = cls.get_tracking_error(portfolio_returns, benchmark_returns)
         if np.isnan(tracking_error) or tracking_error == 0:
             return float("nan")
@@ -1446,8 +1511,8 @@ class ReturnsDataService:
     @classmethod
     def get_correlation(
         cls,
-        portfolio_returns: pd.Series,
-        benchmark_returns: pd.Series,
+        portfolio_returns: "pd.Series",
+        benchmark_returns: "pd.Series",
     ) -> float:
         """
         Calculate correlation between portfolio and benchmark returns.
@@ -1459,6 +1524,8 @@ class ReturnsDataService:
         Returns:
             Correlation coefficient (-1 to 1), or NaN if insufficient data
         """
+        import pandas as pd
+
         if portfolio_returns is None or benchmark_returns is None:
             return float("nan")
 
@@ -1475,8 +1542,8 @@ class ReturnsDataService:
     @classmethod
     def get_r_squared(
         cls,
-        portfolio_returns: pd.Series,
-        benchmark_returns: pd.Series,
+        portfolio_returns: "pd.Series",
+        benchmark_returns: "pd.Series",
     ) -> float:
         """
         Calculate R-squared (coefficient of determination).
@@ -1491,6 +1558,8 @@ class ReturnsDataService:
         Returns:
             R-squared (0 to 1), or NaN if insufficient data
         """
+        import numpy as np
+
         correlation = cls.get_correlation(portfolio_returns, benchmark_returns)
         if np.isnan(correlation):
             return float("nan")
@@ -1506,7 +1575,7 @@ class ReturnsDataService:
         end_date: Optional[str] = None,
         include_cash: bool = False,
         interval: str = "daily",
-    ) -> pd.Series:
+    ) -> "pd.Series":
         """
         Get returns for a benchmark (ticker or portfolio).
 
@@ -1572,6 +1641,8 @@ class ReturnsDataService:
             - portfolio_volatility: Annualized portfolio volatility
             - benchmark_volatility: Annualized benchmark volatility
         """
+        import numpy as np
+
         # Get portfolio returns
         portfolio_returns = cls.get_time_varying_portfolio_returns(
             portfolio_name, start_date, end_date, include_cash, interval="daily"

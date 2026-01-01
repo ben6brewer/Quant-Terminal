@@ -5,8 +5,6 @@ from typing import Dict, List, Any, Tuple, Optional
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-import yfinance as yf
-
 from app.services.market_data import fetch_price_history
 from app.services.ticker_name_cache import TickerNameCache
 
@@ -364,6 +362,7 @@ class PortfolioService:
 
         # Fetch missing names in parallel
         def fetch_single_name(ticker: str) -> Tuple[str, Optional[str]]:
+            import yfinance as yf
             try:
                 info = yf.Ticker(ticker).info
                 name = info.get("shortName") or info.get("longName")
