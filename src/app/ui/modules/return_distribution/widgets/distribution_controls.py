@@ -1,0 +1,528 @@
+"""Distribution Controls Widget - Top Control Bar for Return Distribution module."""
+
+from typing import List, Optional, Tuple
+from PySide6.QtWidgets import (
+    QWidget,
+    QHBoxLayout,
+    QLabel,
+    QComboBox,
+    QPushButton,
+    QAbstractItemView,
+    QListView,
+)
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QWheelEvent
+
+from app.core.theme_manager import ThemeManager
+from app.core.config import CHART_INTERVALS
+
+
+class SmoothScrollListView(QListView):
+    """QListView with smoother, slower scrolling for combo box dropdowns."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
+
+    def wheelEvent(self, event: QWheelEvent):
+        """Override wheel event to reduce scroll speed."""
+        delta = event.angleDelta().y()
+        pixels_to_scroll = int(delta / 4)
+        scrollbar = self.verticalScrollBar()
+        scrollbar.setValue(scrollbar.value() - pixels_to_scroll)
+        event.accept()
+
+
+class DistributionControls(QWidget):
+    """
+    Control bar at top of return distribution module.
+    Contains: Home button, Portfolio selector, Interval selector, Date Range selector, Settings button.
+    """
+
+    # Signals
+    home_clicked = Signal()
+    portfolio_changed = Signal(str)
+    interval_changed = Signal(str)
+    date_range_changed = Signal(str, str)  # start_date, end_date (empty for "All")
+    custom_date_range_requested = Signal()  # Open date range dialog
+    settings_clicked = Signal()
+
+    # Date range presets
+    DATE_RANGE_OPTIONS = ["All", "1Y", "3Y", "5Y", "Custom Date Range..."]
+
+    def __init__(self, theme_manager: ThemeManager, parent=None):
+        super().__init__(parent)
+        self.theme_manager = theme_manager
+        self._custom_start_date: Optional[str] = None
+        self._custom_end_date: Optional[str] = None
+
+        self._setup_ui()
+        self._apply_theme()
+
+        self.theme_manager.theme_changed.connect(self._apply_theme)
+
+    def _setup_ui(self):
+        """Setup control bar UI."""
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+
+        # Home button (leftmost)
+        self.home_btn = QPushButton("Home")
+        self.home_btn.setFixedSize(100, 40)
+        self.home_btn.setObjectName("home_btn")
+        self.home_btn.clicked.connect(self.home_clicked.emit)
+        layout.addWidget(self.home_btn)
+
+        # Add stretch to push controls toward center
+        layout.addStretch(1)
+
+        # Portfolio selector
+        self.portfolio_label = QLabel("Portfolio:")
+        self.portfolio_label.setObjectName("control_label")
+        layout.addWidget(self.portfolio_label)
+        self.portfolio_combo = QComboBox()
+        self.portfolio_combo.setFixedWidth(250)
+        self.portfolio_combo.setFixedHeight(40)
+        self.portfolio_combo.setPlaceholderText("Select Portfolio...")
+        smooth_view = SmoothScrollListView(self.portfolio_combo)
+        smooth_view.setAlternatingRowColors(True)
+        self.portfolio_combo.setView(smooth_view)
+        self.portfolio_combo.currentTextChanged.connect(self._on_portfolio_changed)
+        layout.addWidget(self.portfolio_combo)
+
+        layout.addSpacing(20)
+
+        # Interval selector
+        self.interval_label = QLabel("Interval:")
+        self.interval_label.setObjectName("control_label")
+        layout.addWidget(self.interval_label)
+        self.interval_combo = QComboBox()
+        self.interval_combo.setFixedWidth(120)
+        self.interval_combo.setFixedHeight(40)
+        self.interval_combo.addItems(CHART_INTERVALS)
+        self.interval_combo.setCurrentText("daily")
+        self.interval_combo.currentTextChanged.connect(self.interval_changed.emit)
+        layout.addWidget(self.interval_combo)
+
+        layout.addSpacing(20)
+
+        # Date range selector
+        self.date_range_label = QLabel("Date Range:")
+        self.date_range_label.setObjectName("control_label")
+        layout.addWidget(self.date_range_label)
+        self.date_range_combo = QComboBox()
+        self.date_range_combo.setFixedWidth(180)
+        self.date_range_combo.setFixedHeight(40)
+        self.date_range_combo.addItems(self.DATE_RANGE_OPTIONS)
+        self.date_range_combo.setCurrentText("All")
+        self.date_range_combo.currentTextChanged.connect(self._on_date_range_changed)
+        layout.addWidget(self.date_range_combo)
+
+        # Add stretch to push settings button to the right
+        layout.addStretch(1)
+
+        # Settings button (right-aligned)
+        self.settings_btn = QPushButton("Settings")
+        self.settings_btn.setFixedSize(100, 40)
+        self.settings_btn.clicked.connect(self.settings_clicked.emit)
+        layout.addWidget(self.settings_btn)
+
+    def _on_portfolio_changed(self, name: str):
+        """Handle portfolio dropdown selection."""
+        if name:
+            self.portfolio_changed.emit(name)
+
+    def _on_date_range_changed(self, option: str):
+        """Handle date range dropdown selection."""
+        from datetime import datetime, timedelta
+
+        if option == "Custom Date Range...":
+            # Request custom date range dialog
+            self.custom_date_range_requested.emit()
+            return
+
+        # Calculate date range based on preset
+        end_date = datetime.now().strftime("%Y-%m-%d")
+
+        if option == "All":
+            # Empty dates mean "all available data"
+            self.date_range_changed.emit("", "")
+        elif option == "1Y":
+            start_date = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+            self.date_range_changed.emit(start_date, end_date)
+        elif option == "3Y":
+            start_date = (datetime.now() - timedelta(days=365 * 3)).strftime("%Y-%m-%d")
+            self.date_range_changed.emit(start_date, end_date)
+        elif option == "5Y":
+            start_date = (datetime.now() - timedelta(days=365 * 5)).strftime("%Y-%m-%d")
+            self.date_range_changed.emit(start_date, end_date)
+
+    def set_custom_date_range(self, start_date: str, end_date: str):
+        """
+        Set a custom date range (called after user confirms dialog).
+
+        Args:
+            start_date: Start date in YYYY-MM-DD format
+            end_date: End date in YYYY-MM-DD format
+        """
+        self._custom_start_date = start_date
+        self._custom_end_date = end_date
+
+        # Update dropdown text to show custom range
+        self.date_range_combo.blockSignals(True)
+        # Add or update custom item
+        custom_text = f"{start_date} to {end_date}"
+        custom_index = self.date_range_combo.findText(custom_text)
+        if custom_index == -1:
+            # Remove any previous custom range
+            for i in range(self.date_range_combo.count()):
+                item_text = self.date_range_combo.itemText(i)
+                if " to " in item_text and item_text != "Custom Date Range...":
+                    self.date_range_combo.removeItem(i)
+                    break
+            # Insert before "Custom Date Range..."
+            insert_index = self.date_range_combo.count() - 1
+            self.date_range_combo.insertItem(insert_index, custom_text)
+            custom_index = insert_index
+
+        self.date_range_combo.setCurrentIndex(custom_index)
+        self.date_range_combo.blockSignals(False)
+
+        # Emit the date range
+        self.date_range_changed.emit(start_date, end_date)
+
+    def update_portfolio_list(self, portfolios: List[str], current: str = None):
+        """
+        Update portfolio dropdown.
+
+        Args:
+            portfolios: List of portfolio names
+            current: Currently selected portfolio name (None to show placeholder)
+        """
+        self.portfolio_combo.blockSignals(True)
+        self.portfolio_combo.clear()
+        self.portfolio_combo.addItems(portfolios)
+        if current and current in portfolios:
+            self.portfolio_combo.setCurrentText(current)
+        else:
+            self.portfolio_combo.setCurrentIndex(-1)
+        self.portfolio_combo.blockSignals(False)
+
+    def get_current_portfolio(self) -> str:
+        """Get currently selected portfolio name."""
+        return self.portfolio_combo.currentText() or ""
+
+    def get_current_interval(self) -> str:
+        """Get currently selected interval."""
+        return self.interval_combo.currentText() or "daily"
+
+    def get_current_date_range(self) -> Tuple[str, str]:
+        """
+        Get currently selected date range.
+
+        Returns:
+            Tuple of (start_date, end_date) in YYYY-MM-DD format.
+            Empty strings mean "all available data".
+        """
+        option = self.date_range_combo.currentText()
+
+        if option == "All":
+            return ("", "")
+        elif " to " in option:
+            # Custom range displayed
+            parts = option.split(" to ")
+            return (parts[0], parts[1])
+        else:
+            # Calculate from preset
+            from datetime import datetime, timedelta
+
+            end_date = datetime.now().strftime("%Y-%m-%d")
+
+            if option == "1Y":
+                start_date = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+            elif option == "3Y":
+                start_date = (datetime.now() - timedelta(days=365 * 3)).strftime("%Y-%m-%d")
+            elif option == "5Y":
+                start_date = (datetime.now() - timedelta(days=365 * 5)).strftime("%Y-%m-%d")
+            else:
+                return ("", "")
+
+            return (start_date, end_date)
+
+    def _apply_theme(self):
+        """Apply theme-specific styling."""
+        theme = self.theme_manager.current_theme
+
+        if theme == "light":
+            stylesheet = self._get_light_stylesheet()
+        elif theme == "bloomberg":
+            stylesheet = self._get_bloomberg_stylesheet()
+        else:
+            stylesheet = self._get_dark_stylesheet()
+
+        self.setStyleSheet(stylesheet)
+
+    def _get_dark_stylesheet(self) -> str:
+        """Dark theme stylesheet."""
+        return """
+            QWidget {
+                background-color: #1e1e1e;
+                color: #ffffff;
+            }
+            QLabel {
+                color: #cccccc;
+                font-size: 13px;
+            }
+            QLabel#control_label {
+                color: #ffffff;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            QComboBox {
+                background-color: #2d2d2d;
+                color: #ffffff;
+                border: 1px solid #3d3d3d;
+                border-radius: 3px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            QComboBox:hover {
+                border-color: #00d4ff;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 24px;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-top: 7px solid #ffffff;
+                margin-right: 10px;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #2d2d2d;
+                color: #ffffff;
+                selection-background-color: #00d4ff;
+                selection-color: #000000;
+                font-size: 14px;
+                padding: 4px;
+                outline: none;
+            }
+            QComboBox QAbstractItemView::item {
+                padding: 8px 12px;
+                min-height: 24px;
+            }
+            QComboBox QAbstractItemView::item:alternate {
+                background-color: #252525;
+            }
+            QComboBox QAbstractItemView::item:selected {
+                background-color: #00d4ff;
+                color: #000000;
+            }
+            QPushButton {
+                background-color: #2d2d2d;
+                color: #ffffff;
+                border: 1px solid #3d3d3d;
+                border-radius: 3px;
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                background-color: #3d3d3d;
+                border-color: #00d4ff;
+            }
+            QPushButton:pressed {
+                background-color: #1a1a1a;
+            }
+            QPushButton#home_btn {
+                background-color: transparent;
+                border: 1px solid transparent;
+                font-weight: bold;
+            }
+            QPushButton#home_btn:hover {
+                background-color: rgba(0, 212, 255, 0.15);
+                border: 1px solid #00d4ff;
+            }
+            QPushButton#home_btn:pressed {
+                background-color: #00d4ff;
+                color: #000000;
+            }
+        """
+
+    def _get_light_stylesheet(self) -> str:
+        """Light theme stylesheet."""
+        return """
+            QWidget {
+                background-color: #ffffff;
+                color: #000000;
+            }
+            QLabel {
+                color: #333333;
+                font-size: 13px;
+            }
+            QLabel#control_label {
+                color: #000000;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            QComboBox {
+                background-color: #f5f5f5;
+                color: #000000;
+                border: 1px solid #cccccc;
+                border-radius: 3px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            QComboBox:hover {
+                border-color: #0066cc;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 24px;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-top: 7px solid #000000;
+                margin-right: 10px;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #f5f5f5;
+                color: #000000;
+                selection-background-color: #0066cc;
+                selection-color: #ffffff;
+                font-size: 14px;
+                padding: 4px;
+                outline: none;
+            }
+            QComboBox QAbstractItemView::item {
+                padding: 8px 12px;
+                min-height: 24px;
+            }
+            QComboBox QAbstractItemView::item:alternate {
+                background-color: #e8e8e8;
+            }
+            QComboBox QAbstractItemView::item:selected {
+                background-color: #0066cc;
+                color: #ffffff;
+            }
+            QPushButton {
+                background-color: #f5f5f5;
+                color: #000000;
+                border: 1px solid #cccccc;
+                border-radius: 3px;
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                background-color: #e8e8e8;
+                border-color: #0066cc;
+            }
+            QPushButton:pressed {
+                background-color: #d0d0d0;
+            }
+            QPushButton#home_btn {
+                background-color: transparent;
+                border: 1px solid transparent;
+                font-weight: bold;
+            }
+            QPushButton#home_btn:hover {
+                background-color: rgba(0, 102, 204, 0.15);
+                border: 1px solid #0066cc;
+            }
+            QPushButton#home_btn:pressed {
+                background-color: #0066cc;
+                color: #ffffff;
+            }
+        """
+
+    def _get_bloomberg_stylesheet(self) -> str:
+        """Bloomberg theme stylesheet."""
+        return """
+            QWidget {
+                background-color: #000814;
+                color: #e8e8e8;
+            }
+            QLabel {
+                color: #a8a8a8;
+                font-size: 13px;
+            }
+            QLabel#control_label {
+                color: #e8e8e8;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            QComboBox {
+                background-color: #0d1420;
+                color: #e8e8e8;
+                border: 1px solid #1a2838;
+                border-radius: 3px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            QComboBox:hover {
+                border-color: #FF8000;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 24px;
+            }
+            QComboBox::down-arrow {
+                image: none;
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-top: 7px solid #e8e8e8;
+                margin-right: 10px;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #0d1420;
+                color: #e8e8e8;
+                selection-background-color: #FF8000;
+                selection-color: #000000;
+                font-size: 14px;
+                padding: 4px;
+                outline: none;
+            }
+            QComboBox QAbstractItemView::item {
+                padding: 8px 12px;
+                min-height: 24px;
+            }
+            QComboBox QAbstractItemView::item:alternate {
+                background-color: #0a1018;
+            }
+            QComboBox QAbstractItemView::item:selected {
+                background-color: #FF8000;
+                color: #000000;
+            }
+            QPushButton {
+                background-color: #0d1420;
+                color: #e8e8e8;
+                border: 1px solid #1a2838;
+                border-radius: 3px;
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            QPushButton:hover {
+                background-color: #1a2838;
+                border-color: #FF8000;
+            }
+            QPushButton:pressed {
+                background-color: #060a10;
+            }
+            QPushButton#home_btn {
+                background-color: transparent;
+                border: 1px solid transparent;
+                font-weight: bold;
+            }
+            QPushButton#home_btn:hover {
+                background-color: rgba(255, 128, 0, 0.15);
+                border: 1px solid #FF8000;
+            }
+            QPushButton#home_btn:pressed {
+                background-color: #FF8000;
+                color: #000000;
+            }
+        """

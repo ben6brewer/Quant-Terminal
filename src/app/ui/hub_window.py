@@ -314,6 +314,10 @@ class HubWindow(QMainWindow):
         # Create container with home button overlay
         container = self._create_module_container(widget, has_own_home_button)
 
+        # If module has its own home button, connect its signal to show home screen
+        if has_own_home_button and hasattr(widget, "home_clicked"):
+            widget.home_clicked.connect(self.show_home)
+
         # Store references
         self.modules[module_id] = widget
         self.module_containers[module_id] = container

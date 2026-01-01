@@ -87,6 +87,7 @@ MODULE_SECTIONS = {
     "Portfolio": [
         {"id": "portfolio", "label": "Portfolio"},
         {"id": "portfolio_construction", "label": "Portfolio Construction"},
+        {"id": "return_distribution", "label": "Return Distribution"},
         {"id": "watchlist", "label": "Watchlist"}
     ],
     "Market Data": [

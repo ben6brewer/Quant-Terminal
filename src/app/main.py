@@ -7,6 +7,7 @@ from app.ui.hub_window import HubWindow
 from app.ui.modules.chart.chart_module import ChartModule
 from app.ui.modules.settings_module import SettingsModule
 from app.ui.modules.portfolio_construction.portfolio_construction_module import PortfolioConstructionModule
+from app.ui.modules.return_distribution import ReturnDistributionModule
 from app.ui.modules.placeholder_modules import (
     AnalysisModule,
     CryptoDashboardModule,
@@ -48,6 +49,11 @@ def main() -> int:
     hub.add_module(
         "portfolio_construction",
         lambda: PortfolioConstructionModule(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "return_distribution",
+        lambda: ReturnDistributionModule(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module("watchlist", WatchlistModule())
