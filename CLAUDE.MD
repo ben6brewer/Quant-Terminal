@@ -227,7 +227,8 @@ MODULE_SECTIONS = {
 ```python
 from app.ui.modules.portfolio.portfolio_module import PortfolioModule
 
-hub.add_module("portfolio", PortfolioModule(theme_manager))
+# Use factory function (lambda) - modules are destroyed on navigate and recreated on open
+hub.add_module("portfolio", lambda: PortfolioModule(theme_manager))
 ```
 
 ### Development Checklist
@@ -646,11 +647,14 @@ def main():
     theme_manager = ThemeManager()
     theme_manager.set_theme("bloomberg")
 
-    hub = HubWindow(theme_manager, FavoritesService)
-    hub.add_module("charts", ChartModule(theme_manager))
+    hub = HubWindow(theme_manager)
+    # All modules use factory functions for lazy loading and memory efficiency
+    hub.add_module("charts", lambda: ChartModule(theme_manager))
+    hub.add_module("settings", lambda: SettingsModule(theme_manager))
     # Add other modules...
 
-    hub.showMaximized()
+    hub.show()
+    hub.maximize_on_startup()
     sys.exit(app.exec())
 ```
 
@@ -675,11 +679,29 @@ def main():
 ### Adding to Navigation
 
 1. Add to `MODULE_SECTIONS` in `config.py`
-2. Call `hub.add_module(id, widget)` in `main.py`
+2. Call `hub.add_module(id, lambda: YourModule(theme_manager))` in `main.py`
 3. Screenshot auto-generated on first load
+
+### Module Lifecycle
+
+**Important**: Modules are destroyed when navigating away and recreated when opened again.
+
+- **Factory functions required**: Always use `lambda: Module()` not `Module()` when registering
+- **No persistent state**: Module instance state is lost on navigate (use services for persistence)
+- **Memory efficient**: Only one module in memory at a time (plus home screen)
+- **Theme handling**: Modules apply current theme on creation, no hidden widget updates needed
+
+```python
+# Correct - factory function allows recreation
+hub.add_module("charts", lambda: ChartModule(theme_manager))
+
+# Wrong - direct instance can't be recreated after destruction
+hub.add_module("charts", ChartModule(theme_manager))  # DON'T DO THIS
+```
 
 ### Common Gotchas
 
+- **Use factory functions** for `add_module()` (lambda required for module recreation)
 - Title bar labels need `background: transparent`
 - QWheelEvent uses `.position().toPoint()` not `.pos()`
 - Widget masking > event forwarding for `:hover`
