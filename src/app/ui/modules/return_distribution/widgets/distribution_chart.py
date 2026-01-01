@@ -6,7 +6,6 @@ import pyqtgraph as pg
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
-    QHBoxLayout,
     QLabel,
     QFrame,
     QGridLayout,
@@ -32,7 +31,7 @@ LINE_STYLES = {
 }
 
 
-class StatisticsPanel(LazyThemeMixin, QWidget):
+class StatisticsPanel(LazyThemeMixin, QFrame):
     """Panel displaying return distribution statistics in horizontal layout."""
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
@@ -52,29 +51,18 @@ class StatisticsPanel(LazyThemeMixin, QWidget):
 
     def _setup_ui(self):
         """Setup the statistics panel UI with horizontal layout (metrics as columns)."""
-        # Use HBoxLayout to center the grid
-        outer_layout = QHBoxLayout(self)
-        outer_layout.setContentsMargins(0, 0, 0, 0)
+        self.setFrameStyle(QFrame.StyledPanel | QFrame.Raised)
+        self.setMaximumHeight(100)
 
-        # Add stretch to center the content
-        outer_layout.addStretch(1)
-
-        # Container widget for the grid
-        container = QWidget()
-        layout = QGridLayout(container)
+        layout = QGridLayout(self)
         layout.setContentsMargins(15, 8, 15, 8)
-        layout.setHorizontalSpacing(25)
-        layout.setVerticalSpacing(6)
+        layout.setSpacing(15)
 
         # Column headers (row 0): Name, Mean, Std Dev, Skew, Kurtosis, Min, Max, Count, Cash Drag
         headers = ["", "Mean", "Std Dev", "Skew", "Kurtosis", "Min", "Max", "Count", "Cash Drag"]
         for col, header in enumerate(headers):
             label = self._create_header_label(header)
             layout.addWidget(label, 0, col)
-            if col == 0:
-                layout.setColumnMinimumWidth(col, 140)  # Name column wider
-            else:
-                layout.setColumnMinimumWidth(col, 85)
 
         # Row 1: Portfolio row
         self.portfolio_name_label = self._create_row_label("Portfolio")
@@ -134,29 +122,25 @@ class StatisticsPanel(LazyThemeMixin, QWidget):
         # Hide benchmark row by default
         self.set_benchmark_visible(False)
 
-        # Add container to outer layout with stretch on both sides to center
-        outer_layout.addWidget(container)
-        outer_layout.addStretch(1)
-
     def _create_header_label(self, text: str) -> QLabel:
         """Create a column header label."""
         label = QLabel(text)
-        label.setObjectName("headerLabel")
-        label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        label.setObjectName("stat_header")
+        label.setAlignment(Qt.AlignCenter)
         return label
 
     def _create_row_label(self, text: str) -> QLabel:
         """Create a row name label (portfolio/benchmark name)."""
         label = QLabel(text)
-        label.setObjectName("rowLabel")
+        label.setObjectName("stat_value")
         label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         return label
 
     def _create_value_label(self, text: str) -> QLabel:
         """Create a statistic value label."""
         label = QLabel(text)
-        label.setObjectName("statValue")
-        label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        label.setObjectName("stat_value")
+        label.setAlignment(Qt.AlignCenter)
         return label
 
     def set_portfolio_name(self, name: str):
@@ -286,42 +270,38 @@ class StatisticsPanel(LazyThemeMixin, QWidget):
         """Apply theme-specific styling."""
         theme = self.theme_manager.current_theme
 
-        if theme == "light":
-            bg_color = "#f5f5f5"
-            text_color = "#000000"
-            label_color = "#555555"
-            border_color = "#cccccc"
-        elif theme == "bloomberg":
-            bg_color = "#0d1420"
-            text_color = "#e8e8e8"
-            label_color = "#888888"
-            border_color = "#1a2332"
-        else:  # dark
-            bg_color = "#2d2d2d"
-            text_color = "#ffffff"
-            label_color = "#888888"
-            border_color = "#3d3d3d"
+        if theme == "dark":
+            bg = "#252525"
+            text = "#ffffff"
+            header = "#888888"
+            border = "#444444"
+        elif theme == "light":
+            bg = "#f8f8f8"
+            text = "#000000"
+            header = "#666666"
+            border = "#cccccc"
+        else:  # bloomberg
+            bg = "#0a1018"
+            text = "#e8e8e8"
+            header = "#888888"
+            border = "#3a4654"
 
         self.setStyleSheet(f"""
             StatisticsPanel {{
-                background-color: {bg_color};
-                border: 1px solid {border_color};
+                background-color: {bg};
+                border: 1px solid {border};
                 border-radius: 4px;
             }}
-            QLabel#headerLabel {{
-                color: {label_color};
-                font-size: 16px;
-                background-color: transparent;
+            QLabel#stat_header {{
+                color: {header};
+                font-size: 11px;
+                background: transparent;
             }}
-            QLabel#rowLabel {{
-                color: {text_color};
-                font-size: 18px;
-                background-color: transparent;
-            }}
-            QLabel#statValue {{
-                color: {text_color};
-                font-size: 18px;
-                background-color: transparent;
+            QLabel#stat_value {{
+                color: {text};
+                font-size: 14px;
+                font-weight: bold;
+                background: transparent;
             }}
         """)
 
@@ -386,8 +366,12 @@ class DistributionChart(LazyThemeMixin, QWidget):
     def _setup_ui(self):
         """Setup the chart UI."""
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(10)
+        layout.setContentsMargins(5, 5, 5, 5)
+        layout.setSpacing(5)
+
+        # Statistics panel at top (like Monte Carlo)
+        self.stats_panel = StatisticsPanel(self.theme_manager)
+        layout.addWidget(self.stats_panel)
 
         # Histogram using PyQtGraph
         self.plot_widget = pg.PlotWidget()
@@ -401,13 +385,11 @@ class DistributionChart(LazyThemeMixin, QWidget):
         self.placeholder = QLabel("Select a portfolio to view return distribution")
         self.placeholder.setAlignment(Qt.AlignCenter)
         self.placeholder.setObjectName("placeholder")
-        self.placeholder.setVisible(False)
         layout.addWidget(self.placeholder)
 
-        # Statistics panel at bottom
-        self.stats_panel = StatisticsPanel(self.theme_manager)
-        self.stats_panel.setFixedHeight(95)  # Compact horizontal layout with larger text
-        layout.addWidget(self.stats_panel)
+        # Initially show placeholder, hide chart
+        self.placeholder.setVisible(True)
+        self.plot_widget.setVisible(False)
 
     def set_metric(self, metric: str):
         """
@@ -940,6 +922,7 @@ class DistributionChart(LazyThemeMixin, QWidget):
         self._clear_overlays()
         self.placeholder.setText(message)
         self.placeholder.setVisible(True)
+        self.plot_widget.setVisible(False)
 
     def apply_general_settings(self, settings: Dict[str, Any]):
         """
