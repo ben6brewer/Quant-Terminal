@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QAbstractButton, QWidget, QHBoxLayout, QApplication, QLineEdit, QComboBox
 )
 from PySide6.QtCore import Qt, Signal, QDate, QTimer, QEvent
+from PySide6.QtGui import QBrush, QColor
 
 from app.core.theme_manager import ThemeManager
 from app.services.theme_stylesheet_service import ThemeStylesheetService
@@ -165,13 +166,13 @@ class TransactionLogTable(QTableWidget):
         """Reset column widths to fixed values. Called after table content changes."""
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.Interactive)  # Date
-        self.setColumnWidth(0, 200)
+        self.setColumnWidth(0, 150)
         header.setSectionResizeMode(1, QHeaderView.Interactive)  # Ticker
-        self.setColumnWidth(1, 120)
+        self.setColumnWidth(1, 150)
         header.setSectionResizeMode(2, QHeaderView.Interactive)  # Name
-        self.setColumnWidth(2, 200)
+        self.setColumnWidth(2, 300)
         header.setSectionResizeMode(3, QHeaderView.Interactive)  # Quantity
-        self.setColumnWidth(3, 100)
+        self.setColumnWidth(3, 150)
         header.setSectionResizeMode(4, QHeaderView.Interactive)  # Execution Price
         self.setColumnWidth(4, 150)
         header.setSectionResizeMode(5, QHeaderView.Interactive)  # Fees
@@ -299,15 +300,14 @@ class TransactionLogTable(QTableWidget):
         combo_style = self._get_combo_stylesheet()
 
         # Create widgets for blank row
-        # Date cell
+        # Date cell - column 0
         date_edit = DateInputWidget()
         date_edit.validation_error.connect(self._on_date_validation_error)
         date_edit.setDate(QDate.fromString(blank_transaction["date"], "yyyy-MM-dd"))
         date_edit.setStyleSheet(widget_style)
         date_edit.date_changed.connect(self._on_widget_changed)
         self._set_widget_position(date_edit, 0, 0)
-        date_container = self._wrap_widget_in_cell(date_edit)
-        self.setCellWidget(0, 0, date_container)
+        self._set_editable_cell_widget(0, 0, date_edit)
 
         # Ticker cell - column 1
         ticker_edit = AutoSelectLineEdit(blank_transaction["ticker"])
@@ -315,16 +315,14 @@ class TransactionLogTable(QTableWidget):
         ticker_edit.setStyleSheet(widget_style)
         ticker_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(ticker_edit, 0, 1)
-        ticker_container = self._wrap_widget_in_cell(ticker_edit)
-        self.setCellWidget(0, 1, ticker_container)
+        self._set_editable_cell_widget(0, 1, ticker_edit)
 
         # Name cell (read-only, styled like editable) - column 2
         name_edit = AutoSelectLineEdit("")
         name_edit.setReadOnly(True)
         name_edit.setStyleSheet(widget_style)
         self._set_widget_position(name_edit, 0, 2)
-        name_container = self._wrap_widget_in_cell(name_edit)
-        self.setCellWidget(0, 2, name_container)
+        self._set_editable_cell_widget(0, 2, name_edit)
 
         # Quantity cell - column 3
         qty_edit = ValidatedNumericLineEdit(min_value=0.0001, max_value=1000000, decimals=4, prefix="", show_dash_for_zero=True)
@@ -332,8 +330,7 @@ class TransactionLogTable(QTableWidget):
         qty_edit.setStyleSheet(widget_style)
         qty_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(qty_edit, 0, 3)
-        qty_container = self._wrap_widget_in_cell(qty_edit)
-        self.setCellWidget(0, 3, qty_container)
+        self._set_editable_cell_widget(0, 3, qty_edit)
 
         # Execution Price cell - column 4
         price_edit = ValidatedNumericLineEdit(min_value=0, max_value=1000000, decimals=2, prefix="", show_dash_for_zero=True)
@@ -341,8 +338,7 @@ class TransactionLogTable(QTableWidget):
         price_edit.setStyleSheet(widget_style)
         price_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(price_edit, 0, 4)
-        price_container = self._wrap_widget_in_cell(price_edit)
-        self.setCellWidget(0, 4, price_container)
+        self._set_editable_cell_widget(0, 4, price_edit)
 
         # Fees cell - column 5
         fees_edit = ValidatedNumericLineEdit(min_value=0, max_value=10000, decimals=2, prefix="", show_dash_for_zero=True)
@@ -350,8 +346,7 @@ class TransactionLogTable(QTableWidget):
         fees_edit.setStyleSheet(widget_style)
         fees_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(fees_edit, 0, 5)
-        fees_container = self._wrap_widget_in_cell(fees_edit)
-        self.setCellWidget(0, 5, fees_container)
+        self._set_editable_cell_widget(0, 5, fees_edit)
 
         # Type cell - column 6
         type_combo = NoScrollComboBox()
@@ -361,8 +356,7 @@ class TransactionLogTable(QTableWidget):
         type_combo.currentTextChanged.connect(self._on_widget_changed)
         type_combo.setStyleSheet(combo_style)
         self._set_widget_position(type_combo, 0, 6)
-        type_container = self._wrap_widget_in_cell(type_combo)
-        self.setCellWidget(0, 6, type_container)
+        self._set_editable_cell_widget(0, 6, type_combo)
 
         # Daily Closing Price cell (read-only) - column 7
         daily_close_item = QTableWidgetItem("--")
@@ -824,16 +818,14 @@ class TransactionLogTable(QTableWidget):
         date_edit.setStyleSheet(widget_style)
         date_edit.date_changed.connect(self._on_widget_changed)
         self._set_widget_position(date_edit, row, 0)
-        date_container = self._wrap_widget_in_cell(date_edit)
-        self.setCellWidget(row, 0, date_container)
+        self._set_editable_cell_widget(row, 0, date_edit)
 
         # Ticker cell - column 1
         ticker_edit = AutoSelectLineEdit(transaction["ticker"])
         ticker_edit.setStyleSheet(widget_style)
         ticker_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(ticker_edit, row, 1)
-        ticker_container = self._wrap_widget_in_cell(ticker_edit)
-        self.setCellWidget(row, 1, ticker_container)
+        self._set_editable_cell_widget(row, 1, ticker_edit)
 
         # Name cell (read-only, styled like editable) - column 2
         ticker = transaction["ticker"]
@@ -845,8 +837,7 @@ class TransactionLogTable(QTableWidget):
         name_edit.setReadOnly(True)
         name_edit.setStyleSheet(widget_style)
         self._set_widget_position(name_edit, row, 2)
-        name_container = self._wrap_widget_in_cell(name_edit)
-        self.setCellWidget(row, 2, name_container)
+        self._set_editable_cell_widget(row, 2, name_edit)
 
         # Quantity cell - column 3
         qty_edit = ValidatedNumericLineEdit(min_value=0.0001, max_value=1000000, decimals=4, prefix="", show_dash_for_zero=True)
@@ -854,8 +845,7 @@ class TransactionLogTable(QTableWidget):
         qty_edit.setStyleSheet(widget_style)
         qty_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(qty_edit, row, 3)
-        qty_container = self._wrap_widget_in_cell(qty_edit)
-        self.setCellWidget(row, 3, qty_container)
+        self._set_editable_cell_widget(row, 3, qty_edit)
 
         # Execution Price cell - column 4
         price_edit = ValidatedNumericLineEdit(min_value=0, max_value=1000000, decimals=2, prefix="", show_dash_for_zero=True)
@@ -863,8 +853,7 @@ class TransactionLogTable(QTableWidget):
         price_edit.setStyleSheet(widget_style)
         price_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(price_edit, row, 4)
-        price_container = self._wrap_widget_in_cell(price_edit)
-        self.setCellWidget(row, 4, price_container)
+        self._set_editable_cell_widget(row, 4, price_edit)
 
         # Fees cell - column 5
         fees_edit = ValidatedNumericLineEdit(min_value=0, max_value=10000, decimals=2, prefix="", show_dash_for_zero=True)
@@ -872,8 +861,7 @@ class TransactionLogTable(QTableWidget):
         fees_edit.setStyleSheet(widget_style)
         fees_edit.textChanged.connect(self._on_widget_changed)
         self._set_widget_position(fees_edit, row, 5)
-        fees_container = self._wrap_widget_in_cell(fees_edit)
-        self.setCellWidget(row, 5, fees_container)
+        self._set_editable_cell_widget(row, 5, fees_edit)
 
         # Type cell - column 6
         type_combo = NoScrollComboBox()
@@ -882,8 +870,7 @@ class TransactionLogTable(QTableWidget):
         type_combo.currentTextChanged.connect(self._on_widget_changed)
         type_combo.setStyleSheet(combo_style)
         self._set_widget_position(type_combo, row, 6)
-        type_container = self._wrap_widget_in_cell(type_combo)
-        self.setCellWidget(row, 6, type_container)
+        self._set_editable_cell_widget(row, 6, type_combo)
 
         # Daily Closing Price cell (read-only) - column 7
         daily_close_item = QTableWidgetItem("--")
@@ -2702,7 +2689,15 @@ class TransactionLogTable(QTableWidget):
                 container = self.cellWidget(row, col)
                 if container:
                     # Update container background
-                    container.setStyleSheet(f"background-color: {bg_color};")
+                    container.setStyleSheet(f"QWidget {{ background-color: {bg_color}; }}")
+
+                    # Update cell item background
+                    item = self.item(row, col)
+                    if item:
+                        if self._highlight_editable and bg_color != "transparent":
+                            item.setBackground(QBrush(QColor(bg_color)))
+                        else:
+                            item.setBackground(QBrush())  # Reset to default
 
                     # Update inner widget style
                     inner = container.property("_inner_widget")
@@ -2744,7 +2739,8 @@ class TransactionLogTable(QTableWidget):
         bg_color = self._get_cell_background_color()
 
         container = QWidget()
-        container.setStyleSheet(f"background-color: {bg_color};")
+        container.setAutoFillBackground(True)
+        container.setStyleSheet(f"QWidget {{ background-color: {bg_color}; }}")
 
         layout = QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -2755,6 +2751,25 @@ class TransactionLogTable(QTableWidget):
         container.setProperty("_inner_widget", widget)
 
         return container
+
+    def _set_editable_cell_widget(self, row: int, col: int, widget: QWidget):
+        """
+        Set a widget in a cell with proper background coloring.
+
+        This sets both a QTableWidgetItem with the background color AND the cell widget,
+        ensuring the entire cell is colored (not just the widget area).
+        """
+        bg_color = self._get_cell_background_color()
+
+        # Create and set a table item with the background color
+        item = QTableWidgetItem()
+        if self._highlight_editable and bg_color != "transparent":
+            item.setBackground(QBrush(QColor(bg_color)))
+        self.setItem(row, col, item)
+
+        # Wrap and set the widget
+        container = self._wrap_widget_in_cell(widget)
+        self.setCellWidget(row, col, container)
 
     def _get_inner_widget(self, row: int, col: int) -> Optional[QWidget]:
         """Get the inner widget from a cell (unwraps container if needed)."""

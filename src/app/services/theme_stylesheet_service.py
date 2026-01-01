@@ -118,15 +118,15 @@ class ThemeStylesheetService:
 
         return f"""
             QLineEdit {{
-                background-color: {c['accent']};
+                background-color: transparent;
                 color: {c['text_on_accent']};
                 border: none;
                 margin: 0px;
-                padding: 0px 8px;
+                padding: 0px 4px;
                 font-size: 14px;
             }}
             QLineEdit:focus {{
-                background-color: {c['accent_hover']};
+                background-color: transparent;
             }}
         """
 
@@ -159,14 +159,14 @@ class ThemeStylesheetService:
 
         return f"""
             QComboBox {{
-                background-color: {c['accent']};
+                background-color: transparent;
                 color: {c['text_on_accent']};
                 border: none;
-                padding: 4px 8px;
+                padding: 4px 4px;
                 font-size: 14px;
             }}
             QComboBox::drop-down {{ border: none; width: 0px; }}
-            QComboBox:focus {{ background-color: {c['accent_hover']}; }}
+            QComboBox:focus {{ background-color: transparent; }}
             QComboBox QAbstractItemView {{
                 background-color: {c['accent']};
                 color: {c['text_on_accent']};
