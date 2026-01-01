@@ -8,6 +8,7 @@ from app.ui.modules.chart.chart_module import ChartModule
 from app.ui.modules.settings_module import SettingsModule
 from app.ui.modules.portfolio_construction.portfolio_construction_module import PortfolioConstructionModule
 from app.ui.modules.return_distribution import ReturnDistributionModule
+from app.ui.modules.monte_carlo import MonteCarloModule
 from app.ui.modules.placeholder_modules import (
     AnalysisModule,
     CryptoDashboardModule,
@@ -42,10 +43,10 @@ def main() -> int:
     # Add modules (pass theme_manager to modules that need it)
     # Heavy modules use factory functions for lazy loading (instantiated on first open)
     hub.add_module("charts", lambda: ChartModule(theme_manager))
-    hub.add_module("crypto_dashboard", CryptoDashboardModule())
-    hub.add_module("defi", DeFiModule())
-    hub.add_module("nft", NFTModule())
-    hub.add_module("portfolio", PortfolioModule())
+    hub.add_module("crypto_dashboard", lambda: CryptoDashboardModule())
+    hub.add_module("defi", lambda: DeFiModule())
+    hub.add_module("nft", lambda: NFTModule())
+    hub.add_module("portfolio", lambda: PortfolioModule())
     hub.add_module(
         "portfolio_construction",
         lambda: PortfolioConstructionModule(theme_manager),
@@ -56,11 +57,16 @@ def main() -> int:
         lambda: ReturnDistributionModule(theme_manager),
         has_own_home_button=True,
     )
-    hub.add_module("watchlist", WatchlistModule())
-    hub.add_module("news", NewsModule())
-    hub.add_module("screener", ScreenerModule())
-    hub.add_module("analysis", AnalysisModule())
-    hub.add_module("settings", SettingsModule(theme_manager))
+    hub.add_module(
+        "monte_carlo",
+        lambda: MonteCarloModule(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module("watchlist", lambda: WatchlistModule())
+    hub.add_module("news", lambda: NewsModule())
+    hub.add_module("screener", lambda: ScreenerModule())
+    hub.add_module("analysis", lambda: AnalysisModule())
+    hub.add_module("settings", lambda: SettingsModule(theme_manager))
 
     # Show home screen on startup
     hub.show_initial_screen()
