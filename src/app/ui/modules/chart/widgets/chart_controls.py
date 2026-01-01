@@ -53,6 +53,7 @@ class ChartControls(QWidget):
         self.ticker_input.setText(DEFAULT_TICKER)
         self.ticker_input.setMaximumWidth(200)
         self.ticker_input.setPlaceholderText("Ticker or =equation...")
+        self.ticker_input.textEdited.connect(self._on_ticker_text_edited)
         controls.addWidget(self.ticker_input)
 
         # Separator
@@ -137,6 +138,12 @@ class ChartControls(QWidget):
         self.setStyleSheet(stylesheet)
 
     # Public getters
+    def _on_ticker_text_edited(self, text: str):
+        """Convert ticker input to uppercase as user types."""
+        cursor_pos = self.ticker_input.cursorPosition()
+        self.ticker_input.setText(text.upper())
+        self.ticker_input.setCursorPosition(cursor_pos)
+
     def get_ticker(self) -> str:
         """Get current ticker text."""
         return self.ticker_input.text()
