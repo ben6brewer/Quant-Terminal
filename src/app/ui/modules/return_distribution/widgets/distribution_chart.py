@@ -423,12 +423,12 @@ class DistributionChart(LazyThemeMixin, QWidget):
 
     def set_returns(
         self,
-        returns: pd.Series,
+        returns: "pd.Series",
         settings: Dict[str, Any],
         cash_drag: Optional[Dict[str, float]] = None,
         show_cash_drag: bool = True,
         num_bins: int = 30,
-        benchmark_returns: Optional[pd.Series] = None,
+        benchmark_returns: Optional["pd.Series"] = None,
         benchmark_name: str = "",
         portfolio_name: str = "",
         is_ticker_mode: bool = False,
@@ -713,7 +713,7 @@ class DistributionChart(LazyThemeMixin, QWidget):
         except Exception as e:
             print(f"Error drawing normal distribution: {e}")
 
-    def _draw_mean_median_lines(self, returns_pct: pd.Series, benchmark_pct: Optional[pd.Series] = None):
+    def _draw_mean_median_lines(self, returns_pct: "pd.Series", benchmark_pct: Optional["pd.Series"] = None):
         """Draw vertical lines for mean and median."""
         settings = self._current_settings
         has_benchmark = self._has_benchmark and benchmark_pct is not None
@@ -783,13 +783,13 @@ class DistributionChart(LazyThemeMixin, QWidget):
 
     def _update_legend(
         self,
-        values_display: pd.Series,
+        values_display: "pd.Series",
         show_kde_curve: bool,
         show_normal_distribution: bool,
         show_mean_median_lines: bool,
         show_cdf_view: bool,
         has_benchmark: bool = False,
-        benchmark_values_display: Optional[pd.Series] = None,
+        benchmark_values_display: Optional["pd.Series"] = None,
     ):
         """Add legend to top-left of plot."""
         # Create legend anchored to top-left inside the plot area
@@ -931,7 +931,7 @@ class DistributionChart(LazyThemeMixin, QWidget):
                         median_label
                     )
 
-    def _calculate_statistics(self, returns: pd.Series) -> Dict[str, float]:
+    def _calculate_statistics(self, returns: "pd.Series") -> Dict[str, float]:
         """Calculate distribution statistics using centralized service."""
         return ReturnsDataService.get_distribution_statistics(returns)
 

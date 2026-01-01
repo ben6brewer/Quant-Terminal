@@ -748,7 +748,7 @@ class ReturnsDataService:
     # =========================================================================
 
     @classmethod
-    def get_distribution_statistics(cls, returns: pd.Series) -> Dict[str, float]:
+    def get_distribution_statistics(cls, returns: "pd.Series") -> Dict[str, float]:
         """
         Calculate distribution statistics for a returns series.
 
