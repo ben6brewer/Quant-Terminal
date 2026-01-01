@@ -65,9 +65,6 @@ class ChartModule(LazyThemeMixin, QWidget):
         # Initialize chart settings manager
         self.chart_settings_manager = ChartSettingsManager()
 
-        # Initialize indicator service to load saved indicators
-        IndicatorService.initialize()
-
         self._setup_ui()
         self._setup_state()
         self._connect_signals()

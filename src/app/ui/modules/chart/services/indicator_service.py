@@ -41,6 +41,9 @@ class IndicatorService:
     # Storage for plugin appearance overrides (keyed by plugin NAME)
     PLUGIN_APPEARANCE_OVERRIDES = {}
 
+    # Lazy initialization flag
+    _initialized = False
+
     # Column metadata for multi-line indicators (for per-line customization)
     INDICATOR_COLUMN_METADATA = {
         "bbands": [
@@ -163,8 +166,17 @@ class IndicatorService:
         return per_line_appearance
 
     @classmethod
+    def _ensure_initialized(cls) -> None:
+        """Lazy initialization - called automatically when needed."""
+        if not cls._initialized:
+            cls.initialize()
+
+    @classmethod
     def initialize(cls) -> None:
         """Initialize the service and load saved indicators and plugins."""
+        if cls._initialized:
+            return
+        cls._initialized = True  # Set early to prevent recursive calls
         cls.load_indicators()
         cls.load_custom_indicator_plugins()
         cls.load_plugin_appearance_overrides()
@@ -258,21 +270,25 @@ class IndicatorService:
     @classmethod
     def get_overlay_names(cls) -> List[str]:
         """Get list of overlay indicator names."""
+        cls._ensure_initialized()
         return sorted(list(cls.OVERLAY_INDICATORS.keys()))
 
     @classmethod
     def get_oscillator_names(cls) -> List[str]:
         """Get list of oscillator indicator names."""
+        cls._ensure_initialized()
         return sorted(list(cls.OSCILLATOR_INDICATORS.keys()))
 
     @classmethod
     def get_all_names(cls) -> List[str]:
         """Get list of all indicator names."""
+        cls._ensure_initialized()
         return sorted(list(cls.ALL_INDICATORS.keys()))
 
     @classmethod
     def is_overlay(cls, indicator_name: str) -> bool:
         """Check if indicator is an overlay (plots on price chart)."""
+        cls._ensure_initialized()
         return indicator_name in cls.OVERLAY_INDICATORS
 
     @classmethod
@@ -289,6 +305,7 @@ class IndicatorService:
         Returns:
             List of column metadata dicts, or None for plugin indicators
         """
+        cls._ensure_initialized()
         if indicator_name not in cls.ALL_INDICATORS:
             return []
 
@@ -582,6 +599,7 @@ class IndicatorService:
         Returns:
             DataFrame with indicator values, or None if calculation fails
         """
+        cls._ensure_initialized()
         if indicator_name not in cls.ALL_INDICATORS:
             return None
 
