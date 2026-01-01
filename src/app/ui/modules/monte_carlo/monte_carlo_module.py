@@ -40,7 +40,7 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
         self._current_portfolio: str = ""
         self._is_ticker_mode: bool = False
         self._current_method: str = "bootstrap"
-        self._current_horizon: int = 1  # Years
+        self._current_horizon: int = 252  # Trading days (1 year default)
         self._current_simulations: int = 1000
         self._current_benchmark: str = ""
         self._portfolio_list: list = []
@@ -95,12 +95,13 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
         """Load saved settings."""
         settings = self.settings_manager.get_all_settings()
         self._current_method = settings.get("simulation_method", "bootstrap")
-        self._current_horizon = settings.get("n_years", 1)
+        saved_years = settings.get("n_years", 1)
+        self._current_horizon = saved_years * 252  # Convert to trading days
         self._current_simulations = settings.get("n_simulations", 1000)
 
-        # Update controls
+        # Update controls (set_horizon expects years)
         self.controls.set_method(self._current_method)
-        self.controls.set_horizon(self._current_horizon)
+        self.controls.set_horizon(saved_years)
         self.controls.set_simulations(self._current_simulations)
 
     def _refresh_portfolio_list(self):
@@ -128,9 +129,11 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
         self._current_method = method
         self.settings_manager.update_settings({"simulation_method": method})
 
-    def _on_horizon_changed(self, years: int):
-        """Handle time horizon change."""
-        self._current_horizon = years
+    def _on_horizon_changed(self, trading_days: int):
+        """Handle time horizon change (in trading days)."""
+        self._current_horizon = trading_days
+        # Store as years for settings (approximate)
+        years = max(1, trading_days // 252)
         self.settings_manager.update_settings({"n_years": years})
 
     def _on_simulations_changed(self, count: int):
@@ -167,7 +170,7 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
         self._show_loading("Running simulation...")
 
         try:
-            # Get historical returns
+            # Get historical returns for portfolio
             if self._is_ticker_mode:
                 returns = ReturnsDataService.get_ticker_returns(
                     self._current_portfolio, interval="daily"
@@ -185,14 +188,14 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
                 self._hide_loading()
                 return
 
-            # Calculate simulation periods (trading days)
-            n_periods = self._current_horizon * 252
+            # Simulation periods (already in trading days)
+            n_periods = self._current_horizon
 
             # Get initial value from settings
             initial_value = self.settings_manager.get_setting("initial_value")
             block_size = self.settings_manager.get_setting("block_size")
 
-            # Run simulation based on method
+            # Run simulation for portfolio
             if self._current_method == "bootstrap":
                 result = MonteCarloService.simulate_historical_bootstrap(
                     returns=returns,
@@ -202,7 +205,6 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
                     block_size=block_size,
                 )
             else:  # parametric
-                # Calculate mean and std from historical data
                 mean = returns.mean()
                 std = returns.std()
                 result = MonteCarloService.simulate_parametric(
@@ -215,9 +217,53 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
 
             self._last_result = result
 
+            # Run simulation for benchmark if selected
+            benchmark_result = None
+            if self._current_benchmark:
+                try:
+                    # Check if benchmark is a portfolio or ticker
+                    is_benchmark_ticker = self._current_benchmark not in self._portfolio_list
+                    if is_benchmark_ticker:
+                        bench_returns = ReturnsDataService.get_ticker_returns(
+                            self._current_benchmark, interval="daily"
+                        )
+                    else:
+                        bench_returns = ReturnsDataService.get_time_varying_portfolio_returns(
+                            self._current_benchmark, include_cash=False, interval="daily"
+                        )
+
+                    if not bench_returns.empty and len(bench_returns) >= 30:
+                        if self._current_method == "bootstrap":
+                            benchmark_result = MonteCarloService.simulate_historical_bootstrap(
+                                returns=bench_returns,
+                                n_simulations=self._current_simulations,
+                                n_periods=n_periods,
+                                initial_value=initial_value,
+                                block_size=block_size,
+                            )
+                        else:  # parametric
+                            bench_mean = bench_returns.mean()
+                            bench_std = bench_returns.std()
+                            benchmark_result = MonteCarloService.simulate_parametric(
+                                mean=bench_mean,
+                                std=bench_std,
+                                n_simulations=self._current_simulations,
+                                n_periods=n_periods,
+                                initial_value=initial_value,
+                            )
+                except Exception:
+                    # If benchmark fails, just show portfolio without benchmark
+                    benchmark_result = None
+
             # Display result
             settings = self.settings_manager.get_all_settings()
-            self.chart.set_simulation_result(result, settings)
+            self.chart.set_simulation_result(
+                result,
+                settings,
+                benchmark_result,
+                portfolio_name=self._current_portfolio,
+                benchmark_name=self._current_benchmark,
+            )
 
         except Exception as e:
             self.chart.show_placeholder(f"Error: {str(e)}")

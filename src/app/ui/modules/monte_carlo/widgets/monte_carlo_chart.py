@@ -20,7 +20,7 @@ from ..services.monte_carlo_service import SimulationResult
 
 
 class StatisticsPanel(QFrame):
-    """Panel displaying Monte Carlo simulation statistics."""
+    """Panel displaying Monte Carlo simulation statistics with portfolio and benchmark rows."""
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
@@ -28,38 +28,70 @@ class StatisticsPanel(QFrame):
         self._setup_ui()
 
     def _setup_ui(self):
-        """Setup statistics panel layout."""
+        """Setup statistics panel layout with two rows."""
         self.setFrameStyle(QFrame.StyledPanel | QFrame.Raised)
-        self.setMaximumHeight(100)
+        self.setMaximumHeight(120)
 
         layout = QGridLayout(self)
-        layout.setContentsMargins(15, 10, 15, 10)
-        layout.setSpacing(20)
+        layout.setContentsMargins(15, 8, 15, 8)
+        layout.setSpacing(12)
 
-        # Create labels for statistics
-        self.labels = {}
-        stats = [
-            ("initial", "Initial Value"),
-            ("median_terminal", "Median Terminal"),
-            ("mean_terminal", "Mean Terminal"),
-            ("cagr", "Implied CAGR"),
-            ("prob_positive", "P(Gain)"),
-            ("prob_loss_10", "P(Loss > 10%)"),
-            ("var_95", "VaR (95%)"),
-            ("cvar_95", "CVaR (95%)"),
-        ]
+        # Column headers (row 0)
+        headers = ["", "Median", "Mean", "CAGR", "P(Gain)", "P(Loss>10%)", "VaR 95%", "CVaR 95%"]
+        for col, header in enumerate(headers):
+            label = QLabel(header)
+            label.setObjectName("stat_header")
+            label.setAlignment(Qt.AlignCenter)
+            layout.addWidget(label, 0, col)
 
-        for col, (key, label) in enumerate(stats):
-            header = QLabel(label)
-            header.setObjectName("stat_header")
-            header.setAlignment(Qt.AlignCenter)
-            layout.addWidget(header, 0, col)
+        # Row 1: Portfolio
+        self.portfolio_name_label = QLabel("Portfolio")
+        self.portfolio_name_label.setObjectName("stat_row_name")
+        self.portfolio_name_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        layout.addWidget(self.portfolio_name_label, 1, 0)
 
-            value = QLabel("--")
-            value.setObjectName("stat_value")
-            value.setAlignment(Qt.AlignCenter)
-            layout.addWidget(value, 1, col)
-            self.labels[key] = value
+        self.portfolio_labels = {}
+        stat_keys = ["median", "mean", "cagr", "prob_positive", "prob_loss_10", "var_95", "cvar_95"]
+        for col, key in enumerate(stat_keys, start=1):
+            label = QLabel("--")
+            label.setObjectName("stat_value")
+            label.setAlignment(Qt.AlignCenter)
+            layout.addWidget(label, 1, col)
+            self.portfolio_labels[key] = label
+
+        # Row 2: Benchmark (hidden by default)
+        self.benchmark_name_label = QLabel("Benchmark")
+        self.benchmark_name_label.setObjectName("stat_row_name")
+        self.benchmark_name_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        layout.addWidget(self.benchmark_name_label, 2, 0)
+
+        self.benchmark_labels = {}
+        for col, key in enumerate(stat_keys, start=1):
+            label = QLabel("--")
+            label.setObjectName("stat_value")
+            label.setAlignment(Qt.AlignCenter)
+            layout.addWidget(label, 2, col)
+            self.benchmark_labels[key] = label
+
+        # Store benchmark widgets for visibility toggling
+        self._benchmark_widgets = [self.benchmark_name_label] + list(self.benchmark_labels.values())
+
+        # Hide benchmark row by default
+        self.set_benchmark_visible(False)
+
+    def set_portfolio_name(self, name: str):
+        """Set the portfolio row name."""
+        self.portfolio_name_label.setText(name if name else "Portfolio")
+
+    def set_benchmark_visible(self, visible: bool, name: str = ""):
+        """Show or hide the benchmark statistics row."""
+        if name:
+            self.benchmark_name_label.setText(name)
+        else:
+            self.benchmark_name_label.setText("Benchmark")
+
+        for widget in self._benchmark_widgets:
+            widget.setVisible(visible)
 
     def update_statistics(
         self,
@@ -67,42 +99,63 @@ class StatisticsPanel(QFrame):
         var_cvar: Dict[str, Dict[str, float]],
         probabilities: Dict[str, float],
     ):
-        """Update displayed statistics from simulation result."""
-        # Initial value
-        self.labels["initial"].setText(f"${result.initial_value:,.0f}")
+        """Update portfolio statistics from simulation result."""
+        self._update_row(self.portfolio_labels, result, var_cvar, probabilities)
 
-        # Terminal values
-        self.labels["median_terminal"].setText(f"${result.median_terminal:,.0f}")
-        self.labels["mean_terminal"].setText(f"${result.mean_terminal:,.0f}")
+    def update_benchmark_statistics(
+        self,
+        result: SimulationResult,
+        var_cvar: Dict[str, Dict[str, float]],
+        probabilities: Dict[str, float],
+    ):
+        """Update benchmark statistics from simulation result."""
+        self._update_row(self.benchmark_labels, result, var_cvar, probabilities)
+
+    def _update_row(
+        self,
+        labels: Dict[str, QLabel],
+        result: SimulationResult,
+        var_cvar: Dict[str, Dict[str, float]],
+        probabilities: Dict[str, float],
+    ):
+        """Update a row of statistics."""
+        # Terminal values as percentage change from initial
+        median_pct = (result.median_terminal / result.initial_value - 1) * 100
+        mean_pct = (result.mean_terminal / result.initial_value - 1) * 100
+        labels["median"].setText(f"{median_pct:+.1f}%")
+        labels["mean"].setText(f"{mean_pct:+.1f}%")
 
         # CAGR
         cagr = result.terminal_cagr
         if not np.isnan(cagr):
-            self.labels["cagr"].setText(f"{cagr * 100:+.1f}%")
+            labels["cagr"].setText(f"{cagr * 100:+.1f}%")
         else:
-            self.labels["cagr"].setText("--")
+            labels["cagr"].setText("--")
 
         # Probabilities
         prob_pos = probabilities.get("prob_positive", 0)
-        self.labels["prob_positive"].setText(f"{prob_pos * 100:.1f}%")
+        labels["prob_positive"].setText(f"{prob_pos * 100:.1f}%")
 
         prob_loss = probabilities.get("prob_loss_10pct", 0)
-        self.labels["prob_loss_10"].setText(f"{prob_loss * 100:.1f}%")
+        labels["prob_loss_10"].setText(f"{prob_loss * 100:.1f}%")
 
         # VaR and CVaR
         if "0.95" in var_cvar:
             var_95 = var_cvar["0.95"]["var_pct"]
             cvar_95 = var_cvar["0.95"]["cvar_pct"]
-            self.labels["var_95"].setText(f"{var_95:+.1f}%")
-            self.labels["cvar_95"].setText(f"{cvar_95:+.1f}%")
+            labels["var_95"].setText(f"{var_95:+.1f}%")
+            labels["cvar_95"].setText(f"{cvar_95:+.1f}%")
         else:
-            self.labels["var_95"].setText("--")
-            self.labels["cvar_95"].setText("--")
+            labels["var_95"].setText("--")
+            labels["cvar_95"].setText("--")
 
     def clear(self):
         """Clear all statistics."""
-        for label in self.labels.values():
+        for label in self.portfolio_labels.values():
             label.setText("--")
+        for label in self.benchmark_labels.values():
+            label.setText("--")
+        self.set_benchmark_visible(False)
 
     def apply_theme(self, theme: str):
         """Apply theme styling."""
@@ -133,10 +186,15 @@ class StatisticsPanel(QFrame):
                 font-size: 11px;
                 background: transparent;
             }}
+            QLabel#stat_row_name {{
+                color: {text};
+                font-size: 12px;
+                font-weight: bold;
+                background: transparent;
+            }}
             QLabel#stat_value {{
                 color: {text};
-                font-size: 14px;
-                font-weight: bold;
+                font-size: 13px;
                 background: transparent;
             }}
         """)
@@ -184,7 +242,7 @@ class MonteCarloChart(LazyThemeMixin, QWidget):
         # Create plot item
         self.plot_item = self.plot_widget.addPlot()
         self.plot_item.showGrid(x=True, y=True, alpha=0.3)
-        self.plot_item.setLabel("left", "Portfolio Value ($)")
+        self.plot_item.setLabel("left", "Return (%)")
         self.plot_item.setLabel("bottom", "Trading Days")
 
         # Store plot items for clearing
@@ -202,8 +260,11 @@ class MonteCarloChart(LazyThemeMixin, QWidget):
         self,
         result: SimulationResult,
         settings: Dict[str, Any],
+        benchmark_result: Optional[SimulationResult] = None,
+        portfolio_name: str = "",
+        benchmark_name: str = "",
     ):
-        """Display simulation result on chart."""
+        """Display simulation result on chart, optionally with benchmark comparison."""
         self._current_result = result
         self._clear_plot()
 
@@ -217,53 +278,107 @@ class MonteCarloChart(LazyThemeMixin, QWidget):
 
         theme = self.theme_manager.current_theme
 
-        # Draw 90% confidence band (5th - 95th percentile)
+        # Portfolio colors (blue tones)
+        portfolio_band_90_color = settings.get("band_90_color", (100, 100, 255))
+        portfolio_band_50_color = settings.get("band_50_color", (50, 50, 200))
+        portfolio_median_color = settings.get("median_color", (255, 255, 255))
+
+        # Benchmark colors (orange/red tones for contrast)
+        benchmark_band_90_color = (255, 140, 100)
+        benchmark_band_50_color = (200, 100, 50)
+        benchmark_median_color = (255, 165, 0)  # Orange
+
+        # Helper to convert values to percentage return
+        def to_pct(values, initial):
+            return (values / initial - 1) * 100
+
+        # Draw benchmark first (so portfolio draws on top)
+        if benchmark_result is not None:
+            bench_initial = benchmark_result.initial_value
+
+            # Draw benchmark 90% confidence band
+            if settings.get("show_band_90", True):
+                p5 = to_pct(benchmark_result.get_percentile(5), bench_initial)
+                p95 = to_pct(benchmark_result.get_percentile(95), bench_initial)
+                fill = pg.FillBetweenItem(
+                    pg.PlotDataItem(x, p5),
+                    pg.PlotDataItem(x, p95),
+                    brush=(*benchmark_band_90_color, 40),
+                )
+                self.plot_item.addItem(fill)
+                self._plot_items.append(fill)
+
+            # Draw benchmark 50% confidence band
+            if settings.get("show_band_50", True):
+                p25 = to_pct(benchmark_result.get_percentile(25), bench_initial)
+                p75 = to_pct(benchmark_result.get_percentile(75), bench_initial)
+                fill = pg.FillBetweenItem(
+                    pg.PlotDataItem(x, p25),
+                    pg.PlotDataItem(x, p75),
+                    brush=(*benchmark_band_50_color, 60),
+                )
+                self.plot_item.addItem(fill)
+                self._plot_items.append(fill)
+
+            # Draw benchmark median line
+            if settings.get("show_median", True):
+                median = to_pct(benchmark_result.median_path, bench_initial)
+                pen = pg.mkPen(color=benchmark_median_color, width=2, style=Qt.SolidLine)
+                line = self.plot_item.plot(x, median, pen=pen, name="Benchmark Median")
+                self._plot_items.append(line)
+
+            # Draw benchmark mean line
+            if settings.get("show_mean", False):
+                mean = to_pct(benchmark_result.mean_path, bench_initial)
+                pen = pg.mkPen(color=(255, 180, 100), width=2, style=Qt.DashLine)
+                line = self.plot_item.plot(x, mean, pen=pen, name="Benchmark Mean")
+                self._plot_items.append(line)
+
+        # Portfolio initial value for percentage conversion
+        port_initial = result.initial_value
+
+        # Draw portfolio 90% confidence band (5th - 95th percentile)
         if settings.get("show_band_90", True):
-            p5 = result.get_percentile(5)
-            p95 = result.get_percentile(95)
-            color = settings.get("band_90_color", (100, 100, 255))
+            p5 = to_pct(result.get_percentile(5), port_initial)
+            p95 = to_pct(result.get_percentile(95), port_initial)
             fill = pg.FillBetweenItem(
                 pg.PlotDataItem(x, p5),
                 pg.PlotDataItem(x, p95),
-                brush=(*color, 50),  # Semi-transparent
+                brush=(*portfolio_band_90_color, 50),
             )
             self.plot_item.addItem(fill)
             self._plot_items.append(fill)
 
-        # Draw 50% confidence band (25th - 75th percentile)
+        # Draw portfolio 50% confidence band (25th - 75th percentile)
         if settings.get("show_band_50", True):
-            p25 = result.get_percentile(25)
-            p75 = result.get_percentile(75)
-            color = settings.get("band_50_color", (50, 50, 200))
+            p25 = to_pct(result.get_percentile(25), port_initial)
+            p75 = to_pct(result.get_percentile(75), port_initial)
             fill = pg.FillBetweenItem(
                 pg.PlotDataItem(x, p25),
                 pg.PlotDataItem(x, p75),
-                brush=(*color, 80),
+                brush=(*portfolio_band_50_color, 80),
             )
             self.plot_item.addItem(fill)
             self._plot_items.append(fill)
 
-        # Draw median line
+        # Draw portfolio median line
         if settings.get("show_median", True):
-            median = result.median_path
-            color = settings.get("median_color", (255, 255, 255))
-            pen = pg.mkPen(color=color, width=2, style=Qt.SolidLine)
-            line = self.plot_item.plot(x, median, pen=pen, name="Median")
+            median = to_pct(result.median_path, port_initial)
+            pen = pg.mkPen(color=portfolio_median_color, width=2, style=Qt.SolidLine)
+            line = self.plot_item.plot(x, median, pen=pen, name="Portfolio Median")
             self._plot_items.append(line)
 
-        # Draw mean line
+        # Draw portfolio mean line
         if settings.get("show_mean", False):
-            mean = result.mean_path
+            mean = to_pct(result.mean_path, port_initial)
             color = settings.get("mean_color", (255, 200, 0))
             pen = pg.mkPen(color=color, width=2, style=Qt.DashLine)
-            line = self.plot_item.plot(x, mean, pen=pen, name="Mean")
+            line = self.plot_item.plot(x, mean, pen=pen, name="Portfolio Mean")
             self._plot_items.append(line)
 
-        # Draw initial value line
+        # Draw 0% baseline
         pen = pg.mkPen(color=(100, 100, 100), width=1, style=Qt.DotLine)
-        line = self.plot_item.plot(
-            x, np.full(n_points, result.initial_value), pen=pen
-        )
+        line = self.plot_item.plot(x, np.zeros(n_points), pen=pen)
         self._plot_items.append(line)
 
         # Auto-range
@@ -272,6 +387,8 @@ class MonteCarloChart(LazyThemeMixin, QWidget):
         # Calculate and update statistics
         from ..services.monte_carlo_service import MonteCarloService
 
+        # Portfolio statistics
+        self.stats_panel.set_portfolio_name(portfolio_name)
         var_cvar = MonteCarloService.calculate_var_cvar(
             result.terminal_values, result.initial_value
         )
@@ -279,6 +396,21 @@ class MonteCarloChart(LazyThemeMixin, QWidget):
             result.terminal_values, result.initial_value
         )
         self.stats_panel.update_statistics(result, var_cvar, probabilities)
+
+        # Benchmark statistics
+        if benchmark_result is not None:
+            bench_var_cvar = MonteCarloService.calculate_var_cvar(
+                benchmark_result.terminal_values, benchmark_result.initial_value
+            )
+            bench_probabilities = MonteCarloService.calculate_probability_metrics(
+                benchmark_result.terminal_values, benchmark_result.initial_value
+            )
+            self.stats_panel.set_benchmark_visible(True, benchmark_name)
+            self.stats_panel.update_benchmark_statistics(
+                benchmark_result, bench_var_cvar, bench_probabilities
+            )
+        else:
+            self.stats_panel.set_benchmark_visible(False)
 
     def _clear_plot(self):
         """Clear all plot items."""
