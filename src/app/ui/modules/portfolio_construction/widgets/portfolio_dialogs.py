@@ -351,3 +351,74 @@ class ImportPortfolioDialog(ThemedDialog):
             "include_fees": self.include_fees_checkbox.isChecked(),
             "skip_zero_positions": self.skip_zero_checkbox.isChecked()
         }
+
+
+class ExportDialog(ThemedDialog):
+    """Dialog to select export format (CSV or Excel)."""
+
+    def __init__(self, theme_manager: ThemeManager, parent=None):
+        self.csv_radio: QRadioButton = None
+        self.excel_radio: QRadioButton = None
+        self.format_group: QButtonGroup = None
+        super().__init__(theme_manager, "Export", parent, min_width=350)
+
+    def _setup_content(self, layout: QVBoxLayout):
+        """Setup dialog content with format selection."""
+        # Header label
+        header = QLabel("Select export format:")
+        layout.addWidget(header)
+        layout.addSpacing(10)
+
+        # Format selection
+        self.format_group = QButtonGroup(self)
+
+        # CSV option
+        self.csv_radio = QRadioButton("CSV File")
+        self.csv_radio.setChecked(True)
+        self.format_group.addButton(self.csv_radio)
+        layout.addWidget(self.csv_radio)
+
+        csv_desc = QLabel("Export to comma-separated values file")
+        csv_desc.setObjectName("descriptionLabel")
+        csv_desc.setContentsMargins(20, 0, 0, 0)
+        layout.addWidget(csv_desc)
+
+        layout.addSpacing(10)
+
+        # Excel option
+        self.excel_radio = QRadioButton("Excel (Open in Excel)")
+        self.format_group.addButton(self.excel_radio)
+        layout.addWidget(self.excel_radio)
+
+        excel_desc = QLabel("Open directly in Microsoft Excel")
+        excel_desc.setObjectName("descriptionLabel")
+        excel_desc.setContentsMargins(20, 0, 0, 0)
+        layout.addWidget(excel_desc)
+
+        layout.addStretch()
+
+        # Buttons
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.clicked.connect(self.reject)
+        button_layout.addWidget(cancel_btn)
+
+        export_btn = QPushButton("Export")
+        export_btn.setDefault(True)
+        export_btn.clicked.connect(self.accept)
+        button_layout.addWidget(export_btn)
+
+        layout.addLayout(button_layout)
+
+    def get_format(self) -> Optional[str]:
+        """
+        Get selected export format.
+
+        Returns:
+            'csv' or 'excel' based on selection, or None if cancelled.
+        """
+        if self.result() != QDialog.Accepted:
+            return None
+        return "csv" if self.csv_radio.isChecked() else "excel"

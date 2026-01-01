@@ -3,7 +3,13 @@
 from .transaction_log_table import TransactionLogTable
 from .aggregate_portfolio_table import AggregatePortfolioTable
 from .portfolio_controls import PortfolioControls
-from .portfolio_dialogs import NewPortfolioDialog, LoadPortfolioDialog, RenamePortfolioDialog, ImportPortfolioDialog
+from .portfolio_dialogs import (
+    NewPortfolioDialog,
+    LoadPortfolioDialog,
+    RenamePortfolioDialog,
+    ImportPortfolioDialog,
+    ExportDialog,
+)
 from .view_tab_bar import ViewTabBar
 
 __all__ = [
@@ -14,5 +20,6 @@ __all__ = [
     "LoadPortfolioDialog",
     "RenamePortfolioDialog",
     "ImportPortfolioDialog",
+    "ExportDialog",
     "ViewTabBar",
 ]

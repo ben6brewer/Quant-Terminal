@@ -42,6 +42,7 @@ class PortfolioControls(QWidget):
     portfolio_changed = Signal(str)       # Portfolio name changed
     save_clicked = Signal()
     import_clicked = Signal()
+    export_clicked = Signal()
     new_portfolio_clicked = Signal()
     rename_portfolio_clicked = Signal()
     delete_portfolio_clicked = Signal()
@@ -102,6 +103,14 @@ class PortfolioControls(QWidget):
         self.import_btn.setFixedSize(80, 40)
         self.import_btn.clicked.connect(self.import_clicked.emit)
         layout.addWidget(self.import_btn)
+
+        layout.addSpacing(8)
+
+        # Export button
+        self.export_btn = QPushButton("Export")
+        self.export_btn.setFixedSize(80, 40)
+        self.export_btn.clicked.connect(self.export_clicked.emit)
+        layout.addWidget(self.export_btn)
 
         layout.addSpacing(8)
 
@@ -196,6 +205,7 @@ class PortfolioControls(QWidget):
         """
         self.save_btn.setEnabled(portfolio_loaded)
         self.import_btn.setEnabled(portfolio_loaded)
+        self.export_btn.setEnabled(portfolio_loaded)
         self.rename_btn.setEnabled(portfolio_loaded)
         self.delete_btn.setEnabled(portfolio_loaded)
 
