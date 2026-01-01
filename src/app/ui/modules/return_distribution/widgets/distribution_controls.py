@@ -45,6 +45,7 @@ class DistributionControls(QWidget):
     metric_changed = Signal(str)
     window_changed = Signal(str)
     interval_changed = Signal(str)
+    benchmark_changed = Signal(str)  # Emits ticker/portfolio name or empty string
     date_range_changed = Signal(str, str)  # start_date, end_date (empty for "All")
     custom_date_range_requested = Signal()  # Open date range dialog
     settings_clicked = Signal()
@@ -71,6 +72,9 @@ class DistributionControls(QWidget):
         self.theme_manager = theme_manager
         self._custom_start_date: Optional[str] = None
         self._custom_end_date: Optional[str] = None
+        # Track last processed values to prevent duplicate signals
+        self._last_portfolio_text: str = ""
+        self._last_benchmark_text: str = ""
 
         self._setup_ui()
         self._apply_theme()
@@ -93,19 +97,39 @@ class DistributionControls(QWidget):
         # Add stretch to push controls toward center
         layout.addStretch(1)
 
-        # Portfolio selector
+        # Portfolio selector (editable - can type ticker or select portfolio)
         self.portfolio_label = QLabel("Portfolio:")
         self.portfolio_label.setObjectName("control_label")
         layout.addWidget(self.portfolio_label)
         self.portfolio_combo = QComboBox()
+        self.portfolio_combo.setEditable(True)
         self.portfolio_combo.setFixedWidth(250)
         self.portfolio_combo.setFixedHeight(40)
-        self.portfolio_combo.setPlaceholderText("Select Portfolio...")
+        self.portfolio_combo.lineEdit().setPlaceholderText("Type ticker or select...")
         smooth_view = SmoothScrollListView(self.portfolio_combo)
         smooth_view.setAlternatingRowColors(True)
         self.portfolio_combo.setView(smooth_view)
-        self.portfolio_combo.currentTextChanged.connect(self._on_portfolio_changed)
+        # Connect editing finished (Enter or focus out) and dropdown selection
+        self.portfolio_combo.lineEdit().editingFinished.connect(self._on_portfolio_entered)
+        self.portfolio_combo.currentIndexChanged.connect(self._on_portfolio_selected)
         layout.addWidget(self.portfolio_combo)
+
+        layout.addSpacing(20)
+
+        # Benchmark selector (editable combo box) - right after Portfolio
+        self.benchmark_label = QLabel("Benchmark:")
+        self.benchmark_label.setObjectName("control_label")
+        layout.addWidget(self.benchmark_label)
+        self.benchmark_combo = QComboBox()
+        self.benchmark_combo.setEditable(True)
+        self.benchmark_combo.setFixedWidth(250)  # Same width as Portfolio
+        self.benchmark_combo.setFixedHeight(40)
+        self.benchmark_combo.lineEdit().setPlaceholderText("None")
+        # Don't add "None" as an item - just use placeholder text
+        # Connect editing finished (Enter or focus out) and dropdown selection
+        self.benchmark_combo.lineEdit().editingFinished.connect(self._on_benchmark_entered)
+        self.benchmark_combo.currentIndexChanged.connect(self._on_benchmark_selected)
+        layout.addWidget(self.benchmark_combo)
 
         layout.addSpacing(20)
 
@@ -170,10 +194,24 @@ class DistributionControls(QWidget):
         self.settings_btn.clicked.connect(self.settings_clicked.emit)
         layout.addWidget(self.settings_btn)
 
-    def _on_portfolio_changed(self, name: str):
-        """Handle portfolio dropdown selection."""
-        if name:
-            self.portfolio_changed.emit(name)
+    def _on_portfolio_entered(self):
+        """Handle Enter key or focus out in portfolio combo box."""
+        text = self.portfolio_combo.currentText().strip().upper()
+        # Prevent duplicate processing
+        if text == self._last_portfolio_text:
+            return
+        self._last_portfolio_text = text
+        if text:
+            self.portfolio_combo.setCurrentText(text)
+            self.portfolio_changed.emit(text)
+
+    def _on_portfolio_selected(self, index: int):
+        """Handle dropdown selection in portfolio combo box."""
+        if index >= 0:
+            text = self.portfolio_combo.currentText()
+            if text and text != self._last_portfolio_text:
+                self._last_portfolio_text = text
+                self.portfolio_changed.emit(text)
 
     def _on_metric_changed(self, metric: str):
         """Handle metric dropdown selection."""
@@ -202,6 +240,10 @@ class DistributionControls(QWidget):
         show_interval = metric == "Returns"
         self.interval_label.setVisible(show_interval)
         self.interval_combo.setVisible(show_interval)
+
+        # Show/hide benchmark dropdown (only for Returns)
+        self.benchmark_label.setVisible(show_interval)
+        self.benchmark_combo.setVisible(show_interval)
 
         # Emit metric change signal
         self.metric_changed.emit(metric)
@@ -235,6 +277,54 @@ class DistributionControls(QWidget):
         elif option == "5Y":
             start_date = (datetime.now() - timedelta(days=365 * 5)).strftime("%Y-%m-%d")
             self.date_range_changed.emit(start_date, end_date)
+
+    def _on_benchmark_entered(self):
+        """Handle Enter key or focus out in benchmark combo box."""
+        text = self.benchmark_combo.currentText().strip().upper()
+        # Treat "NONE" or empty as no benchmark
+        if not text or text == "NONE":
+            text = ""
+        # Prevent duplicate processing
+        if text == self._last_benchmark_text:
+            return
+        self._last_benchmark_text = text
+        if text:
+            # Set the uppercase text back
+            self.benchmark_combo.setCurrentText(text)
+            self.benchmark_changed.emit(text)
+        else:
+            # Clear to show placeholder
+            self.benchmark_combo.lineEdit().clear()
+            self.benchmark_combo.setCurrentIndex(-1)
+            self.benchmark_changed.emit("")
+
+    def _on_benchmark_selected(self, index: int):
+        """Handle benchmark selected from dropdown."""
+        if index >= 0:
+            text = self.benchmark_combo.currentText()
+            if text and text != self._last_benchmark_text:
+                self._last_benchmark_text = text
+                self.benchmark_changed.emit(text)
+
+    def update_benchmark_list(self, portfolios: List[str]):
+        """
+        Update the benchmark dropdown with available portfolios.
+
+        Args:
+            portfolios: List of portfolio names
+        """
+        current = self.benchmark_combo.currentText()
+        self.benchmark_combo.blockSignals(True)
+        self.benchmark_combo.clear()
+        # Add portfolios (no "None" item - we use placeholder text instead)
+        for p in portfolios:
+            self.benchmark_combo.addItem(f"[Portfolio] {p}")
+        # Restore previous selection if still valid, otherwise show placeholder
+        if current:
+            self.benchmark_combo.setCurrentText(current)
+        else:
+            self.benchmark_combo.setCurrentIndex(-1)  # Show placeholder
+        self.benchmark_combo.blockSignals(False)
 
     def set_custom_date_range(self, start_date: str, end_date: str):
         """
@@ -302,6 +392,22 @@ class DistributionControls(QWidget):
     def get_current_window(self) -> str:
         """Get currently selected window for rolling metrics."""
         return self.window_combo.currentText() or ""
+
+    def get_current_benchmark(self) -> str:
+        """
+        Get currently selected benchmark.
+
+        Returns:
+            Benchmark ticker/portfolio name, or empty string if none selected.
+        """
+        return self.benchmark_combo.currentText() or ""
+
+    def reset_benchmark(self):
+        """Reset the benchmark dropdown to show placeholder."""
+        self.benchmark_combo.blockSignals(True)
+        self.benchmark_combo.setCurrentIndex(-1)  # Show placeholder
+        self.benchmark_combo.lineEdit().clear()
+        self.benchmark_combo.blockSignals(False)
 
     def get_current_date_range(self) -> Tuple[str, str]:
         """

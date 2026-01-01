@@ -921,3 +921,47 @@ class ReturnsDataService:
             days_under_water.iloc[i] = current_underwater_days
 
         return days_under_water
+
+    # =========================================================================
+    # Single Ticker Returns (for benchmark comparisons)
+    # =========================================================================
+
+    @classmethod
+    def get_ticker_returns(
+        cls,
+        ticker: str,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        interval: str = "daily",
+    ) -> pd.Series:
+        """
+        Get returns for a single ticker.
+
+        Args:
+            ticker: Ticker symbol (e.g., "SPY", "BTC-USD")
+            start_date: Optional start date filter (YYYY-MM-DD)
+            end_date: Optional end date filter (YYYY-MM-DD)
+            interval: Return interval - "daily", "weekly", "monthly", "yearly"
+
+        Returns:
+            Series of returns (as decimals, e.g., 0.05 = 5%)
+        """
+        df = fetch_price_history(ticker, period="max", interval="1d")
+        if df.empty:
+            return pd.Series(dtype=float)
+
+        # Calculate daily returns
+        returns = df["Close"].pct_change().dropna()
+        returns.name = ticker
+
+        # Filter date range
+        if start_date or end_date:
+            returns_df = returns.to_frame()
+            returns_df = cls._filter_date_range(returns_df, start_date, end_date)
+            returns = returns_df[ticker] if ticker in returns_df.columns else returns_df.iloc[:, 0]
+
+        # Resample if needed
+        if interval.lower() != "daily":
+            returns = cls._resample_returns(returns, interval)
+
+        return returns

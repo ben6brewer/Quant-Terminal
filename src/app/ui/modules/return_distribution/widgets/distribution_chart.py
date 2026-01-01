@@ -41,68 +41,83 @@ class StatisticsPanel(QWidget):
         self.theme_manager.theme_changed.connect(self._apply_theme)
 
     def _setup_ui(self):
-        """Setup the statistics panel UI."""
+        """Setup the statistics panel UI with portfolio and optional benchmark columns."""
         layout = QGridLayout(self)
         layout.setContentsMargins(15, 10, 15, 10)
         layout.setHorizontalSpacing(8)
-        layout.setVerticalSpacing(8)
+        layout.setVerticalSpacing(6)
 
-        # Row 1: Mean, Std Dev, Skew, Kurtosis
-        self.mean_label = self._create_stat_label("Mean:")
+        # Column headers
+        col = 0
+
+        # Stat names column
+        layout.addWidget(self._create_stat_label(""), 0, col)  # Empty header
+        layout.addWidget(self._create_stat_label("Mean:"), 1, col)
+        layout.addWidget(self._create_stat_label("Std Dev:"), 2, col)
+        layout.addWidget(self._create_stat_label("Skew:"), 3, col)
+        layout.addWidget(self._create_stat_label("Kurtosis:"), 4, col)
+        layout.addWidget(self._create_stat_label("Min:"), 5, col)
+        layout.addWidget(self._create_stat_label("Max:"), 6, col)
+        layout.addWidget(self._create_stat_label("Count:"), 7, col)
+        layout.setColumnMinimumWidth(col, 70)
+        col += 1
+
+        # Portfolio values column
+        self.portfolio_header = self._create_header_label("Portfolio")
+        layout.addWidget(self.portfolio_header, 0, col)
         self.mean_value = self._create_value_label("--")
-        layout.addWidget(self.mean_label, 0, 0)
-        layout.addWidget(self.mean_value, 0, 1)
-
-        self.std_label = self._create_stat_label("Std Dev:")
         self.std_value = self._create_value_label("--")
-        layout.addWidget(self.std_label, 0, 2)
-        layout.addWidget(self.std_value, 0, 3)
-
-        self.skew_label = self._create_stat_label("Skew:")
         self.skew_value = self._create_value_label("--")
-        layout.addWidget(self.skew_label, 0, 4)
-        layout.addWidget(self.skew_value, 0, 5)
-
-        self.kurtosis_label = self._create_stat_label("Kurtosis:")
         self.kurtosis_value = self._create_value_label("--")
-        layout.addWidget(self.kurtosis_label, 0, 6)
-        layout.addWidget(self.kurtosis_value, 0, 7)
-
-        # Row 2: Min, Max, Count, Cash Drag
-        self.min_label = self._create_stat_label("Min:")
         self.min_value = self._create_value_label("--")
-        layout.addWidget(self.min_label, 1, 0)
-        layout.addWidget(self.min_value, 1, 1)
-
-        self.max_label = self._create_stat_label("Max:")
         self.max_value = self._create_value_label("--")
-        layout.addWidget(self.max_label, 1, 2)
-        layout.addWidget(self.max_value, 1, 3)
-
-        self.count_label = self._create_stat_label("Count:")
         self.count_value = self._create_value_label("--")
-        layout.addWidget(self.count_label, 1, 4)
-        layout.addWidget(self.count_value, 1, 5)
+        layout.addWidget(self.mean_value, 1, col)
+        layout.addWidget(self.std_value, 2, col)
+        layout.addWidget(self.skew_value, 3, col)
+        layout.addWidget(self.kurtosis_value, 4, col)
+        layout.addWidget(self.min_value, 5, col)
+        layout.addWidget(self.max_value, 6, col)
+        layout.addWidget(self.count_value, 7, col)
+        layout.setColumnMinimumWidth(col, 90)
+        col += 1
 
-        self.cash_drag_label = self._create_stat_label("Cash Drag:")
-        self.cash_drag_value = self._create_value_label("--")
-        layout.addWidget(self.cash_drag_label, 1, 6)
-        layout.addWidget(self.cash_drag_value, 1, 7)
+        # Benchmark values column (initially hidden)
+        self.benchmark_header = self._create_header_label("Benchmark")
+        layout.addWidget(self.benchmark_header, 0, col)
+        self.benchmark_mean_value = self._create_value_label("--")
+        self.benchmark_std_value = self._create_value_label("--")
+        self.benchmark_skew_value = self._create_value_label("--")
+        self.benchmark_kurtosis_value = self._create_value_label("--")
+        self.benchmark_min_value = self._create_value_label("--")
+        self.benchmark_max_value = self._create_value_label("--")
+        self.benchmark_count_value = self._create_value_label("--")
+        layout.addWidget(self.benchmark_mean_value, 1, col)
+        layout.addWidget(self.benchmark_std_value, 2, col)
+        layout.addWidget(self.benchmark_skew_value, 3, col)
+        layout.addWidget(self.benchmark_kurtosis_value, 4, col)
+        layout.addWidget(self.benchmark_min_value, 5, col)
+        layout.addWidget(self.benchmark_max_value, 6, col)
+        layout.addWidget(self.benchmark_count_value, 7, col)
+        layout.setColumnMinimumWidth(col, 90)
 
-        # Set fixed widths for label columns to ensure alignment
-        layout.setColumnMinimumWidth(0, 70)  # Mean/Min labels
-        layout.setColumnMinimumWidth(2, 70)  # Std Dev/Max labels
-        layout.setColumnMinimumWidth(4, 70)  # Skew/Count labels
-        layout.setColumnMinimumWidth(6, 80)  # Kurtosis/Cash Drag labels
+        # Store benchmark widgets for visibility toggling
+        self._benchmark_widgets = [
+            self.benchmark_header,
+            self.benchmark_mean_value,
+            self.benchmark_std_value,
+            self.benchmark_skew_value,
+            self.benchmark_kurtosis_value,
+            self.benchmark_min_value,
+            self.benchmark_max_value,
+            self.benchmark_count_value,
+        ]
 
-        # Set fixed widths for value columns
-        layout.setColumnMinimumWidth(1, 80)
-        layout.setColumnMinimumWidth(3, 80)
-        layout.setColumnMinimumWidth(5, 80)
-        layout.setColumnMinimumWidth(7, 80)
+        # Hide benchmark column by default
+        self.set_benchmark_visible(False)
 
         # Add stretch to fill remaining space
-        layout.setColumnStretch(8, 1)
+        layout.setColumnStretch(3, 1)
 
     def _create_stat_label(self, text: str) -> QLabel:
         """Create a statistic name label."""
@@ -118,25 +133,78 @@ class StatisticsPanel(QWidget):
         label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         return label
 
+    def _create_header_label(self, text: str) -> QLabel:
+        """Create a column header label."""
+        label = QLabel(text)
+        label.setObjectName("headerLabel")
+        label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        return label
+
+    def set_benchmark_visible(self, visible: bool, name: str = ""):
+        """
+        Show or hide the benchmark statistics column.
+
+        Args:
+            visible: Whether to show the benchmark column
+            name: Name to display in the benchmark header (e.g., "SPY" or portfolio name)
+        """
+        if name:
+            self.benchmark_header.setText(name)
+        else:
+            self.benchmark_header.setText("Benchmark")
+
+        for widget in self._benchmark_widgets:
+            widget.setVisible(visible)
+
+    def update_benchmark_statistics(self, stats: Dict[str, float]):
+        """
+        Update the benchmark statistics display.
+
+        Args:
+            stats: Dictionary with mean, std, skew, kurtosis, min, max, count
+        """
+        is_time_under_water = self._current_metric == "Time Under Water"
+
+        def fmt_value(val, decimals=2):
+            if val is None or np.isnan(val):
+                return "N/A"
+            if is_time_under_water:
+                return f"{val:.0f} days"
+            else:
+                return f"{val * 100:.{decimals}f}%"
+
+        def fmt_num(val, decimals=2):
+            if val is None or np.isnan(val):
+                return "N/A"
+            return f"{val:.{decimals}f}"
+
+        self.benchmark_mean_value.setText(fmt_value(stats.get("mean")))
+        self.benchmark_std_value.setText(fmt_value(stats.get("std")))
+        self.benchmark_skew_value.setText(fmt_num(stats.get("skew")))
+        self.benchmark_kurtosis_value.setText(fmt_num(stats.get("kurtosis")))
+        self.benchmark_min_value.setText(fmt_value(stats.get("min")))
+        self.benchmark_max_value.setText(fmt_value(stats.get("max")))
+        self.benchmark_count_value.setText(str(stats.get("count", 0)))
+
+    def clear_benchmark(self):
+        """Clear benchmark statistics and hide column."""
+        self.benchmark_mean_value.setText("--")
+        self.benchmark_std_value.setText("--")
+        self.benchmark_skew_value.setText("--")
+        self.benchmark_kurtosis_value.setText("--")
+        self.benchmark_min_value.setText("--")
+        self.benchmark_max_value.setText("--")
+        self.benchmark_count_value.setText("--")
+        self.set_benchmark_visible(False)
+
     def set_metric(self, metric: str):
         """
-        Set the current metric and update labels accordingly.
+        Set the current metric for formatting purposes.
 
         Args:
             metric: The metric name (e.g., "Returns", "Volatility", "Time Under Water")
         """
         self._current_metric = metric
-        metric_label = self.METRIC_LABELS.get(metric, "Value")
-
-        # Update row 1 labels
-        self.mean_label.setText(f"Mean {metric_label}:")
-        self.std_label.setText("Std Dev:")
-        # Skew and Kurtosis stay the same
-
-        # Update row 2 labels
-        self.min_label.setText(f"Min {metric_label}:")
-        self.max_label.setText(f"Max {metric_label}:")
-        # Count and Cash Drag stay the same
 
     def update_statistics(
         self,
@@ -180,21 +248,6 @@ class StatisticsPanel(QWidget):
         self.max_value.setText(fmt_value(stats.get("max")))
         self.count_value.setText(str(stats.get("count", 0)))
 
-        # Update cash drag - only show for Returns metric
-        if self._current_metric == "Returns" and show_cash_drag and cash_drag:
-            drag_bps = cash_drag.get("cash_drag_bps", 0)
-            self.cash_drag_value.setText(f"{drag_bps:.1f} bps")
-            self.cash_drag_label.setVisible(True)
-            self.cash_drag_value.setVisible(True)
-        elif self._current_metric == "Returns":
-            self.cash_drag_value.setText("Excluded")
-            self.cash_drag_label.setVisible(True)
-            self.cash_drag_value.setVisible(True)
-        else:
-            # Hide cash drag for non-Returns metrics
-            self.cash_drag_label.setVisible(False)
-            self.cash_drag_value.setVisible(False)
-
     def clear(self):
         """Clear all statistics."""
         self.mean_value.setText("--")
@@ -204,7 +257,6 @@ class StatisticsPanel(QWidget):
         self.min_value.setText("--")
         self.max_value.setText("--")
         self.count_value.setText("--")
-        self.cash_drag_value.setText("--")
 
     def _apply_theme(self):
         """Apply theme-specific styling."""
@@ -243,6 +295,12 @@ class StatisticsPanel(QWidget):
                 font-weight: bold;
                 background-color: transparent;
             }}
+            QLabel#headerLabel {{
+                color: {text_color};
+                font-size: 12px;
+                font-weight: bold;
+                background-color: transparent;
+            }}
         """)
 
 
@@ -270,8 +328,13 @@ class DistributionChart(QWidget):
         self._current_settings: Dict = {}
         self._current_metric: str = "Returns"
 
+        # Benchmark data
+        self._benchmark_returns: Optional[pd.Series] = None
+        self._benchmark_name: str = ""
+
         # Overlay items
         self.bar_graph = None
+        self.benchmark_bar_graph = None
         self.kde_curve = None
         self.normal_curve = None
         self.mean_line = None
@@ -307,7 +370,7 @@ class DistributionChart(QWidget):
 
         # Statistics panel at bottom
         self.stats_panel = StatisticsPanel(self.theme_manager)
-        self.stats_panel.setFixedHeight(80)
+        self.stats_panel.setFixedHeight(200)  # Increased for 8-row vertical layout
         layout.addWidget(self.stats_panel)
 
     def set_metric(self, metric: str):
@@ -332,6 +395,8 @@ class DistributionChart(QWidget):
         show_normal_distribution: bool = False,
         show_mean_median_lines: bool = False,
         show_cdf_view: bool = False,
+        benchmark_returns: Optional[pd.Series] = None,
+        benchmark_name: str = "",
     ):
         """
         Update the histogram with new return data.
@@ -345,12 +410,16 @@ class DistributionChart(QWidget):
             show_normal_distribution: Whether to show normal distribution overlay
             show_mean_median_lines: Whether to show mean/median vertical lines
             show_cdf_view: Whether to show CDF instead of histogram
+            benchmark_returns: Optional benchmark returns for comparison overlay
+            benchmark_name: Name of the benchmark (ticker or portfolio name)
         """
         # Clear existing plot and overlays
         self._clear_overlays()
 
         # Store for potential redraws
         self._current_returns = returns
+        self._benchmark_returns = benchmark_returns
+        self._benchmark_name = benchmark_name
         self._current_settings = {
             "show_kde_curve": show_kde_curve,
             "show_normal_distribution": show_normal_distribution,
@@ -383,6 +452,16 @@ class DistributionChart(QWidget):
             # All other metrics: convert from decimal to percentage
             values_display = returns * 100
 
+        # Process benchmark returns if provided
+        benchmark_values_display = None
+        if benchmark_returns is not None and not benchmark_returns.empty:
+            benchmark_clean = benchmark_returns.dropna()
+            if len(benchmark_clean) >= 2:
+                if self._current_metric == "Time Under Water":
+                    benchmark_values_display = benchmark_clean.copy()
+                else:
+                    benchmark_values_display = benchmark_clean * 100
+
         if show_cdf_view:
             # Draw CDF instead of histogram
             self._draw_cdf(values_display)
@@ -391,6 +470,10 @@ class DistributionChart(QWidget):
             # Draw histogram
             self._draw_histogram(values_display, num_bins)
             self.plot_widget.setLabel("left", "Frequency")
+
+            # Draw benchmark histogram if provided (behind portfolio)
+            if benchmark_values_display is not None:
+                self._draw_benchmark_histogram(benchmark_values_display, num_bins)
 
             # Draw overlays on histogram
             if show_kde_curve:
@@ -410,6 +493,7 @@ class DistributionChart(QWidget):
             show_normal_distribution=show_normal_distribution,
             show_mean_median_lines=show_mean_median_lines,
             show_cdf_view=show_cdf_view,
+            has_benchmark=benchmark_values_display is not None,
         )
 
         # Auto-range
@@ -418,6 +502,14 @@ class DistributionChart(QWidget):
         # Calculate and display statistics
         stats = self._calculate_statistics(returns)
         self.stats_panel.update_statistics(stats, cash_drag, show_cash_drag)
+
+        # Handle benchmark statistics
+        if benchmark_values_display is not None and benchmark_returns is not None:
+            benchmark_stats = self._calculate_statistics(benchmark_returns.dropna())
+            self.stats_panel.set_benchmark_visible(True, benchmark_name)
+            self.stats_panel.update_benchmark_statistics(benchmark_stats)
+        else:
+            self.stats_panel.set_benchmark_visible(False)
 
     def _clear_overlays(self):
         """Clear all overlay items."""
@@ -428,6 +520,7 @@ class DistributionChart(QWidget):
 
         self.plot_widget.clear()
         self.bar_graph = None
+        self.benchmark_bar_graph = None
         self.kde_curve = None
         self.normal_curve = None
         self.mean_line = None
@@ -448,6 +541,21 @@ class DistributionChart(QWidget):
             pen=self._get_bar_pen(),
         )
         self.plot_widget.addItem(self.bar_graph)
+
+    def _draw_benchmark_histogram(self, benchmark_pct: pd.Series, num_bins: int):
+        """Draw semi-transparent benchmark histogram overlay."""
+        counts, bin_edges = np.histogram(benchmark_pct, bins=num_bins)
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+        bin_width = bin_edges[1] - bin_edges[0]
+
+        self.benchmark_bar_graph = pg.BarGraphItem(
+            x=bin_centers,
+            height=counts,
+            width=bin_width * 0.8,  # Slightly narrower than portfolio bars
+            brush=self._get_benchmark_bar_color(),
+            pen=self._get_benchmark_bar_pen(),
+        )
+        self.plot_widget.addItem(self.benchmark_bar_graph)
 
     def _draw_kde_curve(self, returns_pct: pd.Series, num_bins: int):
         """Draw KDE (Kernel Density Estimation) curve overlay."""
@@ -537,15 +645,30 @@ class DistributionChart(QWidget):
         show_normal_distribution: bool,
         show_mean_median_lines: bool,
         show_cdf_view: bool,
+        has_benchmark: bool = False,
     ):
         """Add legend to top-left of plot if any overlays are enabled."""
-        # Check if any overlay is enabled
-        if not any([show_kde_curve, show_normal_distribution, show_mean_median_lines, show_cdf_view]):
+        # Check if any overlay is enabled (benchmark always shows in legend when present)
+        if not any([show_kde_curve, show_normal_distribution, show_mean_median_lines, show_cdf_view, has_benchmark]):
             return
 
         # Create legend anchored to top-left inside the plot area
         self.legend = pg.LegendItem(offset=(10, 1), labelTextSize="11pt")
         self.legend.setParentItem(self.plot_widget.getPlotItem().vb)
+
+        # Add portfolio and benchmark entries when benchmark is present
+        if has_benchmark and not show_cdf_view:
+            # Portfolio bar entry
+            self.legend.addItem(
+                pg.BarGraphItem(x=[0], height=[0], width=0.5, brush=self._get_bar_color()),
+                "Portfolio"
+            )
+            # Benchmark bar entry
+            benchmark_label = self._benchmark_name if self._benchmark_name else "Benchmark"
+            self.legend.addItem(
+                pg.BarGraphItem(x=[0], height=[0], width=0.5, brush=self._get_benchmark_bar_color()),
+                benchmark_label
+            )
 
         # Add items based on what's enabled
         if show_cdf_view:
@@ -641,6 +764,26 @@ class DistributionChart(QWidget):
             return pg.mkPen(200, 100, 0, 255, width=1)
         else:
             return pg.mkPen(0, 170, 200, 255, width=1)
+
+    def _get_benchmark_bar_color(self):
+        """Get benchmark bar color (semi-transparent, different from portfolio)."""
+        theme = self.theme_manager.current_theme
+        if theme == "light":
+            return pg.mkBrush(255, 100, 0, 100)  # Orange, ~40% alpha
+        elif theme == "bloomberg":
+            return pg.mkBrush(0, 180, 255, 120)  # Cyan, ~50% alpha
+        else:  # dark
+            return pg.mkBrush(255, 140, 0, 120)  # Orange, ~50% alpha
+
+    def _get_benchmark_bar_pen(self):
+        """Get benchmark bar border pen."""
+        theme = self.theme_manager.current_theme
+        if theme == "light":
+            return pg.mkPen(200, 80, 0, 180, width=1)
+        elif theme == "bloomberg":
+            return pg.mkPen(0, 140, 200, 180, width=1)
+        else:  # dark
+            return pg.mkPen(200, 110, 0, 180, width=1)
 
     def _get_kde_pen(self):
         """Get pen for KDE curve (solid, contrasting color)."""

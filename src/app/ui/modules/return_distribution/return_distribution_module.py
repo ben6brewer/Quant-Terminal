@@ -6,6 +6,7 @@ from PySide6.QtCore import Signal
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
+from app.ui.widgets.common.custom_message_box import CustomMessageBox
 
 from .services.distribution_settings_manager import DistributionSettingsManager
 from .widgets.distribution_controls import DistributionControls
@@ -43,12 +44,15 @@ class ReturnDistributionModule(QWidget):
         self.settings_manager = DistributionSettingsManager()
 
         # Current state
-        self._current_portfolio: str = ""
+        self._current_portfolio: str = ""  # Can be portfolio name or ticker
+        self._is_ticker_mode: bool = False  # True if viewing a single ticker
         self._current_interval: str = "Daily"
         self._current_start_date: str = ""
         self._current_end_date: str = ""
         self._current_metric: str = "Returns"
         self._current_window: str = ""
+        self._current_benchmark: str = ""
+        self._portfolio_list: list = []  # Cache of available portfolios
 
         self._setup_ui()
         self._connect_signals()
@@ -82,21 +86,25 @@ class ReturnDistributionModule(QWidget):
         self.controls.date_range_changed.connect(self._on_date_range_changed)
         self.controls.custom_date_range_requested.connect(self._show_date_range_dialog)
         self.controls.settings_clicked.connect(self._show_settings_dialog)
+        self.controls.benchmark_changed.connect(self._on_benchmark_changed)
 
         # Theme changes
         self.theme_manager.theme_changed.connect(self._apply_theme)
 
     def _refresh_portfolio_list(self):
-        """Refresh the portfolio dropdown."""
-        portfolios = PortfolioDataService.list_portfolios_by_recent()
-        self.controls.update_portfolio_list(portfolios, self._current_portfolio)
+        """Refresh the portfolio dropdown and benchmark dropdown."""
+        self._portfolio_list = PortfolioDataService.list_portfolios_by_recent()
+        self.controls.update_portfolio_list(self._portfolio_list, self._current_portfolio)
+        self.controls.update_benchmark_list(self._portfolio_list)
 
     def _on_portfolio_changed(self, name: str):
-        """Handle portfolio selection change."""
+        """Handle portfolio/ticker selection change."""
         if name == self._current_portfolio:
             return
 
         self._current_portfolio = name
+        # Check if this is a portfolio or a ticker
+        self._is_ticker_mode = name not in self._portfolio_list
         self._update_distribution()
 
     def _on_metric_changed(self, metric: str):
@@ -131,6 +139,11 @@ class ReturnDistributionModule(QWidget):
         self._current_end_date = end_date
         self._update_distribution()
 
+    def _on_benchmark_changed(self, benchmark: str):
+        """Handle benchmark selection change."""
+        self._current_benchmark = benchmark
+        self._update_distribution()
+
     def _show_date_range_dialog(self):
         """Show the custom date range dialog."""
         dialog = DateRangeDialog(self.theme_manager, self)
@@ -154,7 +167,7 @@ class ReturnDistributionModule(QWidget):
     def _update_distribution(self):
         """Update the distribution chart with current settings."""
         if not self._current_portfolio:
-            self.chart.show_placeholder("Select a portfolio to view return distribution")
+            self.chart.show_placeholder("Type a ticker or select a portfolio")
             return
 
         # Get settings
@@ -172,21 +185,61 @@ class ReturnDistributionModule(QWidget):
         end_date = self._current_end_date if self._current_end_date else None
 
         try:
-            # Get data based on selected metric
+            # Get data based on selected metric and mode (ticker vs portfolio)
             data = self._get_metric_data(start_date, end_date, include_cash)
 
             if data is None or data.empty:
-                self.chart.show_placeholder(f"No {self._current_metric.lower()} data available")
+                if self._is_ticker_mode:
+                    if self._current_metric != "Returns":
+                        # Non-Returns metrics not supported for tickers
+                        self.chart.show_placeholder(
+                            f"'{self._current_metric}' is only available for portfolios.\n"
+                            f"Select 'Returns' to view {self._current_portfolio} distribution."
+                        )
+                    else:
+                        # Show error for invalid ticker and reset
+                        CustomMessageBox.warning(
+                            self.theme_manager,
+                            self,
+                            "Ticker Not Found",
+                            f"Ticker '{self._current_portfolio}' not found. Please check the symbol and try again."
+                        )
+                        self._current_portfolio = ""
+                        self.controls.portfolio_combo.setCurrentIndex(-1)
+                        self.chart.show_placeholder("Type a ticker or select a portfolio")
+                else:
+                    self.chart.show_placeholder(f"No {self._current_metric.lower()} data available")
                 return
 
-            # Get cash drag if showing Returns with cash included
+            # Get cash drag if showing Returns with cash included (only for portfolios)
             cash_drag = None
-            if self._current_metric == "Returns" and include_cash:
+            if self._current_metric == "Returns" and include_cash and not self._is_ticker_mode:
                 cash_drag = ReturnsDataService.calculate_cash_drag(
                     self._current_portfolio,
                     start_date=start_date,
                     end_date=end_date,
                 )
+
+            # Get benchmark returns if specified (only for Returns metric)
+            benchmark_returns = None
+            benchmark_name = ""
+            if self._current_benchmark and self._current_metric == "Returns":
+                benchmark_returns, benchmark_name, error_msg = self._get_benchmark_data(
+                    start_date, end_date, include_cash
+                )
+                # If benchmark couldn't be loaded, show error and reset to None
+                if error_msg:
+                    CustomMessageBox.warning(
+                        self.theme_manager,
+                        self,
+                        "Benchmark Not Found",
+                        error_msg
+                    )
+                    # Reset benchmark to None
+                    self._current_benchmark = ""
+                    self.controls.reset_benchmark()
+                    benchmark_returns = None
+                    benchmark_name = ""
 
             # Update chart with all visualization settings
             self.chart.set_returns(
@@ -197,6 +250,8 @@ class ReturnDistributionModule(QWidget):
                 show_normal_distribution=show_normal_distribution,
                 show_mean_median_lines=show_mean_median_lines,
                 show_cdf_view=show_cdf_view,
+                benchmark_returns=benchmark_returns,
+                benchmark_name=benchmark_name,
             )
 
         except Exception as e:
@@ -219,6 +274,20 @@ class ReturnDistributionModule(QWidget):
         """
         metric = self._current_metric
 
+        # If in ticker mode, only Returns metric is supported
+        if self._is_ticker_mode:
+            if metric == "Returns":
+                return ReturnsDataService.get_ticker_returns(
+                    self._current_portfolio,
+                    start_date=start_date,
+                    end_date=end_date,
+                    interval=self._current_interval,
+                )
+            else:
+                # Other metrics not supported for single tickers
+                return None
+
+        # Portfolio mode - use portfolio-specific methods
         if metric == "Returns":
             return ReturnsDataService.get_time_varying_portfolio_returns(
                 self._current_portfolio,
@@ -282,6 +351,55 @@ class ReturnDistributionModule(QWidget):
                 include_cash=include_cash,
                 interval=self._current_interval,
             )
+
+    def _get_benchmark_data(self, start_date, end_date, include_cash):
+        """
+        Get benchmark returns data.
+
+        Args:
+            start_date: Start date for data range
+            end_date: End date for data range
+            include_cash: Whether to include cash in portfolio benchmark calculations
+
+        Returns:
+            Tuple of (pd.Series of returns, benchmark name string, error message or None)
+        """
+        import pandas as pd
+
+        benchmark = self._current_benchmark
+
+        if benchmark.startswith("[Portfolio] "):
+            # It's a portfolio - get portfolio returns
+            portfolio_name = benchmark.replace("[Portfolio] ", "")
+            try:
+                returns = ReturnsDataService.get_time_varying_portfolio_returns(
+                    portfolio_name,
+                    start_date=start_date,
+                    end_date=end_date,
+                    include_cash=include_cash,
+                    interval=self._current_interval,
+                )
+                if returns is None or returns.empty:
+                    return pd.Series(dtype=float), "", f"Portfolio '{portfolio_name}' has no return data available."
+                return returns, portfolio_name, None
+            except Exception as e:
+                print(f"Error loading benchmark portfolio {portfolio_name}: {e}")
+                return pd.Series(dtype=float), "", f"Could not load portfolio '{portfolio_name}'."
+        else:
+            # It's a ticker - get ticker returns
+            try:
+                returns = ReturnsDataService.get_ticker_returns(
+                    benchmark,
+                    start_date=start_date,
+                    end_date=end_date,
+                    interval=self._current_interval,
+                )
+                if returns is None or returns.empty:
+                    return pd.Series(dtype=float), "", f"Ticker '{benchmark}' not found. Please check the symbol and try again."
+                return returns, benchmark, None
+            except Exception as e:
+                print(f"Error loading benchmark ticker {benchmark}: {e}")
+                return pd.Series(dtype=float), "", f"Could not load ticker '{benchmark}'. Please check the symbol and try again."
 
     def _apply_theme(self):
         """Apply theme-specific styling."""
