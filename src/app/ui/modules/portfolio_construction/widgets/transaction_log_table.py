@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Any, Optional, Tuple
 from PySide6.QtWidgets import (
-    QTableWidget, QTableWidgetItem, QHeaderView,
+    QTableWidgetItem, QHeaderView,
     QAbstractButton, QWidget, QHBoxLayout, QApplication, QLineEdit, QComboBox
 )
 from PySide6.QtCore import Qt, Signal, QDate, QTimer, QEvent
@@ -15,12 +15,14 @@ from app.ui.widgets.common import (
     DateInputWidget,
     AutoSelectLineEdit,
     ValidatedNumericLineEdit,
-    NoScrollComboBox
+    NoScrollComboBox,
+    EditableTableBase,
 )
 from ..services.portfolio_service import PortfolioService
+from .mixins import FieldRevertMixin, SortingMixin
 
 
-class TransactionLogTable(QTableWidget):
+class TransactionLogTable(FieldRevertMixin, SortingMixin, EditableTableBase):
     """
     Editable transaction log table (left side).
     Inline editing with date picker and dropdown.
@@ -48,9 +50,12 @@ class TransactionLogTable(QTableWidget):
         "Market Value"         # col 10 - Read-only (calculated)
     ]
 
+    # Editable columns (0-6, but 2 is read-only Name)
+    EDITABLE_COLUMNS = [0, 1, 3, 4, 5, 6]
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
+        # Initialize base class with theme_manager and columns
+        super().__init__(theme_manager, self.COLUMNS, parent)
 
         # UUID-based transaction storage
         self._transactions_by_id: Dict[str, Dict[str, Any]] = {}  # Map transaction_id -> transaction_dict
@@ -144,40 +149,17 @@ class TransactionLogTable(QTableWidget):
                   f"date: {old_date} -> {date}")
         self._original_values[tx_id] = values
 
+    def _get_editable_columns(self) -> List[int]:
+        """Return list of editable column indices (implements abstract method)."""
+        return self.EDITABLE_COLUMNS
+
     def _setup_table(self):
         """Configure table structure."""
-        self.setColumnCount(len(self.COLUMNS))
-        self.setHorizontalHeaderLabels(self.COLUMNS)
+        # Call base class setup (handles column setup, row heights, selection, scrolling)
+        self._setup_base_table()
 
-        # Set header alignment to left
-        header = self.horizontalHeader()
-        for col in range(len(self.COLUMNS)):
-            item = self.horizontalHeaderItem(col)
-            if item:
-                item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        header.setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-
-        # Set column resize modes and widths
+        # Set column resize modes and widths (transaction-specific)
         self._reset_column_widths()
-
-        # Table properties - fixed row heights
-        v_header = self.verticalHeader()
-        v_header.setVisible(True)  # Show row numbers
-        v_header.setDefaultSectionSize(48)  # Fixed row height
-        self.setSelectionBehavior(QTableWidget.SelectRows)
-        self.setSelectionMode(QTableWidget.ExtendedSelection)
-        self.setAlternatingRowColors(True)
-        self.setShowGrid(True)
-
-        # Hide vertical scrollbar but keep scroll functionality
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        # Enable smooth pixel-based scrolling instead of item-based
-        self.setVerticalScrollMode(QTableWidget.ScrollPerPixel)
-        self.setHorizontalScrollMode(QTableWidget.ScrollPerPixel)
-
-        # Disable built-in sorting - we handle it manually to keep blank row pinned at top
-        self.setSortingEnabled(False)
 
         # Connect header click for custom sorting
         header = self.horizontalHeader()
@@ -322,7 +304,7 @@ class TransactionLogTable(QTableWidget):
         self._transactions[0] = blank_transaction
 
         # Get current theme stylesheets
-        widget_style = self._get_current_widget_stylesheet()
+        widget_style = self._get_widget_stylesheet()
         combo_style = self._get_combo_stylesheet()
 
         # Create widgets for blank row
@@ -865,7 +847,7 @@ class TransactionLogTable(QTableWidget):
             transaction: Transaction dict
         """
         # Get current theme stylesheets
-        widget_style = self._get_current_widget_stylesheet()
+        widget_style = self._get_widget_stylesheet()
         combo_style = self._get_combo_stylesheet()
 
         # Date cell - column 0
@@ -958,57 +940,6 @@ class TransactionLogTable(QTableWidget):
 
         # Set up tab order for keyboard navigation
         self._setup_tab_order(row)
-
-    def _find_insertion_position(self, transaction: Dict[str, Any]) -> int:
-        """
-        Find the correct insertion position for a new transaction using binary search.
-
-        The table is sorted by date descending, then priority ascending, then sequence ascending.
-        Returns the row index where the transaction should be inserted (after blank row at 0
-        and FREE CASH summary at 1).
-
-        Args:
-            transaction: Transaction dict with date, ticker, transaction_type, sequence
-
-        Returns:
-            Row index for insertion (minimum 2, since rows 0-1 are pinned)
-        """
-        tx_date = transaction.get("date", "")
-        ticker = transaction.get("ticker", "")
-        tx_type = transaction.get("transaction_type", "Buy")
-        sequence = transaction.get("sequence", 0)
-
-        # Calculate sort key for new transaction (negated for descending order)
-        priority = PortfolioService.get_transaction_priority(ticker, tx_type)
-        new_key = (tx_date, -priority, -sequence)
-
-        # Binary search on rows 2 to rowCount-1 (skip blank row and FREE CASH summary)
-        left = 2
-        right = self.rowCount()
-
-        while left < right:
-            mid = (left + right) // 2
-
-            # Extract sort key from row at mid
-            mid_tx = self._get_transaction_for_row(mid)
-            if mid_tx:
-                mid_date = mid_tx.get("date", "")
-                mid_ticker = mid_tx.get("ticker", "")
-                mid_type = mid_tx.get("transaction_type", "Buy")
-                mid_seq = mid_tx.get("sequence", 0)
-                mid_priority = PortfolioService.get_transaction_priority(mid_ticker, mid_type)
-                mid_key = (mid_date, -mid_priority, -mid_seq)
-
-                # For descending order: if new_key > mid_key, insert before mid
-                if new_key > mid_key:
-                    right = mid
-                else:
-                    left = mid + 1
-            else:
-                # Safety fallback - shouldn't happen
-                left = mid + 1
-
-        return left
 
     def _insert_transaction_at_position(self, transaction: Dict[str, Any], pos: int) -> int:
         """
@@ -1426,53 +1357,6 @@ class TransactionLogTable(QTableWidget):
 
             # Update FREE CASH summary row
             self._update_free_cash_summary_row()
-
-    def _find_row_for_widget(self, widget: QWidget) -> Optional[int]:
-        """
-        Find the row index for a given widget using stored property (O(1) lookup).
-
-        Args:
-            widget: The widget to find
-
-        Returns:
-            Row index or None if not found
-        """
-        row = widget.property("_table_row")
-        if row is not None:
-            return row
-        # Fallback to slow search (should not be needed)
-        for r, widgets in self._row_widgets_map.items():
-            if widget in widgets:
-                return r
-        return None
-
-    def _find_cell_for_widget(self, widget: QWidget) -> tuple[Optional[int], Optional[int]]:
-        """
-        Find the (row, col) for a given widget using stored properties (O(1) lookup).
-
-        Args:
-            widget: The widget to find
-
-        Returns:
-            Tuple of (row, col) or (None, None) if not found
-        """
-        row = widget.property("_table_row")
-        col = widget.property("_table_col")
-        if row is not None and col is not None:
-            return (row, col)
-        return (None, None)
-
-    def _set_widget_position(self, widget: QWidget, row: int, col: int):
-        """
-        Store row/col position on widget for O(1) lookup.
-
-        Args:
-            widget: The widget to tag
-            row: Row index
-            col: Column index
-        """
-        widget.setProperty("_table_row", row)
-        widget.setProperty("_table_col", col)
 
     def _update_row_positions(self, start_row: int):
         """
@@ -2346,162 +2230,6 @@ class TransactionLogTable(QTableWidget):
                     if name_widget and isinstance(name_widget, QLineEdit):
                         name_widget.setText(name)
 
-    def _revert_ticker(self, row: int, original_ticker: str):
-        """
-        Revert ticker field to original value.
-
-        Args:
-            row: Row index
-            original_ticker: Original ticker value to restore
-        """
-        ticker_widget = self._get_inner_widget(row, 1)
-        if ticker_widget and isinstance(ticker_widget, QLineEdit):
-            ticker_widget.blockSignals(True)
-            ticker_widget.setText(original_ticker)
-            ticker_widget.blockSignals(False)
-
-        # Update stored transaction
-        transaction = self._get_transaction_for_row(row)
-        if transaction:
-            transaction["ticker"] = original_ticker
-            tx_id = transaction.get("id")
-            if tx_id and tx_id in self._transactions_by_id:
-                self._transactions_by_id[tx_id]["ticker"] = original_ticker
-
-    def _revert_date(self, row: int, original_date: str):
-        """
-        Revert date field to original value.
-
-        Args:
-            row: Row index
-            original_date: Original date value to restore (YYYY-MM-DD)
-        """
-        date_widget = self._get_inner_widget(row, 0)
-        if date_widget and isinstance(date_widget, DateInputWidget):
-            date_widget.blockSignals(True)
-            date_widget.setDate(QDate.fromString(original_date, "yyyy-MM-dd"))
-            date_widget.blockSignals(False)
-
-        # Update stored transaction
-        transaction = self._get_transaction_for_row(row)
-        if transaction:
-            transaction["date"] = original_date
-            tx_id = transaction.get("id")
-            if tx_id and tx_id in self._transactions_by_id:
-                self._transactions_by_id[tx_id]["date"] = original_date
-
-    def _revert_quantity(self, row: int, original_quantity: float):
-        """
-        Revert quantity field to original value.
-
-        Args:
-            row: Row index
-            original_quantity: Original quantity value to restore
-        """
-        qty_widget = self._get_inner_widget(row, 3)
-        if qty_widget and isinstance(qty_widget, ValidatedNumericLineEdit):
-            qty_widget.blockSignals(True)
-            qty_widget.setValue(original_quantity)
-            qty_widget.blockSignals(False)
-
-        # Update stored transaction
-        transaction = self._get_transaction_for_row(row)
-        if transaction:
-            transaction["quantity"] = original_quantity
-            tx_id = transaction.get("id")
-            if tx_id and tx_id in self._transactions_by_id:
-                self._transactions_by_id[tx_id]["quantity"] = original_quantity
-
-    def _revert_entry_price(self, row: int, original_price: float):
-        """
-        Revert entry price field to original value.
-
-        Args:
-            row: Row index
-            original_price: Original price value to restore
-        """
-        price_widget = self._get_inner_widget(row, 4)
-        if price_widget and isinstance(price_widget, ValidatedNumericLineEdit):
-            price_widget.blockSignals(True)
-            price_widget.setValue(original_price)
-            price_widget.blockSignals(False)
-
-        # Update stored transaction
-        transaction = self._get_transaction_for_row(row)
-        if transaction:
-            transaction["entry_price"] = original_price
-            tx_id = transaction.get("id")
-            if tx_id and tx_id in self._transactions_by_id:
-                self._transactions_by_id[tx_id]["entry_price"] = original_price
-
-    def _revert_fees(self, row: int, original_fees: float):
-        """
-        Revert fees field to original value.
-
-        Args:
-            row: Row index
-            original_fees: Original fees value to restore
-        """
-        fees_widget = self._get_inner_widget(row, 5)
-        if fees_widget and isinstance(fees_widget, ValidatedNumericLineEdit):
-            fees_widget.blockSignals(True)
-            fees_widget.setValue(original_fees)
-            fees_widget.blockSignals(False)
-
-        # Update stored transaction
-        transaction = self._get_transaction_for_row(row)
-        if transaction:
-            transaction["fees"] = original_fees
-            tx_id = transaction.get("id")
-            if tx_id and tx_id in self._transactions_by_id:
-                self._transactions_by_id[tx_id]["fees"] = original_fees
-
-    def _revert_transaction_type(self, row: int, original_type: str):
-        """
-        Revert transaction type field to original value.
-
-        Args:
-            row: Row index
-            original_type: Original transaction type ("Buy" or "Sell")
-        """
-        type_widget = self._get_inner_widget(row, 6)
-        if type_widget and isinstance(type_widget, QComboBox):
-            type_widget.blockSignals(True)
-            type_widget.setCurrentText(original_type)
-            type_widget.blockSignals(False)
-
-        # Update stored transaction
-        transaction = self._get_transaction_for_row(row)
-        if transaction:
-            transaction["transaction_type"] = original_type
-            tx_id = transaction.get("id")
-            if tx_id and tx_id in self._transactions_by_id:
-                self._transactions_by_id[tx_id]["transaction_type"] = original_type
-
-    def _revert_all_fields(self, row: int, original: Dict[str, Any]):
-        """
-        Revert all editable fields to original values.
-
-        Args:
-            row: Row index
-            original: Dict with original values for all fields
-        """
-        if not original:
-            return
-
-        if "ticker" in original:
-            self._revert_ticker(row, original["ticker"])
-        if "date" in original:
-            self._revert_date(row, original["date"])
-        if "quantity" in original:
-            self._revert_quantity(row, original["quantity"])
-        if "entry_price" in original:
-            self._revert_entry_price(row, original["entry_price"])
-        if "fees" in original:
-            self._revert_fees(row, original["fees"])
-        if "transaction_type" in original:
-            self._revert_transaction_type(row, original["transaction_type"])
-
     def _validate_transaction_safeguards(
         self,
         row: int,
@@ -2895,22 +2623,6 @@ class TransactionLogTable(QTableWidget):
                         else:  # QLineEdit-based widgets
                             inner.setStyleSheet(widget_stylesheet)
 
-    def _get_current_widget_stylesheet(self) -> str:
-        """Get the current theme's widget stylesheet."""
-        theme = self.theme_manager.current_theme
-        return ThemeStylesheetService.get_line_edit_stylesheet(
-            theme, highlighted=self._highlight_editable
-        )
-
-    def _get_cell_background_color(self) -> str:
-        """Get the current theme's cell background color (or transparent if highlighting disabled)."""
-        if not self._highlight_editable:
-            return "transparent"
-
-        theme = self.theme_manager.current_theme
-        colors = ThemeStylesheetService.get_colors(theme)
-        return colors["accent"]
-
     def set_highlight_editable(self, enabled: bool):
         """
         Enable or disable editable field highlighting.
@@ -2937,61 +2649,3 @@ class TransactionLogTable(QTableWidget):
         # Apply visibility to row 1 (FREE CASH summary row is always at index 1)
         if self.rowCount() > 1:
             self.setRowHidden(1, hidden)
-
-    def _wrap_widget_in_cell(self, widget: QWidget) -> QWidget:
-        """Wrap a widget in a container that fills the cell with themed background."""
-        bg_color = self._get_cell_background_color()
-
-        container = QWidget()
-        container.setAutoFillBackground(True)
-        container.setStyleSheet(f"QWidget {{ background-color: {bg_color}; }}")
-
-        layout = QHBoxLayout(container)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
-        layout.addWidget(widget)
-
-        # Store reference to inner widget for later access
-        container.setProperty("_inner_widget", widget)
-
-        return container
-
-    def _set_editable_cell_widget(self, row: int, col: int, widget: QWidget):
-        """
-        Set a widget in a cell with proper background coloring.
-
-        This sets both a QTableWidgetItem with the background color AND the cell widget,
-        ensuring the entire cell is colored (not just the widget area).
-        """
-        bg_color = self._get_cell_background_color()
-
-        # Create and set a table item with the background color
-        item = QTableWidgetItem()
-        if self._highlight_editable and bg_color != "transparent":
-            item.setBackground(QBrush(QColor(bg_color)))
-        self.setItem(row, col, item)
-
-        # Wrap and set the widget
-        container = self._wrap_widget_in_cell(widget)
-        self.setCellWidget(row, col, container)
-
-    def _get_inner_widget(self, row: int, col: int) -> Optional[QWidget]:
-        """Get the inner widget from a cell (unwraps container if needed)."""
-        cell_widget = self.cellWidget(row, col)
-        if cell_widget is None:
-            return None
-
-        # Check if it's a container with an inner widget
-        inner = cell_widget.property("_inner_widget")
-        if inner is not None:
-            return inner
-
-        # Otherwise return the cell widget directly
-        return cell_widget
-
-    def _get_combo_stylesheet(self) -> str:
-        """Get theme-aware stylesheet for combo box."""
-        theme = self.theme_manager.current_theme
-        return ThemeStylesheetService.get_combobox_stylesheet(
-            theme, highlighted=self._highlight_editable
-        )

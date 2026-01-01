@@ -11,6 +11,8 @@ from .portfolio_dialogs import (
     ExportDialog,
 )
 from .view_tab_bar import ViewTabBar
+from .pinned_row_manager import PinnedRowManager
+from .mixins import FieldRevertMixin, SortingMixin
 
 __all__ = [
     "TransactionLogTable",
@@ -22,4 +24,7 @@ __all__ = [
     "ImportPortfolioDialog",
     "ExportDialog",
     "ViewTabBar",
+    "PinnedRowManager",
+    "FieldRevertMixin",
+    "SortingMixin",
 ]

@@ -98,6 +98,8 @@ src/app/
 │
 ├── services/                  # SHARED ONLY
 │   ├── market_data.py              # Yahoo Finance fetching
+│   ├── portfolio_data_service.py   # Read-only portfolio access for analysis
+│   ├── returns_data_service.py     # Cached daily returns (parquet)
 │   ├── favorites_service.py        # Favorites persistence
 │   ├── theme_stylesheet_service.py # Centralized theme colors/styles
 │   └── base_settings_manager.py    # Abstract settings persistence
@@ -113,7 +115,7 @@ src/app/
 │   │   │   └── overlays/      # resize_handle.py
 │   │   │
 │   │   ├── navigation/        # home_screen.py, module_tile.py, etc.
-│   │   └── common/            # Shared widgets (ThemedDialog, DateInputWidget, etc.)
+│   │   └── common/            # ThemedDialog, DateInputWidget, EditableTableBase, etc.
 │   │
 │   └── modules/
 │       └── chart/             # Example module structure
@@ -567,6 +569,8 @@ TILE_COLS = 3
 - `custom_indicators.json`: Custom indicators (managed by IndicatorService)
 - `chart_settings.json`: Chart preferences (managed by ChartSettingsManager)
 - `screenshots/`: Module preview images (managed by ScreenshotManager)
+- `portfolios/`: Portfolio JSON files (managed by PortfolioPersistence)
+- `cache/returns/`: Cached daily returns parquet files (managed by ReturnsDataService)
 
 ### Persistence Services
 

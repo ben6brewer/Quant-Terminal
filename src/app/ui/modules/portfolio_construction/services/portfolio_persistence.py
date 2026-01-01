@@ -92,6 +92,14 @@ class PortfolioPersistence:
 
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(portfolio, f, indent=2, ensure_ascii=False)
+
+            # Invalidate returns cache (lazy import to avoid circular dependency)
+            try:
+                from app.services.returns_data_service import ReturnsDataService
+                ReturnsDataService.invalidate_cache(name)
+            except ImportError:
+                pass  # Service not available
+
             return True
         except IOError as e:
             print(f"Error saving portfolio {name}: {e}")

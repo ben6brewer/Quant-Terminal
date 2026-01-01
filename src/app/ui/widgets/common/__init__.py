@@ -6,6 +6,7 @@ from .auto_select_line_edit import AutoSelectLineEdit
 from .validated_numeric_line_edit import ValidatedNumericLineEdit
 from .no_scroll_combobox import NoScrollComboBox
 from .themed_dialog import ThemedDialog
+from .editable_table_base import EditableTableBase
 
 __all__ = [
     'CustomMessageBox',
@@ -13,5 +14,6 @@ __all__ = [
     'AutoSelectLineEdit',
     'ValidatedNumericLineEdit',
     'NoScrollComboBox',
-    'ThemedDialog'
+    'ThemedDialog',
+    'EditableTableBase',
 ]
