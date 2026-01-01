@@ -367,20 +367,86 @@ class HubWindow(QMainWindow):
         layout = QVBoxLayout(overlay)
         layout.setContentsMargins(10, 10, 0, 0)
 
-        # Home button
-        home_btn = self.theme_manager.create_styled_button("Home")
+        # Home button with solid background (not transparent like create_styled_button)
+        home_btn = QPushButton("Home")
+        home_btn.setObjectName("overlayHomeBtn")
         home_btn.setFixedSize(100, 40)
         home_btn.setCursor(Qt.PointingHandCursor)
         home_btn.clicked.connect(self.show_home)
 
+        # Apply solid styling based on current theme
+        self._apply_overlay_home_btn_style(home_btn)
+
         # Add button with alignment to position it top-left within the expanding layout
         layout.addWidget(home_btn, alignment=Qt.AlignTop | Qt.AlignLeft)
         layout.addStretch(1)
-        
+
         # Set up the mask so overlay only exists where Home button is
         overlay.set_home_button(home_btn)
 
         return overlay
+
+    def _apply_overlay_home_btn_style(self, btn: QPushButton) -> None:
+        """Apply solid background styling to overlay home button."""
+        theme = self.theme_manager.current_theme
+
+        if theme == "dark":
+            btn.setStyleSheet("""
+                #overlayHomeBtn {
+                    background-color: #2d2d2d;
+                    color: #ffffff;
+                    border: 1px solid #3d3d3d;
+                    border-radius: 3px;
+                    padding: 6px 12px;
+                    font-size: 13px;
+                    font-weight: bold;
+                }
+                #overlayHomeBtn:hover {
+                    background-color: #3d3d3d;
+                    border-color: #00d4ff;
+                }
+                #overlayHomeBtn:pressed {
+                    background-color: #1a1a1a;
+                }
+            """)
+        elif theme == "bloomberg":
+            btn.setStyleSheet("""
+                #overlayHomeBtn {
+                    background-color: #0d1420;
+                    color: #e8e8e8;
+                    border: 1px solid #1a2838;
+                    border-radius: 3px;
+                    padding: 6px 12px;
+                    font-size: 13px;
+                    font-weight: bold;
+                }
+                #overlayHomeBtn:hover {
+                    background-color: #1a2838;
+                    border-color: #FF8000;
+                }
+                #overlayHomeBtn:pressed {
+                    background-color: #060a10;
+                }
+            """)
+        else:  # light theme
+            btn.setStyleSheet("""
+                #overlayHomeBtn {
+                    background-color: #f5f5f5;
+                    color: #000000;
+                    border: 1px solid #cccccc;
+                    border-radius: 3px;
+                    padding: 6px 12px;
+                    font-size: 13px;
+                    font-weight: bold;
+                }
+                #overlayHomeBtn:hover {
+                    background-color: #e8e8e8;
+                    border-color: #0066cc;
+                }
+                #overlayHomeBtn:pressed {
+                    background-color: #d0d0d0;
+                }
+            """)
 
     def open_module(self, module_id: str) -> None:
         """Open a module in full screen."""
