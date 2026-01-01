@@ -36,16 +36,32 @@ class SmoothScrollListView(QListView):
 class DistributionControls(QWidget):
     """
     Control bar at top of return distribution module.
-    Contains: Home button, Portfolio selector, Interval selector, Date Range selector, Settings button.
+    Contains: Home button, Portfolio selector, Metric selector, Interval selector, Date Range selector, Settings button.
     """
 
     # Signals
     home_clicked = Signal()
     portfolio_changed = Signal(str)
+    metric_changed = Signal(str)
+    window_changed = Signal(str)
     interval_changed = Signal(str)
     date_range_changed = Signal(str, str)  # start_date, end_date (empty for "All")
     custom_date_range_requested = Signal()  # Open date range dialog
     settings_clicked = Signal()
+
+    # Metric options
+    METRIC_OPTIONS = [
+        "Returns",
+        "Volatility",
+        "Rolling Volatility",
+        "Drawdown",
+        "Rolling Return",
+        "Time Under Water",
+    ]
+
+    # Window options for rolling metrics
+    ROLLING_VOL_WINDOWS = ["1 Month", "3 Months", "6 Months", "1 Year"]
+    ROLLING_RETURN_WINDOWS = ["1 Month", "3 Months", "1 Year", "3 Years", "5 Years"]
 
     # Date range presets
     DATE_RANGE_OPTIONS = ["All", "1Y", "3Y", "5Y", "Custom Date Range..."]
@@ -93,7 +109,33 @@ class DistributionControls(QWidget):
 
         layout.addSpacing(20)
 
-        # Interval selector
+        # Metric selector
+        self.metric_label = QLabel("Metric:")
+        self.metric_label.setObjectName("control_label")
+        layout.addWidget(self.metric_label)
+        self.metric_combo = QComboBox()
+        self.metric_combo.setFixedWidth(160)
+        self.metric_combo.setFixedHeight(40)
+        self.metric_combo.addItems(self.METRIC_OPTIONS)
+        self.metric_combo.setCurrentText("Returns")
+        self.metric_combo.currentTextChanged.connect(self._on_metric_changed)
+        layout.addWidget(self.metric_combo)
+
+        # Window selector (for rolling metrics - hidden by default)
+        self.window_label = QLabel("Window:")
+        self.window_label.setObjectName("control_label")
+        self.window_label.setVisible(False)
+        layout.addWidget(self.window_label)
+        self.window_combo = QComboBox()
+        self.window_combo.setFixedWidth(120)
+        self.window_combo.setFixedHeight(40)
+        self.window_combo.setVisible(False)
+        self.window_combo.currentTextChanged.connect(self._on_window_changed)
+        layout.addWidget(self.window_combo)
+
+        layout.addSpacing(20)
+
+        # Interval selector (only shown for Returns metric)
         self.interval_label = QLabel("Interval:")
         self.interval_label.setObjectName("control_label")
         layout.addWidget(self.interval_label)
@@ -101,7 +143,7 @@ class DistributionControls(QWidget):
         self.interval_combo.setFixedWidth(120)
         self.interval_combo.setFixedHeight(40)
         self.interval_combo.addItems(CHART_INTERVALS)
-        self.interval_combo.setCurrentText("daily")
+        self.interval_combo.setCurrentText("Daily")
         self.interval_combo.currentTextChanged.connect(self.interval_changed.emit)
         layout.addWidget(self.interval_combo)
 
@@ -132,6 +174,42 @@ class DistributionControls(QWidget):
         """Handle portfolio dropdown selection."""
         if name:
             self.portfolio_changed.emit(name)
+
+    def _on_metric_changed(self, metric: str):
+        """Handle metric dropdown selection."""
+        # Show/hide window dropdown based on metric
+        if metric == "Rolling Volatility":
+            self.window_combo.blockSignals(True)
+            self.window_combo.clear()
+            self.window_combo.addItems(self.ROLLING_VOL_WINDOWS)
+            self.window_combo.setCurrentText("1 Month")
+            self.window_combo.blockSignals(False)
+            self.window_label.setVisible(True)
+            self.window_combo.setVisible(True)
+        elif metric == "Rolling Return":
+            self.window_combo.blockSignals(True)
+            self.window_combo.clear()
+            self.window_combo.addItems(self.ROLLING_RETURN_WINDOWS)
+            self.window_combo.setCurrentText("1 Year")
+            self.window_combo.blockSignals(False)
+            self.window_label.setVisible(True)
+            self.window_combo.setVisible(True)
+        else:
+            self.window_label.setVisible(False)
+            self.window_combo.setVisible(False)
+
+        # Show/hide interval dropdown (only for Returns)
+        show_interval = metric == "Returns"
+        self.interval_label.setVisible(show_interval)
+        self.interval_combo.setVisible(show_interval)
+
+        # Emit metric change signal
+        self.metric_changed.emit(metric)
+
+    def _on_window_changed(self, window: str):
+        """Handle window dropdown selection."""
+        if window:
+            self.window_changed.emit(window)
 
     def _on_date_range_changed(self, option: str):
         """Handle date range dropdown selection."""
@@ -215,7 +293,15 @@ class DistributionControls(QWidget):
 
     def get_current_interval(self) -> str:
         """Get currently selected interval."""
-        return self.interval_combo.currentText() or "daily"
+        return self.interval_combo.currentText() or "Daily"
+
+    def get_current_metric(self) -> str:
+        """Get currently selected metric."""
+        return self.metric_combo.currentText() or "Returns"
+
+    def get_current_window(self) -> str:
+        """Get currently selected window for rolling metrics."""
+        return self.window_combo.currentText() or ""
 
     def get_current_date_range(self) -> Tuple[str, str]:
         """
@@ -336,19 +422,6 @@ class DistributionControls(QWidget):
             QPushButton:pressed {
                 background-color: #1a1a1a;
             }
-            QPushButton#home_btn {
-                background-color: transparent;
-                border: 1px solid transparent;
-                font-weight: bold;
-            }
-            QPushButton#home_btn:hover {
-                background-color: rgba(0, 212, 255, 0.15);
-                border: 1px solid #00d4ff;
-            }
-            QPushButton#home_btn:pressed {
-                background-color: #00d4ff;
-                color: #000000;
-            }
         """
 
     def _get_light_stylesheet(self) -> str:
@@ -424,19 +497,6 @@ class DistributionControls(QWidget):
             QPushButton:pressed {
                 background-color: #d0d0d0;
             }
-            QPushButton#home_btn {
-                background-color: transparent;
-                border: 1px solid transparent;
-                font-weight: bold;
-            }
-            QPushButton#home_btn:hover {
-                background-color: rgba(0, 102, 204, 0.15);
-                border: 1px solid #0066cc;
-            }
-            QPushButton#home_btn:pressed {
-                background-color: #0066cc;
-                color: #ffffff;
-            }
         """
 
     def _get_bloomberg_stylesheet(self) -> str:
@@ -511,18 +571,5 @@ class DistributionControls(QWidget):
             }
             QPushButton:pressed {
                 background-color: #060a10;
-            }
-            QPushButton#home_btn {
-                background-color: transparent;
-                border: 1px solid transparent;
-                font-weight: bold;
-            }
-            QPushButton#home_btn:hover {
-                background-color: rgba(255, 128, 0, 0.15);
-                border: 1px solid #FF8000;
-            }
-            QPushButton#home_btn:pressed {
-                background-color: #FF8000;
-                color: #000000;
             }
         """

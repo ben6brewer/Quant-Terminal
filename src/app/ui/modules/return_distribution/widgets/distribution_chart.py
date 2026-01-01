@@ -22,9 +22,20 @@ from app.core.theme_manager import ThemeManager
 class StatisticsPanel(QWidget):
     """Panel displaying return distribution statistics."""
 
+    # Metric display names for labels
+    METRIC_LABELS = {
+        "Returns": "Return",
+        "Volatility": "Volatility",
+        "Rolling Volatility": "Volatility",
+        "Drawdown": "Drawdown",
+        "Rolling Return": "Return",
+        "Time Under Water": "Days",
+    }
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
         self.theme_manager = theme_manager
+        self._current_metric = "Returns"
         self._setup_ui()
         self._apply_theme()
         self.theme_manager.theme_changed.connect(self._apply_theme)
@@ -32,8 +43,9 @@ class StatisticsPanel(QWidget):
     def _setup_ui(self):
         """Setup the statistics panel UI."""
         layout = QGridLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.setSpacing(15)
+        layout.setContentsMargins(15, 10, 15, 10)
+        layout.setHorizontalSpacing(8)
+        layout.setVerticalSpacing(8)
 
         # Row 1: Mean, Std Dev, Skew, Kurtosis
         self.mean_label = self._create_stat_label("Mean:")
@@ -77,6 +89,18 @@ class StatisticsPanel(QWidget):
         layout.addWidget(self.cash_drag_label, 1, 6)
         layout.addWidget(self.cash_drag_value, 1, 7)
 
+        # Set fixed widths for label columns to ensure alignment
+        layout.setColumnMinimumWidth(0, 70)  # Mean/Min labels
+        layout.setColumnMinimumWidth(2, 70)  # Std Dev/Max labels
+        layout.setColumnMinimumWidth(4, 70)  # Skew/Count labels
+        layout.setColumnMinimumWidth(6, 80)  # Kurtosis/Cash Drag labels
+
+        # Set fixed widths for value columns
+        layout.setColumnMinimumWidth(1, 80)
+        layout.setColumnMinimumWidth(3, 80)
+        layout.setColumnMinimumWidth(5, 80)
+        layout.setColumnMinimumWidth(7, 80)
+
         # Add stretch to fill remaining space
         layout.setColumnStretch(8, 1)
 
@@ -84,7 +108,7 @@ class StatisticsPanel(QWidget):
         """Create a statistic name label."""
         label = QLabel(text)
         label.setObjectName("statLabel")
-        label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         return label
 
     def _create_value_label(self, text: str) -> QLabel:
@@ -92,8 +116,27 @@ class StatisticsPanel(QWidget):
         label = QLabel(text)
         label.setObjectName("statValue")
         label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-        label.setMinimumWidth(80)
         return label
+
+    def set_metric(self, metric: str):
+        """
+        Set the current metric and update labels accordingly.
+
+        Args:
+            metric: The metric name (e.g., "Returns", "Volatility", "Time Under Water")
+        """
+        self._current_metric = metric
+        metric_label = self.METRIC_LABELS.get(metric, "Value")
+
+        # Update row 1 labels
+        self.mean_label.setText(f"Mean {metric_label}:")
+        self.std_label.setText("Std Dev:")
+        # Skew and Kurtosis stay the same
+
+        # Update row 2 labels
+        self.min_label.setText(f"Min {metric_label}:")
+        self.max_label.setText(f"Max {metric_label}:")
+        # Count and Cash Drag stay the same
 
     def update_statistics(
         self,
@@ -110,11 +153,18 @@ class StatisticsPanel(QWidget):
             cash_drag: Dictionary with avg_cash_weight, cash_drag_bps, period_days
             show_cash_drag: Whether to show cash drag (hidden when cash excluded)
         """
-        # Format percentage values
-        def fmt_pct(val, decimals=2):
+        is_time_under_water = self._current_metric == "Time Under Water"
+
+        # Format functions based on metric type
+        def fmt_value(val, decimals=2):
             if val is None or np.isnan(val):
                 return "N/A"
-            return f"{val * 100:.{decimals}f}%"
+            if is_time_under_water:
+                # Time Under Water is in days (count)
+                return f"{val:.0f} days"
+            else:
+                # All other metrics are percentages
+                return f"{val * 100:.{decimals}f}%"
 
         def fmt_num(val, decimals=2):
             if val is None or np.isnan(val):
@@ -122,20 +172,28 @@ class StatisticsPanel(QWidget):
             return f"{val:.{decimals}f}"
 
         # Update value labels
-        self.mean_value.setText(fmt_pct(stats.get("mean")))
-        self.std_value.setText(fmt_pct(stats.get("std")))
+        self.mean_value.setText(fmt_value(stats.get("mean")))
+        self.std_value.setText(fmt_value(stats.get("std")))
         self.skew_value.setText(fmt_num(stats.get("skew")))
         self.kurtosis_value.setText(fmt_num(stats.get("kurtosis")))
-        self.min_value.setText(fmt_pct(stats.get("min")))
-        self.max_value.setText(fmt_pct(stats.get("max")))
+        self.min_value.setText(fmt_value(stats.get("min")))
+        self.max_value.setText(fmt_value(stats.get("max")))
         self.count_value.setText(str(stats.get("count", 0)))
 
-        # Update cash drag
-        if show_cash_drag and cash_drag:
+        # Update cash drag - only show for Returns metric
+        if self._current_metric == "Returns" and show_cash_drag and cash_drag:
             drag_bps = cash_drag.get("cash_drag_bps", 0)
             self.cash_drag_value.setText(f"{drag_bps:.1f} bps")
-        else:
+            self.cash_drag_label.setVisible(True)
+            self.cash_drag_value.setVisible(True)
+        elif self._current_metric == "Returns":
             self.cash_drag_value.setText("Excluded")
+            self.cash_drag_label.setVisible(True)
+            self.cash_drag_value.setVisible(True)
+        else:
+            # Hide cash drag for non-Returns metrics
+            self.cash_drag_label.setVisible(False)
+            self.cash_drag_value.setVisible(False)
 
     def clear(self):
         """Clear all statistics."""
@@ -193,6 +251,16 @@ class DistributionChart(QWidget):
     Histogram visualization of portfolio returns with statistics panel.
     """
 
+    # X-axis labels for each metric
+    X_AXIS_LABELS = {
+        "Returns": "Return (%)",
+        "Volatility": "Annualized Volatility (%)",
+        "Rolling Volatility": "Rolling Volatility (%)",
+        "Drawdown": "Drawdown (%)",
+        "Rolling Return": "Rolling Return (%)",
+        "Time Under Water": "Days Under Water",
+    }
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
         self.theme_manager = theme_manager
@@ -200,6 +268,7 @@ class DistributionChart(QWidget):
         # Store current returns for redraws
         self._current_returns: Optional[pd.Series] = None
         self._current_settings: Dict = {}
+        self._current_metric: str = "Returns"
 
         # Overlay items
         self.bar_graph = None
@@ -240,6 +309,18 @@ class DistributionChart(QWidget):
         self.stats_panel = StatisticsPanel(self.theme_manager)
         self.stats_panel.setFixedHeight(80)
         layout.addWidget(self.stats_panel)
+
+    def set_metric(self, metric: str):
+        """
+        Set the current metric and update axis labels.
+
+        Args:
+            metric: The metric name (e.g., "Returns", "Volatility", "Time Under Water")
+        """
+        self._current_metric = metric
+        x_label = self.X_AXIS_LABELS.get(metric, "Value (%)")
+        self.plot_widget.setLabel("bottom", x_label)
+        self.stats_panel.set_metric(metric)
 
     def set_returns(
         self,
@@ -294,32 +375,37 @@ class DistributionChart(QWidget):
             self.stats_panel.clear()
             return
 
-        # Convert to percentage for display
-        returns_pct = returns * 100
+        # Convert to display format based on metric type
+        if self._current_metric == "Time Under Water":
+            # Time Under Water is already in days, no conversion needed
+            values_display = returns.copy()
+        else:
+            # All other metrics: convert from decimal to percentage
+            values_display = returns * 100
 
         if show_cdf_view:
             # Draw CDF instead of histogram
-            self._draw_cdf(returns_pct)
+            self._draw_cdf(values_display)
             self.plot_widget.setLabel("left", "Cumulative Probability")
         else:
             # Draw histogram
-            self._draw_histogram(returns_pct, num_bins)
+            self._draw_histogram(values_display, num_bins)
             self.plot_widget.setLabel("left", "Frequency")
 
             # Draw overlays on histogram
             if show_kde_curve:
-                self._draw_kde_curve(returns_pct, num_bins)
+                self._draw_kde_curve(values_display, num_bins)
 
             if show_normal_distribution:
-                self._draw_normal_distribution(returns_pct, num_bins)
+                self._draw_normal_distribution(values_display, num_bins)
 
         # Mean/median lines apply to both views
         if show_mean_median_lines:
-            self._draw_mean_median_lines(returns_pct)
+            self._draw_mean_median_lines(values_display)
 
         # Add legend if any overlays are enabled
         self._update_legend(
-            returns_pct,
+            values_display,
             show_kde_curve=show_kde_curve,
             show_normal_distribution=show_normal_distribution,
             show_mean_median_lines=show_mean_median_lines,
@@ -446,7 +532,7 @@ class DistributionChart(QWidget):
 
     def _update_legend(
         self,
-        returns_pct: pd.Series,
+        values_display: pd.Series,
         show_kde_curve: bool,
         show_normal_distribution: bool,
         show_mean_median_lines: bool,
@@ -487,19 +573,27 @@ class DistributionChart(QWidget):
 
         # Mean/median lines apply to both views
         if show_mean_median_lines:
-            mean_val = returns_pct.mean()
-            median_val = returns_pct.median()
+            mean_val = values_display.mean()
+            median_val = values_display.median()
+
+            # Format based on metric type
+            if self._current_metric == "Time Under Water":
+                mean_label = f"Mean ({mean_val:.0f} days)"
+                median_label = f"Median ({median_val:.0f} days)"
+            else:
+                mean_label = f"Mean ({mean_val:.2f}%)"
+                median_label = f"Median ({median_val:.2f}%)"
 
             mean_pen = self._get_mean_pen()
             self.legend.addItem(
                 pg.PlotDataItem(pen=mean_pen),
-                f"Mean ({mean_val:.2f}%)"
+                mean_label
             )
 
             median_pen = self._get_median_pen()
             self.legend.addItem(
                 pg.PlotDataItem(pen=median_pen),
-                f"Median ({median_val:.2f}%)"
+                median_label
             )
 
     def _calculate_statistics(self, returns: pd.Series) -> Dict[str, float]:

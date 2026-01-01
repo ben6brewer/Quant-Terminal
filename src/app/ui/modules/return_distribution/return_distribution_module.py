@@ -25,6 +25,16 @@ class ReturnDistributionModule(QWidget):
     # Signal emitted when user clicks home button
     home_clicked = Signal()
 
+    # Window name to trading days mapping
+    WINDOW_TO_DAYS = {
+        "1 Month": 21,
+        "3 Months": 63,
+        "6 Months": 126,
+        "1 Year": 252,
+        "3 Years": 756,
+        "5 Years": 1260,
+    }
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
         self.theme_manager = theme_manager
@@ -34,9 +44,11 @@ class ReturnDistributionModule(QWidget):
 
         # Current state
         self._current_portfolio: str = ""
-        self._current_interval: str = "daily"
+        self._current_interval: str = "Daily"
         self._current_start_date: str = ""
         self._current_end_date: str = ""
+        self._current_metric: str = "Returns"
+        self._current_window: str = ""
 
         self._setup_ui()
         self._connect_signals()
@@ -64,6 +76,8 @@ class ReturnDistributionModule(QWidget):
         # Controls signals
         self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.portfolio_changed.connect(self._on_portfolio_changed)
+        self.controls.metric_changed.connect(self._on_metric_changed)
+        self.controls.window_changed.connect(self._on_window_changed)
         self.controls.interval_changed.connect(self._on_interval_changed)
         self.controls.date_range_changed.connect(self._on_date_range_changed)
         self.controls.custom_date_range_requested.connect(self._show_date_range_dialog)
@@ -83,6 +97,24 @@ class ReturnDistributionModule(QWidget):
             return
 
         self._current_portfolio = name
+        self._update_distribution()
+
+    def _on_metric_changed(self, metric: str):
+        """Handle metric selection change."""
+        if metric == self._current_metric:
+            return
+
+        self._current_metric = metric
+        # Update chart labels before updating data
+        self.chart.set_metric(metric)
+        self._update_distribution()
+
+    def _on_window_changed(self, window: str):
+        """Handle window selection change for rolling metrics."""
+        if window == self._current_window:
+            return
+
+        self._current_window = window
         self._update_distribution()
 
     def _on_interval_changed(self, interval: str):
@@ -140,22 +172,16 @@ class ReturnDistributionModule(QWidget):
         end_date = self._current_end_date if self._current_end_date else None
 
         try:
-            # Get time-varying portfolio returns
-            returns = ReturnsDataService.get_time_varying_portfolio_returns(
-                self._current_portfolio,
-                start_date=start_date,
-                end_date=end_date,
-                include_cash=include_cash,
-                interval=self._current_interval,
-            )
+            # Get data based on selected metric
+            data = self._get_metric_data(start_date, end_date, include_cash)
 
-            if returns.empty:
-                self.chart.show_placeholder("No return data available for this portfolio")
+            if data is None or data.empty:
+                self.chart.show_placeholder(f"No {self._current_metric.lower()} data available")
                 return
 
-            # Get cash drag if not excluded
+            # Get cash drag if showing Returns with cash included
             cash_drag = None
-            if include_cash:
+            if self._current_metric == "Returns" and include_cash:
                 cash_drag = ReturnsDataService.calculate_cash_drag(
                     self._current_portfolio,
                     start_date=start_date,
@@ -164,9 +190,9 @@ class ReturnDistributionModule(QWidget):
 
             # Update chart with all visualization settings
             self.chart.set_returns(
-                returns,
+                data,
                 cash_drag=cash_drag,
-                show_cash_drag=include_cash,
+                show_cash_drag=(self._current_metric == "Returns" and include_cash),
                 show_kde_curve=show_kde_curve,
                 show_normal_distribution=show_normal_distribution,
                 show_mean_median_lines=show_mean_median_lines,
@@ -175,7 +201,87 @@ class ReturnDistributionModule(QWidget):
 
         except Exception as e:
             print(f"Error updating distribution: {e}")
+            import traceback
+            traceback.print_exc()
             self.chart.show_placeholder(f"Error loading data: {str(e)}")
+
+    def _get_metric_data(self, start_date, end_date, include_cash):
+        """
+        Get data for the selected metric.
+
+        Args:
+            start_date: Start date for data range
+            end_date: End date for data range
+            include_cash: Whether to include cash in calculations
+
+        Returns:
+            pd.Series of metric values
+        """
+        metric = self._current_metric
+
+        if metric == "Returns":
+            return ReturnsDataService.get_time_varying_portfolio_returns(
+                self._current_portfolio,
+                start_date=start_date,
+                end_date=end_date,
+                include_cash=include_cash,
+                interval=self._current_interval,
+            )
+
+        elif metric == "Volatility":
+            return ReturnsDataService.get_portfolio_volatility(
+                self._current_portfolio,
+                start_date=start_date,
+                end_date=end_date,
+                include_cash=include_cash,
+                interval=self._current_interval,
+            )
+
+        elif metric == "Rolling Volatility":
+            window_days = self.WINDOW_TO_DAYS.get(self._current_window, 21)
+            return ReturnsDataService.get_rolling_volatility(
+                self._current_portfolio,
+                window_days=window_days,
+                start_date=start_date,
+                end_date=end_date,
+                include_cash=include_cash,
+            )
+
+        elif metric == "Drawdown":
+            return ReturnsDataService.get_drawdowns(
+                self._current_portfolio,
+                start_date=start_date,
+                end_date=end_date,
+                include_cash=include_cash,
+            )
+
+        elif metric == "Rolling Return":
+            window_days = self.WINDOW_TO_DAYS.get(self._current_window, 252)
+            return ReturnsDataService.get_rolling_returns(
+                self._current_portfolio,
+                window_days=window_days,
+                start_date=start_date,
+                end_date=end_date,
+                include_cash=include_cash,
+            )
+
+        elif metric == "Time Under Water":
+            return ReturnsDataService.get_time_under_water(
+                self._current_portfolio,
+                start_date=start_date,
+                end_date=end_date,
+                include_cash=include_cash,
+            )
+
+        else:
+            # Default to returns
+            return ReturnsDataService.get_time_varying_portfolio_returns(
+                self._current_portfolio,
+                start_date=start_date,
+                end_date=end_date,
+                include_cash=include_cash,
+                interval=self._current_interval,
+            )
 
     def _apply_theme(self):
         """Apply theme-specific styling."""

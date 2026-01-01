@@ -308,19 +308,6 @@ class PortfolioControls(QWidget):
             QPushButton:pressed {
                 background-color: #1a1a1a;
             }
-            QPushButton#home_btn {
-                background-color: transparent;
-                border: 1px solid transparent;
-                font-weight: bold;
-            }
-            QPushButton#home_btn:hover {
-                background-color: rgba(0, 212, 255, 0.15);
-                border: 1px solid #00d4ff;
-            }
-            QPushButton#home_btn:pressed {
-                background-color: #00d4ff;
-                color: #000000;
-            }
             QPushButton#delete_btn:hover {
                 background-color: #5c1a1a;
                 border-color: #d32f2f;
@@ -409,19 +396,6 @@ class PortfolioControls(QWidget):
             QPushButton:pressed {
                 background-color: #d0d0d0;
             }
-            QPushButton#home_btn {
-                background-color: transparent;
-                border: 1px solid transparent;
-                font-weight: bold;
-            }
-            QPushButton#home_btn:hover {
-                background-color: rgba(0, 102, 204, 0.15);
-                border: 1px solid #0066cc;
-            }
-            QPushButton#home_btn:pressed {
-                background-color: #0066cc;
-                color: #ffffff;
-            }
             QPushButton#delete_btn:hover {
                 background-color: #ffebee;
                 border-color: #d32f2f;
@@ -509,19 +483,6 @@ class PortfolioControls(QWidget):
             }
             QPushButton:pressed {
                 background-color: #060a10;
-            }
-            QPushButton#home_btn {
-                background-color: transparent;
-                border: 1px solid transparent;
-                font-weight: bold;
-            }
-            QPushButton#home_btn:hover {
-                background-color: rgba(255, 128, 0, 0.15);
-                border: 1px solid #FF8000;
-            }
-            QPushButton#home_btn:pressed {
-                background-color: #FF8000;
-                color: #000000;
             }
             QPushButton#delete_btn:hover {
                 background-color: #3d1a1a;

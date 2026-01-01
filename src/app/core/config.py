@@ -18,7 +18,7 @@ DEFAULT_WINDOW_HEIGHT = 900
 
 # Chart settings
 DEFAULT_TICKER = "BTC-USD"
-DEFAULT_INTERVAL = "daily"
+DEFAULT_INTERVAL = "Daily"
 DEFAULT_CHART_TYPE = "Candles"
 DEFAULT_SCALE = "Logarithmic"
 CANDLE_BAR_WIDTH = 0.6
@@ -28,16 +28,20 @@ DEFAULT_PERIOD = "max"
 DATA_FETCH_THREADS = True
 SHOW_DOWNLOAD_PROGRESS = False
 
-# Interval mappings for yfinance
+# Interval mappings for yfinance (case-insensitive lookup)
 INTERVAL_MAP = {
     "daily": "1d",
     "weekly": "1wk",
     "monthly": "1mo",
     "yearly": "1y",
+    "Daily": "1d",
+    "Weekly": "1wk",
+    "Monthly": "1mo",
+    "Yearly": "1y",
 }
 
-# Chart intervals
-CHART_INTERVALS = ["daily", "weekly", "monthly", "yearly"]
+# Chart intervals (display names)
+CHART_INTERVALS = ["Daily", "Weekly", "Monthly", "Yearly"]
 CHART_TYPES = ["Candles", "Line"]
 CHART_SCALES = ["Regular", "Logarithmic"]
 

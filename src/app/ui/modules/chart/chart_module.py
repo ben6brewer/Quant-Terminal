@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 
 from app.ui.modules.chart.widgets import (
     PriceChart,
@@ -47,6 +47,12 @@ class ChartModule(QWidget):
     Charting module with indicator support and order book depth.
     Handles ticker data loading, chart display, and technical indicators.
     """
+
+    # Signal emitted when user clicks home button
+    home_clicked = Signal()
+
+    # Flag indicating this module has its own home button
+    has_own_home_button = True
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
@@ -127,6 +133,7 @@ class ChartModule(QWidget):
     def _connect_signals(self) -> None:
         """Connect all signals."""
         # Control bar signals
+        self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.ticker_changed.connect(self.load_ticker_max)
         self.controls.interval_changed.connect(lambda _: self.load_ticker_max(self.controls.get_ticker()))
         self.controls.chart_type_changed.connect(lambda _: self.render_from_cache())

@@ -611,7 +611,7 @@ class ReturnsDataService:
                 portfolio_returns += ticker_weights * ticker_returns
 
         # Resample if needed
-        if interval != "daily":
+        if interval.lower() != "daily":
             portfolio_returns = cls._resample_returns(portfolio_returns, interval)
 
         return portfolio_returns
@@ -631,14 +631,14 @@ class ReturnsDataService:
         if returns.empty:
             return returns
 
-        # Map interval to pandas resample rule
+        # Map interval to pandas resample rule (case-insensitive)
         resample_map = {
             "weekly": "W",
             "monthly": "ME",
             "yearly": "YE",
         }
 
-        rule = resample_map.get(interval)
+        rule = resample_map.get(interval.lower())
         if not rule:
             return returns
 
@@ -718,3 +718,206 @@ class ReturnsDataService:
             "cash_drag_bps": cash_drag_bps,
             "period_days": len(weights),
         }
+
+    # =========================================================================
+    # Distribution Metric Calculations
+    # =========================================================================
+
+    @classmethod
+    def get_portfolio_volatility(
+        cls,
+        portfolio_name: str,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        include_cash: bool = False,
+        interval: str = "daily",
+    ) -> pd.Series:
+        """
+        Calculate annualized volatility series for the portfolio.
+
+        Returns a series of rolling 21-day volatility values (annualized).
+
+        Args:
+            portfolio_name: Name of the portfolio
+            start_date: Optional start date filter (YYYY-MM-DD)
+            end_date: Optional end date filter (YYYY-MM-DD)
+            include_cash: If True, includes FREE CASH (typically False for vol)
+            interval: Return interval for underlying returns
+
+        Returns:
+            Series of annualized volatility values (as decimals, e.g., 0.20 = 20%)
+        """
+        # Get daily portfolio returns
+        returns = cls.get_time_varying_portfolio_returns(
+            portfolio_name, start_date, end_date, include_cash, interval="daily"
+        )
+
+        if returns.empty or len(returns) < 21:
+            return pd.Series(dtype=float)
+
+        # Calculate rolling 21-day volatility, annualized
+        rolling_vol = returns.rolling(window=21).std() * np.sqrt(252)
+
+        return rolling_vol.dropna()
+
+    @classmethod
+    def get_rolling_volatility(
+        cls,
+        portfolio_name: str,
+        window_days: int,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        include_cash: bool = False,
+    ) -> pd.Series:
+        """
+        Calculate rolling volatility with specified window.
+
+        Args:
+            portfolio_name: Name of the portfolio
+            window_days: Rolling window in trading days (21=1m, 63=3m, 126=6m, 252=1y)
+            start_date: Optional start date filter (YYYY-MM-DD)
+            end_date: Optional end date filter (YYYY-MM-DD)
+            include_cash: If True, includes FREE CASH
+
+        Returns:
+            Series of annualized volatility values (as decimals)
+        """
+        # Get daily portfolio returns
+        returns = cls.get_time_varying_portfolio_returns(
+            portfolio_name, start_date, end_date, include_cash, interval="daily"
+        )
+
+        if returns.empty or len(returns) < window_days:
+            return pd.Series(dtype=float)
+
+        # Calculate rolling volatility, annualized
+        rolling_vol = returns.rolling(window=window_days).std() * np.sqrt(252)
+
+        return rolling_vol.dropna()
+
+    @classmethod
+    def get_drawdowns(
+        cls,
+        portfolio_name: str,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        include_cash: bool = False,
+    ) -> pd.Series:
+        """
+        Calculate drawdown series (distance from all-time high).
+
+        Args:
+            portfolio_name: Name of the portfolio
+            start_date: Optional start date filter (YYYY-MM-DD)
+            end_date: Optional end date filter (YYYY-MM-DD)
+            include_cash: If True, includes FREE CASH
+
+        Returns:
+            Series of drawdown values (as negative decimals, e.g., -0.15 = -15%)
+        """
+        # Get daily portfolio returns
+        returns = cls.get_time_varying_portfolio_returns(
+            portfolio_name, start_date, end_date, include_cash, interval="daily"
+        )
+
+        if returns.empty:
+            return pd.Series(dtype=float)
+
+        # Calculate cumulative returns (wealth index)
+        cumulative = (1 + returns).cumprod()
+
+        # Calculate running maximum
+        running_max = cumulative.cummax()
+
+        # Drawdown = current / peak - 1
+        drawdowns = cumulative / running_max - 1
+
+        return drawdowns
+
+    @classmethod
+    def get_rolling_returns(
+        cls,
+        portfolio_name: str,
+        window_days: int,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        include_cash: bool = False,
+    ) -> pd.Series:
+        """
+        Calculate rolling returns with specified window.
+
+        Args:
+            portfolio_name: Name of the portfolio
+            window_days: Rolling window in trading days (21=1m, 63=3m, 252=1y, 756=3y, 1260=5y)
+            start_date: Optional start date filter (YYYY-MM-DD)
+            end_date: Optional end date filter (YYYY-MM-DD)
+            include_cash: If True, includes FREE CASH
+
+        Returns:
+            Series of rolling return values (as decimals, e.g., 0.10 = 10%)
+        """
+        # Get daily portfolio returns
+        returns = cls.get_time_varying_portfolio_returns(
+            portfolio_name, start_date, end_date, include_cash, interval="daily"
+        )
+
+        if returns.empty or len(returns) < window_days:
+            return pd.Series(dtype=float)
+
+        # Calculate rolling compounded returns
+        # (1 + r1) * (1 + r2) * ... * (1 + rn) - 1
+        def compound_return(window):
+            return (1 + window).prod() - 1
+
+        rolling_returns = returns.rolling(window=window_days).apply(
+            compound_return, raw=False
+        )
+
+        return rolling_returns.dropna()
+
+    @classmethod
+    def get_time_under_water(
+        cls,
+        portfolio_name: str,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        include_cash: bool = False,
+    ) -> pd.Series:
+        """
+        Calculate time under water (days since last all-time high).
+
+        Args:
+            portfolio_name: Name of the portfolio
+            start_date: Optional start date filter (YYYY-MM-DD)
+            end_date: Optional end date filter (YYYY-MM-DD)
+            include_cash: If True, includes FREE CASH
+
+        Returns:
+            Series of days under water (integer values)
+        """
+        # Get daily portfolio returns
+        returns = cls.get_time_varying_portfolio_returns(
+            portfolio_name, start_date, end_date, include_cash, interval="daily"
+        )
+
+        if returns.empty:
+            return pd.Series(dtype=float)
+
+        # Calculate cumulative returns (wealth index)
+        cumulative = (1 + returns).cumprod()
+
+        # Calculate running maximum
+        running_max = cumulative.cummax()
+
+        # Track days under water
+        days_under_water = pd.Series(0, index=cumulative.index, dtype=int)
+
+        current_underwater_days = 0
+        for i, (cum, peak) in enumerate(zip(cumulative, running_max)):
+            if cum < peak:
+                current_underwater_days += 1
+            else:
+                current_underwater_days = 0
+            days_under_water.iloc[i] = current_underwater_days
+
+        return days_under_water
