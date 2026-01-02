@@ -1,4 +1,4 @@
-"""Risk Decomposition Panel Widget - 3-column CTEV breakdown display."""
+"""Risk Decomposition Panel Widget - 3-column CTEV breakdown display with bar charts."""
 
 from typing import Dict, List, Optional
 
@@ -11,39 +11,102 @@ from PySide6.QtWidgets import (
     QTableWidgetItem,
     QHeaderView,
     QFrame,
+    QStyledItemDelegate,
+    QStyleOptionViewItem,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QRect
+from PySide6.QtGui import QPainter, QColor
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
 
 
+class BarDelegate(QStyledItemDelegate):
+    """Custom delegate to draw horizontal bars in table cells."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._bar_color = QColor("#00d4ff")  # Default cyan
+        self._max_value = 1.0
+
+    def set_bar_color(self, color: str):
+        """Set the bar color."""
+        self._bar_color = QColor(color)
+
+    def set_max_value(self, max_val: float):
+        """Set the maximum value for scaling bars."""
+        self._max_value = max(max_val, 0.01)  # Avoid division by zero
+
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index):
+        """Paint the bar in the cell."""
+        # Get the value from the model
+        value = index.data(Qt.UserRole)
+        if value is None:
+            return
+
+        painter.save()
+
+        # Calculate bar width as proportion of cell width
+        cell_rect = option.rect
+        bar_width = int((value / self._max_value) * (cell_rect.width() - 4))
+        bar_width = max(bar_width, 0)
+
+        # Draw the bar
+        bar_rect = QRect(
+            cell_rect.left() + 2,
+            cell_rect.top() + 4,
+            bar_width,
+            cell_rect.height() - 8
+        )
+
+        painter.fillRect(bar_rect, self._bar_color)
+        painter.restore()
+
+
 class CTEVTable(QTableWidget):
-    """Table widget for displaying CTEV breakdown."""
+    """Table widget for displaying CTEV breakdown with bar visualization."""
 
     def __init__(self, title: str, columns: List[str], parent=None):
         super().__init__(parent)
         self._title = title
-        self._columns = columns
+        self._columns = columns + [""]  # Add empty column for bar
+        self._bar_delegate = BarDelegate(self)
         self._setup_table()
 
     def _setup_table(self):
         """Setup table configuration."""
         self.setColumnCount(len(self._columns))
         self.setHorizontalHeaderLabels(self._columns)
+        self.horizontalHeader().setVisible(False)  # Hide column headers
         self.setSelectionMode(QTableWidget.NoSelection)
         self.setEditTriggers(QTableWidget.NoEditTriggers)
         self.verticalHeader().setVisible(False)
         self.setShowGrid(False)
         self.setAlternatingRowColors(True)
 
+        # Hide scrollbars but keep scroll functionality
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        # Set default row height for consistency
+        self.verticalHeader().setDefaultSectionSize(28)
+
         # Column sizing
         header = self.horizontalHeader()
-        header.setStretchLastSection(True)
-        if len(self._columns) > 1:
-            header.setSectionResizeMode(0, QHeaderView.Stretch)
-            for i in range(1, len(self._columns)):
-                header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
+        # Name column stretches
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        # Value column fixed width
+        header.setSectionResizeMode(1, QHeaderView.Fixed)
+        self.setColumnWidth(1, 45)  # Slightly narrower for CTEV values
+        # Bar column stretches
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
+
+        # Set delegate for bar column
+        self.setItemDelegateForColumn(2, self._bar_delegate)
+
+    def set_bar_color(self, color: str):
+        """Set the bar color for the visualization."""
+        self._bar_delegate.set_bar_color(color)
 
     def set_data(self, data: Dict[str, float]):
         """
@@ -53,6 +116,10 @@ class CTEVTable(QTableWidget):
             data: Dict mapping name to value
         """
         self.setRowCount(len(data))
+
+        # Find max value for scaling
+        max_value = max(data.values()) if data else 1.0
+        self._bar_delegate.set_max_value(max_value)
 
         for row, (name, value) in enumerate(data.items()):
             # Name column
@@ -69,6 +136,12 @@ class CTEVTable(QTableWidget):
             value_item.setFlags(value_item.flags() & ~Qt.ItemIsEditable)
             value_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self.setItem(row, 1, value_item)
+
+            # Bar column - store value for delegate to use
+            bar_item = QTableWidgetItem()
+            bar_item.setFlags(bar_item.flags() & ~Qt.ItemIsEditable)
+            bar_item.setData(Qt.UserRole, value if isinstance(value, (int, float)) else 0)
+            self.setItem(row, 2, bar_item)
 
         self.resizeRowsToContents()
 
@@ -102,6 +175,10 @@ class CTEVPanel(QFrame):
         # Table
         self.table = CTEVTable(self._title, self._columns)
         layout.addWidget(self.table, stretch=1)
+
+    def set_bar_color(self, color: str):
+        """Set the bar color for the table."""
+        self.table.set_bar_color(color)
 
     def set_data(self, data: Dict[str, float]):
         """Set table data."""
@@ -211,12 +288,20 @@ class RiskDecompositionPanel(LazyThemeMixin, QWidget):
 
         if theme == "light":
             stylesheet = self._get_light_stylesheet()
+            bar_color = "#0066cc"
         elif theme == "bloomberg":
             stylesheet = self._get_bloomberg_stylesheet()
+            bar_color = "#FF8000"
         else:
             stylesheet = self._get_dark_stylesheet()
+            bar_color = "#00d4ff"
 
         self.setStyleSheet(stylesheet)
+
+        # Update bar colors for all panels
+        self.factor_panel.set_bar_color(bar_color)
+        self.sector_panel.set_bar_color(bar_color)
+        self.security_panel.set_bar_color(bar_color)
 
     def _get_dark_stylesheet(self) -> str:
         """Dark theme stylesheet."""
@@ -232,7 +317,7 @@ class RiskDecompositionPanel(LazyThemeMixin, QWidget):
             }
             QLabel#panel_title {
                 color: #00d4ff;
-                font-size: 13px;
+                font-size: 15px;
                 font-weight: bold;
                 background: transparent;
                 padding: 4px;
@@ -276,7 +361,7 @@ class RiskDecompositionPanel(LazyThemeMixin, QWidget):
             }
             QLabel#panel_title {
                 color: #0066cc;
-                font-size: 13px;
+                font-size: 15px;
                 font-weight: bold;
                 background: transparent;
                 padding: 4px;
@@ -320,7 +405,7 @@ class RiskDecompositionPanel(LazyThemeMixin, QWidget):
             }
             QLabel#panel_title {
                 color: #FF8000;
-                font-size: 13px;
+                font-size: 15px;
                 font-weight: bold;
                 background: transparent;
                 padding: 4px;

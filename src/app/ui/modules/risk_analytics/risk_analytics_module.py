@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
+    QHBoxLayout,
     QScrollArea,
     QApplication,
 )
@@ -103,13 +104,23 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         content_layout.setContentsMargins(20, 20, 20, 20)
         content_layout.setSpacing(20)
 
-        # Summary panel (4 metric cards)
-        self.summary_panel = RiskSummaryPanel(self.theme_manager)
-        content_layout.addWidget(self.summary_panel)
+        # Top row: Risk Summary + 3 CTEV panels (4 equal columns)
+        # Fixed height to show 6 rows (title + header + 6 data rows)
+        top_row = QWidget()
+        top_row.setFixedHeight(280)
+        top_row_layout = QHBoxLayout(top_row)
+        top_row_layout.setContentsMargins(0, 0, 0, 0)
+        top_row_layout.setSpacing(20)
 
-        # Risk decomposition panels (3 columns)
+        # Summary panel (vertical layout with main metric + sub-rows)
+        self.summary_panel = RiskSummaryPanel(self.theme_manager)
+        top_row_layout.addWidget(self.summary_panel, stretch=1)
+
+        # Risk decomposition panels (3 columns - gets 3/4 of the width)
         self.decomposition_panel = RiskDecompositionPanel(self.theme_manager)
-        content_layout.addWidget(self.decomposition_panel)
+        top_row_layout.addWidget(self.decomposition_panel, stretch=3)
+
+        content_layout.addWidget(top_row)
 
         # Security risk table (collapsible by sector)
         self.security_table = SecurityRiskTable(self.theme_manager)

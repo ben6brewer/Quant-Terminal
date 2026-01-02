@@ -98,6 +98,43 @@ class RiskAnalyticsService:
         return 1.0  # Default to market beta
 
     @staticmethod
+    def calculate_ex_post_beta(
+        portfolio_returns: "pd.Series",
+        benchmark_returns: "pd.Series",
+    ) -> float:
+        """
+        Calculate portfolio ex-post beta from historical returns.
+
+        Ex-post beta = cov(portfolio, benchmark) / var(benchmark)
+
+        Args:
+            portfolio_returns: Series of portfolio daily returns
+            benchmark_returns: Series of benchmark daily returns
+
+        Returns:
+            Historical beta based on actual returns
+        """
+        import pandas as pd
+
+        # Align the returns
+        aligned = pd.concat(
+            [portfolio_returns, benchmark_returns],
+            axis=1,
+            keys=["portfolio", "benchmark"],
+        ).dropna()
+
+        if len(aligned) < 10:
+            return 1.0  # Default to market beta if insufficient data
+
+        cov = aligned["portfolio"].cov(aligned["benchmark"])
+        var = aligned["benchmark"].var()
+
+        if var <= 0:
+            return 1.0
+
+        return cov / var
+
+    @staticmethod
     def calculate_factor_exposures(
         tickers: List[str],
         weights: Dict[str, float],
@@ -436,6 +473,7 @@ class RiskAnalyticsService:
                 "factor_risk_pct": 65.0,
                 "idio_risk_pct": 35.0,
                 "ex_ante_beta": 1.15,
+                "ex_post_beta": 1.10,
             }
         """
         # Total active risk
@@ -443,8 +481,13 @@ class RiskAnalyticsService:
             portfolio_returns, benchmark_returns
         )
 
-        # Ex-ante beta
+        # Ex-ante beta (from individual ticker betas)
         ex_ante_beta = RiskAnalyticsService.calculate_ex_ante_beta(tickers, weights)
+
+        # Ex-post beta (from historical returns)
+        ex_post_beta = RiskAnalyticsService.calculate_ex_post_beta(
+            portfolio_returns, benchmark_returns
+        )
 
         # Factor exposures and risk decomposition
         factor_exposures = RiskAnalyticsService.calculate_factor_exposures(
@@ -459,6 +502,7 @@ class RiskAnalyticsService:
             "factor_risk_pct": round(factor_risk_pct, 1),
             "idio_risk_pct": round(idio_risk_pct, 1),
             "ex_ante_beta": round(ex_ante_beta, 2),
+            "ex_post_beta": round(ex_post_beta, 2),
         }
 
     @staticmethod

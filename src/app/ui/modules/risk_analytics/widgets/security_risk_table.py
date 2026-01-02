@@ -70,6 +70,10 @@ class SecurityRiskTable(LazyThemeMixin, QWidget):
         self.table.setShowGrid(False)
         self.table.setAlternatingRowColors(False)  # We handle row colors manually
 
+        # Hide scrollbars but keep scroll functionality
+        self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         # Column sizing
         header = self.table.horizontalHeader()
         header.setStretchLastSection(False)
@@ -363,7 +367,7 @@ class SecurityRiskTable(LazyThemeMixin, QWidget):
             }
             QLabel#section_title {
                 color: #00d4ff;
-                font-size: 14px;
+                font-size: 15px;
                 font-weight: bold;
                 background: transparent;
                 padding: 4px 0;
@@ -401,7 +405,7 @@ class SecurityRiskTable(LazyThemeMixin, QWidget):
             }
             QLabel#section_title {
                 color: #0066cc;
-                font-size: 14px;
+                font-size: 15px;
                 font-weight: bold;
                 background: transparent;
                 padding: 4px 0;
@@ -439,7 +443,7 @@ class SecurityRiskTable(LazyThemeMixin, QWidget):
             }
             QLabel#section_title {
                 color: #FF8000;
-                font-size: 14px;
+                font-size: 15px;
                 font-weight: bold;
                 background: transparent;
                 padding: 4px 0;
