@@ -6,14 +6,14 @@ This document describes how market data is fetched, stored, updated, and refresh
 
 ## Data Sources
 
-### Yahoo Finance (Primary - Chart Module)
-- **Use Case**: All chart module data (historical + live polling)
+### Yahoo Finance (Primary)
+- **Use Case**: Full historical data, portfolio batch loading, chart module
 - **Library**: `yfinance` Python package
 - **Rate Limits**: Unofficial API, no documented limits (be reasonable)
 - **Docs**: https://github.com/ranaroussi/yfinance
 
-### Polygon.io (Future - Bulk Imports)
-- **Use Case**: Bulk historical data imports, WebSocket live data for other modules
+### Polygon.io (Fallback + Incremental Updates)
+- **Use Case**: Fallback when Yahoo rate-limited, incremental daily updates
 - **API Key**: Stored in `.env` as `POLYGON_API_KEY`
 - **Plan**: Starter ($29/mo) - 5 years historical, 15-min delayed WebSocket
 
@@ -82,21 +82,79 @@ Each ticker's parquet file contains:
 
 ### Backfill Status Tracking
 
-`backfill_status.json` tracks which tickers have been backfilled with Yahoo historical data:
+`backfill_status.json` tracks which tickers have full Yahoo Finance historical data (schema v2):
 
 ```json
 {
-  "AAPL": true,
-  "MSFT": true,
-  "BTC-USD": true
+  "schema_version": 2,
+  "AAPL": {"yahoo_backfilled": true, "timestamp": "2024-01-15T10:30:00"},
+  "MSFT": {"yahoo_backfilled": true, "timestamp": "2024-01-15T10:31:00"},
+  "BTC-USD": {"yahoo_backfilled": true, "timestamp": "2024-01-15T10:32:00"}
 }
 ```
 
-This prevents redundant Yahoo Finance calls for pre-5-year data.
+- **`yahoo_backfilled: true`** = Full Yahoo history fetched, use Polygon for incremental updates
+- **`yahoo_backfilled: false` or missing** = Only has Polygon data (5-year limit), retry Yahoo on next access
 
 ---
 
 ## Module Data Flows
+
+### Batch Processing (Portfolio/Analysis Modules)
+
+For loading multiple tickers (portfolios, risk analysis, etc.), the system uses optimized batch processing:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              fetch_price_history_batch(tickers)                  │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │   classify_tickers()   │
+                    │   (Pre-sort by state) │
+                    └───────────────────────┘
+                                │
+            ┌───────────────────┼───────────────────┐
+            │                   │                   │
+            ▼                   ▼                   ▼
+    ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+    │   Group A:    │   │   Group B:    │   │   Group C:    │
+    │ Cache Current │   │ Need Yahoo    │   │ Need Polygon  │
+    │ (just read)   │   │ Backfill      │   │ Update        │
+    └───────────────┘   └───────────────┘   └───────────────┘
+            │                   │                   │
+            ▼                   ▼                   ▼
+    ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+    │ Read parquet  │   │ Single batch  │   │ Parallel      │
+    │ (instant)     │   │ yf.download() │   │ Polygon calls │
+    └───────────────┘   └───────────────┘   └───────────────┘
+            │                   │                   │
+            └───────────────────┴───────────────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │  Dict[ticker, DataFrame] │
+                    └───────────────────────┘
+```
+
+**Classification Groups:**
+
+| Group | Condition | Action |
+|-------|-----------|--------|
+| **A: Cache Current** | `yahoo_backfilled=True` AND cache up-to-date | Read from parquet |
+| **B: Need Yahoo** | `yahoo_backfilled=False` OR no parquet | Batch `yf.download()` |
+| **C: Need Update** | `yahoo_backfilled=True` AND cache outdated | Parallel Polygon incremental |
+
+**Performance Improvement:**
+
+| Scenario | Sequential | Batch | Speedup |
+|----------|-----------|-------|---------|
+| 100 tickers, all cached | ~10s | ~2s | 5x |
+| 100 tickers, need Yahoo | ~200s | ~15s | 13x |
+| 100 tickers, need Polygon | ~120s | ~10s | 12x |
+
+---
 
 ### Chart Module (Yahoo Finance Only)
 
@@ -296,20 +354,27 @@ Holiday observance rules:
 
 ### BackfillTracker (`services/backfill_tracker.py`)
 
-Tracks which tickers have been backfilled with Yahoo historical data.
+Tracks which tickers have full Yahoo Finance historical data.
 
 ```python
 from app.services.backfill_tracker import BackfillTracker
 
-# Check if ticker has been backfilled
-BackfillTracker.is_backfilled("AAPL")  # Returns bool
+# Check if ticker has Yahoo backfill (full history)
+BackfillTracker.is_yahoo_backfilled("AAPL")  # Returns bool
 
-# Mark ticker as backfilled
-BackfillTracker.mark_backfilled("AAPL")
+# Mark ticker as having Yahoo backfill
+BackfillTracker.mark_yahoo_backfilled("AAPL")
 
-# Clear status (for testing)
+# Get all backfilled tickers
+tickers = BackfillTracker.get_all_backfilled()  # Returns list[str]
+
+# Clear status (for testing/re-fetch)
 BackfillTracker.clear_status("AAPL")  # Single ticker
 BackfillTracker.clear_status()         # All tickers
+
+# Legacy aliases (still work)
+BackfillTracker.is_backfilled("AAPL")    # Same as is_yahoo_backfilled
+BackfillTracker.mark_backfilled("AAPL")  # Same as mark_yahoo_backfilled
 ```
 
 ### MarketDataCache (`services/market_data_cache.py`)
@@ -353,25 +418,79 @@ df = YahooFinanceService.fetch_today_ohlcv("AAPL")
 # Fetch full history (fresh load)
 df = YahooFinanceService.fetch_full_history("AAPL")
 
+# Fetch full history with rate limit detection
+df, was_rate_limited = YahooFinanceService.fetch_full_history_safe("AAPL")
+
+# BATCH: Fetch multiple tickers in single yf.download() call
+results, failed = YahooFinanceService.fetch_batch_full_history(
+    ["AAPL", "MSFT", "GOOGL"],
+    progress_callback=lambda completed, total, ticker: print(f"{completed}/{total}")
+)
+# results = {"AAPL": DataFrame, "MSFT": DataFrame, ...}
+# failed = ["INVALID_TICKER", ...]  # Tickers that failed
+
 # Validate ticker
 is_valid = YahooFinanceService.is_valid_ticker("AAPL")
 ```
 
 ### PolygonDataService (`services/polygon_data.py`)
 
-Polygon.io REST API wrapper (for future bulk imports).
+Polygon.io REST API wrapper for fallback and incremental updates.
 
 ```python
 from app.services.polygon_data import PolygonDataService
 
 # Fetch historical data (max 5 years)
-df = PolygonDataService.fetch_historical("AAPL", period="max")
+df = PolygonDataService.fetch("AAPL", period="max", interval="1d")
 
-# Fetch specific date range
+# Fetch specific date range (for incremental updates)
 df = PolygonDataService.fetch_date_range("AAPL", "2024-01-01", "2024-12-31")
 
-# Fetch live bar (today's partial)
+# BATCH: Parallel incremental updates for multiple tickers
+results = PolygonDataService.fetch_batch_date_range(
+    ["AAPL", "MSFT", "GOOGL"],
+    date_ranges={
+        "AAPL": ("2024-12-01", "2024-12-31"),
+        "MSFT": ("2024-12-15", "2024-12-31"),
+        "GOOGL": ("2024-12-20", "2024-12-31"),
+    },
+    progress_callback=lambda completed, total, ticker: print(f"{completed}/{total}")
+)
+# results = {"AAPL": DataFrame, "MSFT": DataFrame, ...}
+
+# Fetch live bar (today's partial - stocks only)
 df = PolygonDataService.fetch_live_bar("AAPL")
+```
+
+### Market Data Entry Points (`services/market_data.py`)
+
+Main entry points for fetching market data.
+
+```python
+from app.services.market_data import (
+    fetch_price_history,
+    fetch_price_history_batch,
+    fetch_price_history_yahoo,
+    clear_cache,
+)
+
+# Single ticker (Yahoo-first with Polygon fallback)
+df = fetch_price_history("AAPL", period="max", interval="1d")
+
+# BATCH: Multiple tickers with optimized grouping
+results = fetch_price_history_batch(
+    ["AAPL", "MSFT", "GOOGL", "AMZN"],
+    progress_callback=lambda completed, total, ticker, phase: print(f"[{phase}] {ticker}")
+)
+# results = {"AAPL": DataFrame, "MSFT": DataFrame, ...}
+# phase = "classifying" | "cache" | "yahoo" | "polygon"
+
+# Chart module only (Yahoo-only, no Polygon)
+df = fetch_price_history_yahoo("AAPL", period="max", interval="1d")
+
+# Clear cache (for testing/re-fetch)
+clear_cache("AAPL")  # Single ticker
+clear_cache()         # All tickers
 ```
 
 ### Market Hours Utilities (`utils/market_hours.py`)
@@ -500,9 +619,19 @@ if df is not None:
 
 ## Summary
 
-| Module | Data Source | Storage | Live Updates |
+### Data Flow Strategy
+
+| Operation | Primary Source | Fallback | Notes |
+|-----------|----------------|----------|-------|
+| Fresh fetch (no cache) | Yahoo Finance | Polygon (5yr limit) | Don't set `yahoo_backfilled` on Polygon fallback |
+| Incremental update | Polygon | - | Only if `yahoo_backfilled=True` |
+| Batch fetch | Yahoo batch | Polygon parallel | 10-15x faster than sequential |
+
+### Module Data Sources
+
+| Module | Entry Point | Storage | Live Updates |
 |--------|-------------|---------|--------------|
-| Chart | Yahoo Finance | Parquet | Polling (60s) |
-| Portfolio | Yahoo Finance | Parquet | On-demand |
-| Bulk Import | Polygon (future) | Parquet | N/A |
-| Screener | Polygon (future) | Parquet | WebSocket |
+| Chart | `fetch_price_history_yahoo()` | Parquet | Polling (60s) |
+| Portfolio | `fetch_price_history_batch()` | Parquet | On-demand |
+| Risk Analytics | `fetch_price_history_batch()` | Parquet | On-demand |
+| Distribution | `fetch_price_history_batch()` | Parquet | On-demand |

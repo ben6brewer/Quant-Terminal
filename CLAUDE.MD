@@ -187,8 +187,10 @@ StatisticsService.align_returns(portfolio, benchmark)
 **BaseSettingsManager** - Settings persistence base class
 - Subclass with `DEFAULT_SETTINGS` and `settings_filename` properties
 
-**MarketDataService** - Yahoo Finance with caching
-- `fetch_price_history(ticker, period, interval)`
+**MarketDataService** - Yahoo-first with Polygon fallback, parquet caching
+- `fetch_price_history(ticker, period, interval)` - Single ticker
+- `fetch_price_history_batch(tickers)` - Multiple tickers (10x faster for portfolios)
+- `fetch_price_history_yahoo(ticker)` - Yahoo-only (for chart module)
 
 **ReturnsDataService** - Cached portfolio returns
 - `get_daily_returns(portfolio_name)`, `get_portfolio_returns()`

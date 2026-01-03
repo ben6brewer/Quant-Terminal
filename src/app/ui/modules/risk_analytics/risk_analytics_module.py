@@ -254,17 +254,16 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 )
                 return
 
-            # Fetch current prices for weight calculation
-            from app.services.market_data import fetch_price_history
+            # Batch fetch current prices for weight calculation
+            from app.services.market_data import fetch_price_history_batch
 
+            batch_data = fetch_price_history_batch(tickers_list)
             current_prices = {}
             for ticker in tickers_list:
-                try:
-                    df = fetch_price_history(ticker, period="5d", interval="1d")
+                if ticker in batch_data:
+                    df = batch_data[ticker]
                     if df is not None and not df.empty:
                         current_prices[ticker] = df["Close"].iloc[-1]
-                except Exception:
-                    pass
 
             # Get portfolio data with current prices
             holdings = PortfolioDataService.get_holdings(self._current_portfolio, current_prices)
@@ -502,23 +501,24 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
     ) -> "pd.DataFrame":
         """Get returns for individual tickers."""
         import pandas as pd
-        from app.services.market_data import fetch_price_history
+        from app.services.market_data import fetch_price_history_batch
+
+        # Batch fetch all tickers at once
+        batch_data = fetch_price_history_batch(tickers)
 
         returns_dict = {}
-
         for ticker in tickers:
-            try:
-                df = fetch_price_history(ticker, period="max", interval="1d")
-                if df is not None and not df.empty:
-                    returns = df["Close"].pct_change().dropna()
-                    # Apply date filtering
-                    returns = self._filter_returns_by_period(
-                        returns, lookback_days, custom_start_date, custom_end_date
-                    )
-                    if returns is not None and not returns.empty:
-                        returns_dict[ticker] = returns
-            except Exception:
+            if ticker not in batch_data:
                 continue
+            df = batch_data[ticker]
+            if df is not None and not df.empty:
+                returns = df["Close"].pct_change().dropna()
+                # Apply date filtering
+                returns = self._filter_returns_by_period(
+                    returns, lookback_days, custom_start_date, custom_end_date
+                )
+                if returns is not None and not returns.empty:
+                    returns_dict[ticker] = returns
 
         if not returns_dict:
             return pd.DataFrame()

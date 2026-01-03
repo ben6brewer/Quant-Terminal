@@ -9,9 +9,10 @@ from __future__ import annotations
 import os
 import time
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Callable, Optional
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -389,6 +390,73 @@ class PolygonDataService:
 
         print(f"Fetched {len(df)} bars for {ticker} (incremental update)")
         return df
+
+    @classmethod
+    def fetch_batch_date_range(
+        cls,
+        tickers: list[str],
+        date_ranges: dict[str, tuple[str, str]],
+        progress_callback: Optional[Callable[[int, int, str], None]] = None,
+    ) -> dict[str, "pd.DataFrame"]:
+        """
+        Fetch incremental updates for multiple tickers in parallel.
+
+        Uses ThreadPoolExecutor for parallel fetching since user has unlimited
+        Polygon tier (no rate limiting needed).
+
+        Args:
+            tickers: List of ticker symbols
+            date_ranges: Dict mapping ticker -> (from_date, to_date)
+            progress_callback: Optional callback(completed, total, current_ticker)
+
+        Returns:
+            Dict mapping ticker -> DataFrame with new data
+        """
+        import pandas as pd
+
+        if not tickers:
+            return {}
+
+        total = len(tickers)
+        print(f"Batch fetching {total} tickers from Polygon (incremental updates)...")
+
+        results: dict[str, pd.DataFrame] = {}
+
+        def fetch_one(ticker: str) -> tuple[str, Optional[pd.DataFrame]]:
+            """Fetch a single ticker's date range."""
+            from_date, to_date = date_ranges.get(ticker, ("", ""))
+            if not from_date or not to_date:
+                return ticker, None
+            try:
+                df = cls.fetch_date_range(ticker, from_date, to_date)
+                return ticker, df
+            except Exception as e:
+                print(f"  {ticker}: FAILED ({e})")
+                return ticker, None
+
+        # Parallel fetch with ThreadPoolExecutor
+        # Using max_workers=10 for reasonable parallelism without overwhelming
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = {executor.submit(fetch_one, t): t for t in tickers}
+            completed_count = 0
+
+            for future in as_completed(futures):
+                ticker, df = future.result()
+                completed_count += 1
+
+                if df is not None and not df.empty:
+                    results[ticker] = df
+                    print(f"  {ticker}: {len(df)} new bars")
+                elif df is not None:
+                    print(f"  {ticker}: no new data")
+
+                if progress_callback:
+                    progress_callback(completed_count, total, ticker)
+
+        print(
+            f"Polygon batch complete: {len(results)} tickers with updates"
+        )
+        return results
 
     @classmethod
     def fetch_live_bar(cls, ticker: str) -> "pd.DataFrame | None":

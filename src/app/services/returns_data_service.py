@@ -138,22 +138,30 @@ class ReturnsDataService:
         """
         Compute daily returns for all tickers in a portfolio.
 
+        Uses batch fetching for optimal performance with large portfolios.
+
         Returns:
             DataFrame with daily returns for each ticker
         """
         import pandas as pd
+        from app.services.market_data import fetch_price_history_batch
 
         tickers = PortfolioDataService.get_tickers(portfolio_name)
         if not tickers:
             return pd.DataFrame()
 
+        # Batch fetch all ticker data at once (much faster than sequential)
+        price_data = fetch_price_history_batch(tickers)
+
         returns_dict: Dict[str, Any] = {}
 
         for ticker in tickers:
             try:
-                # Fetch price history (uses existing cache)
-                df = fetch_price_history(ticker, period="max", interval="1d")
-                if df.empty:
+                if ticker not in price_data:
+                    continue
+
+                df = price_data[ticker]
+                if df is None or df.empty:
                     continue
 
                 # Calculate daily returns from Close prices
@@ -163,7 +171,7 @@ class ReturnsDataService:
                 returns_dict[ticker] = daily_returns
 
             except Exception as e:
-                print(f"Warning: Could not fetch returns for {ticker}: {e}")
+                print(f"Warning: Could not compute returns for {ticker}: {e}")
                 continue
 
         if not returns_dict:
@@ -517,22 +525,21 @@ class ReturnsDataService:
 
         tickers = positions.columns.tolist()
 
-        # Fetch daily close prices for all tickers (except FREE CASH)
+        # Batch fetch daily close prices for all tickers (except FREE CASH)
+        from app.services.market_data import fetch_price_history_batch
+
+        tickers_to_fetch = [t for t in tickers if t.upper() != "FREE CASH"]
+        batch_data = fetch_price_history_batch(tickers_to_fetch)
+
+        # Extract close prices from batch results
         price_data: Dict[str, Any] = {}
-
-        for ticker in tickers:
-            if ticker.upper() == "FREE CASH":
-                # FREE CASH: quantity IS the dollar value (price = $1)
-                continue
-
-            try:
-                df = fetch_price_history(ticker, period="max", interval="1d")
-                if not df.empty:
+        for ticker in tickers_to_fetch:
+            if ticker in batch_data:
+                df = batch_data[ticker]
+                if df is not None and not df.empty:
                     close = df["Close"]
                     close.index = pd.to_datetime(close.index)
                     price_data[ticker] = close
-            except Exception as e:
-                print(f"Warning: Could not fetch prices for {ticker}: {e}")
 
         # Calculate market values for each position on each day
         market_values = pd.DataFrame(index=positions.index, columns=tickers, dtype=float)
