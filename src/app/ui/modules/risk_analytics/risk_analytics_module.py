@@ -507,6 +507,12 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             portfolio_returns.index = portfolio_returns.index.normalize()
             benchmark_returns.index = benchmark_returns.index.normalize()
 
+            # Remove any duplicate indices created by normalization (keep last value)
+            if portfolio_returns.index.duplicated().any():
+                portfolio_returns = portfolio_returns[~portfolio_returns.index.duplicated(keep="last")]
+            if benchmark_returns.index.duplicated().any():
+                benchmark_returns = benchmark_returns[~benchmark_returns.index.duplicated(keep="last")]
+
             # DEBUG: Print return statistics to diagnose tracking error issues
             print(f"[DEBUG] Portfolio returns: len={len(portfolio_returns)}, mean={portfolio_returns.mean():.6f}, std={portfolio_returns.std():.6f}")
             print(f"[DEBUG] Portfolio date range: {portfolio_returns.index.min()} to {portfolio_returns.index.max()}")
@@ -686,6 +692,11 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         # Create DataFrame of constituent returns
         returns_df = pd.DataFrame(constituent_returns)
 
+        # Normalize index to date-only and remove duplicates
+        returns_df.index = returns_df.index.normalize()
+        if returns_df.index.duplicated().any():
+            returns_df = returns_df[~returns_df.index.duplicated(keep="last")]
+
         # Calculate weighted benchmark returns
         # Weight = holding.weight (already as decimal, e.g., 0.05 = 5%)
         weights = {ticker: holdings[ticker].weight for ticker in returns_df.columns}
@@ -764,6 +775,12 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         # Use dropna(how='all') to only remove rows where ALL values are NaN
         # This preserves more data when tickers have different trading histories
         df = pd.DataFrame(returns_dict)
+
+        # Normalize index to date-only and remove duplicates
+        df.index = df.index.normalize()
+        if df.index.duplicated().any():
+            df = df[~df.index.duplicated(keep="last")]
+
         df = df.dropna(how='all')  # Remove rows with all NaN
         df = df.ffill().bfill()    # Forward/backward fill remaining NaN
         return df
@@ -890,12 +907,24 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 if outlier_count > 0:
                     print(f"[Attribution] Clipped {outlier_count} extreme return values")
 
+            # Normalize benchmark_returns index and remove duplicates before concat
+            if not benchmark_returns.empty:
+                benchmark_returns.index = benchmark_returns.index.normalize()
+                if benchmark_returns.index.duplicated().any():
+                    benchmark_returns = benchmark_returns[~benchmark_returns.index.duplicated(keep="last")]
+
             # Combine with portfolio returns
             if self._current_ticker_returns is not None and not self._current_ticker_returns.empty:
                 if benchmark_returns.empty:
                     benchmark_returns = self._current_ticker_returns.copy()
                 else:
-                    benchmark_returns = pd.concat([self._current_ticker_returns, benchmark_returns], axis=1)
+                    # Ensure both DataFrames have normalized, non-duplicate indices before concat
+                    portfolio_rets = self._current_ticker_returns.copy()
+                    portfolio_rets.index = portfolio_rets.index.normalize()
+                    if portfolio_rets.index.duplicated().any():
+                        portfolio_rets = portfolio_rets[~portfolio_rets.index.duplicated(keep="last")]
+
+                    benchmark_returns = pd.concat([portfolio_rets, benchmark_returns], axis=1)
                     benchmark_returns = benchmark_returns.loc[:, ~benchmark_returns.columns.duplicated()]
 
             print(f"[Attribution] Combined returns shape: {benchmark_returns.shape}")

@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import (
     QButtonGroup,
+    QGridLayout,
     QGroupBox,
+    QHBoxLayout,
     QLabel,
     QPushButton,
     QRadioButton,
@@ -107,55 +109,233 @@ class SettingsModule(QWidget):
 
         # Description label
         desc_label = QLabel(
-            "Clear cached market data stored on your local system. "
-            "This includes parquet files and backfill status tracking."
+            "Clear cached data stored on your local system. "
+            "Data will be re-fetched from APIs on next use."
         )
         desc_label.setObjectName("descLabel")
         desc_label.setWordWrap(True)
         layout.addWidget(desc_label)
 
-        # Clear cache button
-        self.clear_cache_btn = QPushButton("Clear Local Cache")
-        self.clear_cache_btn.setObjectName("clearCacheButton")
-        self.clear_cache_btn.setCursor(Qt.PointingHandCursor)
-        self.clear_cache_btn.clicked.connect(self._on_clear_cache_clicked)
-        layout.addWidget(self.clear_cache_btn)
+        # Grid of cache buttons (2 columns)
+        grid = QGridLayout()
+        grid.setSpacing(10)
+
+        # Define buttons: (label, handler)
+        cache_buttons = [
+            ("Clear Market Data", self._on_clear_market_data),
+            ("Clear Ticker Metadata", self._on_clear_ticker_metadata),
+            ("Clear Ticker Names", self._on_clear_ticker_names),
+            ("Clear Portfolio Returns", self._on_clear_portfolio_returns),
+            ("Clear Benchmark Returns", self._on_clear_benchmark_returns),
+            ("Clear IWV Holdings", self._on_clear_iwv_holdings),
+        ]
+
+        for i, (label, handler) in enumerate(cache_buttons):
+            btn = QPushButton(label)
+            btn.setObjectName("cacheButton")
+            btn.setCursor(Qt.PointingHandCursor)
+            btn.clicked.connect(handler)
+            row = i // 2
+            col = i % 2
+            grid.addWidget(btn, row, col)
+
+        layout.addLayout(grid)
+
+        # Clear All button (full width, more prominent)
+        self.clear_all_btn = QPushButton("Clear All Cache")
+        self.clear_all_btn.setObjectName("clearAllButton")
+        self.clear_all_btn.setCursor(Qt.PointingHandCursor)
+        self.clear_all_btn.clicked.connect(self._on_clear_all_cache)
+        layout.addWidget(self.clear_all_btn)
 
         group.setLayout(layout)
         return group
 
-    def _on_clear_cache_clicked(self) -> None:
-        """Handle clear cache button click."""
-        # Show confirmation dialog
+    # -------------------------------------------------------------------------
+    # Cache clear handlers
+    # -------------------------------------------------------------------------
+
+    def _on_clear_market_data(self) -> None:
+        """Clear market data cache (parquet files + backfill status)."""
         result = CustomMessageBox.question(
             self.theme_manager,
             self,
-            "Clear Local Cache",
-            "This will permanently delete all cached market data from your system.\n\n"
-            "• All parquet files (~/.quant_terminal/cache/)\n"
-            "• Backfill status tracking\n"
-            "• In-memory cache\n\n"
-            "The next time you load data, it will be re-fetched from Yahoo Finance.\n\n"
+            "Clear Market Data",
+            "This will delete all cached price data (parquet files) and backfill status.\n\n"
+            "Data will be re-fetched from APIs on next use.\n\n"
             "Are you sure you want to continue?",
             CustomMessageBox.Ok | CustomMessageBox.Cancel,
         )
-
         if result == CustomMessageBox.Ok:
-            self._clear_cache()
+            from app.services.market_data import clear_cache
+            try:
+                clear_cache()
+            except Exception as e:
+                self._show_error("Failed to clear market data cache", e)
 
-    def _clear_cache(self) -> None:
-        """Clear all cached market data."""
-        from app.services.market_data import clear_cache
+    def _on_clear_ticker_metadata(self) -> None:
+        """Clear ticker metadata cache."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear Ticker Metadata",
+            "This will delete cached ticker information (sector, industry, beta, etc.).\n\n"
+            "Metadata will be re-fetched from Yahoo Finance on next use.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            from app.services.ticker_metadata_service import TickerMetadataService
+            try:
+                TickerMetadataService.clear_cache()
+            except Exception as e:
+                self._show_error("Failed to clear ticker metadata cache", e)
 
-        try:
-            clear_cache()
-        except Exception as e:
-            CustomMessageBox.critical(
-                self.theme_manager,
-                self,
-                "Error",
-                f"Failed to clear cache:\n\n{str(e)}",
-            )
+    def _on_clear_ticker_names(self) -> None:
+        """Clear ticker names cache."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear Ticker Names",
+            "This will delete cached ticker display names (e.g., 'Apple Inc.').\n\n"
+            "Names will be re-fetched from Yahoo Finance on next use.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            from app.services.ticker_name_cache import TickerNameCache
+            try:
+                TickerNameCache.clear_cache()
+            except Exception as e:
+                self._show_error("Failed to clear ticker names cache", e)
+
+    def _on_clear_portfolio_returns(self) -> None:
+        """Clear portfolio returns cache."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear Portfolio Returns",
+            "This will delete all cached portfolio return calculations.\n\n"
+            "Returns will be recalculated on next use.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            from app.services.returns_data_service import ReturnsDataService
+            try:
+                ReturnsDataService.clear_cache()
+            except Exception as e:
+                self._show_error("Failed to clear portfolio returns cache", e)
+
+    def _on_clear_benchmark_returns(self) -> None:
+        """Clear benchmark returns cache."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear Benchmark Returns",
+            "This will delete all cached benchmark constituent returns.\n\n"
+            "Returns will be re-fetched on next use.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            from app.services.benchmark_returns_service import BenchmarkReturnsService
+            try:
+                BenchmarkReturnsService.clear_cache()
+            except Exception as e:
+                self._show_error("Failed to clear benchmark returns cache", e)
+
+    def _on_clear_iwv_holdings(self) -> None:
+        """Clear IWV holdings cache."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear IWV Holdings",
+            "This will delete cached iShares Russell 3000 ETF holdings.\n\n"
+            "Holdings will be re-fetched from iShares on next use.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            from app.services.ishares_holdings_service import ISharesHoldingsService
+            try:
+                ISharesHoldingsService.clear_cache()
+            except Exception as e:
+                self._show_error("Failed to clear IWV holdings cache", e)
+
+    def _on_clear_all_cache(self) -> None:
+        """Clear all caches."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear All Cache",
+            "This will delete ALL cached data:\n\n"
+            "• Market data (price history)\n"
+            "• Ticker metadata (sector, industry, beta)\n"
+            "• Ticker names\n"
+            "• Portfolio returns\n"
+            "• Benchmark returns\n"
+            "• IWV holdings\n\n"
+            "All data will be re-fetched on next use.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            errors = []
+
+            # Clear all caches
+            try:
+                from app.services.market_data import clear_cache
+                clear_cache()
+            except Exception as e:
+                errors.append(f"Market data: {e}")
+
+            try:
+                from app.services.ticker_metadata_service import TickerMetadataService
+                TickerMetadataService.clear_cache()
+            except Exception as e:
+                errors.append(f"Ticker metadata: {e}")
+
+            try:
+                from app.services.ticker_name_cache import TickerNameCache
+                TickerNameCache.clear_cache()
+            except Exception as e:
+                errors.append(f"Ticker names: {e}")
+
+            try:
+                from app.services.returns_data_service import ReturnsDataService
+                ReturnsDataService.clear_cache()
+            except Exception as e:
+                errors.append(f"Portfolio returns: {e}")
+
+            try:
+                from app.services.benchmark_returns_service import BenchmarkReturnsService
+                BenchmarkReturnsService.clear_cache()
+            except Exception as e:
+                errors.append(f"Benchmark returns: {e}")
+
+            try:
+                from app.services.ishares_holdings_service import ISharesHoldingsService
+                ISharesHoldingsService.clear_cache()
+            except Exception as e:
+                errors.append(f"IWV holdings: {e}")
+
+            if errors:
+                CustomMessageBox.critical(
+                    self.theme_manager,
+                    self,
+                    "Partial Error",
+                    "Some caches failed to clear:\n\n" + "\n".join(errors),
+                )
+
+    def _show_error(self, message: str, error: Exception) -> None:
+        """Show error dialog."""
+        CustomMessageBox.critical(
+            self.theme_manager,
+            self,
+            "Error",
+            f"{message}:\n\n{str(error)}",
+        )
 
     def _sync_theme_buttons(self) -> None:
         """Synchronize radio buttons with current theme."""
@@ -268,23 +448,38 @@ class SettingsModule(QWidget):
                 margin-left: 10px;
                 margin-right: 10px;
             }
-            QPushButton#clearCacheButton {
+            QPushButton#cacheButton {
                 background-color: #2d2d2d;
                 color: #ffffff;
                 border: 1px solid #3d3d3d;
                 border-radius: 6px;
-                padding: 12px 24px;
-                font-size: 13px;
+                padding: 10px 16px;
+                font-size: 12px;
                 font-weight: bold;
-                margin-left: 10px;
-                margin-right: 10px;
-                max-width: 200px;
             }
-            QPushButton#clearCacheButton:hover {
+            QPushButton#cacheButton:hover {
                 border-color: #ff6b6b;
                 background-color: #3d3d3d;
             }
-            QPushButton#clearCacheButton:pressed {
+            QPushButton#cacheButton:pressed {
+                background-color: #ff6b6b;
+                color: #ffffff;
+            }
+            QPushButton#clearAllButton {
+                background-color: #3d2020;
+                color: #ffffff;
+                border: 1px solid #ff6b6b;
+                border-radius: 6px;
+                padding: 12px 24px;
+                font-size: 13px;
+                font-weight: bold;
+                margin-top: 10px;
+            }
+            QPushButton#clearAllButton:hover {
+                border-color: #ff8888;
+                background-color: #4d2525;
+            }
+            QPushButton#clearAllButton:pressed {
                 background-color: #ff6b6b;
                 color: #ffffff;
             }
@@ -354,23 +549,38 @@ class SettingsModule(QWidget):
                 margin-left: 10px;
                 margin-right: 10px;
             }
-            QPushButton#clearCacheButton {
+            QPushButton#cacheButton {
                 background-color: #f5f5f5;
                 color: #000000;
                 border: 1px solid #cccccc;
                 border-radius: 6px;
-                padding: 12px 24px;
-                font-size: 13px;
+                padding: 10px 16px;
+                font-size: 12px;
                 font-weight: bold;
-                margin-left: 10px;
-                margin-right: 10px;
-                max-width: 200px;
             }
-            QPushButton#clearCacheButton:hover {
+            QPushButton#cacheButton:hover {
                 border-color: #e53935;
                 background-color: #e8e8e8;
             }
-            QPushButton#clearCacheButton:pressed {
+            QPushButton#cacheButton:pressed {
+                background-color: #e53935;
+                color: #ffffff;
+            }
+            QPushButton#clearAllButton {
+                background-color: #ffebee;
+                color: #c62828;
+                border: 1px solid #e53935;
+                border-radius: 6px;
+                padding: 12px 24px;
+                font-size: 13px;
+                font-weight: bold;
+                margin-top: 10px;
+            }
+            QPushButton#clearAllButton:hover {
+                border-color: #c62828;
+                background-color: #ffcdd2;
+            }
+            QPushButton#clearAllButton:pressed {
                 background-color: #e53935;
                 color: #ffffff;
             }
@@ -440,23 +650,38 @@ class SettingsModule(QWidget):
                 margin-left: 10px;
                 margin-right: 10px;
             }
-            QPushButton#clearCacheButton {
+            QPushButton#cacheButton {
                 background-color: #0d1420;
                 color: #e8e8e8;
                 border: 1px solid #1a2838;
                 border-radius: 6px;
-                padding: 12px 24px;
-                font-size: 13px;
+                padding: 10px 16px;
+                font-size: 12px;
                 font-weight: bold;
-                margin-left: 10px;
-                margin-right: 10px;
-                max-width: 200px;
             }
-            QPushButton#clearCacheButton:hover {
+            QPushButton#cacheButton:hover {
                 border-color: #ff6b6b;
                 background-color: #1a2838;
             }
-            QPushButton#clearCacheButton:pressed {
+            QPushButton#cacheButton:pressed {
+                background-color: #ff6b6b;
+                color: #ffffff;
+            }
+            QPushButton#clearAllButton {
+                background-color: #2a1515;
+                color: #ff6b6b;
+                border: 1px solid #ff6b6b;
+                border-radius: 6px;
+                padding: 12px 24px;
+                font-size: 13px;
+                font-weight: bold;
+                margin-top: 10px;
+            }
+            QPushButton#clearAllButton:hover {
+                border-color: #ff8888;
+                background-color: #3a2020;
+            }
+            QPushButton#clearAllButton:pressed {
                 background-color: #ff6b6b;
                 color: #ffffff;
             }

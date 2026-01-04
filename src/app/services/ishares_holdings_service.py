@@ -5,11 +5,17 @@ normalized constituent information for performance attribution.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+from dataclasses import asdict, dataclass
+from datetime import date
+from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Optional
 
 if TYPE_CHECKING:
     pass
+
+# Cache location for IWV holdings
+_CACHE_FILE = Path.home() / ".quant_terminal" / "cache" / "iwv_holdings.json"
 
 
 @dataclass
@@ -49,10 +55,106 @@ class ISharesHoldingsService:
         "Utilities": "Utilities",
     }
 
+    # -------------------------------------------------------------------------
+    # Cache methods
+    # -------------------------------------------------------------------------
+
+    @classmethod
+    def _is_cache_current(cls) -> bool:
+        """Check if cached IWV holdings are current (no new trading day data expected)."""
+        if not _CACHE_FILE.exists():
+            return False
+
+        try:
+            with open(_CACHE_FILE, "r") as f:
+                cache_data = json.load(f)
+
+            last_updated_str = cache_data.get("last_updated")
+            if not last_updated_str:
+                return False
+
+            last_updated = date.fromisoformat(last_updated_str)
+
+            # Use same staleness logic as stock cache
+            from app.utils.market_hours import get_last_expected_trading_date
+
+            expected_date = get_last_expected_trading_date()
+            return last_updated >= expected_date
+
+        except (json.JSONDecodeError, ValueError, KeyError):
+            return False
+
+    @classmethod
+    def _load_from_cache(cls) -> Optional[Dict[str, ETFHolding]]:
+        """Load IWV holdings from cache file."""
+        if not _CACHE_FILE.exists():
+            return None
+
+        try:
+            with open(_CACHE_FILE, "r") as f:
+                cache_data = json.load(f)
+
+            holdings_data = cache_data.get("holdings", {})
+            holdings: Dict[str, ETFHolding] = {}
+
+            for ticker, data in holdings_data.items():
+                holdings[ticker] = ETFHolding(
+                    ticker=data["ticker"],
+                    name=data["name"],
+                    sector=data["sector"],
+                    weight=data["weight"],
+                    currency=data["currency"],
+                    asset_class=data["asset_class"],
+                    location=data["location"],
+                )
+
+            return holdings
+
+        except (json.JSONDecodeError, ValueError, KeyError) as e:
+            print(f"[ISharesHoldingsService] Failed to load cache: {e}")
+            return None
+
+    @classmethod
+    def _save_to_cache(cls, holdings: Dict[str, ETFHolding]) -> None:
+        """Save IWV holdings to cache file."""
+        try:
+            # Ensure cache directory exists
+            _CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+            # Serialize holdings to JSON-compatible format
+            holdings_data = {ticker: asdict(holding) for ticker, holding in holdings.items()}
+
+            cache_data = {
+                "last_updated": date.today().isoformat(),
+                "holdings": holdings_data,
+            }
+
+            with open(_CACHE_FILE, "w") as f:
+                json.dump(cache_data, f)
+
+            print(f"[ISharesHoldingsService] Cached {len(holdings)} IWV holdings")
+
+        except Exception as e:
+            print(f"[ISharesHoldingsService] Failed to save cache: {e}")
+
+    @classmethod
+    def clear_cache(cls) -> None:
+        """Clear cached IWV holdings."""
+        if _CACHE_FILE.exists():
+            _CACHE_FILE.unlink()
+        print("[ISharesHoldingsService] Cache cleared")
+
+    # -------------------------------------------------------------------------
+    # Fetch methods
+    # -------------------------------------------------------------------------
+
     @classmethod
     def fetch_holdings(cls, etf_symbol: str = "IWV") -> Dict[str, ETFHolding]:
         """
         Fetch current holdings for an iShares ETF.
+
+        For IWV, uses trading-day-aware caching to avoid re-fetching on every call.
+        Cache is refreshed when a new trading day's data is expected.
 
         Args:
             etf_symbol: ETF ticker symbol (default: IWV)
@@ -61,9 +163,39 @@ class ISharesHoldingsService:
             Dict mapping ticker -> ETFHolding
             Empty dict if fetch fails
         """
+        etf_upper = etf_symbol.upper()
+
+        # Only IWV is cached
+        if etf_upper == "IWV":
+            # Check cache first
+            if cls._is_cache_current():
+                cached = cls._load_from_cache()
+                if cached:
+                    print(f"[ISharesHoldingsService] Using cached IWV holdings ({len(cached)} tickers)")
+                    return cached
+
+        # Fetch fresh data from iShares
+        holdings = cls._fetch_from_ishares(etf_upper)
+
+        # Cache if IWV and fetch succeeded
+        if etf_upper == "IWV" and holdings:
+            cls._save_to_cache(holdings)
+
+        # If fetch failed but we have stale cache, use it
+        if not holdings and etf_upper == "IWV":
+            cached = cls._load_from_cache()
+            if cached:
+                print(f"[ISharesHoldingsService] Using stale cache ({len(cached)} tickers)")
+                return cached
+
+        return holdings
+
+    @classmethod
+    def _fetch_from_ishares(cls, etf_symbol: str) -> Dict[str, ETFHolding]:
+        """Fetch holdings directly from iShares website."""
         import requests
 
-        url = cls.ETF_URLS.get(etf_symbol.upper())
+        url = cls.ETF_URLS.get(etf_symbol)
         if not url:
             print(f"[ISharesHoldingsService] Unknown ETF: {etf_symbol}")
             return {}

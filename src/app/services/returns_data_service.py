@@ -321,6 +321,12 @@ class ReturnsDataService:
                         pass
 
     @classmethod
+    def clear_cache(cls) -> None:
+        """Clear all cached portfolio returns."""
+        cls.invalidate_all_caches()
+        print("[ReturnsDataService] Cache cleared")
+
+    @classmethod
     def get_correlation_matrix(
         cls,
         portfolio_name: str,

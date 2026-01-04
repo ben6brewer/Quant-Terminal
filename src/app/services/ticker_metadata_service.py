@@ -108,6 +108,15 @@ class TickerMetadataService:
                 print(f"Warning: Could not save ticker metadata cache: {e}")
 
     @classmethod
+    def clear_cache(cls) -> None:
+        """Clear all cached ticker metadata."""
+        with cls._lock:
+            if cls._CACHE_FILE.exists():
+                cls._CACHE_FILE.unlink()
+            cls._cache = None
+        print("[TickerMetadataService] Cache cleared")
+
+    @classmethod
     def _is_cache_stale(cls, ticker: str) -> bool:
         """Check if cached metadata is older than CACHE_EXPIRY_DAYS."""
         cache = cls._load_cache()
