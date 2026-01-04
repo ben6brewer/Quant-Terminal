@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 from app.core.config import (
     POLYGON_BASE_URL,
+    POLYGON_BATCH_CONCURRENCY,
     POLYGON_RATE_LIMIT_CALLS,
     POLYGON_RATE_LIMIT_PERIOD,
     POLYGON_TIMESPAN_MAP,
@@ -457,6 +458,149 @@ class PolygonDataService:
             f"Polygon batch complete: {len(results)} tickers with updates"
         )
         return results
+
+    @classmethod
+    def fetch_batch_full_history(
+        cls,
+        tickers: list[str],
+        max_workers: int = POLYGON_BATCH_CONCURRENCY,
+        progress_callback: Optional[Callable[[int, int, str], None]] = None,
+    ) -> tuple[dict[str, "pd.DataFrame"], list[str]]:
+        """
+        Fetch full 5-year history for multiple tickers with high concurrency.
+
+        Designed for Polygon Unlimited tier with ~100 concurrent requests.
+        Does NOT apply rate limiting - use only if you have unlimited API calls.
+
+        Args:
+            tickers: List of ticker symbols (Yahoo format)
+            max_workers: Number of concurrent workers (default from config)
+            progress_callback: Optional callback(completed, total, current_ticker)
+
+        Returns:
+            Tuple of:
+            - Dict mapping ticker -> DataFrame with OHLCV data
+            - List of failed tickers (for Yahoo fallback)
+        """
+        import pandas as pd
+        import requests
+
+        if not tickers:
+            return {}, []
+
+        # Get API key upfront
+        api_key = cls._load_api_key()
+        if not api_key or api_key == "your_api_key_here":
+            print("[Polygon Batch] ERROR: API key not configured")
+            return {}, list(tickers)
+
+        total = len(tickers)
+        print(f"[Polygon Batch] Starting fetch for {total} tickers ({max_workers} workers)...")
+
+        # Calculate date range for 5-year history
+        from_date, to_date = cls._calculate_date_range("max")
+
+        results: dict[str, pd.DataFrame] = {}
+        failed: list[str] = []
+        completed_count = 0
+        lock = threading.Lock()
+
+        def fetch_one(ticker: str) -> tuple[str, Optional[pd.DataFrame], Optional[str]]:
+            """Fetch a single ticker's full history without rate limiting."""
+            nonlocal completed_count
+
+            polygon_ticker = cls._convert_ticker(ticker)
+
+            # Skip indices (require higher tier)
+            if polygon_ticker.startswith("I:"):
+                return ticker, None, "index requires Developer plan"
+
+            # Build URL for daily data
+            url = (
+                f"{POLYGON_BASE_URL}/v2/aggs/ticker/{polygon_ticker}"
+                f"/range/1/day/{from_date}/{to_date}"
+            )
+            params = {
+                "adjusted": "true",
+                "sort": "asc",
+                "limit": 50000,
+                "apiKey": api_key,
+            }
+
+            # Make request with retry logic (no rate limiting)
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    response = requests.get(url, params=params, timeout=30)
+                    response.raise_for_status()
+                    data = response.json()
+
+                    if data.get("status") == "ERROR":
+                        return ticker, None, data.get("error", "API error")
+
+                    results_data = data.get("results", [])
+                    if not results_data:
+                        return ticker, None, "no data"
+
+                    # Convert to DataFrame
+                    df = pd.DataFrame(results_data)
+                    column_map = {
+                        "o": "Open",
+                        "h": "High",
+                        "l": "Low",
+                        "c": "Close",
+                        "v": "Volume",
+                        "t": "timestamp",
+                    }
+                    df = df.rename(columns=column_map)
+                    df["Date"] = pd.to_datetime(df["timestamp"], unit="ms")
+                    df.set_index("Date", inplace=True)
+
+                    cols_to_drop = ["timestamp", "vw", "n", "otc"]
+                    df.drop(columns=[c for c in cols_to_drop if c in df.columns], inplace=True)
+
+                    standard_cols = ["Open", "High", "Low", "Close", "Volume"]
+                    df = df[[c for c in standard_cols if c in df.columns]]
+                    df.sort_index(inplace=True)
+
+                    return ticker, df, None
+
+                except requests.RequestException as e:
+                    if attempt == max_retries - 1:
+                        return ticker, None, str(e)
+                    time.sleep(2**attempt)
+
+            return ticker, None, "max retries exceeded"
+
+        # Parallel fetch with high concurrency
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {executor.submit(fetch_one, t): t for t in tickers}
+
+            for future in as_completed(futures):
+                ticker, df, error = future.result()
+
+                with lock:
+                    completed_count += 1
+
+                    if df is not None and not df.empty:
+                        results[ticker] = df
+                        # Progress logging every 50 tickers or at milestones
+                        if completed_count % 50 == 0 or completed_count == total:
+                            pct = (completed_count / total) * 100
+                            print(f"[Polygon Batch] Progress: {completed_count}/{total} ({pct:.1f}%) - {ticker}: {len(df)} bars")
+                    else:
+                        failed.append(ticker)
+                        if error and error != "no data":
+                            print(f"  {ticker}: FAILED ({error})")
+
+                    if progress_callback:
+                        progress_callback(completed_count, total, ticker)
+
+        succeeded = len(results)
+        failed_count = len(failed)
+        print(f"[Polygon Batch] Complete: {succeeded} succeeded, {failed_count} failed")
+
+        return results, failed
 
     @classmethod
     def fetch_live_bar(cls, ticker: str) -> "pd.DataFrame | None":

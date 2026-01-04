@@ -34,6 +34,7 @@ POLYGON_RATE_LIMIT_CALLS = 5  # Starter plan: 5 calls/minute
 POLYGON_RATE_LIMIT_PERIOD = 60  # seconds
 POLYGON_MAX_HISTORY_YEARS = 5  # Polygon Starter plan limit
 POLYGON_MAX_HISTORY_DAYS = 1825  # 5 years in days
+POLYGON_BATCH_CONCURRENCY = 100  # Concurrent workers for batch fetching (unlimited tier)
 
 # Yahoo Finance Configuration (for backfill and crypto)
 YAHOO_HISTORICAL_START = "1970-01-01"  # Earliest date to try fetching

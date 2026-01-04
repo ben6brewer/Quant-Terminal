@@ -10,6 +10,7 @@ from app.core.config import (
     INTERVAL_MAP,
     DEFAULT_PERIOD,
     DATA_FETCH_THREADS,
+    POLYGON_BATCH_CONCURRENCY,
     SHOW_DOWNLOAD_PROGRESS,
     ERROR_EMPTY_TICKER,
     ERROR_NO_DATA,
@@ -670,6 +671,122 @@ def fetch_price_history_batch(
                 _set_memory_cache(ticker, cached_df)
 
     print(f"\n=== Batch complete: {len(results)}/{total} tickers loaded ===\n")
+    return results
+
+
+def fetch_price_history_batch_polygon_first(
+    tickers: List[str],
+    max_workers: int = POLYGON_BATCH_CONCURRENCY,
+) -> Dict[str, "pd.DataFrame"]:
+    """
+    Fetch price history for multiple tickers using Polygon as primary source.
+
+    Optimized for Risk Analytics Attribution with ~3000 IWV tickers.
+    Uses high concurrency (100 workers) for fast batch fetching.
+
+    Strategy:
+    1. Check cache first - return cached data if current
+    2. Fetch from Polygon (100 concurrent) for uncached/stale tickers
+    3. Yahoo fallback for Polygon failures only
+    4. Save all fetched data to cache
+
+    Args:
+        tickers: List of ticker symbols
+        max_workers: Polygon concurrent workers (default from config)
+
+    Returns:
+        Dict mapping ticker -> DataFrame with OHLCV data
+    """
+    import pandas as pd
+
+    if not tickers:
+        return {}
+
+    # Ensure unique, uppercase tickers
+    tickers = list(dict.fromkeys(t.strip().upper() for t in tickers))
+    total = len(tickers)
+
+    print(f"\n=== Polygon-First Batch: {total} tickers ===")
+
+    results: Dict[str, pd.DataFrame] = {}
+
+    # Phase 1: Check cache for all tickers
+    cached_tickers: List[str] = []
+    need_fetch: List[str] = []
+
+    print(f"[Cache] Checking {total} tickers...")
+
+    for ticker in tickers:
+        # Check memory cache first
+        df = _get_from_memory_cache(ticker)
+        if df is not None and not df.empty and _cache.is_cache_current(ticker):
+            results[ticker] = df
+            cached_tickers.append(ticker)
+            continue
+
+        # Check disk cache
+        if _cache.has_cache(ticker) and _cache.is_cache_current(ticker):
+            df = _cache.get_cached_data(ticker)
+            if df is not None and not df.empty:
+                _set_memory_cache(ticker, df)
+                results[ticker] = df
+                cached_tickers.append(ticker)
+                continue
+
+        # Need to fetch
+        need_fetch.append(ticker)
+
+    print(f"[Cache] {len(cached_tickers)} current, {len(need_fetch)} need fetch")
+
+    if not need_fetch:
+        print(f"=== Batch Complete: {len(results)}/{total} tickers loaded (all from cache) ===\n")
+        return results
+
+    # Phase 2: Fetch from Polygon (primary source)
+    polygon_results, failed_tickers = PolygonDataService.fetch_batch_full_history(
+        need_fetch, max_workers=max_workers
+    )
+
+    # Process successful Polygon results
+    for ticker, df in polygon_results.items():
+        if df is not None and not df.empty:
+            df.index = pd.to_datetime(df.index)
+            df.sort_index(inplace=True)
+
+            # Save to caches
+            _cache.save_to_cache(ticker, df)
+            _set_memory_cache(ticker, df)
+            results[ticker] = df
+
+    # Phase 3: Yahoo fallback for failed tickers
+    if failed_tickers:
+        print(f"[Yahoo Fallback] Fetching {len(failed_tickers)} failed tickers...")
+
+        def yahoo_progress(completed: int, yahoo_total: int, ticker: str) -> None:
+            pass  # Silent progress for fallback
+
+        yahoo_results, yahoo_failed = YahooFinanceService.fetch_batch_full_history(
+            failed_tickers, yahoo_progress
+        )
+
+        for ticker, df in yahoo_results.items():
+            if df is not None and not df.empty:
+                df.index = pd.to_datetime(df.index)
+                df.sort_index(inplace=True)
+
+                # Mark as yahoo_backfilled
+                BackfillTracker.mark_yahoo_backfilled(ticker)
+
+                # Save to caches
+                _cache.save_to_cache(ticker, df)
+                _set_memory_cache(ticker, df)
+                results[ticker] = df
+
+        yahoo_succeeded = len(yahoo_results)
+        yahoo_failed_count = len(yahoo_failed)
+        print(f"[Yahoo Fallback] Complete: {yahoo_succeeded} succeeded, {yahoo_failed_count} failed")
+
+    print(f"=== Batch Complete: {len(results)}/{total} tickers loaded ===\n")
     return results
 
 
