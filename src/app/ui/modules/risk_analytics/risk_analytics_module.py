@@ -19,6 +19,7 @@ from app.services.returns_data_service import ReturnsDataService
 from app.ui.widgets.common.custom_message_box import CustomMessageBox
 from app.ui.widgets.common.loading_overlay import LoadingOverlay
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.utils.market_hours import is_crypto_ticker
 
 from .services.risk_analytics_service import RiskAnalyticsService
 from .services.risk_analytics_settings_manager import RiskAnalyticsSettingsManager
@@ -148,6 +149,27 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         self.controls.update_portfolio_list(self._portfolio_list, self._current_portfolio)
         self.controls.update_benchmark_list(self._portfolio_list)
 
+    def _get_crypto_tickers_in_portfolio(self, portfolio_name: str) -> List[str]:
+        """
+        Check if a portfolio contains any cryptocurrency tickers.
+
+        Args:
+            portfolio_name: Name of the portfolio to check
+
+        Returns:
+            List of crypto ticker symbols found in the portfolio (empty if none)
+        """
+        tickers = PortfolioDataService.get_tickers(portfolio_name)
+        if not tickers:
+            return []
+
+        crypto_tickers = []
+        for ticker in tickers:
+            if ticker and is_crypto_ticker(ticker):
+                crypto_tickers.append(ticker)
+
+        return crypto_tickers
+
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio selection change (just update state, don't analyze)."""
         # Strip "[Port] " prefix if present
@@ -155,6 +177,25 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             name = name[7:]
 
         if name == self._current_portfolio:
+            return
+
+        # Check if portfolio contains crypto tickers
+        crypto_tickers = self._get_crypto_tickers_in_portfolio(name)
+        if crypto_tickers:
+            # Block signals before showing dialog to prevent re-trigger
+            self.controls.portfolio_combo.blockSignals(True)
+            CustomMessageBox.warning(
+                self.theme_manager,
+                self,
+                "Crypto Not Supported",
+                f"Risk Analytics does not support cryptocurrency tickers.\n\n"
+                f"Portfolio '{name}' contains: {', '.join(crypto_tickers[:5])}"
+                f"{'...' if len(crypto_tickers) > 5 else ''}\n\n"
+                f"Please select a portfolio without crypto holdings.",
+            )
+            # Reset the dropdown to previous value
+            self.controls.update_portfolio_list(self._portfolio_list, self._current_portfolio)
+            self.controls.portfolio_combo.blockSignals(False)
             return
 
         self._current_portfolio = name
@@ -167,13 +208,56 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         if benchmark == self._current_benchmark:
             return
 
-        self._current_benchmark = benchmark
-
-        # Determine if benchmark is a portfolio
-        if benchmark:
-            self._is_benchmark_portfolio = benchmark.startswith("[Port] ")
-        else:
+        # Check if benchmark is empty or "None"
+        if not benchmark or benchmark.upper() == "NONE":
+            self._current_benchmark = ""
             self._is_benchmark_portfolio = False
+            return
+
+        # Check if benchmark is a portfolio
+        is_portfolio = benchmark.startswith("[Port] ")
+
+        if is_portfolio:
+            # Extract portfolio name and check for crypto
+            portfolio_name = benchmark.replace("[Port] ", "")
+            crypto_tickers = self._get_crypto_tickers_in_portfolio(portfolio_name)
+            if crypto_tickers:
+                # Block signals before showing dialog to prevent re-trigger
+                self.controls.benchmark_combo.blockSignals(True)
+                CustomMessageBox.warning(
+                    self.theme_manager,
+                    self,
+                    "Crypto Not Supported",
+                    f"Risk Analytics does not support cryptocurrency tickers.\n\n"
+                    f"Portfolio '{portfolio_name}' contains: {', '.join(crypto_tickers[:5])}"
+                    f"{'...' if len(crypto_tickers) > 5 else ''}\n\n"
+                    f"Please select a benchmark without crypto holdings.",
+                )
+                # Reset the benchmark dropdown
+                self.controls.reset_benchmark()
+                self.controls.benchmark_combo.blockSignals(False)
+                return
+        else:
+            # It's a ticker - check if it's crypto
+            ticker = benchmark.strip().upper()
+            if is_crypto_ticker(ticker):
+                # Block signals before showing dialog to prevent re-trigger
+                self.controls.benchmark_combo.blockSignals(True)
+                CustomMessageBox.warning(
+                    self.theme_manager,
+                    self,
+                    "Crypto Not Supported",
+                    f"Risk Analytics does not support cryptocurrency tickers.\n\n"
+                    f"'{ticker}' is a cryptocurrency ticker.\n\n"
+                    f"Please enter a stock or ETF ticker (e.g., SPY, QQQ).",
+                )
+                # Reset the benchmark dropdown
+                self.controls.reset_benchmark()
+                self.controls.benchmark_combo.blockSignals(False)
+                return
+
+        self._current_benchmark = benchmark
+        self._is_benchmark_portfolio = is_portfolio
 
     def _show_settings_dialog(self):
         """Show the settings dialog."""
