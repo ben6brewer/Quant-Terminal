@@ -262,6 +262,83 @@ For loading multiple tickers (portfolios, risk analysis, etc.), the system uses 
 
 ---
 
+### Portfolio Construction (Live Price Updates)
+
+Holdings tab polls Yahoo Finance every 60 seconds for live price updates during market hours.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Portfolio Load                                │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │  Start Live Polling   │
+                    │  (_start_live_updates)│
+                    └───────────────────────┘
+                                │
+                    ┌───────────┴───────────┐
+                    │                       │
+                 [Crypto]                [Stock]
+                    │                       │
+                    ▼                       ▼
+            ┌───────────────┐    ┌─────────────────────┐
+            │ Always poll   │    │ Market Open?        │
+            │ (24/7)        │    │ (4am-8pm ET)        │
+            └───────────────┘    └─────────────────────┘
+                    │                 │           │
+                    │                yes          no
+                    │                 │           │
+                    ▼                 ▼           ▼
+            ┌─────────────────────────────┐  [Skip ticker]
+            │  fetch_batch_current_prices │
+            │  (single yf.download call)  │
+            └─────────────────────────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │  Update Holdings Tab  │
+                    │  (Price, MV, P&L, %)  │
+                    └───────────────────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │  Wait 60 seconds      │
+                    │  (QTimer)             │
+                    └───────────────────────┘
+```
+
+**Behavior:**
+- Polling starts when portfolio is loaded
+- Pauses when module is hidden (hideEvent)
+- Resumes when module is shown (showEvent)
+- Crypto tickers (-USD, -USDT): update 24/7
+- Stock tickers: only during extended hours (4am-8pm ET on trading days)
+
+---
+
+### Performance Metrics (Live Returns on Load)
+
+Performance Metrics appends today's live return to historical returns when calculating metrics.
+
+```python
+# Automatic live return injection in _get_returns():
+returns = ReturnsDataService.get_ticker_returns(ticker, start_date, end_date)
+returns = ReturnsDataService.append_live_return(returns, ticker)  # Adds today
+
+# For portfolios:
+returns = ReturnsDataService.get_time_varying_portfolio_returns(portfolio_name, ...)
+returns = ReturnsDataService.append_live_portfolio_return(returns, portfolio_name)
+```
+
+**Behavior:**
+- Live return appended once on module load (not polling)
+- Crypto: always eligible for live return
+- Stocks: only during extended market hours
+- If today's data already in cache: no additional fetch
+
+---
+
 ### Other Modules (Future - Polygon)
 
 For modules requiring bulk data imports (backtesting, screening, etc.), Polygon will be used:
@@ -429,6 +506,10 @@ results, failed = YahooFinanceService.fetch_batch_full_history(
 # results = {"AAPL": DataFrame, "MSFT": DataFrame, ...}
 # failed = ["INVALID_TICKER", ...]  # Tickers that failed
 
+# BATCH: Fetch current live prices for multiple tickers (for live updates)
+prices = YahooFinanceService.fetch_batch_current_prices(["AAPL", "MSFT", "BTC-USD"])
+# prices = {"AAPL": 175.50, "MSFT": 380.25, "BTC-USD": 98234.56}
+
 # Validate ticker
 is_valid = YahooFinanceService.is_valid_ticker("AAPL")
 ```
@@ -504,7 +585,7 @@ from app.utils.market_hours import (
     is_stock_cache_current,
 )
 
-# Check if crypto
+# Check if crypto (strips whitespace, case-insensitive)
 is_crypto_ticker("BTC-USD")   # True
 is_crypto_ticker("ETH-USDT")  # True
 is_crypto_ticker("AAPL")      # False
@@ -517,6 +598,39 @@ is_market_open_extended()  # True if 4am-8pm ET on trading day
 
 # Get last expected date for cache freshness
 get_last_expected_trading_date()  # Returns date
+```
+
+### ReturnsDataService (`services/returns_data_service.py`)
+
+Cached daily returns with live return injection.
+
+```python
+from app.services.returns_data_service import ReturnsDataService
+
+# Get cached daily returns for portfolio
+returns_df = ReturnsDataService.get_daily_returns("portfolio_name")  # DataFrame
+
+# Get weighted portfolio returns (time-varying weights)
+returns = ReturnsDataService.get_time_varying_portfolio_returns(
+    "portfolio_name",
+    start_date="2024-01-01",
+    end_date="2024-12-31",
+    include_cash=False,
+)
+
+# Get single ticker returns
+returns = ReturnsDataService.get_ticker_returns("AAPL", start_date="2024-01-01")
+
+# LIVE: Append today's live return to a ticker's returns series
+# Only appends if: crypto (24/7) OR stock during market hours
+# AND today's data not already in series
+updated = ReturnsDataService.append_live_return(returns, "AAPL")
+
+# LIVE: Append today's live portfolio return (weighted across holdings)
+updated = ReturnsDataService.append_live_portfolio_return(returns, "portfolio_name")
+
+# Invalidate cache when portfolio changes
+ReturnsDataService.invalidate_cache("portfolio_name")
 ```
 
 ---
@@ -632,6 +746,7 @@ if df is not None:
 | Module | Entry Point | Storage | Live Updates |
 |--------|-------------|---------|--------------|
 | Chart | `fetch_price_history_yahoo()` | Parquet | Polling (60s) |
-| Portfolio | `fetch_price_history_batch()` | Parquet | On-demand |
+| Portfolio Construction | `fetch_price_history_batch()` | Parquet | Polling (60s) - Holdings tab |
+| Performance Metrics | `ReturnsDataService` | Parquet | On-load (once) |
 | Risk Analytics | `fetch_price_history_batch()` | Parquet | On-demand |
 | Distribution | `fetch_price_history_batch()` | Parquet | On-demand |

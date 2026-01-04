@@ -417,6 +417,72 @@ class YahooFinanceService:
             return {}, tickers
 
     @classmethod
+    def fetch_batch_current_prices(cls, tickers: list[str]) -> dict[str, float]:
+        """
+        Fetch current prices for multiple tickers in a single API call.
+
+        Used for live price updates in Portfolio Construction module.
+        Returns the most recent close price for each ticker.
+
+        Args:
+            tickers: List of ticker symbols
+
+        Returns:
+            Dict mapping ticker -> latest close price
+        """
+        import pandas as pd
+        import yfinance as yf
+
+        if not tickers:
+            return {}
+
+        # Normalize tickers
+        tickers = [t.strip().upper() for t in tickers]
+
+        try:
+            # Single batch download - fetch 5 days for redundancy
+            df = yf.download(
+                tickers=" ".join(tickers) if len(tickers) > 1 else tickers[0],
+                period="5d",
+                interval="1d",
+                auto_adjust=False,
+                progress=False,
+                threads=True,
+                group_by="ticker" if len(tickers) > 1 else "column",
+            )
+
+            if df is None or df.empty:
+                return {}
+
+            prices: dict[str, float] = {}
+
+            if len(tickers) == 1:
+                # Single ticker - flat columns
+                ticker = tickers[0]
+                if isinstance(df.columns, pd.MultiIndex):
+                    df.columns = [c[0] for c in df.columns]
+                if "Close" in df.columns:
+                    close_series = df["Close"].dropna()
+                    if not close_series.empty:
+                        prices[ticker] = float(close_series.iloc[-1])
+            else:
+                # Multiple tickers - MultiIndex columns
+                for ticker in tickers:
+                    try:
+                        if ticker in df.columns.get_level_values(0):
+                            ticker_close = df[ticker]["Close"].dropna()
+                            if not ticker_close.empty:
+                                prices[ticker] = float(ticker_close.iloc[-1])
+                    except Exception:
+                        pass  # Skip failed tickers silently
+
+            return prices
+
+        except Exception as e:
+            print(f"Yahoo Finance batch current prices failed: {e}")
+            return {}
+
+    @classmethod
     def is_valid_ticker(cls, ticker: str) -> bool:
         """
         Check if a ticker exists on Yahoo Finance.

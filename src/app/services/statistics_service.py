@@ -818,13 +818,18 @@ class StatisticsService:
             Annualized risk-free rate as decimal (e.g., 0.0525 for 5.25%)
         """
         # Use Yahoo Finance directly for ^IRX (index tickers not supported by Polygon Starter)
-        from app.services.yahoo_finance_service import YahooFinanceService
+        import yfinance as yf
 
         try:
-            df = YahooFinanceService.fetch_ticker_history("^IRX", period="5d", interval="1d")
+            df = yf.download("^IRX", period="5d", interval="1d", progress=False)
             if df is not None and not df.empty:
+                # Handle MultiIndex columns if present
+                if hasattr(df.columns, 'levels'):
+                    close = df["Close"].iloc[:, 0] if df["Close"].ndim > 1 else df["Close"]
+                else:
+                    close = df["Close"]
                 # ^IRX is quoted as percentage
-                return df["Close"].iloc[-1] / 100
+                return float(close.iloc[-1]) / 100
         except Exception as e:
             print(f"Error fetching risk-free rate: {e}")
 

@@ -33,7 +33,7 @@ def is_crypto_ticker(ticker: str) -> bool:
     Returns:
         True if crypto ticker, False otherwise
     """
-    ticker = ticker.upper()
+    ticker = ticker.strip().upper()
     return ticker.endswith("-USD") or ticker.endswith("-USDT")
 
 
