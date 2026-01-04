@@ -19,7 +19,7 @@ from PySide6.QtGui import QFont, QColor
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
 from ..services.sector_override_service import SectorOverrideService
-from ..services.ticker_metadata_service import TickerMetadataService
+from app.services.ticker_metadata_service import TickerMetadataService
 
 
 class SecurityRiskTable(LazyThemeMixin, QWidget):

@@ -1045,7 +1045,8 @@ class ReturnsDataService:
         """
         import pandas as pd
 
-        df = fetch_price_history(ticker, period="max", interval="1d")
+        # skip_live_bar=True - returns calculations use daily closes, not intraday
+        df = fetch_price_history(ticker, period="max", interval="1d", skip_live_bar=True)
         if df.empty:
             return pd.Series(dtype=float)
 

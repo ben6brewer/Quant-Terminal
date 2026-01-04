@@ -22,7 +22,7 @@ from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
 
 from .services.risk_analytics_service import RiskAnalyticsService
 from .services.risk_analytics_settings_manager import RiskAnalyticsSettingsManager
-from .services.ticker_metadata_service import TickerMetadataService
+from app.services.ticker_metadata_service import TickerMetadataService
 from .widgets.risk_analytics_controls import RiskAnalyticsControls
 from .widgets.risk_summary_panel import RiskSummaryPanel
 from .widgets.risk_decomposition_panel import RiskDecompositionPanel

@@ -234,6 +234,16 @@ class YahooFinanceService:
             df.sort_index(inplace=True)
 
             print(f"Fetched {len(df)} bars for {ticker} from Yahoo Finance")
+
+            # Also cache metadata (name, sector, etc.) for this ticker
+            try:
+                from app.services.ticker_metadata_service import TickerMetadataService
+
+                TickerMetadataService.get_metadata(ticker)
+            except Exception as meta_err:
+                # Don't fail the fetch if metadata caching fails
+                print(f"Warning: Could not cache metadata for {ticker}: {meta_err}")
+
             return df
 
         except Exception as e:
@@ -387,6 +397,19 @@ class YahooFinanceService:
             print(
                 f"Yahoo batch complete: {len(results)} succeeded, {len(failed)} failed"
             )
+
+            # Also cache metadata (name, sector, etc.) for successful tickers
+            if results:
+                try:
+                    from app.services.ticker_metadata_service import TickerMetadataService
+
+                    successful_tickers = list(results.keys())
+                    TickerMetadataService.get_metadata_batch(successful_tickers)
+                    print(f"Cached metadata for {len(successful_tickers)} tickers")
+                except Exception as meta_err:
+                    # Don't fail the fetch if metadata caching fails
+                    print(f"Warning: Could not cache metadata: {meta_err}")
+
             return results, failed
 
         except Exception as e:

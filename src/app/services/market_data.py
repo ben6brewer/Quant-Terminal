@@ -677,6 +677,7 @@ def fetch_price_history(
     ticker: str,
     period: str = DEFAULT_PERIOD,
     interval: str = "1d",
+    skip_live_bar: bool = False,
 ) -> "pd.DataFrame":
     """
     Fetch historical price data for a ticker with two-level caching.
@@ -695,6 +696,8 @@ def fetch_price_history(
         ticker: Ticker symbol (e.g., "BTC-USD", "AAPL")
         period: Time period (e.g., "max", "1y", "6mo")
         interval: Data interval (e.g., "1d", "daily", "weekly")
+        skip_live_bar: If True, skip fetching today's live bar from Polygon.
+            Use this for portfolio operations that don't need intraday precision.
 
     Returns:
         DataFrame with OHLCV data
@@ -724,6 +727,8 @@ def fetch_price_history(
     # Helper to append live data (crypto vs stock)
     def _append_live_data(data: "pd.DataFrame") -> "pd.DataFrame":
         """Append today's data: Yahoo for crypto, Polygon snapshot for stocks."""
+        if skip_live_bar:
+            return data  # Skip live bar fetching for portfolio operations
         if is_crypto_ticker(ticker):
             return _append_crypto_today(data, ticker)
         return _append_live_bar(data, ticker)

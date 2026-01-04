@@ -817,10 +817,11 @@ class StatisticsService:
         Returns:
             Annualized risk-free rate as decimal (e.g., 0.0525 for 5.25%)
         """
-        from app.services.market_data import fetch_price_history
+        # Use Yahoo Finance directly for ^IRX (index tickers not supported by Polygon Starter)
+        from app.services.yahoo_finance_service import YahooFinanceService
 
         try:
-            df = fetch_price_history("^IRX", period="5d", interval="1d")
+            df = YahooFinanceService.fetch_ticker_history("^IRX", period="5d", interval="1d")
             if df is not None and not df.empty:
                 # ^IRX is quoted as percentage
                 return df["Close"].iloc[-1] / 100
