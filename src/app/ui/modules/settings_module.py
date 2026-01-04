@@ -149,13 +149,6 @@ class SettingsModule(QWidget):
 
         try:
             clear_cache()
-            CustomMessageBox.information(
-                self.theme_manager,
-                self,
-                "Cache Cleared",
-                "Local cache has been successfully cleared.\n\n"
-                "Market data will be re-fetched on next access.",
-            )
         except Exception as e:
             CustomMessageBox.critical(
                 self.theme_manager,
