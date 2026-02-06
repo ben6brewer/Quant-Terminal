@@ -20,6 +20,7 @@ from app.utils.market_hours import (
     is_stock_cache_current,
     get_last_expected_trading_date,
 )
+from app.utils.scaling import scaled, get_scale_factor
 
 __all__ = [
     "format_price_usd",
@@ -36,4 +37,6 @@ __all__ = [
     "is_nyse_trading_day",
     "is_stock_cache_current",
     "get_last_expected_trading_date",
+    "scaled",
+    "get_scale_factor",
 ]

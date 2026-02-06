@@ -190,10 +190,10 @@ StatisticsService.align_returns(portfolio, benchmark)
 **BaseSettingsManager** - Settings persistence base class
 - Subclass with `DEFAULT_SETTINGS` and `settings_filename` properties
 
-**MarketDataService** - Yahoo-first with Polygon fallback, parquet caching
+**MarketDataService** - Yahoo Finance with parquet caching
 - `fetch_price_history(ticker, period, interval, skip_live_bar=False)` - Single ticker
 - `fetch_price_history_batch(tickers)` - Multiple tickers (10x faster for portfolios)
-- `fetch_price_history_yahoo(ticker)` - Yahoo-only (for chart module)
+- `fetch_price_history_yahoo(ticker)` - Chart module entry point
 
 **YahooFinanceService** - Yahoo Finance API wrapper
 - `fetch_full_history(ticker)` - Max history for a ticker

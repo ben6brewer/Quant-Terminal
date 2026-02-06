@@ -89,7 +89,16 @@ class HubWindow(QMainWindow):
     def __init__(self, theme_manager: ThemeManager):
         super().__init__()
         self.setWindowTitle(f"{APP_NAME} v{APP_VERSION}")
-        self.resize(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT)
+
+        # Screen-aware default size: cap to 90% of available screen
+        screen = QApplication.primaryScreen().availableGeometry()
+        width = min(DEFAULT_WINDOW_WIDTH, int(screen.width() * 0.9))
+        height = min(DEFAULT_WINDOW_HEIGHT, int(screen.height() * 0.9))
+        self.resize(width, height)
+        # Center on screen
+        x = screen.x() + (screen.width() - width) // 2
+        y = screen.y() + (screen.height() - height) // 2
+        self.move(x, y)
 
         # Remove native title bar
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -192,10 +201,10 @@ class HubWindow(QMainWindow):
                 # Restore saved geometry
                 self.setGeometry(self._normal_geometry)
             else:
-                # No saved geometry (started maximized), use default size centered on screen
+                # No saved geometry (started maximized), use default size capped to 90% of screen
                 screen = QApplication.primaryScreen().availableGeometry()
-                width = DEFAULT_WINDOW_WIDTH
-                height = DEFAULT_WINDOW_HEIGHT
+                width = min(DEFAULT_WINDOW_WIDTH, int(screen.width() * 0.9))
+                height = min(DEFAULT_WINDOW_HEIGHT, int(screen.height() * 0.9))
                 x = screen.x() + (screen.width() - width) // 2
                 y = screen.y() + (screen.height() - height) // 2
                 self.setGeometry(x, y, width, height)

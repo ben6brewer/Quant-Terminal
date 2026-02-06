@@ -1,7 +1,7 @@
 """Portfolio Controls Widget - Top Control Bar"""
 
 from typing import List
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton, QSizePolicy
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
@@ -49,7 +49,10 @@ class PortfolioControls(LazyThemeMixin, QWidget):
 
         # Home button (leftmost)
         self.home_btn = QPushButton("Home")
-        self.home_btn.setFixedSize(100, 40)
+        self.home_btn.setMinimumWidth(70)
+        self.home_btn.setMaximumWidth(100)
+        self.home_btn.setFixedHeight(40)
+        self.home_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.home_btn.setObjectName("home_btn")
         self.home_btn.clicked.connect(self.home_clicked.emit)
         layout.addWidget(self.home_btn)
@@ -65,8 +68,10 @@ class PortfolioControls(LazyThemeMixin, QWidget):
         self.portfolio_combo.setEditable(True)
         self.portfolio_combo.lineEdit().setReadOnly(True)
         self.portfolio_combo.lineEdit().setPlaceholderText("Select Portfolio...")
-        self.portfolio_combo.setFixedWidth(250)
+        self.portfolio_combo.setMinimumWidth(150)
+        self.portfolio_combo.setMaximumWidth(250)
         self.portfolio_combo.setFixedHeight(45)
+        self.portfolio_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         # Use custom smooth scroll view for the dropdown
         smooth_view = SmoothScrollListView(self.portfolio_combo)
         smooth_view.setAlternatingRowColors(True)
@@ -78,39 +83,54 @@ class PortfolioControls(LazyThemeMixin, QWidget):
 
         # Save button
         self.save_btn = QPushButton("Save")
-        self.save_btn.setFixedSize(80, 40)
+        self.save_btn.setMinimumWidth(55)
+        self.save_btn.setMaximumWidth(80)
+        self.save_btn.setFixedHeight(40)
+        self.save_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.save_btn.clicked.connect(self.save_clicked.emit)
         layout.addWidget(self.save_btn)
 
-        layout.addSpacing(8)
+        layout.addSpacing(4)
 
         # Import button
         self.import_btn = QPushButton("Import")
-        self.import_btn.setFixedSize(80, 40)
+        self.import_btn.setMinimumWidth(55)
+        self.import_btn.setMaximumWidth(80)
+        self.import_btn.setFixedHeight(40)
+        self.import_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.import_btn.clicked.connect(self.import_clicked.emit)
         layout.addWidget(self.import_btn)
 
-        layout.addSpacing(8)
+        layout.addSpacing(4)
 
         # Export button
         self.export_btn = QPushButton("Export")
-        self.export_btn.setFixedSize(80, 40)
+        self.export_btn.setMinimumWidth(55)
+        self.export_btn.setMaximumWidth(80)
+        self.export_btn.setFixedHeight(40)
+        self.export_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.export_btn.clicked.connect(self.export_clicked.emit)
         layout.addWidget(self.export_btn)
 
-        layout.addSpacing(8)
+        layout.addSpacing(4)
 
         # Rename button
         self.rename_btn = QPushButton("Rename")
-        self.rename_btn.setFixedSize(80, 40)
+        self.rename_btn.setMinimumWidth(55)
+        self.rename_btn.setMaximumWidth(80)
+        self.rename_btn.setFixedHeight(40)
+        self.rename_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.rename_btn.clicked.connect(self.rename_portfolio_clicked.emit)
         layout.addWidget(self.rename_btn)
 
-        layout.addSpacing(8)
+        layout.addSpacing(4)
 
         # Delete button
         self.delete_btn = QPushButton("Delete")
-        self.delete_btn.setFixedSize(80, 40)
+        self.delete_btn.setMinimumWidth(55)
+        self.delete_btn.setMaximumWidth(80)
+        self.delete_btn.setFixedHeight(40)
+        self.delete_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.delete_btn.setObjectName("delete_btn")
         self.delete_btn.clicked.connect(self.delete_portfolio_clicked.emit)
         layout.addWidget(self.delete_btn)
@@ -120,7 +140,10 @@ class PortfolioControls(LazyThemeMixin, QWidget):
 
         # Settings button (right-aligned)
         self.settings_btn = QPushButton("Settings")
-        self.settings_btn.setFixedSize(100, 40)
+        self.settings_btn.setMinimumWidth(70)
+        self.settings_btn.setMaximumWidth(100)
+        self.settings_btn.setFixedHeight(40)
+        self.settings_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.settings_btn.clicked.connect(self.settings_clicked.emit)
         layout.addWidget(self.settings_btn)
 

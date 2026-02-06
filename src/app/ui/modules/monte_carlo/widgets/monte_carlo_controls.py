@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QSpinBox,
     QMessageBox,
+    QSizePolicy,
 )
 from PySide6.QtCore import Signal, QDate
 from PySide6.QtGui import QWheelEvent
@@ -281,7 +282,10 @@ class MonteCarloControls(LazyThemeMixin, QWidget):
 
         # Home button (leftmost)
         self.home_btn = QPushButton("Home")
-        self.home_btn.setFixedSize(100, 40)
+        self.home_btn.setMinimumWidth(70)
+        self.home_btn.setMaximumWidth(100)
+        self.home_btn.setFixedHeight(40)
+        self.home_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.home_btn.setObjectName("home_btn")
         self.home_btn.clicked.connect(self.home_clicked.emit)
         layout.addWidget(self.home_btn)
@@ -293,45 +297,53 @@ class MonteCarloControls(LazyThemeMixin, QWidget):
         self.portfolio_label.setObjectName("control_label")
         layout.addWidget(self.portfolio_label)
         self.portfolio_combo = PortfolioTickerComboBox()
-        self.portfolio_combo.setFixedWidth(250)
+        self.portfolio_combo.setMinimumWidth(140)
+        self.portfolio_combo.setMaximumWidth(250)
         self.portfolio_combo.setFixedHeight(40)
+        self.portfolio_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.portfolio_combo.value_changed.connect(self.portfolio_changed.emit)
         layout.addWidget(self.portfolio_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Benchmark selector (optional) - right after Portfolio
         self.benchmark_label = QLabel("Benchmark:")
         self.benchmark_label.setObjectName("control_label")
         layout.addWidget(self.benchmark_label)
         self.benchmark_combo = BenchmarkComboBox()
-        self.benchmark_combo.setFixedWidth(250)
+        self.benchmark_combo.setMinimumWidth(140)
+        self.benchmark_combo.setMaximumWidth(250)
         self.benchmark_combo.setFixedHeight(40)
+        self.benchmark_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.benchmark_combo.value_changed.connect(self.benchmark_changed.emit)
         layout.addWidget(self.benchmark_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Simulation method selector
         self.method_label = QLabel("Method:")
         self.method_label.setObjectName("control_label")
         layout.addWidget(self.method_label)
         self.method_combo = NoScrollComboBox()
-        self.method_combo.setFixedWidth(120)
+        self.method_combo.setMinimumWidth(85)
+        self.method_combo.setMaximumWidth(120)
         self.method_combo.setFixedHeight(40)
+        self.method_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.method_combo.addItems(self.METHOD_OPTIONS)
         self.method_combo.currentTextChanged.connect(self._on_method_changed)
         layout.addWidget(self.method_combo)
 
-        layout.addSpacing(15)
+        layout.addSpacing(8)
 
         # Time horizon selector
         self.horizon_label = QLabel("Horizon:")
         self.horizon_label.setObjectName("control_label")
         layout.addWidget(self.horizon_label)
         self.horizon_combo = HorizonComboBox()
-        self.horizon_combo.setFixedWidth(125)
+        self.horizon_combo.setMinimumWidth(85)
+        self.horizon_combo.setMaximumWidth(125)
         self.horizon_combo.setFixedHeight(40)
+        self.horizon_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         for years in self.HORIZON_OPTIONS:
             self.horizon_combo.addItem(f"{years} Year{'s' if years > 1 else ''}", years)
         self.horizon_combo.addItem(self.CUSTOM_HORIZON_TEXT, -1)  # -1 indicates custom
@@ -339,26 +351,31 @@ class MonteCarloControls(LazyThemeMixin, QWidget):
         layout.addWidget(self.horizon_combo)
         self._custom_horizon_days: Optional[int] = None  # Store custom horizon in trading days
 
-        layout.addSpacing(15)
+        layout.addSpacing(8)
 
         # Number of simulations
         self.sims_label = QLabel("Simulations:")
         self.sims_label.setObjectName("control_label")
         layout.addWidget(self.sims_label)
         self.sims_combo = NoScrollComboBox()
-        self.sims_combo.setFixedWidth(100)
+        self.sims_combo.setMinimumWidth(70)
+        self.sims_combo.setMaximumWidth(100)
         self.sims_combo.setFixedHeight(40)
+        self.sims_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         for count in self.SIMULATION_OPTIONS:
             self.sims_combo.addItem(f"{count:,}", count)
         self.sims_combo.setCurrentIndex(2)  # Default 1000
         self.sims_combo.currentIndexChanged.connect(self._on_sims_changed)
         layout.addWidget(self.sims_combo)
 
-        layout.addSpacing(15)
+        layout.addSpacing(8)
 
         # Run simulation button
         self.run_btn = QPushButton("Run Simulation")
-        self.run_btn.setFixedSize(140, 40)
+        self.run_btn.setMinimumWidth(90)
+        self.run_btn.setMaximumWidth(140)
+        self.run_btn.setFixedHeight(40)
+        self.run_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.run_btn.setObjectName("run_btn")
         self.run_btn.clicked.connect(self.run_simulation.emit)
         layout.addWidget(self.run_btn)
@@ -367,7 +384,10 @@ class MonteCarloControls(LazyThemeMixin, QWidget):
 
         # Settings button (right-aligned)
         self.settings_btn = QPushButton("Settings")
-        self.settings_btn.setFixedSize(100, 40)
+        self.settings_btn.setMinimumWidth(70)
+        self.settings_btn.setMaximumWidth(100)
+        self.settings_btn.setFixedHeight(40)
+        self.settings_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.settings_btn.clicked.connect(self.settings_clicked.emit)
         layout.addWidget(self.settings_btn)
 

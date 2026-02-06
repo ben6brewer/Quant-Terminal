@@ -25,7 +25,6 @@ from app.ui.modules.chart.widgets.depth_chart import OrderBookPanel
 from app.ui.modules.chart.widgets import EditPluginAppearanceDialog
 from app.ui.widgets.common import CustomMessageBox
 from app.services.market_data import fetch_price_history, fetch_price_history_yahoo
-from app.services.massive_websocket import MassiveWebSocketService
 from app.services.live_bar_aggregator import LiveBarAggregator
 from app.services.yahoo_finance_service import YahooFinanceService
 from app.utils.market_hours import is_crypto_ticker, is_market_open_extended
@@ -75,8 +74,6 @@ class ChartModule(LazyThemeMixin, QWidget):
         # Initialize chart settings manager
         self.chart_settings_manager = ChartSettingsManager()
 
-        # WebSocket live updates (for stocks)
-        self._ws_service: MassiveWebSocketService | None = None
         self._live_aggregator = LiveBarAggregator()
         self._live_updates_enabled = True  # Can be toggled by user
 

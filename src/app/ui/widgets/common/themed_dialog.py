@@ -1,7 +1,7 @@
 """Themed Dialog Base Class - Frameless dialog with custom title bar and theming."""
 
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QWidget
+    QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QWidget, QApplication
 )
 from PySide6.QtCore import Qt, QPoint
 from PySide6.QtGui import QMouseEvent
@@ -48,6 +48,12 @@ class ThemedDialog(QDialog):
         self.theme_manager = theme_manager
         self._dialog_title = title
         self._drag_pos = QPoint()
+
+        # Clamp min_width to 90% of screen to prevent dialogs wider than screen
+        screen = QApplication.primaryScreen()
+        if screen:
+            screen_width = screen.availableGeometry().width()
+            min_width = min(min_width, int(screen_width * 0.9))
 
         # Window setup
         self.setModal(True)

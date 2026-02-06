@@ -1,7 +1,7 @@
 """Distribution Controls Widget - Top Control Bar for Return Distribution module."""
 
 from typing import List, Optional, Tuple
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QComboBox, QPushButton, QSizePolicy
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
@@ -73,7 +73,10 @@ class DistributionControls(LazyThemeMixin, QWidget):
 
         # Home button (leftmost)
         self.home_btn = QPushButton("Home")
-        self.home_btn.setFixedSize(100, 40)
+        self.home_btn.setMinimumWidth(70)
+        self.home_btn.setMaximumWidth(100)
+        self.home_btn.setFixedHeight(40)
+        self.home_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.home_btn.setObjectName("home_btn")
         self.home_btn.clicked.connect(self.home_clicked.emit)
         layout.addWidget(self.home_btn)
@@ -86,32 +89,38 @@ class DistributionControls(LazyThemeMixin, QWidget):
         self.portfolio_label.setObjectName("control_label")
         layout.addWidget(self.portfolio_label)
         self.portfolio_combo = PortfolioTickerComboBox()
-        self.portfolio_combo.setFixedWidth(250)
+        self.portfolio_combo.setMinimumWidth(140)
+        self.portfolio_combo.setMaximumWidth(250)
         self.portfolio_combo.setFixedHeight(40)
+        self.portfolio_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.portfolio_combo.value_changed.connect(self.portfolio_changed.emit)
         layout.addWidget(self.portfolio_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Benchmark selector (editable combo box) - right after Portfolio
         self.benchmark_label = QLabel("Benchmark:")
         self.benchmark_label.setObjectName("control_label")
         layout.addWidget(self.benchmark_label)
         self.benchmark_combo = BenchmarkComboBox()
-        self.benchmark_combo.setFixedWidth(250)
+        self.benchmark_combo.setMinimumWidth(140)
+        self.benchmark_combo.setMaximumWidth(250)
         self.benchmark_combo.setFixedHeight(40)
+        self.benchmark_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.benchmark_combo.value_changed.connect(self.benchmark_changed.emit)
         layout.addWidget(self.benchmark_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Metric selector
         self.metric_label = QLabel("Metric:")
         self.metric_label.setObjectName("control_label")
         layout.addWidget(self.metric_label)
         self.metric_combo = QComboBox()
-        self.metric_combo.setFixedWidth(160)
+        self.metric_combo.setMinimumWidth(100)
+        self.metric_combo.setMaximumWidth(160)
         self.metric_combo.setFixedHeight(40)
+        self.metric_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.metric_combo.addItems(self.METRIC_OPTIONS)
         self.metric_combo.setCurrentText("Returns")
         self.metric_combo.currentTextChanged.connect(self._on_metric_changed)
@@ -123,35 +132,41 @@ class DistributionControls(LazyThemeMixin, QWidget):
         self.window_label.setVisible(False)
         layout.addWidget(self.window_label)
         self.window_combo = QComboBox()
-        self.window_combo.setFixedWidth(120)
+        self.window_combo.setMinimumWidth(80)
+        self.window_combo.setMaximumWidth(120)
         self.window_combo.setFixedHeight(40)
+        self.window_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.window_combo.setVisible(False)
         self.window_combo.currentTextChanged.connect(self._on_window_changed)
         layout.addWidget(self.window_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Interval selector (only shown for Returns metric)
         self.interval_label = QLabel("Interval:")
         self.interval_label.setObjectName("control_label")
         layout.addWidget(self.interval_label)
         self.interval_combo = QComboBox()
-        self.interval_combo.setFixedWidth(120)
+        self.interval_combo.setMinimumWidth(80)
+        self.interval_combo.setMaximumWidth(120)
         self.interval_combo.setFixedHeight(40)
+        self.interval_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.interval_combo.addItems(CHART_INTERVALS)
         self.interval_combo.setCurrentText("Daily")
         self.interval_combo.currentTextChanged.connect(self.interval_changed.emit)
         layout.addWidget(self.interval_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Date range selector
         self.date_range_label = QLabel("Date Range:")
         self.date_range_label.setObjectName("control_label")
         layout.addWidget(self.date_range_label)
         self.date_range_combo = QComboBox()
-        self.date_range_combo.setFixedWidth(180)
+        self.date_range_combo.setMinimumWidth(100)
+        self.date_range_combo.setMaximumWidth(180)
         self.date_range_combo.setFixedHeight(40)
+        self.date_range_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.date_range_combo.addItems(self.DATE_RANGE_OPTIONS)
         self.date_range_combo.setCurrentText("All")
         self.date_range_combo.currentTextChanged.connect(self._on_date_range_changed)
@@ -162,7 +177,10 @@ class DistributionControls(LazyThemeMixin, QWidget):
 
         # Settings button (right-aligned)
         self.settings_btn = QPushButton("Settings")
-        self.settings_btn.setFixedSize(100, 40)
+        self.settings_btn.setMinimumWidth(70)
+        self.settings_btn.setMaximumWidth(100)
+        self.settings_btn.setFixedHeight(40)
+        self.settings_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.settings_btn.clicked.connect(self.settings_clicked.emit)
         layout.addWidget(self.settings_btn)
 

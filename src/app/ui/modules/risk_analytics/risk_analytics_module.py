@@ -168,8 +168,10 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         content_layout.setSpacing(20)
 
         # Top section: Risk Summary + 3 CTEV panels (always visible)
+        from app.utils.scaling import scaled
         top_row = QWidget()
-        top_row.setFixedHeight(280)
+        top_row.setMinimumHeight(scaled(200))
+        top_row.setMaximumHeight(scaled(350))
         top_row_layout = QHBoxLayout(top_row)
         top_row_layout.setContentsMargins(0, 0, 0, 0)
         top_row_layout.setSpacing(20)
@@ -367,10 +369,10 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 )
                 return
 
-            # Batch fetch current prices for weight calculation (Polygon-first for speed)
-            from app.services.market_data import fetch_price_history_batch_polygon_first
+            # Batch fetch current prices for weight calculation
+            from app.services.market_data import fetch_price_history_batch
 
-            batch_data = fetch_price_history_batch_polygon_first(tickers_list)
+            batch_data = fetch_price_history_batch(tickers_list)
             current_prices = {}
             for ticker in tickers_list:
                 if ticker in batch_data:
@@ -685,7 +687,7 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         """
         import pandas as pd
         from app.services.ishares_holdings_service import ISharesHoldingsService
-        from app.services.market_data import fetch_price_history_batch_polygon_first
+        from app.services.market_data import fetch_price_history_batch
         from app.services.ticker_metadata_service import TickerMetadataService
 
         benchmark = self._current_benchmark
@@ -748,9 +750,9 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         # Get all constituent tickers
         constituent_tickers = list(holdings.keys())
 
-        # Fetch price data for all constituents (Polygon-first)
+        # Fetch price data for all constituents
         print(f"[Benchmark] Fetching price data for {len(constituent_tickers)} constituents...")
-        batch_data = fetch_price_history_batch_polygon_first(constituent_tickers)
+        batch_data = fetch_price_history_batch(constituent_tickers)
 
         # Calculate individual returns for each constituent
         # Filter out extreme returns (>100% or <-100%) which are likely data errors
@@ -829,10 +831,10 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
     ) -> "pd.DataFrame":
         """Get returns for individual tickers."""
         import pandas as pd
-        from app.services.market_data import fetch_price_history_batch_polygon_first
+        from app.services.market_data import fetch_price_history_batch
 
-        # Batch fetch all tickers at once (Polygon-first for speed)
-        batch_data = fetch_price_history_batch_polygon_first(tickers)
+        # Batch fetch all tickers at once
+        batch_data = fetch_price_history_batch(tickers)
 
         returns_dict = {}
         outlier_count = 0

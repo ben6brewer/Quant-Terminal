@@ -817,7 +817,7 @@ class StatisticsService:
         Returns:
             Annualized risk-free rate as decimal (e.g., 0.0525 for 5.25%)
         """
-        # Use Yahoo Finance directly for ^IRX (index tickers not supported by Polygon Starter)
+        # Fetch ^IRX directly from Yahoo Finance
         import yfinance as yf
 
         try:

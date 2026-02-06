@@ -156,13 +156,13 @@ class SettingsModule(QWidget):
     # -------------------------------------------------------------------------
 
     def _on_clear_market_data(self) -> None:
-        """Clear market data cache (parquet files + backfill status)."""
+        """Clear market data cache (parquet files)."""
         result = CustomMessageBox.question(
             self.theme_manager,
             self,
             "Clear Market Data",
-            "This will delete all cached price data (parquet files) and backfill status.\n\n"
-            "Data will be re-fetched from APIs on next use.\n\n"
+            "This will delete all cached price data (parquet files).\n\n"
+            "Data will be re-fetched from Yahoo Finance on next use.\n\n"
             "Are you sure you want to continue?",
             CustomMessageBox.Ok | CustomMessageBox.Cancel,
         )

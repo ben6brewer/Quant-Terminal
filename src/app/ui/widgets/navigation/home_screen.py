@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QSizePolicy
 from PySide6.QtCore import Signal, Qt
 
 from app.core.theme_manager import ThemeManager
@@ -71,11 +71,14 @@ class HomeScreen(LazyThemeMixin, QWidget):
         # Add stretch before search box
         search_layout.addStretch(1)
 
-        # Search bar (width of 2 tiles: 453*2 + 20 = 926px)
+        # Search bar (responsive: up to 926px, min 300px)
         self.search_box = QLineEdit()
         self.search_box.setObjectName("searchBox")
         self.search_box.setPlaceholderText("Search modules...")
-        self.search_box.setFixedSize(926, 40)
+        self.search_box.setFixedHeight(40)
+        self.search_box.setMinimumWidth(300)
+        self.search_box.setMaximumWidth(926)
+        self.search_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.search_box.setClearButtonEnabled(True)  # Add X button to clear
         search_layout.addWidget(self.search_box)
 

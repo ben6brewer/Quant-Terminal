@@ -1,9 +1,10 @@
 """
-Yahoo Finance service for historical backfill and crypto live prices.
+Yahoo Finance service - sole data provider for all market data.
 
-Used for:
-1. One-time backfill of data older than 5 years (beyond Polygon's limit)
-2. Fetching today's OHLCV for crypto tickers (since Polygon WebSocket doesn't support crypto)
+Provides:
+1. Full historical data for all tickers (stocks, crypto, ETFs)
+2. Batch fetching for portfolios and large ticker lists
+3. Today's OHLCV for live polling (stocks and crypto)
 """
 
 from __future__ import annotations
@@ -19,9 +20,11 @@ class YahooFinanceService:
     """
     Service for fetching market data from Yahoo Finance.
 
-    This is a supplementary data source used for:
-    - Historical data backfill (pre-5-year data)
-    - Crypto today's price (Polygon doesn't support crypto WebSocket on Starter plan)
+    This is the sole data provider for all market data. Features:
+    - Full historical data for any ticker
+    - Batch downloading for portfolios and large ticker lists
+    - Today's OHLCV for live polling
+    - Chunked parallel downloads for 1000+ ticker batches
 
     All methods use lazy imports for startup performance.
     """
@@ -92,11 +95,10 @@ class YahooFinanceService:
         """
         Fetch today's OHLCV bar for a ticker.
 
-        Used primarily for crypto tickers where Polygon WebSocket
-        is not available on Starter plan.
+        Used for live polling of both stocks and crypto tickers.
 
         Args:
-            ticker: Ticker symbol (e.g., "BTC-USD")
+            ticker: Ticker symbol (e.g., "AAPL", "BTC-USD")
 
         Returns:
             DataFrame with single row for today, or None if unavailable
@@ -150,7 +152,6 @@ class YahooFinanceService:
         Normalize DataFrame columns to standard OHLCV format.
 
         Ensures columns are: Open, High, Low, Close, Volume
-        (capitalized to match Polygon format)
 
         Args:
             df: DataFrame with various column name formats
@@ -291,10 +292,11 @@ class YahooFinanceService:
         progress_callback: Optional[Callable[[int, int, str], None]] = None,
     ) -> tuple[dict[str, "pd.DataFrame"], list[str]]:
         """
-        Fetch full history for multiple tickers in a single yf.download call.
+        Fetch full history for multiple tickers using chunked parallel downloads.
 
-        This is much faster than sequential single-ticker fetches for portfolios.
-        Uses yfinance's native multi-ticker support.
+        For small lists (<=200), uses a single yf.download() call.
+        For large lists (>200, e.g. 3000+ IWV constituents), chunks into
+        groups of 200 and runs parallel yf.download() calls via ThreadPoolExecutor.
 
         Args:
             tickers: List of ticker symbols
@@ -303,7 +305,86 @@ class YahooFinanceService:
         Returns:
             Tuple of:
             - Dict mapping ticker -> DataFrame with OHLCV data
-            - List of failed tickers (for retry or fallback)
+            - List of failed tickers
+        """
+        import pandas as pd
+
+        if not tickers:
+            return {}, []
+
+        # Normalize and deduplicate tickers
+        tickers = list(dict.fromkeys(t.strip().upper() for t in tickers))
+        total = len(tickers)
+
+        print(f"Batch fetching {total} tickers from Yahoo Finance...")
+
+        _CHUNK_SIZE = 200
+
+        if total <= _CHUNK_SIZE:
+            # Small batch - single download
+            results, failed = cls._fetch_batch_chunk(tickers, progress_callback)
+        else:
+            # Large batch - chunked parallel downloads
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+
+            chunks = [tickers[i:i + _CHUNK_SIZE] for i in range(0, total, _CHUNK_SIZE)]
+            print(f"  Splitting into {len(chunks)} chunks of ~{_CHUNK_SIZE} tickers")
+
+            results: dict[str, pd.DataFrame] = {}
+            failed: list[str] = []
+            completed_count = 0
+
+            def fetch_chunk(chunk: list[str]) -> tuple[dict[str, pd.DataFrame], list[str]]:
+                return cls._fetch_batch_chunk(chunk)
+
+            with ThreadPoolExecutor(max_workers=5) as executor:
+                futures = {executor.submit(fetch_chunk, chunk): chunk for chunk in chunks}
+                for future in as_completed(futures):
+                    try:
+                        chunk_results, chunk_failed = future.result()
+                        results.update(chunk_results)
+                        failed.extend(chunk_failed)
+                        completed_count += len(chunk_results) + len(chunk_failed)
+                        if progress_callback:
+                            last_ticker = list(chunk_results.keys())[-1] if chunk_results else ""
+                            progress_callback(completed_count, total, last_ticker)
+                    except Exception as e:
+                        chunk = futures[future]
+                        print(f"  Chunk failed: {e}")
+                        failed.extend(chunk)
+
+        print(
+            f"Yahoo batch complete: {len(results)} succeeded, {len(failed)} failed"
+        )
+
+        # Cache metadata for successful tickers
+        if results:
+            try:
+                from app.services.ticker_metadata_service import TickerMetadataService
+
+                successful_tickers = list(results.keys())
+                TickerMetadataService.get_metadata_batch(successful_tickers)
+                print(f"Cached metadata for {len(successful_tickers)} tickers")
+            except Exception as meta_err:
+                print(f"Warning: Could not cache metadata: {meta_err}")
+
+        return results, failed
+
+    @classmethod
+    def _fetch_batch_chunk(
+        cls,
+        tickers: list[str],
+        progress_callback: Optional[Callable[[int, int, str], None]] = None,
+    ) -> tuple[dict[str, "pd.DataFrame"], list[str]]:
+        """
+        Fetch full history for a chunk of tickers in a single yf.download call.
+
+        Args:
+            tickers: List of ticker symbols (should be <=200 for best results)
+            progress_callback: Optional callback(completed, total, current_ticker)
+
+        Returns:
+            Tuple of (results dict, failed list)
         """
         import pandas as pd
         import yfinance as yf
@@ -311,38 +392,28 @@ class YahooFinanceService:
         if not tickers:
             return {}, []
 
-        # Normalize tickers
-        tickers = [t.strip().upper() for t in tickers]
         total = len(tickers)
 
-        print(f"Batch fetching {total} tickers from Yahoo Finance...")
-
         try:
-            # Single batch download - use space-separated string for multiple tickers
-            # group_by="ticker" gives us MultiIndex columns grouped by ticker
             df = yf.download(
                 tickers=" ".join(tickers) if len(tickers) > 1 else tickers[0],
                 period="max",
                 interval="1d",
                 auto_adjust=False,
                 progress=False,
-                threads=True,  # Enable yfinance internal threading for batch
+                threads=True,
                 group_by="ticker" if len(tickers) > 1 else "column",
             )
 
             if df is None or df.empty:
-                print("Yahoo Finance batch download returned empty data")
                 return {}, tickers
 
             results: dict[str, pd.DataFrame] = {}
             failed: list[str] = []
 
-            # Handle single vs multiple ticker response structure
             if len(tickers) == 1:
-                # Single ticker: flat columns (Open, High, Low, Close, Volume)
                 ticker = tickers[0]
                 try:
-                    # Handle potential MultiIndex from single ticker
                     if isinstance(df.columns, pd.MultiIndex):
                         df.columns = [c[0] for c in df.columns]
 
@@ -353,26 +424,18 @@ class YahooFinanceService:
 
                     if not ticker_df.empty:
                         results[ticker] = ticker_df
-                        print(f"  {ticker}: {len(ticker_df)} bars")
                     else:
                         failed.append(ticker)
-                        print(f"  {ticker}: FAILED (empty data)")
-                except Exception as e:
-                    print(f"  {ticker}: FAILED ({e})")
+                except Exception:
                     failed.append(ticker)
 
                 if progress_callback:
                     progress_callback(1, 1, ticker)
             else:
-                # Multiple tickers: MultiIndex columns (ticker, field)
-                # Access individual ticker data via df[ticker]
                 for i, ticker in enumerate(tickers):
                     try:
-                        # Check if ticker exists in the response
                         if ticker in df.columns.get_level_values(0):
                             ticker_df = df[ticker].copy()
-
-                            # Normalize columns (should already be standard OHLCV)
                             ticker_df = cls._normalize_columns(ticker_df)
                             ticker_df.index = pd.to_datetime(ticker_df.index)
                             ticker_df.sort_index(inplace=True)
@@ -380,41 +443,114 @@ class YahooFinanceService:
 
                             if not ticker_df.empty:
                                 results[ticker] = ticker_df
-                                print(f"  {ticker}: {len(ticker_df)} bars")
                             else:
                                 failed.append(ticker)
-                                print(f"  {ticker}: FAILED (empty after dropna)")
                         else:
                             failed.append(ticker)
-                            print(f"  {ticker}: FAILED (not in response)")
-                    except Exception as e:
-                        print(f"  {ticker}: FAILED ({e})")
+                    except Exception:
                         failed.append(ticker)
 
                     if progress_callback:
                         progress_callback(i + 1, total, ticker)
 
-            print(
-                f"Yahoo batch complete: {len(results)} succeeded, {len(failed)} failed"
-            )
-
-            # Also cache metadata (name, sector, etc.) for successful tickers
-            if results:
-                try:
-                    from app.services.ticker_metadata_service import TickerMetadataService
-
-                    successful_tickers = list(results.keys())
-                    TickerMetadataService.get_metadata_batch(successful_tickers)
-                    print(f"Cached metadata for {len(successful_tickers)} tickers")
-                except Exception as meta_err:
-                    # Don't fail the fetch if metadata caching fails
-                    print(f"Warning: Could not cache metadata: {meta_err}")
-
             return results, failed
 
         except Exception as e:
-            print(f"Yahoo Finance batch download failed: {e}")
+            print(f"Yahoo Finance batch chunk failed: {e}")
             return {}, tickers
+
+    @classmethod
+    def fetch_batch_date_range(
+        cls,
+        tickers: list[str],
+        date_ranges: dict[str, tuple[str, str]],
+        progress_callback: Optional[Callable[[int, int, str], None]] = None,
+    ) -> dict[str, "pd.DataFrame"]:
+        """
+        Fetch historical data for multiple tickers with per-ticker date ranges.
+
+        Groups tickers by identical date ranges and batch downloads each group.
+        Used by BenchmarkReturnsService for incremental updates.
+
+        Args:
+            tickers: List of ticker symbols
+            date_ranges: Dict mapping ticker -> (from_date, to_date)
+            progress_callback: Optional callback(completed, total, ticker)
+
+        Returns:
+            Dict mapping ticker -> DataFrame with OHLCV data
+        """
+        import pandas as pd
+        import yfinance as yf
+        from collections import defaultdict
+
+        if not tickers or not date_ranges:
+            return {}
+
+        # Group tickers by identical date ranges for batch efficiency
+        range_groups: dict[tuple[str, str], list[str]] = defaultdict(list)
+        for ticker in tickers:
+            if ticker in date_ranges:
+                range_key = date_ranges[ticker]
+                range_groups[range_key].append(ticker)
+
+        results: dict[str, pd.DataFrame] = {}
+        completed = 0
+        total = len(tickers)
+
+        for (start_date, end_date), group_tickers in range_groups.items():
+            try:
+                df = yf.download(
+                    tickers=" ".join(group_tickers) if len(group_tickers) > 1 else group_tickers[0],
+                    start=start_date,
+                    end=end_date,
+                    interval="1d",
+                    auto_adjust=False,
+                    progress=False,
+                    threads=True,
+                    group_by="ticker" if len(group_tickers) > 1 else "column",
+                )
+
+                if df is None or df.empty:
+                    completed += len(group_tickers)
+                    continue
+
+                if len(group_tickers) == 1:
+                    ticker = group_tickers[0]
+                    if isinstance(df.columns, pd.MultiIndex):
+                        df.columns = [c[0] for c in df.columns]
+                    ticker_df = cls._normalize_columns(df.copy())
+                    ticker_df.index = pd.to_datetime(ticker_df.index)
+                    ticker_df.sort_index(inplace=True)
+                    ticker_df.dropna(how="all", inplace=True)
+                    if not ticker_df.empty:
+                        results[ticker] = ticker_df
+                    completed += 1
+                    if progress_callback:
+                        progress_callback(completed, total, ticker)
+                else:
+                    for ticker in group_tickers:
+                        try:
+                            if ticker in df.columns.get_level_values(0):
+                                ticker_df = df[ticker].copy()
+                                ticker_df = cls._normalize_columns(ticker_df)
+                                ticker_df.index = pd.to_datetime(ticker_df.index)
+                                ticker_df.sort_index(inplace=True)
+                                ticker_df.dropna(how="all", inplace=True)
+                                if not ticker_df.empty:
+                                    results[ticker] = ticker_df
+                        except Exception:
+                            pass
+                        completed += 1
+                        if progress_callback:
+                            progress_callback(completed, total, ticker)
+
+            except Exception as e:
+                print(f"Yahoo batch date range failed for group: {e}")
+                completed += len(group_tickers)
+
+        print(f"Yahoo batch date range: {len(results)}/{total} tickers fetched")
+        return results
 
     @classmethod
     def fetch_batch_current_prices(cls, tickers: list[str]) -> dict[str, float]:

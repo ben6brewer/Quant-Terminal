@@ -2,7 +2,7 @@
 
 from typing import List
 
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QSizePolicy
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
@@ -50,7 +50,10 @@ class PerformanceMetricsControls(LazyThemeMixin, QWidget):
 
         # Home button (leftmost)
         self.home_btn = QPushButton("Home")
-        self.home_btn.setFixedSize(100, 40)
+        self.home_btn.setMinimumWidth(70)
+        self.home_btn.setMaximumWidth(100)
+        self.home_btn.setFixedHeight(40)
+        self.home_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.home_btn.setObjectName("home_btn")
         self.home_btn.clicked.connect(self.home_clicked.emit)
         layout.addWidget(self.home_btn)
@@ -63,20 +66,24 @@ class PerformanceMetricsControls(LazyThemeMixin, QWidget):
         self.portfolio_label.setObjectName("control_label")
         layout.addWidget(self.portfolio_label)
         self.portfolio_combo = PortfolioTickerComboBox()
-        self.portfolio_combo.setFixedWidth(250)
+        self.portfolio_combo.setMinimumWidth(140)
+        self.portfolio_combo.setMaximumWidth(250)
         self.portfolio_combo.setFixedHeight(40)
+        self.portfolio_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.portfolio_combo.value_changed.connect(self.portfolio_changed.emit)
         layout.addWidget(self.portfolio_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Benchmark selector (editable combo box)
         self.benchmark_label = QLabel("Benchmark:")
         self.benchmark_label.setObjectName("control_label")
         layout.addWidget(self.benchmark_label)
         self.benchmark_combo = BenchmarkComboBox()
-        self.benchmark_combo.setFixedWidth(250)
+        self.benchmark_combo.setMinimumWidth(140)
+        self.benchmark_combo.setMaximumWidth(250)
         self.benchmark_combo.setFixedHeight(40)
+        self.benchmark_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.benchmark_combo.value_changed.connect(self.benchmark_changed.emit)
         layout.addWidget(self.benchmark_combo)
 
@@ -85,7 +92,10 @@ class PerformanceMetricsControls(LazyThemeMixin, QWidget):
 
         # Settings button (right-aligned)
         self.settings_btn = QPushButton("Settings")
-        self.settings_btn.setFixedSize(100, 40)
+        self.settings_btn.setMinimumWidth(70)
+        self.settings_btn.setMaximumWidth(100)
+        self.settings_btn.setFixedHeight(40)
+        self.settings_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.settings_btn.clicked.connect(self.settings_clicked.emit)
         layout.addWidget(self.settings_btn)
 

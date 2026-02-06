@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QComboBox,
     QPushButton,
+    QSizePolicy,
 )
 from PySide6.QtCore import Signal
 
@@ -64,7 +65,10 @@ class ChartControls(LazyThemeMixin, QWidget):
 
         # Home button (leftmost)
         self.home_btn = QPushButton("Home")
-        self.home_btn.setFixedSize(100, 40)
+        self.home_btn.setMinimumWidth(70)
+        self.home_btn.setMaximumWidth(100)
+        self.home_btn.setFixedHeight(40)
+        self.home_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.home_btn.clicked.connect(self.home_clicked.emit)
         layout.addWidget(self.home_btn)
 
@@ -77,62 +81,76 @@ class ChartControls(LazyThemeMixin, QWidget):
         layout.addWidget(self.ticker_label)
         self.ticker_input = QLineEdit()
         self.ticker_input.setText(DEFAULT_TICKER)
-        self.ticker_input.setFixedWidth(200)
+        self.ticker_input.setMinimumWidth(120)
+        self.ticker_input.setMaximumWidth(200)
         self.ticker_input.setFixedHeight(40)
+        self.ticker_input.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.ticker_input.setPlaceholderText("Ticker or =equation...")
         self.ticker_input.textEdited.connect(self._on_ticker_text_edited)
         layout.addWidget(self.ticker_input)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Interval selector
         self.interval_label = QLabel("Interval:")
         self.interval_label.setObjectName("control_label")
         layout.addWidget(self.interval_label)
         self.interval_combo = QComboBox()
-        self.interval_combo.setFixedWidth(120)
+        self.interval_combo.setMinimumWidth(80)
+        self.interval_combo.setMaximumWidth(120)
         self.interval_combo.setFixedHeight(40)
+        self.interval_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.interval_combo.addItems(CHART_INTERVALS)
         self.interval_combo.setCurrentText(DEFAULT_INTERVAL)
         layout.addWidget(self.interval_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Chart type selector
         self.chart_type_label = QLabel("Chart:")
         self.chart_type_label.setObjectName("control_label")
         layout.addWidget(self.chart_type_label)
         self.chart_type_combo = QComboBox()
-        self.chart_type_combo.setFixedWidth(120)
+        self.chart_type_combo.setMinimumWidth(80)
+        self.chart_type_combo.setMaximumWidth(120)
         self.chart_type_combo.setFixedHeight(40)
+        self.chart_type_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.chart_type_combo.addItems(CHART_TYPES)
         self.chart_type_combo.setCurrentText(DEFAULT_CHART_TYPE)
         layout.addWidget(self.chart_type_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Scale selector
         self.scale_label = QLabel("Scale:")
         self.scale_label.setObjectName("control_label")
         layout.addWidget(self.scale_label)
         self.scale_combo = QComboBox()
-        self.scale_combo.setFixedWidth(130)
+        self.scale_combo.setMinimumWidth(80)
+        self.scale_combo.setMaximumWidth(130)
         self.scale_combo.setFixedHeight(40)
+        self.scale_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.scale_combo.addItems(CHART_SCALES)
         self.scale_combo.setCurrentText(DEFAULT_SCALE)
         layout.addWidget(self.scale_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Indicators button
         self.indicators_btn = QPushButton("Indicators")
-        self.indicators_btn.setFixedSize(100, 40)
+        self.indicators_btn.setMinimumWidth(70)
+        self.indicators_btn.setMaximumWidth(100)
+        self.indicators_btn.setFixedHeight(40)
+        self.indicators_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.indicators_btn.setCheckable(True)
         layout.addWidget(self.indicators_btn)
 
         # Depth button
         self.depth_btn = QPushButton("Depth")
-        self.depth_btn.setFixedSize(100, 40)
+        self.depth_btn.setMinimumWidth(70)
+        self.depth_btn.setMaximumWidth(100)
+        self.depth_btn.setFixedHeight(40)
+        self.depth_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.depth_btn.setCheckable(True)
         self.depth_btn.setEnabled(False)  # Disabled by default
         layout.addWidget(self.depth_btn)
@@ -142,7 +160,10 @@ class ChartControls(LazyThemeMixin, QWidget):
 
         # Settings button (right-aligned)
         self.settings_btn = QPushButton("Settings")
-        self.settings_btn.setFixedSize(100, 40)
+        self.settings_btn.setMinimumWidth(70)
+        self.settings_btn.setMaximumWidth(100)
+        self.settings_btn.setFixedHeight(40)
+        self.settings_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         layout.addWidget(self.settings_btn)
 
     def _connect_signals(self) -> None:

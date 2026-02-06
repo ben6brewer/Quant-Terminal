@@ -2,7 +2,7 @@
 
 from typing import List
 
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QComboBox
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QComboBox, QSizePolicy
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
@@ -51,7 +51,10 @@ class RiskAnalyticsControls(LazyThemeMixin, QWidget):
 
         # Home button (leftmost)
         self.home_btn = QPushButton("Home")
-        self.home_btn.setFixedSize(100, 40)
+        self.home_btn.setMinimumWidth(70)
+        self.home_btn.setMaximumWidth(100)
+        self.home_btn.setFixedHeight(40)
+        self.home_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.home_btn.setObjectName("home_btn")
         self.home_btn.clicked.connect(self.home_clicked.emit)
         layout.addWidget(self.home_btn)
@@ -64,12 +67,14 @@ class RiskAnalyticsControls(LazyThemeMixin, QWidget):
         self.portfolio_label.setObjectName("control_label")
         layout.addWidget(self.portfolio_label)
         self.portfolio_combo = PortfolioComboBox()
-        self.portfolio_combo.setFixedWidth(250)
+        self.portfolio_combo.setMinimumWidth(140)
+        self.portfolio_combo.setMaximumWidth(250)
         self.portfolio_combo.setFixedHeight(40)
+        self.portfolio_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.portfolio_combo.value_changed.connect(self.portfolio_changed.emit)
         layout.addWidget(self.portfolio_combo)
 
-        layout.addSpacing(20)
+        layout.addSpacing(10)
 
         # Benchmark selector (ETF dropdown)
         self.benchmark_label = QLabel("Benchmark:")
@@ -78,18 +83,23 @@ class RiskAnalyticsControls(LazyThemeMixin, QWidget):
         self.etf_benchmark_combo = QComboBox()
         self.etf_benchmark_combo.setObjectName("etf_benchmark_combo")
         self.etf_benchmark_combo.addItems(ISharesHoldingsService.get_available_etfs())
-        self.etf_benchmark_combo.setFixedWidth(100)
+        self.etf_benchmark_combo.setMinimumWidth(70)
+        self.etf_benchmark_combo.setMaximumWidth(100)
         self.etf_benchmark_combo.setFixedHeight(40)
+        self.etf_benchmark_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.etf_benchmark_combo.currentTextChanged.connect(
             self.etf_benchmark_changed.emit
         )
         layout.addWidget(self.etf_benchmark_combo)
 
-        layout.addSpacing(15)
+        layout.addSpacing(8)
 
         # Analyze button (primary action)
         self.analyze_btn = QPushButton("Analyze")
-        self.analyze_btn.setFixedSize(100, 40)
+        self.analyze_btn.setMinimumWidth(70)
+        self.analyze_btn.setMaximumWidth(100)
+        self.analyze_btn.setFixedHeight(40)
+        self.analyze_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.analyze_btn.setObjectName("analyze_btn")
         self.analyze_btn.clicked.connect(self.analyze_clicked.emit)
         layout.addWidget(self.analyze_btn)
@@ -99,7 +109,10 @@ class RiskAnalyticsControls(LazyThemeMixin, QWidget):
 
         # Settings button (right-aligned)
         self.settings_btn = QPushButton("Settings")
-        self.settings_btn.setFixedSize(100, 40)
+        self.settings_btn.setMinimumWidth(70)
+        self.settings_btn.setMaximumWidth(100)
+        self.settings_btn.setFixedHeight(40)
+        self.settings_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.settings_btn.clicked.connect(self.settings_clicked.emit)
         layout.addWidget(self.settings_btn)
 

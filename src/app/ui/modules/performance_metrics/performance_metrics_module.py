@@ -214,6 +214,19 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
                 self.table.show_placeholder("No data available for selected portfolio")
                 return
 
+            # DEBUG: Print portfolio returns info
+            print("\n" + "=" * 50)
+            print("=== PERFORMANCE METRICS DEBUG ===")
+            print("=" * 50)
+            print(f"Portfolio: {self._current_portfolio}")
+            print(f"Is ticker mode: {self._is_ticker_mode}")
+            print(f"Full fetch range: {earliest_start} to {end_date}")
+            print(f"Full portfolio returns shape: {full_portfolio_returns.shape}")
+            print(f"Full portfolio returns dates: {full_portfolio_returns.index[0]} to {full_portfolio_returns.index[-1]}")
+            print(f"Full portfolio returns (first 5): {full_portfolio_returns.head(5).tolist()}")
+            print(f"Full portfolio returns (last 5): {full_portfolio_returns.tail(5).tolist()}")
+            print("=" * 50)
+
             # Fetch benchmark returns ONCE for the full range (if selected)
             full_benchmark_returns = None
             benchmark_failed = False
@@ -269,6 +282,25 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
                     benchmark_returns = self._filter_returns_by_date(
                         full_benchmark_returns, start_date, period_end
                     )
+
+                # DEBUG: Print details for 12 Months period
+                if period_name == "12 Months":
+                    print("\n" + "-" * 50)
+                    print("=== PERFORMANCE METRICS - 12 MONTHS PERIOD ===")
+                    print("-" * 50)
+                    print(f"Period: {start_date} to {period_end}")
+                    print(f"Filtered portfolio returns: {len(portfolio_returns)} days")
+                    if len(portfolio_returns) > 0:
+                        print(f"  First date: {portfolio_returns.index[0]}")
+                        print(f"  Last date: {portfolio_returns.index[-1]}")
+                        print(f"  First 5 returns: {portfolio_returns.head(5).tolist()}")
+                        print(f"  Last 5 returns: {portfolio_returns.tail(5).tolist()}")
+                        print(f"  Mean daily return: {portfolio_returns.mean():.6f}")
+                        print(f"  Std daily return: {portfolio_returns.std():.6f}")
+                        # Calculate total return manually for comparison
+                        total_ret = (1 + portfolio_returns).prod() - 1
+                        print(f"  Calculated total return: {total_ret * 100:.4f}%")
+                    print("-" * 50 + "\n")
 
                 # Calculate all metrics for this period
                 metrics = PerformanceMetricsService.calculate_all_metrics(

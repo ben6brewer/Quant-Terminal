@@ -16,6 +16,7 @@ __all__ = [
     "StatisticsService",
     "ISharesHoldingsService",
     "BenchmarkReturnsService",
+    "FMPHoldingsService",
 ]
 
 
@@ -59,5 +60,10 @@ def __getattr__(name: str):
         from app.services.benchmark_returns_service import BenchmarkReturnsService
         globals()["BenchmarkReturnsService"] = BenchmarkReturnsService
         return BenchmarkReturnsService
+
+    if name == "FMPHoldingsService":
+        from app.services.fmp_holdings_service import FMPHoldingsService
+        globals()["FMPHoldingsService"] = FMPHoldingsService
+        return FMPHoldingsService
 
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

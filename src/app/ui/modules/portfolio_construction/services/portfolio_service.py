@@ -301,7 +301,7 @@ class PortfolioService:
 
         def fetch_single_price(ticker: str) -> Tuple[str, Optional[float]]:
             try:
-                # skip_live_bar=True to avoid Polygon rate limiting for portfolio ops
+                # skip_live_bar=True for portfolio ops (no need for intraday precision)
                 df = fetch_price_history(ticker, period="max", interval="1d", skip_live_bar=True)
                 if df is not None and not df.empty:
                     return ticker, float(df["Close"].iloc[-1])
@@ -323,7 +323,7 @@ class PortfolioService:
         """
         Fetch short names for tickers using TickerMetadataService cache.
 
-        Uses the shared metadata cache populated during Yahoo backfill.
+        Uses the shared metadata cache populated during data fetch.
         If not cached, fetches from yfinance and caches for future use.
 
         Args:
@@ -392,7 +392,7 @@ class PortfolioService:
             return False, f"Invalid ticker '{ticker}'. Ticker symbols cannot contain spaces."
 
         try:
-            # skip_live_bar=True to avoid Polygon rate limiting for portfolio ops
+            # skip_live_bar=True for portfolio ops (no need for intraday precision)
             df = fetch_price_history(ticker, period="max", interval="1d", skip_live_bar=True)
 
             if df is None or df.empty:
@@ -441,7 +441,7 @@ class PortfolioService:
                 return False, f"{date_str} is a {day_name}. Stock markets are closed on weekends."
 
             # Fetch historical data to check if it's a trading day
-            # skip_live_bar=True to avoid Polygon rate limiting for portfolio ops
+            # skip_live_bar=True for portfolio ops (no need for intraday precision)
             df = fetch_price_history(ticker, period="max", interval="1d", skip_live_bar=True)
 
             if df is None or df.empty:
@@ -503,7 +503,7 @@ class PortfolioService:
 
         try:
             # Fetch full history (uses cache if current)
-            # skip_live_bar=True to avoid Polygon rate limiting for portfolio ops
+            # skip_live_bar=True for portfolio ops (no need for intraday precision)
             df = fetch_price_history(ticker, period="max", interval="1d", skip_live_bar=True)
 
             if df is None or df.empty:
@@ -575,7 +575,7 @@ class PortfolioService:
             """Fetch all needed dates for a single ticker."""
             date_prices: Dict[str, Optional[float]] = {}
             try:
-                # skip_live_bar=True to avoid Polygon rate limiting for portfolio ops
+                # skip_live_bar=True for portfolio ops (no need for intraday precision)
                 df = fetch_price_history(ticker, period="max", interval="1d", skip_live_bar=True)
 
                 if df is None or df.empty:
@@ -624,7 +624,7 @@ class PortfolioService:
             Date string in YYYY-MM-DD format, or None if no data available
         """
         try:
-            # skip_live_bar=True to avoid Polygon rate limiting for portfolio ops
+            # skip_live_bar=True for portfolio ops (no need for intraday precision)
             df = fetch_price_history(ticker, period="max", interval="1d", skip_live_bar=True)
             if df is None or df.empty:
                 return None

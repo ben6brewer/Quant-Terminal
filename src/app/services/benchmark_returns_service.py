@@ -24,7 +24,7 @@ class BenchmarkReturnsService:
     Features:
     - Memory cache for session-persistent data
     - Disk cache with parquet format
-    - Incremental updates via Polygon API
+    - Incremental updates via Yahoo Finance
     - Thread-safe access
     """
 
@@ -46,7 +46,7 @@ class BenchmarkReturnsService:
         Args:
             etf_symbol: ETF ticker (e.g., "IWV")
             tickers: List of constituent tickers to fetch
-            lookback_years: Years of history (default 5, matches Polygon limit)
+            lookback_years: Years of history (default 5)
             progress_callback: Optional callback(completed, total, ticker)
 
         Returns:
@@ -155,7 +155,7 @@ class BenchmarkReturnsService:
         """
         import pandas as pd
 
-        from app.services.polygon_data import PolygonDataService
+        from app.services.yahoo_finance_service import YahooFinanceService
 
         today = datetime.now().strftime("%Y-%m-%d")
         start_date = (datetime.now() - timedelta(days=lookback_years * 365)).strftime(
@@ -178,9 +178,9 @@ class BenchmarkReturnsService:
         total = len(date_ranges)
         print(f"[BenchmarkReturns] Fetching {total} tickers...")
 
-        # Fetch in batches using Polygon
+        # Fetch in batches using Yahoo Finance
         try:
-            price_data = PolygonDataService.fetch_batch_date_range(
+            price_data = YahooFinanceService.fetch_batch_date_range(
                 list(date_ranges.keys()),
                 date_ranges,
                 progress_callback,

@@ -7,6 +7,7 @@ from PySide6.QtCore import Signal, Qt
 from app.core.theme_manager import ThemeManager
 from app.core.config import MODULE_SECTIONS, TILE_COLS, TILE_SPACING
 from app.services.favorites_service import FavoritesService
+from app.utils.scaling import scaled
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
 from .module_tile import ModuleTile
 
@@ -146,8 +147,22 @@ class ModuleTileGrid(LazyThemeMixin, QScrollArea):
             )
         )
 
+    def resizeEvent(self, event) -> None:
+        """Recalculate columns on resize."""
+        super().resizeEvent(event)
+        self._layout_tiles()
+
+    def _get_dynamic_cols(self) -> int:
+        """Compute number of tile columns based on available width."""
+        tile_w = scaled(453)
+        available = self.viewport().width() - 40  # account for container margins
+        if available <= 0:
+            return TILE_COLS  # fallback
+        cols = max(1, (available + TILE_SPACING) // (tile_w + TILE_SPACING))
+        return cols
+
     def _layout_tiles(self) -> None:
-        """Layout tiles in grid."""
+        """Layout tiles in grid with dynamic column count."""
         # Clear existing layout
         for i in reversed(range(self.grid_layout.count())):
             item = self.grid_layout.itemAt(i)
@@ -162,10 +177,13 @@ class ModuleTileGrid(LazyThemeMixin, QScrollArea):
         for tile in self.tiles.values():
             tile.hide()
 
-        # Layout visible tiles in 3-column grid
+        # Compute dynamic column count
+        cols = self._get_dynamic_cols()
+
+        # Layout visible tiles in dynamic grid
         for idx, tile in enumerate(sorted_tiles):
-            row = idx // TILE_COLS
-            col = idx % TILE_COLS
+            row = idx // cols
+            col = idx % cols
             self.grid_layout.addWidget(tile, row, col)
             tile.show()
 

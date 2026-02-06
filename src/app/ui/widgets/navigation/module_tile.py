@@ -8,6 +8,7 @@ from PySide6.QtGui import QPixmap, QMouseEvent
 from app.core.theme_manager import ThemeManager
 from app.services.favorites_service import FavoritesService
 from app.utils.screenshot_manager import ScreenshotManager
+from app.utils.scaling import scaled
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
 
 
@@ -50,8 +51,12 @@ class ModuleTile(LazyThemeMixin, QFrame):
 
     def _setup_ui(self) -> None:
         """Setup the tile UI."""
-        # Set fixed size
-        self.setFixedSize(453, 285)  # Accommodate 453×255 screenshot (16:9 ratio) + label
+        # Set scaled size
+        tile_w = scaled(453)
+        tile_h = scaled(285)
+        screenshot_w = scaled(453)
+        screenshot_h = scaled(255)
+        self.setFixedSize(tile_w, tile_h)  # Accommodate screenshot (16:9 ratio) + label
         self.setCursor(Qt.PointingHandCursor)
 
         # Main layout
@@ -67,7 +72,7 @@ class ModuleTile(LazyThemeMixin, QFrame):
 
         # Screenshot
         self.screenshot_label = QLabel()
-        self.screenshot_label.setFixedSize(453, 255)  # 16:9 aspect ratio
+        self.screenshot_label.setFixedSize(screenshot_w, screenshot_h)  # 16:9 aspect ratio
         self.screenshot_label.setScaledContents(True)
         self._load_screenshot()
 
