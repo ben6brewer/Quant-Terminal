@@ -3,7 +3,10 @@
 from typing import Tuple
 import pyqtgraph as pg
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QMouseEvent
+from PySide6.QtGui import QColor, QMouseEvent, QPalette
+from PySide6.QtWidgets import QMenu, QFileDialog, QApplication
+
+from app.ui.widgets.charting.axes import _patch_axis_item  # noqa: F401 — activates monkeypatch
 
 
 class BaseChart(pg.GraphicsLayoutWidget):
@@ -29,6 +32,14 @@ class BaseChart(pg.GraphicsLayoutWidget):
         # Theme state
         self._theme: str = "dark"
 
+        # Force opaque from the very first frame — prevents desktop flash
+        self.setBackground((30, 30, 30))
+        self.setAttribute(Qt.WA_OpaquePaintEvent, True)
+        self.viewport().setAutoFillBackground(True)
+        pal = self.viewport().palette()
+        pal.setColor(QPalette.Window, QColor(30, 30, 30))
+        self.viewport().setPalette(pal)
+
         # Subclasses should create their plot items in _setup_plots()
         self.plot_item = None  # Main plot item (to be set by subclass)
         self.view_box = None  # Main ViewBox (to be set by subclass)
@@ -48,12 +59,15 @@ class BaseChart(pg.GraphicsLayoutWidget):
 
     def _apply_background(self):
         """Apply theme-specific background color."""
-        if self.plot_item is None:
-            return
-
         bg_color = self._get_background_rgb()
         self.setBackground(bg_color)
-        if hasattr(self.plot_item, 'setBackground'):
+
+        # Keep viewport palette in sync to prevent transparent flicker
+        pal = self.viewport().palette()
+        pal.setColor(QPalette.Window, QColor(*bg_color))
+        self.viewport().setPalette(pal)
+
+        if self.plot_item is not None and hasattr(self.plot_item, 'setBackground'):
             self.plot_item.setBackground(bg_color)
 
     def _get_background_rgb(self) -> tuple[int, int, int]:
@@ -182,6 +196,38 @@ class BaseChart(pg.GraphicsLayoutWidget):
     def _on_mouse_leave(self, ev):
         """Hook for subclass to implement custom mouse leave behavior."""
         pass
+
+    def contextMenuEvent(self, event):
+        """Show right-click context menu with export options."""
+        menu = QMenu(self)
+
+        bg = self._get_background_rgb()
+        text = self._get_label_text_color()
+        accent = self._get_theme_accent_color()
+        menu.setStyleSheet(f"""
+            QMenu {{
+                background-color: rgb{bg};
+                color: rgb{text};
+                border: 1px solid rgb{accent};
+                padding: 4px;
+            }}
+            QMenu::item:selected {{
+                background-color: rgba({accent[0]}, {accent[1]}, {accent[2]}, 80);
+            }}
+        """)
+
+        copy_action = menu.addAction("Copy to Clipboard")
+        save_action = menu.addAction("Save as PNG...")
+
+        action = menu.exec(event.globalPos())
+        if action == copy_action:
+            QApplication.clipboard().setPixmap(self.grab())
+        elif action == save_action:
+            path, _ = QFileDialog.getSaveFileName(
+                self, "Save Chart as PNG", "", "PNG Files (*.png)"
+            )
+            if path:
+                self.grab().save(path, "PNG")
 
     # Utility methods
 

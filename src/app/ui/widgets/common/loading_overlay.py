@@ -42,7 +42,6 @@ class LoadingOverlay(QWidget):
         # Setup widget - ensure it stacks above other widgets including QGraphicsView
         self.setAttribute(Qt.WA_TransparentForMouseEvents, False)
         self.setAttribute(Qt.WA_StyledBackground, True)
-        self.setAttribute(Qt.WA_OpaquePaintEvent, True)
         self.setAutoFillBackground(False)
 
         # Cover parent completely

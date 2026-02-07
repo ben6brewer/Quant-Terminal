@@ -46,9 +46,23 @@ def _create_risk_analytics_module(theme_manager):
     return RiskAnalyticsModule(theme_manager)
 
 
+def _create_efficient_frontier_module(theme_manager):
+    from app.ui.modules.analysis import EfficientFrontierModule
+    return EfficientFrontierModule(theme_manager)
+
+
+def _create_correlation_matrix_module(theme_manager):
+    from app.ui.modules.analysis import CorrelationMatrixModule
+    return CorrelationMatrixModule(theme_manager)
+
+
+def _create_covariance_matrix_module(theme_manager):
+    from app.ui.modules.analysis import CovarianceMatrixModule
+    return CovarianceMatrixModule(theme_manager)
+
+
 def _create_placeholder_module(class_name):
     from app.ui.modules.placeholder_modules import (
-        AnalysisModule,
         CryptoDashboardModule,
         DeFiModule,
         NFTModule,
@@ -58,7 +72,6 @@ def _create_placeholder_module(class_name):
         WatchlistModule,
     )
     modules = {
-        "AnalysisModule": AnalysisModule,
         "CryptoDashboardModule": CryptoDashboardModule,
         "DeFiModule": DeFiModule,
         "NFTModule": NFTModule,
@@ -119,7 +132,21 @@ def main() -> int:
     hub.add_module("watchlist", lambda: _create_placeholder_module("WatchlistModule"))
     hub.add_module("news", lambda: _create_placeholder_module("NewsModule"))
     hub.add_module("screener", lambda: _create_placeholder_module("ScreenerModule"))
-    hub.add_module("analysis", lambda: _create_placeholder_module("AnalysisModule"))
+    hub.add_module(
+        "efficient_frontier",
+        lambda: _create_efficient_frontier_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "correlation_matrix",
+        lambda: _create_correlation_matrix_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "covariance_matrix",
+        lambda: _create_covariance_matrix_module(theme_manager),
+        has_own_home_button=True,
+    )
     hub.add_module("settings", lambda: _create_settings_module(theme_manager))
 
     # Show home screen on startup

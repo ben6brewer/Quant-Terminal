@@ -105,7 +105,9 @@ MODULE_SECTIONS = {
         {"id": "screener", "label": "Screener"}
     ],
     "Analysis": [
-        {"id": "analysis", "label": "Analysis"}
+        {"id": "efficient_frontier", "label": "Efficient Frontier"},
+        {"id": "correlation_matrix", "label": "Correlation Matrix"},
+        {"id": "covariance_matrix", "label": "Covariance Matrix"},
     ]
 }
 
