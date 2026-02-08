@@ -66,6 +66,14 @@ class TickerListPersistence:
             return False
 
     @classmethod
+    def clear_all(cls) -> None:
+        """Delete all saved ticker lists."""
+        if not cls._LISTS_DIR.exists():
+            return
+        for f in cls._LISTS_DIR.glob("*.json"):
+            f.unlink()
+
+    @classmethod
     def delete_list(cls, name: str) -> bool:
         """Delete a saved ticker list.
 

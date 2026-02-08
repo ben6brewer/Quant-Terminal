@@ -128,6 +128,9 @@ class SettingsModule(QWidget):
             ("Clear Portfolio Returns", self._on_clear_portfolio_returns),
             ("Clear Benchmark Returns", self._on_clear_benchmark_returns),
             ("Clear IWV Holdings", self._on_clear_iwv_holdings),
+            ("Clear Ticker Lists", self._on_clear_ticker_lists),
+            ("Clear Portfolios", self._on_clear_portfolios),
+            ("Clear Module Settings", self._on_clear_module_settings),
         ]
 
         for i, (label, handler) in enumerate(cache_buttons):
@@ -263,6 +266,64 @@ class SettingsModule(QWidget):
             except Exception as e:
                 self._show_error("Failed to clear IWV holdings cache", e)
 
+    def _on_clear_ticker_lists(self) -> None:
+        """Clear saved ticker lists."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear Ticker Lists",
+            "This will delete all saved ticker lists used by EF, Correlation, "
+            "and Covariance modules.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            from app.ui.modules.analysis.services.ticker_list_persistence import TickerListPersistence
+            try:
+                TickerListPersistence.clear_all()
+            except Exception as e:
+                self._show_error("Failed to clear ticker lists", e)
+
+    def _on_clear_portfolios(self) -> None:
+        """Clear all portfolio files."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear Portfolios",
+            "This will permanently delete ALL portfolio transaction logs.\n\n"
+            "This action cannot be undone.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            from app.ui.modules.portfolio_construction.services.portfolio_persistence import PortfolioPersistence
+            try:
+                PortfolioPersistence.clear_all()
+            except Exception as e:
+                self._show_error("Failed to clear portfolios", e)
+
+    def _on_clear_module_settings(self) -> None:
+        """Clear all module settings files."""
+        result = CustomMessageBox.question(
+            self.theme_manager,
+            self,
+            "Clear Module Settings",
+            "This will delete all module settings (chart preferences, "
+            "default tickers, etc.).\n\n"
+            "Settings will be reset to defaults on next use.\n\n"
+            "Are you sure you want to continue?",
+            CustomMessageBox.Ok | CustomMessageBox.Cancel,
+        )
+        if result == CustomMessageBox.Ok:
+            from pathlib import Path
+            try:
+                settings_dir = Path.home() / ".quant_terminal"
+                if settings_dir.exists():
+                    for f in settings_dir.glob("*_settings.json"):
+                        f.unlink()
+            except Exception as e:
+                self._show_error("Failed to clear module settings", e)
+
     def _on_clear_all_cache(self) -> None:
         """Clear all caches."""
         result = CustomMessageBox.question(
@@ -275,8 +336,11 @@ class SettingsModule(QWidget):
             "• Ticker names\n"
             "• Portfolio returns\n"
             "• Benchmark returns\n"
-            "• IWV holdings\n\n"
-            "All data will be re-fetched on next use.\n\n"
+            "• IWV holdings\n"
+            "• Ticker lists\n"
+            "• Portfolios\n"
+            "• Module settings\n\n"
+            "All data will be re-fetched or reset on next use.\n\n"
             "Are you sure you want to continue?",
             CustomMessageBox.Ok | CustomMessageBox.Cancel,
         )
@@ -319,6 +383,27 @@ class SettingsModule(QWidget):
                 ISharesHoldingsService.clear_cache()
             except Exception as e:
                 errors.append(f"IWV holdings: {e}")
+
+            try:
+                from app.ui.modules.analysis.services.ticker_list_persistence import TickerListPersistence
+                TickerListPersistence.clear_all()
+            except Exception as e:
+                errors.append(f"Ticker lists: {e}")
+
+            try:
+                from app.ui.modules.portfolio_construction.services.portfolio_persistence import PortfolioPersistence
+                PortfolioPersistence.clear_all()
+            except Exception as e:
+                errors.append(f"Portfolios: {e}")
+
+            try:
+                from pathlib import Path
+                settings_dir = Path.home() / ".quant_terminal"
+                if settings_dir.exists():
+                    for f in settings_dir.glob("*_settings.json"):
+                        f.unlink()
+            except Exception as e:
+                errors.append(f"Module settings: {e}")
 
             if errors:
                 CustomMessageBox.critical(

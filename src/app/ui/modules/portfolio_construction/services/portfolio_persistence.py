@@ -127,6 +127,15 @@ class PortfolioPersistence:
         return False
 
     @classmethod
+    def clear_all(cls) -> None:
+        """Delete all portfolio files and recent visits."""
+        if cls._PORTFOLIOS_DIR.exists():
+            for f in cls._PORTFOLIOS_DIR.glob("*.json"):
+                f.unlink()
+        if cls._RECENT_FILE.exists():
+            cls._RECENT_FILE.unlink()
+
+    @classmethod
     def create_new_portfolio(cls, name: str) -> Dict[str, Any]:
         """
         Create a new empty portfolio.
