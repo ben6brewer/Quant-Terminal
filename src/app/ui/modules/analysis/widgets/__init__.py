@@ -6,6 +6,7 @@ from .matrix_heatmap import MatrixHeatmap
 from .frontier_chart import FrontierChart
 from .weights_panel import WeightsPanel
 from .analysis_settings_dialog import AnalysisSettingsDialog
+from .ef_settings_dialog import EFSettingsDialog
 from .custom_date_dialog import CustomDateDialog
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "FrontierChart",
     "WeightsPanel",
     "AnalysisSettingsDialog",
+    "EFSettingsDialog",
     "CustomDateDialog",
 ]

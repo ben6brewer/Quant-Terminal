@@ -41,6 +41,14 @@ class AnalysisSettingsManager(BaseSettingsManager):
             "corr_decimals": 3,
             "cov_decimals": 4,
             "matrix_colorscale": "Green-Yellow-Red",
+            "ef_show_gridlines": True,
+            "ef_colorscale": "Magma",
+            "ef_show_individual_securities": True,
+            "ef_show_frontier": True,
+            "ef_show_cml": True,
+            "ef_show_max_sharpe": True,
+            "ef_show_min_vol": True,
+            "ef_show_max_sortino": True,
         }
 
     @property
@@ -82,3 +90,14 @@ class AnalysisSettingsManager(BaseSettingsManager):
 
     def set_matrix_colorscale(self, value: str) -> None:
         self.update_settings({"matrix_colorscale": value})
+
+    def get_ef_show_gridlines(self) -> bool:
+        val = self.get_setting("ef_show_gridlines")
+        return val if val is not None else True
+
+    def get_ef_colorscale(self) -> str:
+        return self.get_setting("ef_colorscale") or "Magma"
+
+    def get_ef_show_individual_securities(self) -> bool:
+        val = self.get_setting("ef_show_individual_securities")
+        return val if val is not None else True

@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QAbstractItemView,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common import LazyThemeMixin
@@ -24,6 +24,8 @@ from app.services.theme_stylesheet_service import ThemeStylesheetService
 
 class CollapsibleWeightsSection(QWidget):
     """A collapsible section with a header and weights table."""
+
+    toggled = Signal()
 
     def __init__(self, title: str, metric_label: str, parent=None):
         super().__init__(parent)
@@ -67,7 +69,7 @@ class CollapsibleWeightsSection(QWidget):
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        layout.addWidget(self.table, stretch=1)
+        layout.addWidget(self.table, stretch=0)
 
         self._expanded = True
 
@@ -75,6 +77,15 @@ class CollapsibleWeightsSection(QWidget):
         self._expanded = not self._expanded
         self.table.setVisible(self._expanded)
         self.toggle_btn.setText("v" if self._expanded else ">")
+        self.toggled.emit()
+
+    def ideal_table_height(self):
+        row_count = self.table.rowCount()
+        if row_count == 0:
+            return 0
+        row_h = self.table.verticalHeader().defaultSectionSize()
+        header_h = self.table.horizontalHeader().height()
+        return header_h + row_count * row_h + 2
 
     def set_data(self, tickers: List[str], weights: List[float], metric_value: float):
         """Populate the table with weights data.
@@ -99,6 +110,7 @@ class CollapsibleWeightsSection(QWidget):
 
     def clear_data(self):
         self.table.setRowCount(0)
+        self.table.setFixedHeight(0)
         self.metric_value.setText("")
 
 
@@ -118,6 +130,11 @@ class WeightsPanel(LazyThemeMixin, QWidget):
     def showEvent(self, event):
         super().showEvent(event)
         self._check_theme_dirty()
+        self._distribute_heights()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._distribute_heights()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
@@ -125,46 +142,110 @@ class WeightsPanel(LazyThemeMixin, QWidget):
         layout.setSpacing(4)
 
         # Header
-        header = QLabel("Portfolio Weights")
-        header.setObjectName("panel_header")
-        header.setAlignment(Qt.AlignCenter)
-        layout.addWidget(header)
+        self._header = QLabel("Portfolio Weights")
+        self._header.setObjectName("panel_header")
+        self._header.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self._header)
 
         # Three collapsible sections
         self.tangency_section = CollapsibleWeightsSection(
-            "Tangency (Max Sharpe)", "Sharpe"
+            "Max Sharpe", "Sharpe"
         )
-        layout.addWidget(self.tangency_section, stretch=1)
+        layout.addWidget(self.tangency_section, stretch=0)
 
         self.min_vol_section = CollapsibleWeightsSection(
             "Min Volatility", "Vol"
         )
-        layout.addWidget(self.min_vol_section, stretch=1)
+        layout.addWidget(self.min_vol_section, stretch=0)
 
         self.sortino_section = CollapsibleWeightsSection(
             "Max Sortino", "Sortino"
         )
-        layout.addWidget(self.sortino_section, stretch=1)
+        layout.addWidget(self.sortino_section, stretch=0)
 
-    def set_results(self, results: Dict[str, Any]):
-        """Populate all three sections from EF results dict."""
+        self._sections = [self.tangency_section, self.min_vol_section, self.sortino_section]
+        for s in self._sections:
+            s.toggled.connect(self._distribute_heights)
+
+        layout.addStretch(1)
+
+    def _distribute_heights(self):
+        visible = [s for s in self._sections if s.isVisible()]
+        expanded = [s for s in visible if s._expanded]
+
+        if not expanded or self.height() == 0:
+            return
+
+        layout = self.layout()
+        margins = layout.contentsMargins()
+        overhead = margins.top() + margins.bottom()
+        overhead += self._header.sizeHint().height()
+        overhead += layout.spacing() * len(visible)  # gaps between header and each section
+
+        for s in visible:
+            s_margins = s.layout().contentsMargins()
+            overhead += s_margins.top() + s_margins.bottom()
+            header_item = s.layout().itemAt(0)  # header_row QHBoxLayout
+            if header_item:
+                overhead += header_item.sizeHint().height()
+            if s._expanded:
+                overhead += s.layout().spacing()  # gap between section header and table
+
+        available = self.height() - overhead
+
+        ideals = [s.ideal_table_height() for s in expanded]
+        total_ideal = sum(ideals)
+
+        if total_ideal <= available:
+            for s, ideal in zip(expanded, ideals):
+                s.table.setFixedHeight(ideal)
+        else:
+            per_table = max(available // len(expanded), 0)
+            for s in expanded:
+                s.table.setFixedHeight(per_table)
+
+    def set_results(self, results: Dict[str, Any], visibility: Dict[str, bool] | None = None):
+        """Populate sections from EF results dict, respecting visibility toggles."""
         tickers = results["tickers"]
+        show_sharpe = True if visibility is None else visibility.get("ef_show_max_sharpe", True)
+        show_min_vol = True if visibility is None else visibility.get("ef_show_min_vol", True)
+        show_sortino = True if visibility is None else visibility.get("ef_show_max_sortino", True)
 
-        self.tangency_section.set_data(
-            tickers, results["tangency_weights"], results["sharpe_ratio"]
-        )
-        self.min_vol_section.set_data(
-            tickers, results["min_vol_weights"], results["min_vol_vol"]
-        )
-        self.sortino_section.set_data(
-            tickers, results["sortino_weights"], results["sortino_ratio"]
-        )
+        if show_sharpe:
+            self.tangency_section.set_data(
+                tickers, results["tangency_weights"], results["sharpe_ratio"]
+            )
+            self.tangency_section.show()
+        else:
+            self.tangency_section.clear_data()
+            self.tangency_section.hide()
+
+        if show_min_vol:
+            self.min_vol_section.set_data(
+                tickers, results["min_vol_weights"], results["min_vol_vol"]
+            )
+            self.min_vol_section.show()
+        else:
+            self.min_vol_section.clear_data()
+            self.min_vol_section.hide()
+
+        if show_sortino:
+            self.sortino_section.set_data(
+                tickers, results["sortino_weights"], results["sortino_ratio"]
+            )
+            self.sortino_section.show()
+        else:
+            self.sortino_section.clear_data()
+            self.sortino_section.hide()
+
+        self._distribute_heights()
 
     def clear_results(self):
         """Clear all sections."""
         self.tangency_section.clear_data()
         self.min_vol_section.clear_data()
         self.sortino_section.clear_data()
+        self._distribute_heights()
 
     def _apply_theme(self):
         c = ThemeStylesheetService.get_colors(self.theme_manager.current_theme)

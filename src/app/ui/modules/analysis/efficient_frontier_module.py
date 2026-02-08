@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QSplitter
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PySide6.QtCore import Signal, Qt, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
@@ -15,6 +15,7 @@ from .widgets.analysis_controls import AnalysisControls
 from .widgets.ticker_list_panel import TickerListPanel
 from .widgets.frontier_chart import FrontierChart
 from .widgets.weights_panel import WeightsPanel
+from .widgets.ef_settings_dialog import EFSettingsDialog
 
 
 class _EFWorker(QObject):
@@ -60,6 +61,7 @@ class EfficientFrontierModule(LazyThemeMixin, QWidget):
         self._loading_overlay: Optional[LoadingOverlay] = None
         self._worker: Optional[_EFWorker] = None
         self._thread: Optional[QThread] = None
+        self._last_results: Optional[dict] = None
 
         self._setup_ui()
         self._connect_signals()
@@ -75,29 +77,26 @@ class EfficientFrontierModule(LazyThemeMixin, QWidget):
         self.controls = AnalysisControls(
             self.theme_manager,
             show_simulations=True,
-            run_label="Run EF",
+            run_label="Run",
         )
         layout.addWidget(self.controls)
 
-        # Splitter: ticker list | chart | weights
-        self.splitter = QSplitter(Qt.Horizontal)
+        # Content: ticker list | chart | weights
+        content = QHBoxLayout()
+        content.setContentsMargins(0, 0, 0, 0)
+        content.setSpacing(0)
 
         self.ticker_panel = TickerListPanel(self.theme_manager)
-        self.splitter.addWidget(self.ticker_panel)
+        content.addWidget(self.ticker_panel)
 
         self.chart = FrontierChart()
         self.chart.show_placeholder()
-        self.splitter.addWidget(self.chart)
+        content.addWidget(self.chart, stretch=1)
 
         self.weights_panel = WeightsPanel(self.theme_manager)
-        self.splitter.addWidget(self.weights_panel)
+        content.addWidget(self.weights_panel)
 
-        # Set stretch factors: ticker=0, chart=1, weights=0
-        self.splitter.setStretchFactor(0, 0)
-        self.splitter.setStretchFactor(1, 1)
-        self.splitter.setStretchFactor(2, 0)
-
-        layout.addWidget(self.splitter, stretch=1)
+        layout.addLayout(content, stretch=1)
 
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
@@ -105,6 +104,7 @@ class EfficientFrontierModule(LazyThemeMixin, QWidget):
         self.controls.lookback_changed.connect(self._on_lookback_changed)
         self.controls.simulations_changed.connect(self._on_simulations_changed)
         self.controls.run_clicked.connect(self._run)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
@@ -122,6 +122,9 @@ class EfficientFrontierModule(LazyThemeMixin, QWidget):
 
         sims = self.settings_manager.get_num_simulations()
         self.controls.set_simulations(sims)
+
+        # Apply EF chart settings
+        self.chart.apply_settings(self.settings_manager.get_all_settings())
 
         # Populate portfolio dropdown
         portfolios = PortfolioDataService.list_portfolios_by_recent()
@@ -143,6 +146,24 @@ class EfficientFrontierModule(LazyThemeMixin, QWidget):
 
     def _on_simulations_changed(self, count: int):
         self.settings_manager.update_settings({"num_simulations": count})
+
+    def _on_settings_clicked(self):
+        from PySide6.QtWidgets import QDialog
+        dialog = EFSettingsDialog(
+            self.theme_manager,
+            current_settings=self.settings_manager.get_all_settings(),
+            parent=self,
+        )
+        if dialog.exec() == QDialog.Accepted:
+            new_settings = dialog.get_settings()
+            if new_settings:
+                self.settings_manager.update_settings(new_settings)
+                all_settings = self.settings_manager.get_all_settings()
+                self.chart.apply_settings(all_settings)
+                if self._last_results is not None:
+                    self.chart.plot_results(self._last_results)
+                    self.weights_panel.set_results(self._last_results, all_settings)
+                self.chart.set_theme(self.theme_manager.current_theme)
 
     def _run(self):
         tickers = self.ticker_panel.get_tickers()
@@ -174,9 +195,10 @@ class EfficientFrontierModule(LazyThemeMixin, QWidget):
         self._thread.start()
 
     def _on_complete(self, results: dict):
+        self._last_results = results
         self.chart.plot_results(results)
         self.chart.set_theme(self.theme_manager.current_theme)
-        self.weights_panel.set_results(results)
+        self.weights_panel.set_results(results, self.settings_manager.get_all_settings())
         self._hide_loading()
         self._cleanup_worker()
 
