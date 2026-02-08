@@ -476,7 +476,7 @@ class ThemeManager(QObject):
                 color: #FF8000;
                 font-size: 14px;
                 font-weight: bold;
-                font-family: "Consolas", "Monaco", "Courier New", monospace;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
                 padding: 20px 10px;
                 border-bottom: 2px solid #FF8000;
             }
@@ -484,7 +484,7 @@ class ThemeManager(QObject):
             #sidebarFooter {
                 color: #666666;
                 font-size: 10px;
-                font-family: "Consolas", "Monaco", "Courier New", monospace;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
                 padding: 10px;
             }
 
@@ -569,7 +569,7 @@ class ThemeManager(QObject):
                 padding: 6px 10px;
                 font-size: 13px;
                 font-weight: 600;
-                font-family: "Consolas", "Monaco", "Courier New", monospace;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
                 selection-background-color: #FF8000;
                 selection-color: #000000;
             }

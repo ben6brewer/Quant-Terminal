@@ -255,7 +255,7 @@ class HomeScreen(LazyThemeMixin, QWidget):
                     padding: 0px 10px;
                     font-size: 13px;
                     font-weight: 500;
-                    font-family: "Consolas", "Monaco", "Courier New", monospace;
+                    font-family: "Menlo", "Consolas", "Courier New", monospace;
                 }
                 #searchBox:hover {
                     border: 1px solid #FF8000;

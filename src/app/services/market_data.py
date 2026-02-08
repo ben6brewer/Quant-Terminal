@@ -633,10 +633,10 @@ def _perform_yahoo_incremental_update(ticker: str, cached_df: "pd.DataFrame") ->
 
     # Calculate date range for update
     start_date = (last_date + timedelta(days=1)).strftime("%Y-%m-%d")
-    end_date = datetime.now().strftime("%Y-%m-%d")
+    end_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
     # If start > end, no update needed
-    if start_date >= end_date:
+    if start_date > end_date:
         return cached_df
 
     print(f"Fetching Yahoo data for {ticker}: {start_date} to {end_date}")
