@@ -672,8 +672,6 @@ class ChartModule(LazyThemeMixin, QWidget):
             # Use polling timer for stocks (Yahoo Finance, only during market hours)
             if is_market_open_extended():
                 self._start_stock_polling(ticker)
-            else:
-                print(f"Market closed - not starting live updates for {ticker}")
 
     def _start_stock_polling(self, ticker: str) -> None:
         """Start polling timer for stock live updates via Yahoo Finance."""
@@ -684,7 +682,8 @@ class ChartModule(LazyThemeMixin, QWidget):
         self._stock_poll_timer = QTimer(self)
         self._stock_poll_timer.timeout.connect(self._on_stock_poll_tick)
         self._stock_poll_timer.start(self._STOCK_POLL_INTERVAL_MS)
-        print(f"Started stock polling for {ticker} (every {self._STOCK_POLL_INTERVAL_MS // 1000}s)")
+        # Fire first poll immediately (runs on next event loop tick)
+        QTimer.singleShot(0, self._on_stock_poll_tick)
 
     def _stop_stock_polling(self) -> None:
         """Stop the stock polling timer."""
@@ -701,7 +700,6 @@ class ChartModule(LazyThemeMixin, QWidget):
 
         # Check if market is still open
         if not is_market_open_extended():
-            print(f"Market closed - stopping stock polling for {ticker}")
             self._stop_stock_polling()
             return
 
@@ -709,23 +707,14 @@ class ChartModule(LazyThemeMixin, QWidget):
         if self.current_interval().lower() != "daily":
             return
 
-        print(f"Stock poll: Fetching {ticker}...")
-
         # Fetch in background thread to avoid blocking UI
         def fetch_and_update():
             try:
                 today_bar = YahooFinanceService.fetch_today_ohlcv(ticker)
                 if today_bar is not None and not today_bar.empty:
-                    close_price = today_bar.iloc[0]["Close"]
-                    print(f"Stock poll: Yahoo returned ${close_price:,.2f}")
-                    # Emit signal to update UI on main thread (reuse crypto signal)
                     self._crypto_bar_received.emit(ticker, today_bar)
-                else:
-                    print(f"Stock poll: No data returned for {ticker}")
-            except Exception as e:
-                import traceback
-                print(f"Stock poll failed for {ticker}: {e}")
-                traceback.print_exc()
+            except Exception:
+                pass
 
         thread = threading.Thread(target=fetch_and_update, daemon=True)
         thread.start()
@@ -739,7 +728,8 @@ class ChartModule(LazyThemeMixin, QWidget):
         self._crypto_poll_timer = QTimer(self)
         self._crypto_poll_timer.timeout.connect(self._on_crypto_poll_tick)
         self._crypto_poll_timer.start(self._CRYPTO_POLL_INTERVAL_MS)
-        print(f"Started crypto polling for {ticker} (every {self._CRYPTO_POLL_INTERVAL_MS // 1000}s)")
+        # Fire first poll immediately (runs on next event loop tick)
+        QTimer.singleShot(0, self._on_crypto_poll_tick)
 
     def _stop_crypto_polling(self) -> None:
         """Stop the crypto polling timer."""
@@ -758,23 +748,14 @@ class ChartModule(LazyThemeMixin, QWidget):
         if self.current_interval().lower() != "daily":
             return
 
-        print(f"Crypto poll: Fetching {ticker}...")
-
         # Fetch in background thread to avoid blocking UI
         def fetch_and_update():
             try:
                 today_bar = YahooFinanceService.fetch_today_ohlcv(ticker)
                 if today_bar is not None and not today_bar.empty:
-                    close_price = today_bar.iloc[0]["Close"]
-                    print(f"Crypto poll: Yahoo returned ${close_price:,.2f}")
-                    # Emit signal to update UI on main thread
                     self._crypto_bar_received.emit(ticker, today_bar)
-                else:
-                    print(f"Crypto poll: No data returned for {ticker}")
-            except Exception as e:
-                import traceback
-                print(f"Crypto poll failed for {ticker}: {e}")
-                traceback.print_exc()
+            except Exception:
+                pass
 
         thread = threading.Thread(target=fetch_and_update, daemon=True)
         thread.start()
@@ -783,18 +764,13 @@ class ChartModule(LazyThemeMixin, QWidget):
         """Update the chart with the latest bar from Yahoo (for both stocks and crypto)."""
         import pandas as pd
 
-        # Determine ticker type for logging
-        ticker_type = "Crypto" if is_crypto_ticker(ticker) else "Stock"
-
         # Verify this is still the current ticker
         current_ticker = self.state.get("ticker")
         if not current_ticker or ticker.upper() != current_ticker.upper():
-            print(f"{ticker_type} poll: Skipping update, ticker changed from {ticker} to {current_ticker}")
             return
 
         df = self.state.get("df")
         if df is None or df.empty:
-            print(f"{ticker_type} poll: Skipping update, no DataFrame in state")
             return
 
         # Get the bar data
@@ -808,7 +784,7 @@ class ChartModule(LazyThemeMixin, QWidget):
         bar_close = today_bar.iloc[0]["Close"]
         bar_volume = today_bar.iloc[0].get("Volume", 0)
 
-        # Store old close before updating (for change calculation and API)
+        # Store old close before updating (for incremental chart update)
         old_close = df.iloc[-1, df.columns.get_loc("Close")]
         is_new_day = bar_date > last_date
 
@@ -825,7 +801,6 @@ class ChartModule(LazyThemeMixin, QWidget):
                 index=pd.DatetimeIndex([bar_date]),
             )
             self.state["df"] = pd.concat([df, new_row])
-            print(f"{ticker_type} {ticker}: New day {bar_date}, price ${bar_close:,.2f}")
         else:
             # Same day - update last row in-place
             df.iloc[-1, df.columns.get_loc("Open")] = bar_open
@@ -834,12 +809,6 @@ class ChartModule(LazyThemeMixin, QWidget):
             df.iloc[-1, df.columns.get_loc("Close")] = bar_close
             if "Volume" in df.columns:
                 df.iloc[-1, df.columns.get_loc("Volume")] = bar_volume
-
-            # Show price change
-            change = bar_close - old_close
-            change_pct = (change / old_close * 100) if old_close else 0
-            arrow = "↑" if change > 0 else "↓" if change < 0 else "→"
-            print(f"{ticker_type} {ticker}: ${bar_close:,.2f} {arrow} ({change:+,.2f}, {change_pct:+.2f}%)")
 
         # INCREMENTAL UPDATE instead of full rebuild
         # This preserves the user's view (zoom/scroll position)
@@ -856,8 +825,6 @@ class ChartModule(LazyThemeMixin, QWidget):
             self.chart.append_new_bar(self.state["df"])
         else:
             self.chart.update_last_bar(self.state["df"], old_close)
-
-        print(f"{ticker_type} poll: Chart updated for {ticker}")
 
     def _stop_live_updates(self) -> None:
         """Stop all live updates (polling timers)."""
