@@ -127,8 +127,7 @@ class YieldCurveInterpolation:
 
             return x_smooth.tolist(), y_smooth.tolist()
 
-        except Exception as e:
-            print(f"[YieldCurve] Nelson-Siegel fit failed ({e}), falling back to cubic spline")
+        except Exception:
             return YieldCurveInterpolation.interpolate_cubic_spline(
                 maturities, yields, n_points
             )

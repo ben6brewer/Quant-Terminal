@@ -14,6 +14,7 @@ from .portfolio_ticker_combo import (
     PortfolioComboBox,
     SmoothScrollListView,
 )
+from .api_key_dialog import APIKeyDialog
 
 __all__ = [
     'CustomMessageBox',
@@ -28,4 +29,5 @@ __all__ = [
     'BenchmarkComboBox',
     'PortfolioComboBox',
     'SmoothScrollListView',
+    'APIKeyDialog',
 ]

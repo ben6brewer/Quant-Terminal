@@ -66,6 +66,11 @@ def _create_yield_curve_module(theme_manager):
     return YieldCurveModule(theme_manager)
 
 
+def _create_rate_probability_module(theme_manager):
+    from app.ui.modules.rate_probability import RateProbabilityModule
+    return RateProbabilityModule(theme_manager)
+
+
 def _create_placeholder_module(class_name):
     from app.ui.modules.placeholder_modules import (
         CryptoDashboardModule,
@@ -155,6 +160,11 @@ def main() -> int:
     hub.add_module(
         "yield_curve",
         lambda: _create_yield_curve_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "rate_probability",
+        lambda: _create_rate_probability_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module("settings", lambda: _create_settings_module(theme_manager))

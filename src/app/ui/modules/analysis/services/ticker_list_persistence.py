@@ -37,8 +37,7 @@ class TickerListPersistence:
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             return data.get("tickers", [])
-        except (json.JSONDecodeError, IOError) as e:
-            print(f"Error loading ticker list {name}: {e}")
+        except (json.JSONDecodeError, IOError):
             return None
 
     @classmethod
@@ -61,8 +60,7 @@ class TickerListPersistence:
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
             return True
-        except IOError as e:
-            print(f"Error saving ticker list {name}: {e}")
+        except IOError:
             return False
 
     @classmethod
@@ -86,6 +84,5 @@ class TickerListPersistence:
         try:
             path.unlink()
             return True
-        except OSError as e:
-            print(f"Error deleting ticker list {name}: {e}")
+        except OSError:
             return False

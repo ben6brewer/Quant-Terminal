@@ -103,7 +103,7 @@ class YieldCurveModule(LazyThemeMixin, QWidget):
 
     def _show_api_key_dialog(self):
         """Show the FRED API key dialog on initial load when key is missing."""
-        from .widgets.api_key_dialog import APIKeyDialog
+        from app.ui.widgets.common.api_key_dialog import APIKeyDialog
 
         dialog = APIKeyDialog(self.theme_manager, parent=self)
         if dialog.exec():

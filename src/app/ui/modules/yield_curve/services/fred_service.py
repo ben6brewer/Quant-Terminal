@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import os
 from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Optional
+
+from app.services.fred_api_key_service import FredApiKeyService
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -56,54 +57,23 @@ class FredService:
     for cache freshness (FRED publishes on trading days).
     """
 
-    _api_key: Optional[str] = None
     _last_fetch_time: Optional[float] = None  # monotonic timestamp of last API call
     _FETCH_COOLDOWN = 3600  # Skip refetch within 1 hour of a failed advance
 
     @classmethod
     def has_api_key(cls) -> bool:
         """Check if a FRED API key is available."""
-        return cls._load_api_key() is not None
+        return FredApiKeyService.has_api_key()
 
     @classmethod
     def set_api_key(cls, key: str) -> None:
-        """Save FRED API key to .env file and update class cache."""
-        env_path = Path(__file__).parent.parent.parent.parent.parent.parent.parent / ".env"
-
-        # Read existing .env content
-        lines = []
-        found = False
-        if env_path.exists():
-            with open(env_path, "r") as f:
-                for line in f:
-                    if line.startswith("FRED_API_KEY="):
-                        lines.append(f"FRED_API_KEY={key}\n")
-                        found = True
-                    else:
-                        lines.append(line)
-
-        if not found:
-            lines.append(f"FRED_API_KEY={key}\n")
-
-        with open(env_path, "w") as f:
-            f.writelines(lines)
-
-        cls._api_key = key
+        """Save FRED API key to .env file."""
+        FredApiKeyService.set_api_key(key)
 
     @classmethod
     def _load_api_key(cls) -> Optional[str]:
-        """Load FRED_API_KEY from .env file (cached)."""
-        if cls._api_key is not None:
-            return cls._api_key
-
-        from dotenv import load_dotenv
-
-        env_path = Path(__file__).parent.parent.parent.parent.parent.parent.parent / ".env"
-        load_dotenv(env_path)
-
-        cls._api_key = os.getenv("FRED_API_KEY") or None
-
-        return cls._api_key
+        """Load FRED_API_KEY from .env file (delegated to shared service)."""
+        return FredApiKeyService.get_api_key()
 
     @classmethod
     def fetch_all_yields(cls) -> "pd.DataFrame":
@@ -124,7 +94,6 @@ class FredService:
 
             last_date = cached.index.max().date()
             if is_stock_cache_current(last_date):
-                print("[FRED] Cache is current, using cached data")
                 return cached
 
             # Skip refetch if we already tried recently (FRED has ~1 day pub lag)
@@ -133,18 +102,15 @@ class FredService:
             if cls._last_fetch_time is not None:
                 elapsed = time.monotonic() - cls._last_fetch_time
                 if elapsed < cls._FETCH_COOLDOWN:
-                    print("[FRED] Cache checked recently, using cached data")
                     return cached
 
             # Cache exists but stale - do incremental update
-            print(f"[FRED] Cache stale (last: {last_date}), fetching updates...")
             cls._last_fetch_time = time.monotonic()
             updated = cls._fetch_incremental(cached)
             if updated is not None:
                 return updated
 
         # No cache or incremental failed - full fetch
-        print("[FRED] Performing full fetch...")
         return cls._fetch_full()
 
     @classmethod
@@ -160,8 +126,7 @@ class FredService:
             if df.empty:
                 return None
             return df
-        except Exception as e:
-            print(f"[FRED] Cache read error: {e}")
+        except Exception:
             return None
 
     @classmethod
@@ -170,9 +135,8 @@ class FredService:
         CACHE_DIR.mkdir(parents=True, exist_ok=True)
         try:
             df.to_parquet(CACHE_FILE)
-            print(f"[FRED] Saved cache ({len(df)} rows)")
-        except Exception as e:
-            print(f"[FRED] Cache write error: {e}")
+        except Exception:
+            pass
 
     @classmethod
     def _fetch_full(cls) -> "pd.DataFrame":
@@ -194,11 +158,10 @@ class FredService:
                     data = fred.get_series(series_id)
                     if data is not None and not data.empty:
                         frames[tenor] = data
-                except Exception as e:
-                    print(f"[FRED] Error fetching {series_id}: {e}")
+                except Exception:
+                    continue
 
             if not frames:
-                print("[FRED] No data fetched from any series")
                 return pd.DataFrame()
 
             df = pd.DataFrame(frames)
@@ -207,11 +170,9 @@ class FredService:
             df = df.dropna(how="all")
 
             cls._save_cache(df)
-            print(f"[FRED] Full fetch complete: {len(df)} rows, {len(df.columns)} tenors")
             return df
 
-        except Exception as e:
-            print(f"[FRED] Full fetch error: {e}")
+        except Exception:
             return pd.DataFrame()
 
     @classmethod
@@ -237,8 +198,8 @@ class FredService:
                     data = fred.get_series(series_id, observation_start=start_date)
                     if data is not None and not data.empty:
                         frames[tenor] = data
-                except Exception as e:
-                    print(f"[FRED] Incremental error for {series_id}: {e}")
+                except Exception:
+                    continue
 
             if not frames:
                 return cached
@@ -258,12 +219,9 @@ class FredService:
             if advanced:
                 # New data found — clear cooldown so next expected date isn't blocked
                 cls._last_fetch_time = None
-            print(f"[FRED] Incremental update: {len(new_data)} new rows, {len(combined)} total"
-                  f"{'' if advanced else ' (no new dates)'}")
             return combined
 
-        except Exception as e:
-            print(f"[FRED] Incremental fetch error: {e}")
+        except Exception:
             return cached
 
     @classmethod

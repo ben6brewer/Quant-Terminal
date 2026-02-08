@@ -111,6 +111,7 @@ MODULE_SECTIONS = {
     ],
     "Fixed Income": [
         {"id": "yield_curve", "label": "Yield Curve"},
+        {"id": "rate_probability", "label": "Rate Probabilities"},
     ]
 }
 
