@@ -61,6 +61,11 @@ def _create_covariance_matrix_module(theme_manager):
     return CovarianceMatrixModule(theme_manager)
 
 
+def _create_yield_curve_module(theme_manager):
+    from app.ui.modules.yield_curve import YieldCurveModule
+    return YieldCurveModule(theme_manager)
+
+
 def _create_placeholder_module(class_name):
     from app.ui.modules.placeholder_modules import (
         CryptoDashboardModule,
@@ -145,6 +150,11 @@ def main() -> int:
     hub.add_module(
         "covariance_matrix",
         lambda: _create_covariance_matrix_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "yield_curve",
+        lambda: _create_yield_curve_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module("settings", lambda: _create_settings_module(theme_manager))

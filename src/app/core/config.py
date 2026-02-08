@@ -108,6 +108,9 @@ MODULE_SECTIONS = {
         {"id": "efficient_frontier", "label": "Efficient Frontier"},
         {"id": "correlation_matrix", "label": "Correlation Matrix"},
         {"id": "covariance_matrix", "label": "Covariance Matrix"},
+    ],
+    "Fixed Income": [
+        {"id": "yield_curve", "label": "Yield Curve"},
     ]
 }
 

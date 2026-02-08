@@ -21,6 +21,7 @@ dependencies = [
   "requests>=2.31",
   "aiohttp>=3.9",
   "pandas-datareader>=0.10",
+  "fredapi>=0.5",
 ]
 
 [tool.setuptools]

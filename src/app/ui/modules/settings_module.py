@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QPushButton,
     QRadioButton,
     QScrollArea,
@@ -16,6 +17,11 @@ from PySide6.QtCore import Qt, QTimer
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common import CustomMessageBox
+
+# API keys managed in .env  (add new entries here as needed)
+_API_KEY_DEFS = [
+    {"env_var": "FRED_API_KEY", "label": "FRED", "hint": "fred.stlouisfed.org/docs/api/api_key.html"},
+]
 
 
 class SettingsModule(QWidget):
@@ -55,12 +61,13 @@ class SettingsModule(QWidget):
         appearance_group = self._create_appearance_group()
         layout.addWidget(appearance_group)
 
+        # API Keys settings
+        api_keys_group = self._create_api_keys_group()
+        layout.addWidget(api_keys_group)
+
         # Memory Manager settings
         memory_group = self._create_memory_group()
         layout.addWidget(memory_group)
-
-        # Future settings groups can go here
-        # layout.addWidget(self._create_api_group())
 
         layout.addStretch(1)
 
@@ -153,6 +160,190 @@ class SettingsModule(QWidget):
 
         group.setLayout(layout)
         return group
+
+    # -------------------------------------------------------------------------
+    # API Keys
+    # -------------------------------------------------------------------------
+
+    def _create_api_keys_group(self) -> QGroupBox:
+        """Create API keys management group."""
+        group = QGroupBox("API Keys")
+
+        layout = QVBoxLayout()
+        layout.setSpacing(15)
+
+        desc_label = QLabel(
+            "Manage API keys for external data providers. "
+            "Keys are stored in your local .env file."
+        )
+        desc_label.setObjectName("descLabel")
+        desc_label.setWordWrap(True)
+        layout.addWidget(desc_label)
+
+        self._api_key_rows: dict = {}
+
+        # Read current values from .env
+        env_values = self._read_env_values()
+
+        for key_def in _API_KEY_DEFS:
+            env_var = key_def["env_var"]
+            current_value = env_values.get(env_var, "")
+
+            row_layout = QHBoxLayout()
+            row_layout.setSpacing(8)
+
+            # Label
+            label = QLabel(key_def["label"])
+            label.setObjectName("apiKeyLabel")
+            label.setFixedWidth(60)
+            row_layout.addWidget(label)
+
+            # Input field (masked by default)
+            key_input = QLineEdit()
+            key_input.setObjectName("apiKeyInput")
+            key_input.setEchoMode(QLineEdit.Password)
+            key_input.setReadOnly(True)
+            key_input.setText(current_value)
+            if not current_value:
+                key_input.setPlaceholderText("Not configured")
+            row_layout.addWidget(key_input)
+
+            # Show/Hide toggle button
+            toggle_btn = QPushButton("Show")
+            toggle_btn.setObjectName("apiKeyToggle")
+            toggle_btn.setCursor(Qt.PointingHandCursor)
+            toggle_btn.setFixedWidth(60)
+            toggle_btn.clicked.connect(lambda checked=False, ev=env_var: self._on_api_key_toggle(ev))
+            row_layout.addWidget(toggle_btn)
+
+            # Edit button
+            edit_btn = QPushButton("Edit")
+            edit_btn.setObjectName("apiKeyEdit")
+            edit_btn.setCursor(Qt.PointingHandCursor)
+            edit_btn.setFixedWidth(60)
+            edit_btn.clicked.connect(lambda checked=False, ev=env_var: self._on_api_key_edit(ev))
+            row_layout.addWidget(edit_btn)
+
+            # Save button (hidden initially)
+            save_btn = QPushButton("Save")
+            save_btn.setObjectName("apiKeySave")
+            save_btn.setCursor(Qt.PointingHandCursor)
+            save_btn.setFixedWidth(60)
+            save_btn.setVisible(False)
+            save_btn.clicked.connect(lambda checked=False, ev=env_var: self._on_api_key_save(ev))
+            row_layout.addWidget(save_btn)
+
+            # Cancel button (hidden initially)
+            cancel_btn = QPushButton("Cancel")
+            cancel_btn.setObjectName("apiKeyCancel")
+            cancel_btn.setCursor(Qt.PointingHandCursor)
+            cancel_btn.setFixedWidth(60)
+            cancel_btn.setVisible(False)
+            cancel_btn.clicked.connect(lambda checked=False, ev=env_var: self._on_api_key_cancel(ev))
+            row_layout.addWidget(cancel_btn)
+
+            self._api_key_rows[env_var] = {
+                "input": key_input,
+                "toggle_btn": toggle_btn,
+                "edit_btn": edit_btn,
+                "save_btn": save_btn,
+                "cancel_btn": cancel_btn,
+                "original_value": current_value,
+            }
+
+            layout.addLayout(row_layout)
+
+        group.setLayout(layout)
+        return group
+
+    def _read_env_values(self) -> dict:
+        """Read all managed API key values from .env."""
+        from dotenv import dotenv_values
+
+        env_path = self._get_env_path()
+        if not env_path.exists():
+            return {}
+        values = dotenv_values(env_path)
+        return {d["env_var"]: values.get(d["env_var"], "") or "" for d in _API_KEY_DEFS}
+
+    @staticmethod
+    def _get_env_path():
+        """Return path to project root .env file."""
+        from pathlib import Path
+        return Path(__file__).parents[4] / ".env"
+
+    def _on_api_key_toggle(self, env_var: str) -> None:
+        """Toggle show/hide of an API key."""
+        row = self._api_key_rows[env_var]
+        key_input: QLineEdit = row["input"]
+        toggle_btn: QPushButton = row["toggle_btn"]
+
+        if key_input.echoMode() == QLineEdit.Password:
+            key_input.setEchoMode(QLineEdit.Normal)
+            toggle_btn.setText("Hide")
+        else:
+            key_input.setEchoMode(QLineEdit.Password)
+            toggle_btn.setText("Show")
+
+    def _on_api_key_edit(self, env_var: str) -> None:
+        """Enter edit mode for an API key row."""
+        row = self._api_key_rows[env_var]
+        row["original_value"] = row["input"].text()
+
+        row["input"].setReadOnly(False)
+        row["input"].setEchoMode(QLineEdit.Normal)
+        row["input"].setFocus()
+        row["toggle_btn"].setText("Show")
+        row["toggle_btn"].setVisible(False)
+        row["edit_btn"].setVisible(False)
+        row["save_btn"].setVisible(True)
+        row["cancel_btn"].setVisible(True)
+
+    def _on_api_key_save(self, env_var: str) -> None:
+        """Save edited API key to .env and return to display mode."""
+        from dotenv import set_key
+
+        row = self._api_key_rows[env_var]
+        new_value = row["input"].text().strip()
+
+        env_path = self._get_env_path()
+        # Ensure .env exists
+        if not env_path.exists():
+            env_path.touch()
+
+        set_key(str(env_path), env_var, new_value)
+
+        # Update placeholder state
+        if new_value:
+            row["input"].setPlaceholderText("")
+        else:
+            row["input"].setPlaceholderText("Not configured")
+
+        row["original_value"] = new_value
+
+        # Invalidate service caches
+        if env_var == "FRED_API_KEY":
+            from app.ui.modules.yield_curve.services.fred_service import FredService
+            FredService._api_key = None
+
+        self._api_key_exit_edit(env_var)
+
+    def _on_api_key_cancel(self, env_var: str) -> None:
+        """Cancel editing and restore original value."""
+        row = self._api_key_rows[env_var]
+        row["input"].setText(row["original_value"])
+        self._api_key_exit_edit(env_var)
+
+    def _api_key_exit_edit(self, env_var: str) -> None:
+        """Return an API key row to display mode."""
+        row = self._api_key_rows[env_var]
+        row["input"].setReadOnly(True)
+        row["input"].setEchoMode(QLineEdit.Password)
+        row["toggle_btn"].setText("Show")
+        row["toggle_btn"].setVisible(True)
+        row["edit_btn"].setVisible(True)
+        row["save_btn"].setVisible(False)
+        row["cancel_btn"].setVisible(False)
 
     # -------------------------------------------------------------------------
     # Cache clear handlers
@@ -568,6 +759,53 @@ class SettingsModule(QWidget):
                 background-color: #ff6b6b;
                 color: #ffffff;
             }
+            QLabel#apiKeyLabel {
+                font-size: 13px;
+                font-weight: bold;
+                color: #cccccc;
+                margin-left: 10px;
+            }
+            QLineEdit#apiKeyInput {
+                background-color: #2d2d2d;
+                color: #ffffff;
+                border: 1px solid #3d3d3d;
+                border-radius: 4px;
+                padding: 6px 10px;
+                font-size: 13px;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
+            }
+            QLineEdit#apiKeyInput:focus {
+                border-color: #00d4ff;
+            }
+            QLineEdit#apiKeyInput:read-only {
+                background-color: #252525;
+            }
+            QPushButton#apiKeyToggle, QPushButton#apiKeyEdit,
+            QPushButton#apiKeyCancel {
+                background-color: #2d2d2d;
+                color: #ffffff;
+                border: 1px solid #3d3d3d;
+                border-radius: 4px;
+                padding: 6px 4px;
+                font-size: 11px;
+            }
+            QPushButton#apiKeyToggle:hover, QPushButton#apiKeyEdit:hover,
+            QPushButton#apiKeyCancel:hover {
+                border-color: #00d4ff;
+                background-color: #3d3d3d;
+            }
+            QPushButton#apiKeySave {
+                background-color: #00d4ff;
+                color: #000000;
+                border: 1px solid #00d4ff;
+                border-radius: 4px;
+                padding: 6px 4px;
+                font-size: 11px;
+                font-weight: bold;
+            }
+            QPushButton#apiKeySave:hover {
+                background-color: #33ddff;
+            }
         """
 
     def _get_light_stylesheet(self) -> str:
@@ -669,6 +907,53 @@ class SettingsModule(QWidget):
                 background-color: #e53935;
                 color: #ffffff;
             }
+            QLabel#apiKeyLabel {
+                font-size: 13px;
+                font-weight: bold;
+                color: #333333;
+                margin-left: 10px;
+            }
+            QLineEdit#apiKeyInput {
+                background-color: #f5f5f5;
+                color: #000000;
+                border: 1px solid #cccccc;
+                border-radius: 4px;
+                padding: 6px 10px;
+                font-size: 13px;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
+            }
+            QLineEdit#apiKeyInput:focus {
+                border-color: #0066cc;
+            }
+            QLineEdit#apiKeyInput:read-only {
+                background-color: #eeeeee;
+            }
+            QPushButton#apiKeyToggle, QPushButton#apiKeyEdit,
+            QPushButton#apiKeyCancel {
+                background-color: #f5f5f5;
+                color: #000000;
+                border: 1px solid #cccccc;
+                border-radius: 4px;
+                padding: 6px 4px;
+                font-size: 11px;
+            }
+            QPushButton#apiKeyToggle:hover, QPushButton#apiKeyEdit:hover,
+            QPushButton#apiKeyCancel:hover {
+                border-color: #0066cc;
+                background-color: #e8e8e8;
+            }
+            QPushButton#apiKeySave {
+                background-color: #0066cc;
+                color: #ffffff;
+                border: 1px solid #0066cc;
+                border-radius: 4px;
+                padding: 6px 4px;
+                font-size: 11px;
+                font-weight: bold;
+            }
+            QPushButton#apiKeySave:hover {
+                background-color: #0077ee;
+            }
         """
 
     def _get_bloomberg_stylesheet(self) -> str:
@@ -769,5 +1054,52 @@ class SettingsModule(QWidget):
             QPushButton#clearAllButton:pressed {
                 background-color: #ff6b6b;
                 color: #ffffff;
+            }
+            QLabel#apiKeyLabel {
+                font-size: 13px;
+                font-weight: bold;
+                color: #a8a8a8;
+                margin-left: 10px;
+            }
+            QLineEdit#apiKeyInput {
+                background-color: #0d1420;
+                color: #e8e8e8;
+                border: 1px solid #1a2838;
+                border-radius: 4px;
+                padding: 6px 10px;
+                font-size: 13px;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
+            }
+            QLineEdit#apiKeyInput:focus {
+                border-color: #FF8000;
+            }
+            QLineEdit#apiKeyInput:read-only {
+                background-color: #0a1018;
+            }
+            QPushButton#apiKeyToggle, QPushButton#apiKeyEdit,
+            QPushButton#apiKeyCancel {
+                background-color: #0d1420;
+                color: #e8e8e8;
+                border: 1px solid #1a2838;
+                border-radius: 4px;
+                padding: 6px 4px;
+                font-size: 11px;
+            }
+            QPushButton#apiKeyToggle:hover, QPushButton#apiKeyEdit:hover,
+            QPushButton#apiKeyCancel:hover {
+                border-color: #FF8000;
+                background-color: #1a2838;
+            }
+            QPushButton#apiKeySave {
+                background-color: #FF8000;
+                color: #000000;
+                border: 1px solid #FF8000;
+                border-radius: 4px;
+                padding: 6px 4px;
+                font-size: 11px;
+                font-weight: bold;
+            }
+            QPushButton#apiKeySave:hover {
+                background-color: #FF9933;
             }
         """
