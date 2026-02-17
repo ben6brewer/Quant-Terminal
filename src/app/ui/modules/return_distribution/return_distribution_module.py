@@ -1,14 +1,13 @@
 """Return Distribution Module - Histogram visualization of portfolio returns."""
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QApplication
+from PySide6.QtWidgets import QVBoxLayout, QApplication
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
 from app.ui.widgets.common.custom_message_box import CustomMessageBox
-from app.ui.widgets.common.loading_overlay import LoadingOverlay
-from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.ui.modules.base_module import BaseModule
 
 from .services.distribution_settings_manager import DistributionSettingsManager
 from .widgets.distribution_controls import DistributionControls
@@ -17,16 +16,13 @@ from .widgets.distribution_settings_dialog import DistributionSettingsDialog
 from .widgets.date_range_dialog import DateRangeDialog
 
 
-class ReturnDistributionModule(LazyThemeMixin, QWidget):
+class ReturnDistributionModule(BaseModule):
     """
     Portfolio Return Distribution module.
 
     Displays a histogram of portfolio returns with statistical analysis.
     Supports time-varying weights based on transaction history.
     """
-
-    # Signal emitted when user clicks home button
-    home_clicked = Signal()
 
     # Window name to trading days mapping
     WINDOW_TO_DAYS = {
@@ -39,9 +35,7 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
     }
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False  # For lazy theme application
+        super().__init__(theme_manager, parent)
 
         # Settings manager
         self.settings_manager = DistributionSettingsManager()
@@ -56,9 +50,6 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
         self._current_window: str = ""
         self._current_benchmark: str = ""
         self._portfolio_list: list = []  # Cache of available portfolios
-
-        # Loading overlay (created on demand)
-        self._loading_overlay = None
 
         self._setup_ui()
         self._connect_signals()
@@ -270,9 +261,6 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
             )
 
         except Exception as e:
-            print(f"Error updating distribution: {e}")
-            import traceback
-            traceback.print_exc()
             self.chart.show_placeholder(f"Error loading data: {str(e)}")
 
         finally:
@@ -280,17 +268,7 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
             self._hide_loading_overlay()
 
     def _get_metric_data(self, start_date, end_date, include_cash):
-        """
-        Get data for the selected metric.
-
-        Args:
-            start_date: Start date for data range
-            end_date: End date for data range
-            include_cash: Whether to include cash in calculations
-
-        Returns:
-            pd.Series of metric values
-        """
+        """Get data for the selected metric."""
         metric = self._current_metric
         is_ticker = self._is_ticker_mode
         name = self._current_portfolio
@@ -298,32 +276,23 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
         if metric == "Returns":
             if is_ticker:
                 return ReturnsDataService.get_ticker_returns(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, start_date=start_date, end_date=end_date,
                     interval=self._current_interval,
                 )
             else:
                 return ReturnsDataService.get_time_varying_portfolio_returns(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
-                    include_cash=include_cash,
-                    interval=self._current_interval,
+                    name, start_date=start_date, end_date=end_date,
+                    include_cash=include_cash, interval=self._current_interval,
                 )
 
         elif metric == "Volatility":
             if is_ticker:
                 return ReturnsDataService.get_ticker_volatility(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, start_date=start_date, end_date=end_date,
                 )
             else:
                 return ReturnsDataService.get_portfolio_volatility(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
 
@@ -331,32 +300,24 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
             window_days = self.WINDOW_TO_DAYS.get(self._current_window, 21)
             if is_ticker:
                 return ReturnsDataService.get_ticker_rolling_volatility(
-                    name,
-                    window_days=window_days,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, window_days=window_days,
+                    start_date=start_date, end_date=end_date,
                 )
             else:
                 return ReturnsDataService.get_rolling_volatility(
-                    name,
-                    window_days=window_days,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, window_days=window_days,
+                    start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
 
         elif metric == "Drawdown":
             if is_ticker:
                 return ReturnsDataService.get_ticker_drawdowns(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, start_date=start_date, end_date=end_date,
                 )
             else:
                 return ReturnsDataService.get_drawdowns(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
 
@@ -364,32 +325,24 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
             window_days = self.WINDOW_TO_DAYS.get(self._current_window, 252)
             if is_ticker:
                 return ReturnsDataService.get_ticker_rolling_returns(
-                    name,
-                    window_days=window_days,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, window_days=window_days,
+                    start_date=start_date, end_date=end_date,
                 )
             else:
                 return ReturnsDataService.get_rolling_returns(
-                    name,
-                    window_days=window_days,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, window_days=window_days,
+                    start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
 
         elif metric == "Time Under Water":
             if is_ticker:
                 return ReturnsDataService.get_ticker_time_under_water(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, start_date=start_date, end_date=end_date,
                 )
             else:
                 return ReturnsDataService.get_time_under_water(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
 
@@ -397,36 +350,20 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
             # Default to returns
             if is_ticker:
                 return ReturnsDataService.get_ticker_returns(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    name, start_date=start_date, end_date=end_date,
                     interval=self._current_interval,
                 )
             else:
                 return ReturnsDataService.get_time_varying_portfolio_returns(
-                    name,
-                    start_date=start_date,
-                    end_date=end_date,
-                    include_cash=include_cash,
-                    interval=self._current_interval,
+                    name, start_date=start_date, end_date=end_date,
+                    include_cash=include_cash, interval=self._current_interval,
                 )
 
     def _get_benchmark_data(self, start_date, end_date, include_cash):
-        """
-        Get benchmark data for the current metric.
-
-        Args:
-            start_date: Start date for data range
-            end_date: End date for data range
-            include_cash: Whether to include cash in portfolio benchmark calculations
-
-        Returns:
-            Tuple of (pd.Series of metric data, benchmark name string, error message or None)
-        """
+        """Get benchmark data for the current metric."""
         import pandas as pd
 
         benchmark = self._current_benchmark
-        metric = self._current_metric
         is_portfolio = benchmark.startswith("[Port] ")
 
         if is_portfolio:
@@ -441,14 +378,13 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
 
             if data is None or data.empty:
                 if is_portfolio:
-                    return pd.Series(dtype=float), "", f"Portfolio '{benchmark_name}' has no {metric.lower()} data available."
+                    return pd.Series(dtype=float), "", f"Portfolio '{benchmark_name}' has no {self._current_metric.lower()} data available."
                 else:
                     return pd.Series(dtype=float), "", f"Ticker '{benchmark_name}' not found. Please check the symbol and try again."
 
             return data, benchmark_name, None
 
-        except Exception as e:
-            print(f"Error loading benchmark {benchmark_name}: {e}")
+        except Exception:
             if is_portfolio:
                 return pd.Series(dtype=float), "", f"Could not load portfolio '{benchmark_name}'."
             else:
@@ -457,154 +393,99 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
     def _get_benchmark_metric_data(
         self, benchmark_name: str, is_portfolio: bool, start_date, end_date, include_cash
     ):
-        """
-        Get metric data for benchmark (portfolio or ticker).
-
-        Args:
-            benchmark_name: Name of portfolio or ticker symbol
-            is_portfolio: True if benchmark is a portfolio, False if ticker
-            start_date: Start date for data range
-            end_date: End date for data range
-            include_cash: Whether to include cash in portfolio calculations
-
-        Returns:
-            pd.Series of metric values
-        """
+        """Get metric data for benchmark (portfolio or ticker)."""
         metric = self._current_metric
 
         if metric == "Returns":
             if is_portfolio:
                 return ReturnsDataService.get_time_varying_portfolio_returns(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
-                    include_cash=include_cash,
-                    interval=self._current_interval,
+                    benchmark_name, start_date=start_date, end_date=end_date,
+                    include_cash=include_cash, interval=self._current_interval,
                 )
             else:
                 return ReturnsDataService.get_ticker_returns(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, start_date=start_date, end_date=end_date,
                     interval=self._current_interval,
                 )
 
         elif metric == "Volatility":
             if is_portfolio:
                 return ReturnsDataService.get_portfolio_volatility(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
             else:
                 return ReturnsDataService.get_ticker_volatility(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, start_date=start_date, end_date=end_date,
                 )
 
         elif metric == "Rolling Volatility":
             window_days = self.WINDOW_TO_DAYS.get(self._current_window, 21)
             if is_portfolio:
                 return ReturnsDataService.get_rolling_volatility(
-                    benchmark_name,
-                    window_days=window_days,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, window_days=window_days,
+                    start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
             else:
                 return ReturnsDataService.get_ticker_rolling_volatility(
-                    benchmark_name,
-                    window_days=window_days,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, window_days=window_days,
+                    start_date=start_date, end_date=end_date,
                 )
 
         elif metric == "Drawdown":
             if is_portfolio:
                 return ReturnsDataService.get_drawdowns(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
             else:
                 return ReturnsDataService.get_ticker_drawdowns(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, start_date=start_date, end_date=end_date,
                 )
 
         elif metric == "Rolling Return":
             window_days = self.WINDOW_TO_DAYS.get(self._current_window, 252)
             if is_portfolio:
                 return ReturnsDataService.get_rolling_returns(
-                    benchmark_name,
-                    window_days=window_days,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, window_days=window_days,
+                    start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
             else:
                 return ReturnsDataService.get_ticker_rolling_returns(
-                    benchmark_name,
-                    window_days=window_days,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, window_days=window_days,
+                    start_date=start_date, end_date=end_date,
                 )
 
         elif metric == "Time Under Water":
             if is_portfolio:
                 return ReturnsDataService.get_time_under_water(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, start_date=start_date, end_date=end_date,
                     include_cash=include_cash,
                 )
             else:
                 return ReturnsDataService.get_ticker_time_under_water(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, start_date=start_date, end_date=end_date,
                 )
 
         else:
             # Default to returns
             if is_portfolio:
                 return ReturnsDataService.get_time_varying_portfolio_returns(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
-                    include_cash=include_cash,
-                    interval=self._current_interval,
+                    benchmark_name, start_date=start_date, end_date=end_date,
+                    include_cash=include_cash, interval=self._current_interval,
                 )
             else:
                 return ReturnsDataService.get_ticker_returns(
-                    benchmark_name,
-                    start_date=start_date,
-                    end_date=end_date,
+                    benchmark_name, start_date=start_date, end_date=end_date,
                     interval=self._current_interval,
                 )
 
     def _apply_theme(self):
         """Apply theme-specific styling."""
-        theme = self.theme_manager.current_theme
-
-        if theme == "light":
-            bg_color = "#ffffff"
-        elif theme == "bloomberg":
-            bg_color = "#000814"
-        else:
-            bg_color = "#1e1e1e"
-
-        self.setStyleSheet(f"ReturnDistributionModule {{ background-color: {bg_color}; }}")
-
-    def showEvent(self, event):
-        """Handle show event - apply pending theme if needed."""
-        super().showEvent(event)
-        self._check_theme_dirty()
+        bg = self._get_theme_bg()
+        self.setStyleSheet(f"ReturnDistributionModule {{ background-color: {bg}; }}")
 
     def _apply_initial_chart_settings(self):
         """Apply chart settings (background, gridlines) on initialization."""
@@ -613,13 +494,14 @@ class ReturnDistributionModule(LazyThemeMixin, QWidget):
 
     def _show_loading_overlay(self, message: str = "Loading Distribution..."):
         """Show loading overlay over the entire module."""
+        from app.ui.widgets.common.loading_overlay import LoadingOverlay
+
         # Hide chart to prevent PyQtGraph from painting over the overlay
         self.chart.hide()
 
         if self._loading_overlay is None:
             self._loading_overlay = LoadingOverlay(self, self.theme_manager, message)
         else:
-            # Update message if overlay already exists
             self._loading_overlay.set_message(message)
 
         # Cover the entire module

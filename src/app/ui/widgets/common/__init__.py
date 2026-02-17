@@ -15,6 +15,7 @@ from .portfolio_ticker_combo import (
     SmoothScrollListView,
 )
 from .api_key_dialog import APIKeyDialog
+from .smooth_scroll_widgets import SmoothScrollTableWidget, SmoothScrollListWidget
 
 __all__ = [
     'CustomMessageBox',
@@ -30,4 +31,11 @@ __all__ = [
     'PortfolioComboBox',
     'SmoothScrollListView',
     'APIKeyDialog',
+    'SmoothScrollTableWidget',
+    'SmoothScrollListWidget',
 ]
+
+# Re-export BaseModule for convenient access
+from app.ui.modules.base_module import BaseModule
+
+__all__.append('BaseModule')

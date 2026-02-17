@@ -5,9 +5,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from PySide6.QtWidgets import (
-    QWidget,
     QVBoxLayout,
     QHBoxLayout,
+    QWidget,
     QScrollArea,
     QApplication,
 )
@@ -17,8 +17,7 @@ from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
 from app.ui.widgets.common.custom_message_box import CustomMessageBox
-from app.ui.widgets.common.loading_overlay import LoadingOverlay
-from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.ui.modules.base_module import BaseModule
 from app.utils.market_hours import is_crypto_ticker
 
 from .services.risk_analytics_service import RiskAnalyticsService
@@ -77,7 +76,7 @@ class MetadataPreFetchWorker(QThread):
         self._cancelled = True
 
 
-class RiskAnalyticsModule(LazyThemeMixin, QWidget):
+class RiskAnalyticsModule(BaseModule):
     """
     Risk Analytics module - Bloomberg TEV-style risk decomposition.
 
@@ -88,13 +87,8 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
     - Collapsible security-level risk table
     """
 
-    # Signal emitted when user clicks home button
-    home_clicked = Signal()
-
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False
+        super().__init__(theme_manager, parent)
 
         # Settings manager
         self.settings_manager = RiskAnalyticsSettingsManager()
@@ -110,9 +104,6 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         self._benchmark_weights_normalized: Dict[str, float] = {}  # Renormalized benchmark weights
         self._period_start: str = ""
         self._period_end: str = ""
-
-        # Loading overlay
-        self._loading_overlay: Optional[LoadingOverlay] = None
 
         # Metadata pre-fetch worker
         self._metadata_worker: Optional[MetadataPreFetchWorker] = None
@@ -131,23 +122,8 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             self.controls.set_etf_benchmark(default_benchmark)
             self._current_benchmark = default_benchmark
 
-    def showEvent(self, event):
-        """Handle show event - apply pending theme if needed."""
-        super().showEvent(event)
-        self._check_theme_dirty()
-
     def _setup_ui(self):
-        """Setup the module UI.
-
-        New layout (Bloomberg-style):
-        ┌─────────────────────────────────────┐
-        │ Controls (Portfolio, Benchmark)     │
-        ├─────────────────────────────────────┤
-        │ Risk Summary │ Top CTEV panels (3)  │  ← ALWAYS VISIBLE
-        ├─────────────────────────────────────┤
-        │ Idiosyncratic Risk Table            │  ← SECURITY TABLE
-        └─────────────────────────────────────┘
-        """
+        """Setup the module UI."""
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
@@ -213,15 +189,7 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         self.controls.update_portfolio_list(self._portfolio_list, self._current_portfolio)
 
     def _get_crypto_tickers_in_portfolio(self, portfolio_name: str) -> List[str]:
-        """
-        Check if a portfolio contains any cryptocurrency tickers.
-
-        Args:
-            portfolio_name: Name of the portfolio to check
-
-        Returns:
-            List of crypto ticker symbols found in the portfolio (empty if none)
-        """
+        """Check if a portfolio contains any cryptocurrency tickers."""
         tickers = PortfolioDataService.get_tickers(portfolio_name)
         if not tickers:
             return []
@@ -291,15 +259,7 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             self._update_risk_analysis()
 
     def _prefetch_benchmark_metadata(self, tickers: List[str]) -> None:
-        """
-        Pre-fetch Yahoo Finance metadata for benchmark tickers.
-
-        This ensures industry data is available for hierarchical sector→industry display.
-        Shows progress in the loading overlay.
-
-        Args:
-            tickers: List of benchmark ticker symbols
-        """
+        """Pre-fetch Yahoo Finance metadata for benchmark tickers."""
         if not tickers:
             return
 
@@ -449,7 +409,6 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             custom_end_date = self.settings_manager.get_setting("custom_end_date")
 
             # Get portfolio returns using TIME-VARYING weights from transaction history
-            # This correctly accounts for when each holding was actually purchased/sold
             portfolio_returns = ReturnsDataService.get_time_varying_portfolio_returns(
                 self._current_portfolio, include_cash=False
             )
@@ -473,7 +432,6 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             # Clip any extreme portfolio returns (>50% daily is extreme)
             extreme_port = (portfolio_returns.abs() > 0.5).sum()
             if extreme_port > 0:
-                print(f"[RiskAnalysis] Clipping {extreme_port} extreme portfolio return days")
                 portfolio_returns = portfolio_returns.clip(lower=-0.5, upper=0.5)
 
             # Get benchmark returns
@@ -493,7 +451,6 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 return
 
             # Normalize indices to date-only (remove time component) to ensure alignment
-            # This fixes timezone mismatches between portfolio and benchmark data sources
             portfolio_returns.index = portfolio_returns.index.normalize()
             benchmark_returns.index = benchmark_returns.index.normalize()
 
@@ -503,20 +460,9 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             if benchmark_returns.index.duplicated().any():
                 benchmark_returns = benchmark_returns[~benchmark_returns.index.duplicated(keep="last")]
 
-            # DEBUG: Print return statistics to diagnose tracking error issues
-            print(f"[DEBUG] Portfolio returns: len={len(portfolio_returns)}, mean={portfolio_returns.mean():.6f}, std={portfolio_returns.std():.6f}")
-            print(f"[DEBUG] Portfolio date range: {portfolio_returns.index.min()} to {portfolio_returns.index.max()}")
-            print(f"[DEBUG] Benchmark returns: len={len(benchmark_returns)}, mean={benchmark_returns.mean():.6f}, std={benchmark_returns.std():.6f}")
-            print(f"[DEBUG] Benchmark date range: {benchmark_returns.index.min()} to {benchmark_returns.index.max()}")
-            # Check overlap
-            common_dates = portfolio_returns.index.intersection(benchmark_returns.index)
-            print(f"[DEBUG] Common dates: {len(common_dates)}")
-
             # Pre-fetch Yahoo Finance metadata for all benchmark tickers
-            # This ensures industry data is available for hierarchical sector→industry display
             if self._benchmark_holdings:
                 benchmark_tickers = list(self._benchmark_holdings.keys())
-                print(f"[RiskAnalysis] Pre-fetching metadata for {len(benchmark_tickers)} benchmark tickers...")
                 self._prefetch_benchmark_metadata(benchmark_tickers)
                 self._show_loading_overlay("Running factor analysis...")
 
@@ -526,11 +472,9 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             )
 
             # Also fetch returns for ALL benchmark tickers NOT in portfolio
-            # These are needed to show underweight positions (negative active weight)
             if self._benchmark_holdings:
                 import pandas as pd
 
-                # Get all benchmark tickers not in portfolio
                 portfolio_set = set(t.upper() for t in tickers)
                 benchmark_only_tickers = [
                     ticker
@@ -539,19 +483,15 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 ]
 
                 if benchmark_only_tickers:
-                    print(f"[RiskAnalysis] Fetching returns for {len(benchmark_only_tickers)} benchmark-only tickers")
                     benchmark_ticker_returns = self._get_ticker_returns(
                         benchmark_only_tickers, lookback_days, custom_start_date, custom_end_date
                     )
 
-                    # Merge with portfolio ticker returns
                     if not benchmark_ticker_returns.empty:
-                        # Ensure indices are aligned
                         if not ticker_returns.empty:
                             ticker_returns = pd.concat(
                                 [ticker_returns, benchmark_ticker_returns], axis=1
                             )
-                            # Remove any duplicate columns
                             ticker_returns = ticker_returns.loc[:, ~ticker_returns.columns.duplicated()]
                         else:
                             ticker_returns = benchmark_ticker_returns
@@ -560,14 +500,12 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             if universe_sectors and not ticker_returns.empty:
                 import pandas as pd
 
-                # Calculate weighted portfolio returns from filtered ticker returns
                 filtered_portfolio_returns = pd.Series(0.0, index=ticker_returns.index)
                 for ticker in tickers:
                     if ticker in ticker_returns.columns:
                         weight = weights.get(ticker, 0.0)
                         filtered_portfolio_returns += ticker_returns[ticker] * weight
 
-                # Use filtered returns instead of full portfolio returns
                 portfolio_returns = filtered_portfolio_returns.dropna()
 
                 if portfolio_returns.empty:
@@ -584,18 +522,13 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             # Store data for attribution analysis
             self._current_weights = weights
             self._current_ticker_returns = ticker_returns
-            # Use portfolio_returns for period dates (it's filtered to lookback period)
             if not portfolio_returns.empty:
                 self._period_start = portfolio_returns.index.min().strftime("%Y-%m-%d")
                 self._period_end = portfolio_returns.index.max().strftime("%Y-%m-%d")
-            print(f"[RiskAnalysis] Stored {len(weights)} weights and returns with shape {ticker_returns.shape}")
-            print(f"[RiskAnalysis] Attribution period: {self._period_start} to {self._period_end}")
 
-            # Use renormalized benchmark weights (calculated in _get_benchmark_returns)
-            # These are already normalized to sum to 1.0 for the filtered universe
+            # Use renormalized benchmark weights
             benchmark_weights = getattr(self, '_benchmark_weights_normalized', {})
             if not benchmark_weights and self._benchmark_holdings:
-                # Fallback: calculate from holdings if not already computed
                 total_weight = sum(h.weight for h in self._benchmark_holdings.values())
                 if total_weight > 0:
                     benchmark_weights = {
@@ -604,7 +537,6 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                     }
 
             # Build ticker price data dict for constructed factors
-            # Combine portfolio and benchmark price data
             ticker_price_data = {}
             for ticker in ticker_returns.columns:
                 ticker_upper = ticker.upper()
@@ -613,7 +545,7 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 elif ticker_upper in batch_data and batch_data[ticker_upper] is not None:
                     ticker_price_data[ticker_upper] = batch_data[ticker_upper]
 
-            # Run full analysis (pass benchmark weights, price data, and holdings for factor model)
+            # Run full analysis
             analysis = RiskAnalyticsService.get_full_analysis(
                 portfolio_returns,
                 benchmark_returns,
@@ -622,10 +554,10 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 weights,
                 benchmark_weights,
                 ticker_price_data,
-                self._benchmark_holdings,  # Pass holdings for currency/country factors
+                self._benchmark_holdings,
             )
 
-            # Update displays (pass benchmark weights to table)
+            # Update displays
             self._update_displays(analysis, benchmark_weights)
 
         except Exception as e:
@@ -645,30 +577,17 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         custom_start_date: Optional[str],
         custom_end_date: Optional[str],
     ) -> "pd.Series":
-        """
-        Filter returns by either lookback period or custom date range.
-
-        Args:
-            returns: Series of returns with DatetimeIndex
-            lookback_days: Number of trading days to look back (or None for custom)
-            custom_start_date: Start date string (YYYY-MM-DD) for custom range
-            custom_end_date: End date string (YYYY-MM-DD) for custom range
-
-        Returns:
-            Filtered returns series
-        """
+        """Filter returns by either lookback period or custom date range."""
         if returns is None or returns.empty:
             return returns
 
         if lookback_days is None and custom_start_date and custom_end_date:
-            # Custom date range - filter by dates
             import pandas as pd
 
             start = pd.Timestamp(custom_start_date)
             end = pd.Timestamp(custom_end_date)
             return returns[(returns.index >= start) & (returns.index <= end)]
         elif lookback_days is not None:
-            # Standard lookback period - take last N days
             if len(returns) > lookback_days:
                 return returns.iloc[-lookback_days:]
         return returns
@@ -679,12 +598,7 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         custom_start_date: Optional[str] = None,
         custom_end_date: Optional[str] = None,
     ) -> Optional["pd.Series"]:
-        """
-        Get benchmark returns calculated from constituent-weighted returns.
-
-        Instead of fetching the ETF ticker, this fetches all constituent
-        holdings and calculates weighted daily returns for accuracy.
-        """
+        """Get benchmark returns calculated from constituent-weighted returns."""
         import pandas as pd
         from app.services.ishares_holdings_service import ISharesHoldingsService
         from app.services.market_data import fetch_price_history_batch
@@ -695,43 +609,26 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         if not benchmark:
             return None
 
-        # Fetch ETF holdings (e.g., IWV has ~3000 constituents)
-        print(f"[Benchmark] Fetching {benchmark} holdings for constituent-weighted returns...")
+        # Fetch ETF holdings
         holdings = ISharesHoldingsService.fetch_holdings(benchmark)
         if not holdings:
-            print(f"[Benchmark] Could not fetch holdings for {benchmark}")
             return None
-
-        print(f"[Benchmark] Got {len(holdings)} constituents")
-
-        # DEBUG: Count holdings with 0 weight in raw ETF data
-        zero_weight_count = sum(1 for h in holdings.values() if h.weight <= 0)
-        nonzero_weight_count = len(holdings) - zero_weight_count
-        total_raw_weight = sum(h.weight for h in holdings.values())
-        print(f"[Benchmark] DEBUG: Raw holdings - {nonzero_weight_count} non-zero, {zero_weight_count} zero weight")
-        print(f"[Benchmark] DEBUG: Raw holdings total weight sum = {total_raw_weight:.4f}")
 
         # Cache metadata from ETF holdings (sector, name, etc.)
         TickerMetadataService.cache_from_etf_holdings(holdings)
 
         # Apply benchmark universe sector filter if set
         benchmark_universe_sectors = self.settings_manager.get_setting("benchmark_universe_sectors")
-        print(f"[Benchmark] DEBUG: benchmark_universe_sectors setting = {benchmark_universe_sectors}")
         if benchmark_universe_sectors:
             sector_set = set(benchmark_universe_sectors)
-            print(f"[Benchmark] DEBUG: Filtering to sectors: {sector_set}")
             filtered_holdings = {
                 ticker: holding
                 for ticker, holding in holdings.items()
                 if holding.sector in sector_set
             }
             if not filtered_holdings:
-                print(f"[Benchmark] No holdings match selected benchmark universe sectors")
                 return None
-            print(f"[Benchmark] Filtered to {len(filtered_holdings)} constituents in selected sectors")
             holdings = filtered_holdings
-        else:
-            print(f"[Benchmark] DEBUG: No sector filter applied, keeping all {len(holdings)} constituents")
 
         # Store holdings for later use (filtered if applicable)
         self._benchmark_holdings = holdings
@@ -745,19 +642,15 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             }
         else:
             self._benchmark_weights_normalized = {}
-        print(f"[Benchmark] DEBUG: _benchmark_weights_normalized has {len(self._benchmark_weights_normalized)} tickers")
 
         # Get all constituent tickers
         constituent_tickers = list(holdings.keys())
 
         # Fetch price data for all constituents
-        print(f"[Benchmark] Fetching price data for {len(constituent_tickers)} constituents...")
         batch_data = fetch_price_history_batch(constituent_tickers)
 
         # Calculate individual returns for each constituent
-        # Filter out extreme returns (>100% or <-100%) which are likely data errors
         constituent_returns = {}
-        outlier_count = 0
         for ticker, holding in holdings.items():
             if ticker in batch_data and batch_data[ticker] is not None:
                 df = batch_data[ticker]
@@ -767,18 +660,11 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                         # Clip extreme returns - daily moves >100% are almost certainly data errors
                         extreme_mask = (returns > 1.0) | (returns < -1.0)
                         if extreme_mask.any():
-                            outlier_count += extreme_mask.sum()
                             returns = returns.clip(lower=-1.0, upper=1.0)
                         constituent_returns[ticker] = returns
 
-        if outlier_count > 0:
-            print(f"[Benchmark] Clipped {outlier_count} extreme return values (>100% daily)")
-
         if not constituent_returns:
-            print(f"[Benchmark] No valid returns data for constituents")
             return None
-
-        print(f"[Benchmark] Got returns for {len(constituent_returns)} constituents")
 
         # Create DataFrame of constituent returns
         returns_df = pd.DataFrame(constituent_returns)
@@ -789,10 +675,9 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             returns_df = returns_df[~returns_df.index.duplicated(keep="last")]
 
         # Calculate weighted benchmark returns
-        # Weight = holding.weight (already as decimal, e.g., 0.05 = 5%)
         weights = {ticker: holdings[ticker].weight for ticker in returns_df.columns}
 
-        # Normalize weights to sum to 1.0 (in case some constituents are missing)
+        # Normalize weights to sum to 1.0
         total_weight = sum(weights.values())
         if total_weight > 0:
             weights = {t: w / total_weight for t, w in weights.items()}
@@ -806,16 +691,12 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         benchmark_returns = benchmark_returns.dropna()
 
         if benchmark_returns.empty:
-            print(f"[Benchmark] Weighted returns calculation produced empty result")
             return None
 
-        # Final sanity check - clip any remaining extreme values in weighted returns
-        extreme_weighted = (benchmark_returns.abs() > 0.5).sum()  # >50% daily is extreme for an index
+        # Final sanity check - clip any remaining extreme values
+        extreme_weighted = (benchmark_returns.abs() > 0.5).sum()
         if extreme_weighted > 0:
-            print(f"[Benchmark] Warning: {extreme_weighted} days with >50% weighted return, clipping")
             benchmark_returns = benchmark_returns.clip(lower=-0.5, upper=0.5)
-
-        print(f"[Benchmark] Calculated constituent-weighted returns: {len(benchmark_returns)} days")
 
         # Apply date filtering
         return self._filter_returns_by_period(
@@ -837,7 +718,6 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         batch_data = fetch_price_history_batch(tickers)
 
         returns_dict = {}
-        outlier_count = 0
         for ticker in tickers:
             if ticker not in batch_data:
                 continue
@@ -847,7 +727,6 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 # Clip extreme returns (>100% daily is likely data error)
                 extreme_mask = (returns > 1.0) | (returns < -1.0)
                 if extreme_mask.any():
-                    outlier_count += extreme_mask.sum()
                     returns = returns.clip(lower=-1.0, upper=1.0)
                 # Apply date filtering
                 returns = self._filter_returns_by_period(
@@ -856,15 +735,9 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
                 if returns is not None and not returns.empty:
                     returns_dict[ticker] = returns
 
-        if outlier_count > 0:
-            print(f"[RiskAnalysis] Clipped {outlier_count} extreme ticker return values")
-
         if not returns_dict:
             return pd.DataFrame()
 
-        # Combine into DataFrame, aligning by date
-        # Use dropna(how='all') to only remove rows where ALL values are NaN
-        # This preserves more data when tickers have different trading histories
         df = pd.DataFrame(returns_dict)
 
         # Normalize index to date-only and remove duplicates
@@ -872,8 +745,8 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         if df.index.duplicated().any():
             df = df[~df.index.duplicated(keep="last")]
 
-        df = df.dropna(how='all')  # Remove rows with all NaN
-        df = df.ffill().bfill()    # Forward/backward fill remaining NaN
+        df = df.dropna(how='all')
+        df = df.ffill().bfill()
         return df
 
     def _update_displays(
@@ -886,7 +759,6 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         self.summary_panel.update_metrics(analysis.get("summary"))
 
         # Decomposition panels
-        # Filter out Currency factor if setting is disabled
         ctev_by_factor = analysis.get("ctev_by_factor", {})
         show_currency = self.settings_manager.get_setting("show_currency_factor")
         if not show_currency and "Currency" in ctev_by_factor:
@@ -895,7 +767,7 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         self.decomposition_panel.update_factor_ctev(ctev_by_factor)
         self.decomposition_panel.update_sector_ctev(analysis.get("ctev_by_sector"))
 
-        # Transform top_securities to new format: {ticker: {"ctev": X, "active_weight": Y}}
+        # Transform top_securities to new format
         top_securities = analysis.get("top_securities", {})
         security_ctev_data = {
             ticker: {
@@ -906,7 +778,7 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
         }
         self.decomposition_panel.update_security_ctev(security_ctev_data)
 
-        # Security table (pass benchmark weights, regression results, and all factor contributions)
+        # Security table
         self.security_table.set_data(
             analysis.get("security_risks", {}),
             benchmark_weights,
@@ -915,9 +787,9 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
             analysis.get("industry_contributions"),
             analysis.get("currency_contributions"),
             analysis.get("country_contributions"),
-            analysis.get("sector_industry_contributions"),  # Hierarchical sector→industry (for "Industry" display)
-            analysis.get("sector_contributions"),  # Flat sector (for "Sector" display)
-            ctev_by_factor,  # Pass ctev_by_factor for consistent top-level headers
+            analysis.get("sector_industry_contributions"),
+            analysis.get("sector_contributions"),
+            ctev_by_factor,
         )
 
     def _clear_displays(self):
@@ -928,6 +800,8 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
 
     def _show_loading_overlay(self, message: str = "Loading..."):
         """Show loading overlay."""
+        from app.ui.widgets.common.loading_overlay import LoadingOverlay
+
         if self._loading_overlay is None:
             self._loading_overlay = LoadingOverlay(self, self.theme_manager, message)
         else:
@@ -942,24 +816,16 @@ class RiskAnalyticsModule(LazyThemeMixin, QWidget):
 
     def _apply_theme(self):
         """Apply theme-specific styling."""
-        theme = self.theme_manager.current_theme
-
-        if theme == "light":
-            bg_color = "#ffffff"
-        elif theme == "bloomberg":
-            bg_color = "#000814"
-        else:  # dark
-            bg_color = "#1e1e1e"
-
+        bg = self._get_theme_bg()
         self.setStyleSheet(f"""
             RiskAnalyticsModule {{
-                background-color: {bg_color};
+                background-color: {bg};
             }}
             QScrollArea {{
-                background-color: {bg_color};
+                background-color: {bg};
                 border: none;
             }}
             QScrollArea > QWidget > QWidget {{
-                background-color: {bg_color};
+                background-color: {bg};
             }}
         """)

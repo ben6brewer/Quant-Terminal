@@ -2,14 +2,13 @@
 
 from typing import Optional
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
-from app.ui.widgets.common.loading_overlay import LoadingOverlay
-from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.ui.modules.base_module import BaseModule
 
 from .services.monte_carlo_service import SimulationResult
 from .services.monte_carlo_settings_manager import MonteCarloSettingsManager
@@ -22,7 +21,7 @@ from .widgets.monte_carlo_controls import MonteCarloControls
 from .widgets.monte_carlo_chart import MonteCarloChart
 
 
-class MonteCarloModule(LazyThemeMixin, QWidget):
+class MonteCarloModule(BaseModule):
     """
     Monte Carlo Simulation module.
 
@@ -30,13 +29,8 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
     using either historical bootstrap or parametric simulation methods.
     """
 
-    # Signal emitted when user clicks home button
-    home_clicked = Signal()
-
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False  # For lazy theme application
+        super().__init__(theme_manager, parent)
 
         # Settings manager
         self.settings_manager = MonteCarloSettingsManager()
@@ -50,9 +44,6 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
         self._current_benchmark: str = ""
         self._portfolio_list: list = []
         self._last_result: Optional[SimulationResult] = None
-
-        # Loading overlay
-        self._loading_overlay: Optional[LoadingOverlay] = None
 
         # Background simulation worker
         self._simulation_worker: Optional[SimulationWorker] = None
@@ -93,11 +84,6 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
 
         # Theme changes (lazy - only apply when visible)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
-
-    def showEvent(self, event):
-        """Handle show event - apply pending theme if needed."""
-        super().showEvent(event)
-        self._check_theme_dirty()
 
     def hideEvent(self, event):
         """Handle hide event - cancel any running simulation."""
@@ -159,20 +145,6 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
         if benchmark.startswith("[Port] "):
             benchmark = benchmark[7:]
         self._current_benchmark = benchmark
-
-    def _show_loading(self, message: str = "Running simulation..."):
-        """Show loading overlay."""
-        if self._loading_overlay is None:
-            self._loading_overlay = LoadingOverlay(self, self.theme_manager, message)
-        else:
-            self._loading_overlay.set_message(message)
-        self._loading_overlay.show()
-        self._loading_overlay.raise_()
-
-    def _hide_loading(self):
-        """Hide loading overlay."""
-        if self._loading_overlay:
-            self._loading_overlay.hide()
 
     def _cancel_running_simulation(self):
         """Cancel any in-progress simulation."""
@@ -308,22 +280,3 @@ class MonteCarloModule(LazyThemeMixin, QWidget):
                 # Runs in background thread to keep UI responsive
                 if self._last_result is not None and self._current_portfolio:
                     self._run_simulation()
-
-    def _apply_theme(self):
-        """Apply theme styling."""
-        theme = self.theme_manager.current_theme
-
-        if theme == "dark":
-            bg_color = "#1e1e1e"
-        elif theme == "light":
-            bg_color = "#ffffff"
-        else:  # bloomberg
-            bg_color = "#0d1420"
-
-        self.setStyleSheet(f"background-color: {bg_color};")
-
-    def resizeEvent(self, event):
-        """Handle resize to reposition loading overlay."""
-        super().resizeEvent(event)
-        if self._loading_overlay:
-            self._loading_overlay.resize(self.size())

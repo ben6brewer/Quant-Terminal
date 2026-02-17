@@ -5,15 +5,14 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Dict, Any, Optional, Tuple
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QApplication
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QApplication
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
 from app.ui.widgets.common.custom_message_box import CustomMessageBox
-from app.ui.widgets.common.loading_overlay import LoadingOverlay
-from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.ui.modules.base_module import BaseModule
 
 from .services.performance_metrics_service import PerformanceMetricsService
 from .services.performance_metrics_settings_manager import PerformanceMetricsSettingsManager
@@ -25,16 +24,13 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-class PerformanceMetricsModule(LazyThemeMixin, QWidget):
+class PerformanceMetricsModule(BaseModule):
     """
     Performance Metrics module.
 
     Displays comprehensive portfolio statistics across multiple time periods
     with optional benchmark comparison, in a Bloomberg terminal style.
     """
-
-    # Signal emitted when user clicks home button
-    home_clicked = Signal()
 
     # Time period definitions: (name, trading_days or None for YTD)
     TIME_PERIODS = [
@@ -45,9 +41,7 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
     ]
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False
+        super().__init__(theme_manager, parent)
 
         # Settings manager
         self.settings_manager = PerformanceMetricsSettingsManager()
@@ -58,9 +52,6 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
         self._current_benchmark: str = ""
         self._is_benchmark_portfolio: bool = False
         self._portfolio_list: list = []
-
-        # Loading overlay
-        self._loading_overlay = None
 
         self._setup_ui()
         self._connect_signals()
@@ -214,19 +205,6 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
                 self.table.show_placeholder("No data available for selected portfolio")
                 return
 
-            # DEBUG: Print portfolio returns info
-            print("\n" + "=" * 50)
-            print("=== PERFORMANCE METRICS DEBUG ===")
-            print("=" * 50)
-            print(f"Portfolio: {self._current_portfolio}")
-            print(f"Is ticker mode: {self._is_ticker_mode}")
-            print(f"Full fetch range: {earliest_start} to {end_date}")
-            print(f"Full portfolio returns shape: {full_portfolio_returns.shape}")
-            print(f"Full portfolio returns dates: {full_portfolio_returns.index[0]} to {full_portfolio_returns.index[-1]}")
-            print(f"Full portfolio returns (first 5): {full_portfolio_returns.head(5).tolist()}")
-            print(f"Full portfolio returns (last 5): {full_portfolio_returns.tail(5).tolist()}")
-            print("=" * 50)
-
             # Fetch benchmark returns ONCE for the full range (if selected)
             full_benchmark_returns = None
             benchmark_failed = False
@@ -283,25 +261,6 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
                         full_benchmark_returns, start_date, period_end
                     )
 
-                # DEBUG: Print details for 12 Months period
-                if period_name == "12 Months":
-                    print("\n" + "-" * 50)
-                    print("=== PERFORMANCE METRICS - 12 MONTHS PERIOD ===")
-                    print("-" * 50)
-                    print(f"Period: {start_date} to {period_end}")
-                    print(f"Filtered portfolio returns: {len(portfolio_returns)} days")
-                    if len(portfolio_returns) > 0:
-                        print(f"  First date: {portfolio_returns.index[0]}")
-                        print(f"  Last date: {portfolio_returns.index[-1]}")
-                        print(f"  First 5 returns: {portfolio_returns.head(5).tolist()}")
-                        print(f"  Last 5 returns: {portfolio_returns.tail(5).tolist()}")
-                        print(f"  Mean daily return: {portfolio_returns.mean():.6f}")
-                        print(f"  Std daily return: {portfolio_returns.std():.6f}")
-                        # Calculate total return manually for comparison
-                        total_ret = (1 + portfolio_returns).prod() - 1
-                        print(f"  Calculated total return: {total_ret * 100:.4f}%")
-                    print("-" * 50 + "\n")
-
                 # Calculate all metrics for this period
                 metrics = PerformanceMetricsService.calculate_all_metrics(
                     portfolio_returns,
@@ -315,9 +274,6 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
             self.table.update_metrics(metrics_by_period)
 
         except Exception as e:
-            print(f"Error calculating metrics: {e}")
-            import traceback
-            traceback.print_exc()
             self.table.show_placeholder(f"Error loading data: {str(e)}")
 
         finally:
@@ -329,17 +285,7 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
         start_date: str,
         end_date: str,
     ) -> "pd.Series":
-        """
-        Filter a returns series by date range.
-
-        Args:
-            returns: Series of returns with DatetimeIndex
-            start_date: Start date (YYYY-MM-DD)
-            end_date: End date (YYYY-MM-DD)
-
-        Returns:
-            Filtered returns series
-        """
+        """Filter a returns series by date range."""
         import pandas as pd
 
         if returns is None or returns.empty:
@@ -354,15 +300,7 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
         return returns[mask]
 
     def _get_date_range(self, trading_days: Optional[int]) -> Tuple[str, str]:
-        """
-        Get start and end date for a time period.
-
-        Args:
-            trading_days: Number of trading days, or None for YTD
-
-        Returns:
-            Tuple of (start_date, end_date) in YYYY-MM-DD format
-        """
+        """Get start and end date for a time period."""
         end_date = datetime.now().strftime("%Y-%m-%d")
 
         if trading_days is None:
@@ -370,7 +308,7 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
             start_date = f"{datetime.now().year}-01-01"
         else:
             # Approximate calendar days from trading days
-            # (252 trading days ≈ 365 calendar days)
+            # (252 trading days ~ 365 calendar days)
             calendar_days = int(trading_days * 365 / 252)
             start = datetime.now() - timedelta(days=calendar_days)
             start_date = start.strftime("%Y-%m-%d")
@@ -384,21 +322,7 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
         start_date: str,
         end_date: str,
     ) -> "pd.Series":
-        """
-        Get returns for a portfolio or ticker.
-
-        Automatically appends today's live return if within market hours
-        (for stocks) or anytime (for crypto).
-
-        Args:
-            name: Portfolio name or ticker symbol
-            is_ticker: True if name is a ticker, False if portfolio
-            start_date: Start date (YYYY-MM-DD)
-            end_date: End date (YYYY-MM-DD)
-
-        Returns:
-            Series of daily returns (with today's live return appended if eligible)
-        """
+        """Get returns for a portfolio or ticker with live return appended."""
         if is_ticker:
             returns = ReturnsDataService.get_ticker_returns(
                 name,
@@ -425,27 +349,16 @@ class PerformanceMetricsModule(LazyThemeMixin, QWidget):
 
     def _apply_theme(self):
         """Apply theme-specific styling."""
-        theme = self.theme_manager.current_theme
-
-        if theme == "light":
-            bg_color = "#ffffff"
-        elif theme == "bloomberg":
-            bg_color = "#000814"
-        else:
-            bg_color = "#1e1e1e"
-
+        bg = self._get_theme_bg()
         self.setStyleSheet(f"""
-            PerformanceMetricsModule {{ background-color: {bg_color}; }}
-            QWidget {{ background-color: {bg_color}; }}
+            PerformanceMetricsModule {{ background-color: {bg}; }}
+            QWidget {{ background-color: {bg}; }}
         """)
-
-    def showEvent(self, event):
-        """Handle show event - apply pending theme if needed."""
-        super().showEvent(event)
-        self._check_theme_dirty()
 
     def _show_loading_overlay(self, message: str = "Loading..."):
         """Show loading overlay over the entire module."""
+        from app.ui.widgets.common.loading_overlay import LoadingOverlay
+
         # Hide table container to prevent painting over overlay
         self.table_container.hide()
 

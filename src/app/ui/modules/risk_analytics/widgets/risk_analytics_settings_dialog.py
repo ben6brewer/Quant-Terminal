@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from .smooth_scroll_widgets import SmoothScrollListWidget
+from app.ui.widgets.common.smooth_scroll_widgets import SmoothScrollListWidget
 from app.ui.widgets.common import SmoothScrollListView
 from PySide6.QtCore import Signal, Qt, QDate
 

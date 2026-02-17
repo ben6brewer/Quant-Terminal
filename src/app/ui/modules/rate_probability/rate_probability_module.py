@@ -5,12 +5,11 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, List, Optional, Tuple
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
+from PySide6.QtWidgets import QVBoxLayout, QStackedWidget
 from PySide6.QtCore import Signal, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common.loading_overlay import LoadingOverlay
-from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.ui.modules.base_module import BaseModule
 
 from .services.fomc_calendar_service import FomcCalendarService
 from .services.rate_probability_service import RateProbabilityService
@@ -67,8 +66,6 @@ class _FetchWorker(QObject):
             self.finished.emit(result)
 
         except Exception as e:
-            import traceback
-            traceback.print_exc()
             self.error.emit(str(e))
 
 
@@ -139,20 +136,14 @@ class _EvolutionFetchWorker(QObject):
             self.finished.emit(evolution_df)
 
         except Exception as e:
-            import traceback
-            traceback.print_exc()
             self.error.emit(str(e))
 
 
-class RateProbabilityModule(LazyThemeMixin, QWidget):
+class RateProbabilityModule(BaseModule):
     """Rate Probability module - CME FedWatch-style FOMC rate probabilities."""
 
-    home_clicked = Signal()
-
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False
+        super().__init__(theme_manager, parent)
 
         # Settings
         self.settings_manager = RateProbabilitySettingsManager()
@@ -165,8 +156,7 @@ class RateProbabilityModule(LazyThemeMixin, QWidget):
         self._meetings: List[date] = []
         self._rate_path = None
 
-        # Loading
-        self._loading_overlay: Optional[LoadingOverlay] = None
+        # Workers
         self._fetch_thread: Optional[QThread] = None
         self._fetch_worker: Optional[_FetchWorker] = None
         self._evolution_thread: Optional[QThread] = None
@@ -211,10 +201,14 @@ class RateProbabilityModule(LazyThemeMixin, QWidget):
 
     def showEvent(self, event):
         super().showEvent(event)
-        self._check_theme_dirty()
         if not self._data_initialized:
             self._data_initialized = True
             self._initialize_data()
+
+    def hideEvent(self, event):
+        self._cancel_fetch()
+        self._cancel_evolution_fetch()
+        super().hideEvent(event)
 
     def _initialize_data(self):
         """Check for API key and start data fetch."""
@@ -403,36 +397,3 @@ class RateProbabilityModule(LazyThemeMixin, QWidget):
         self.table_view.apply_settings(settings)
         self.rate_path_view.apply_settings(settings)
         self.evolution_view.apply_settings(settings)
-
-    # ========== Loading Overlay ==========
-
-    def _show_loading(self, message: str = "Loading..."):
-        if self._loading_overlay is None:
-            self._loading_overlay = LoadingOverlay(self, self.theme_manager, message)
-        else:
-            self._loading_overlay.set_message(message)
-        self._loading_overlay.show()
-        self._loading_overlay.raise_()
-
-    def _hide_loading(self):
-        if self._loading_overlay:
-            self._loading_overlay.hide()
-
-    # ========== Theme ==========
-
-    def _apply_theme(self):
-        """Apply theme styling."""
-        theme = self.theme_manager.current_theme
-        if theme == "dark":
-            bg_color = "#1e1e1e"
-        elif theme == "light":
-            bg_color = "#ffffff"
-        else:
-            bg_color = "#0d1420"
-        self.setStyleSheet(f"background-color: {bg_color};")
-
-    def resizeEvent(self, event):
-        """Handle resize to reposition loading overlay."""
-        super().resizeEvent(event)
-        if self._loading_overlay:
-            self._loading_overlay.resize(self.size())

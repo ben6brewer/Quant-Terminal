@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 
-from .smooth_scroll_widgets import SmoothScrollTableWidget
+from app.ui.widgets.common.smooth_scroll_widgets import SmoothScrollTableWidget
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QColor
 

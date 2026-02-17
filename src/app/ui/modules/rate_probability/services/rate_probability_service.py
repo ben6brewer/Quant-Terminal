@@ -89,62 +89,31 @@ class RateProbabilityService:
     def _fetch_futures_prices_uncached(cls) -> "pd.DataFrame":
         """Fetch futures prices from Yahoo Finance (no cache)."""
         import pandas as pd
-        import yfinance as yf
+        from app.services.yahoo_finance_service import YahooFinanceService
 
         contracts = cls._generate_contract_tickers(months_ahead=18)
-        rows = []
-
-        # Batch download - try all tickers at once
         tickers = [c[0] for c in contracts]
-        ticker_str = " ".join(tickers)
 
-        try:
-            data = yf.download(ticker_str, period="5d", progress=False, threads=True)
+        close_data = YahooFinanceService.fetch_batch_short_history(tickers, period="5d")
 
-            if data.empty:
-                return pd.DataFrame()
+        if close_data.empty:
+            return pd.DataFrame()
 
-            # Handle multi-ticker vs single-ticker response format
-            if isinstance(data.columns, pd.MultiIndex):
-                close_data = data["Close"]
-            else:
-                # Single ticker case
-                close_data = pd.DataFrame({tickers[0]: data["Close"]})
-
-            for ticker, month, year in contracts:
-                if ticker in close_data.columns:
-                    col = close_data[ticker].dropna()
-                    if not col.empty:
-                        price = float(col.iloc[-1])
-                        if price > 0:
-                            implied_rate = 100.0 - price
-                            rows.append({
-                                "contract": ticker,
-                                "month": month,
-                                "year": year,
-                                "price": round(price, 4),
-                                "implied_rate": round(implied_rate, 4),
-                            })
-
-        except Exception:
-            # Fallback: fetch individually
-            for ticker, month, year in contracts:
-                try:
-                    t = yf.Ticker(ticker)
-                    hist = t.history(period="5d")
-                    if not hist.empty:
-                        price = float(hist["Close"].iloc[-1])
-                        if price > 0:
-                            implied_rate = 100.0 - price
-                            rows.append({
-                                "contract": ticker,
-                                "month": month,
-                                "year": year,
-                                "price": round(price, 4),
-                                "implied_rate": round(implied_rate, 4),
-                            })
-                except Exception:
-                    continue
+        rows = []
+        for ticker, month, year in contracts:
+            if ticker in close_data.columns:
+                col = close_data[ticker].dropna()
+                if not col.empty:
+                    price = float(col.iloc[-1])
+                    if price > 0:
+                        implied_rate = 100.0 - price
+                        rows.append({
+                            "contract": ticker,
+                            "month": month,
+                            "year": year,
+                            "price": round(price, 4),
+                            "implied_rate": round(implied_rate, 4),
+                        })
 
         if not rows:
             return pd.DataFrame()
@@ -215,32 +184,14 @@ class RateProbabilityService:
     def _fetch_historical_futures_uncached(cls, contract_tickers: List[str], lookback_days: int = 90) -> "pd.DataFrame":
         """Fetch historical futures prices from Yahoo Finance (no cache)."""
         import pandas as pd
-        import yfinance as yf
+        from app.services.yahoo_finance_service import YahooFinanceService
 
         if not contract_tickers:
             return pd.DataFrame()
 
-        ticker_str = " ".join(contract_tickers)
-        try:
-            data = yf.download(
-                ticker_str,
-                period=f"{lookback_days}d",
-                progress=False,
-                threads=True,
-            )
-
-            if data.empty:
-                return pd.DataFrame()
-
-            if isinstance(data.columns, pd.MultiIndex):
-                close_data = data["Close"]
-            else:
-                close_data = pd.DataFrame({contract_tickers[0]: data["Close"]})
-
-            return close_data.dropna(how="all")
-
-        except Exception:
-            return pd.DataFrame()
+        return YahooFinanceService.fetch_batch_short_history(
+            contract_tickers, period=f"{lookback_days}d"
+        )
 
     # --- Probability Calculations ---
 

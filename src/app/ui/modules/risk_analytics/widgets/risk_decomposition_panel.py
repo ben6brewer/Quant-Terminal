@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
     QStyleOptionViewItem,
 )
 
-from .smooth_scroll_widgets import SmoothScrollTableWidget
+from app.ui.widgets.common.smooth_scroll_widgets import SmoothScrollTableWidget
 from PySide6.QtCore import Qt, QRect
 from PySide6.QtGui import QPainter, QColor
 

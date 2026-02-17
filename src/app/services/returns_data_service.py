@@ -5,7 +5,7 @@ for analysis modules like Risk Analysis, Monte Carlo, and Return Distributions.
 """
 
 import threading
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
@@ -33,7 +33,6 @@ class ReturnsDataService:
 
     # In-memory cache for session performance
     _memory_cache: Dict[str, Any] = {}
-    _memory_cache_timestamps: Dict[str, datetime] = {}
 
     @classmethod
     def _ensure_cache_dir(cls) -> None:
@@ -611,22 +610,16 @@ class ReturnsDataService:
             portfolio_name, start_date, end_date, include_cash
         )
         if weights.empty:
-            print(f"[DEBUG] get_time_varying_portfolio_returns: weights empty for '{portfolio_name}'")
             return pd.Series(dtype=float)
-
-        print(f"[DEBUG] Weights shape: {weights.shape}, date range: {weights.index.min()} to {weights.index.max()}")
 
         # Get daily returns for all tickers (excluding FREE CASH - it has 0% return)
         tickers = [t for t in weights.columns if t.upper() != "FREE CASH"]
 
         if not tickers:
-            # Only cash in portfolio - return zeros
-            print(f"[DEBUG] Only cash in portfolio, returning zeros")
             return pd.Series(0.0, index=weights.index, name="portfolio_return")
 
         # Get daily returns
         returns = cls.get_daily_returns(portfolio_name, start_date, end_date)
-        print(f"[DEBUG] Returns shape: {returns.shape if not returns.empty else 'empty'}")
 
         # Normalize both indices to date-only (remove time component and timezone)
         # This fixes mismatches like 2026-01-15 00:00:00 vs 2026-01-15 05:00:00
@@ -643,9 +636,6 @@ class ReturnsDataService:
         # Ensure same index
         common_dates = weights.index.intersection(returns.index)
         if common_dates.empty:
-            print(f"[DEBUG] No common dates between weights and returns!")
-            if not returns.empty:
-                print(f"[DEBUG] Returns date range: {returns.index.min()} to {returns.index.max()}")
             return pd.Series(dtype=float)
 
         weights = weights.loc[common_dates]
@@ -1374,231 +1364,45 @@ class ReturnsDataService:
     # =========================================================================
     # Benchmark-Relative Metrics
     # =========================================================================
+    # Delegated to StatisticsService to avoid duplication.
 
     @classmethod
-    def get_beta(
-        cls,
-        portfolio_returns: "pd.Series",
-        benchmark_returns: "pd.Series",
-    ) -> float:
-        """
-        Calculate portfolio beta relative to a benchmark.
+    def get_beta(cls, portfolio_returns, benchmark_returns):
+        """Calculate portfolio beta. Delegates to StatisticsService."""
+        from app.services.statistics_service import StatisticsService
+        return StatisticsService.get_beta(portfolio_returns, benchmark_returns)
 
-        Beta measures the portfolio's sensitivity to benchmark movements.
-        Beta > 1 means more volatile than benchmark, Beta < 1 means less volatile.
+    @classmethod
+    def get_alpha(cls, portfolio_returns, benchmark_returns, risk_free_rate=0.0):
+        """Calculate Jensen's alpha (annualized). Delegates to StatisticsService."""
+        from app.services.statistics_service import StatisticsService
+        return StatisticsService.get_alpha(portfolio_returns, benchmark_returns, risk_free_rate)
 
-        Args:
-            portfolio_returns: Series of portfolio returns (as decimals)
-            benchmark_returns: Series of benchmark returns (as decimals)
+    @classmethod
+    def get_tracking_error(cls, portfolio_returns, benchmark_returns):
+        """Calculate annualized tracking error. Delegates to StatisticsService."""
+        from app.services.statistics_service import StatisticsService
+        return StatisticsService.get_tracking_error(portfolio_returns, benchmark_returns)
 
-        Returns:
-            Beta coefficient, or NaN if insufficient data
-        """
+    @classmethod
+    def get_information_ratio(cls, portfolio_returns, benchmark_returns):
+        """Calculate information ratio. Delegates to StatisticsService."""
+        from app.services.statistics_service import StatisticsService
+        return StatisticsService.get_information_ratio(portfolio_returns, benchmark_returns)
+
+    @classmethod
+    def get_correlation(cls, portfolio_returns, benchmark_returns):
+        """Calculate correlation. Delegates to StatisticsService."""
+        from app.services.statistics_service import StatisticsService
+        return StatisticsService.get_correlation(portfolio_returns, benchmark_returns)
+
+    @classmethod
+    def get_r_squared(cls, portfolio_returns, benchmark_returns):
+        """Calculate R-squared. Delegates to StatisticsService."""
+        from app.services.statistics_service import StatisticsService
+        corr = StatisticsService.get_correlation(portfolio_returns, benchmark_returns)
         import numpy as np
-        import pandas as pd
-
-        if portfolio_returns is None or benchmark_returns is None:
-            return float("nan")
-
-        # Align the two series to common dates
-        aligned = pd.concat(
-            [portfolio_returns, benchmark_returns], axis=1, keys=["portfolio", "benchmark"]
-        ).dropna()
-
-        if len(aligned) < 2:
-            return float("nan")
-
-        # Beta = Cov(Rp, Rb) / Var(Rb)
-        covariance = aligned["portfolio"].cov(aligned["benchmark"])
-        benchmark_variance = aligned["benchmark"].var()
-
-        if benchmark_variance == 0 or np.isnan(benchmark_variance):
-            return float("nan")
-
-        return covariance / benchmark_variance
-
-    @classmethod
-    def get_alpha(
-        cls,
-        portfolio_returns: "pd.Series",
-        benchmark_returns: "pd.Series",
-        risk_free_rate: float = 0.0,
-    ) -> float:
-        """
-        Calculate Jensen's alpha (annualized).
-
-        Alpha measures excess return not explained by beta exposure to benchmark.
-        Positive alpha indicates outperformance, negative indicates underperformance.
-
-        Args:
-            portfolio_returns: Series of portfolio returns (as decimals)
-            benchmark_returns: Series of benchmark returns (as decimals)
-            risk_free_rate: Annualized risk-free rate (as decimal, e.g., 0.05 = 5%)
-
-        Returns:
-            Annualized alpha, or NaN if insufficient data
-        """
-        import numpy as np
-        import pandas as pd
-
-        beta = cls.get_beta(portfolio_returns, benchmark_returns)
-        if np.isnan(beta):
-            return float("nan")
-
-        # Align returns
-        aligned = pd.concat(
-            [portfolio_returns, benchmark_returns], axis=1, keys=["portfolio", "benchmark"]
-        ).dropna()
-
-        if len(aligned) < 2:
-            return float("nan")
-
-        # Annualize mean returns
-        portfolio_annual = aligned["portfolio"].mean() * 252
-        benchmark_annual = aligned["benchmark"].mean() * 252
-
-        # Jensen's Alpha = Rp - [Rf + beta * (Rb - Rf)]
-        alpha = portfolio_annual - (risk_free_rate + beta * (benchmark_annual - risk_free_rate))
-
-        return alpha
-
-    @classmethod
-    def get_tracking_error(
-        cls,
-        portfolio_returns: "pd.Series",
-        benchmark_returns: "pd.Series",
-    ) -> float:
-        """
-        Calculate annualized tracking error.
-
-        Tracking error measures the volatility of the difference between
-        portfolio and benchmark returns. Lower values indicate closer tracking.
-
-        Args:
-            portfolio_returns: Series of portfolio returns (as decimals)
-            benchmark_returns: Series of benchmark returns (as decimals)
-
-        Returns:
-            Annualized tracking error, or NaN if insufficient data
-        """
-        import numpy as np
-        import pandas as pd
-
-        if portfolio_returns is None or benchmark_returns is None:
-            return float("nan")
-
-        # Align the two series
-        aligned = pd.concat(
-            [portfolio_returns, benchmark_returns], axis=1, keys=["portfolio", "benchmark"]
-        ).dropna()
-
-        if len(aligned) < 2:
-            return float("nan")
-
-        # Tracking error = std(portfolio - benchmark) * sqrt(252)
-        excess_returns = aligned["portfolio"] - aligned["benchmark"]
-        tracking_error = excess_returns.std(ddof=1) * np.sqrt(252)
-
-        return tracking_error
-
-    @classmethod
-    def get_information_ratio(
-        cls,
-        portfolio_returns: "pd.Series",
-        benchmark_returns: "pd.Series",
-    ) -> float:
-        """
-        Calculate the information ratio.
-
-        Information ratio measures active return per unit of active risk.
-        Higher values indicate better risk-adjusted active performance.
-
-        Args:
-            portfolio_returns: Series of portfolio returns (as decimals)
-            benchmark_returns: Series of benchmark returns (as decimals)
-
-        Returns:
-            Information ratio, or NaN if insufficient data
-        """
-        import numpy as np
-        import pandas as pd
-
-        tracking_error = cls.get_tracking_error(portfolio_returns, benchmark_returns)
-        if np.isnan(tracking_error) or tracking_error == 0:
-            return float("nan")
-
-        # Align returns
-        aligned = pd.concat(
-            [portfolio_returns, benchmark_returns], axis=1, keys=["portfolio", "benchmark"]
-        ).dropna()
-
-        if len(aligned) < 2:
-            return float("nan")
-
-        # Annualized excess return
-        excess_returns = aligned["portfolio"] - aligned["benchmark"]
-        annualized_excess = excess_returns.mean() * 252
-
-        # Information ratio = annualized excess return / tracking error
-        return annualized_excess / tracking_error
-
-    @classmethod
-    def get_correlation(
-        cls,
-        portfolio_returns: "pd.Series",
-        benchmark_returns: "pd.Series",
-    ) -> float:
-        """
-        Calculate correlation between portfolio and benchmark returns.
-
-        Args:
-            portfolio_returns: Series of portfolio returns (as decimals)
-            benchmark_returns: Series of benchmark returns (as decimals)
-
-        Returns:
-            Correlation coefficient (-1 to 1), or NaN if insufficient data
-        """
-        import pandas as pd
-
-        if portfolio_returns is None or benchmark_returns is None:
-            return float("nan")
-
-        # Align the two series
-        aligned = pd.concat(
-            [portfolio_returns, benchmark_returns], axis=1, keys=["portfolio", "benchmark"]
-        ).dropna()
-
-        if len(aligned) < 2:
-            return float("nan")
-
-        return aligned["portfolio"].corr(aligned["benchmark"])
-
-    @classmethod
-    def get_r_squared(
-        cls,
-        portfolio_returns: "pd.Series",
-        benchmark_returns: "pd.Series",
-    ) -> float:
-        """
-        Calculate R-squared (coefficient of determination).
-
-        R-squared measures what percentage of portfolio variance is explained
-        by the benchmark. Higher values indicate closer relationship.
-
-        Args:
-            portfolio_returns: Series of portfolio returns (as decimals)
-            benchmark_returns: Series of benchmark returns (as decimals)
-
-        Returns:
-            R-squared (0 to 1), or NaN if insufficient data
-        """
-        import numpy as np
-
-        correlation = cls.get_correlation(portfolio_returns, benchmark_returns)
-        if np.isnan(correlation):
-            return float("nan")
-
-        return correlation ** 2
+        return float("nan") if np.isnan(corr) else corr ** 2
 
     @classmethod
     def get_benchmark_returns(

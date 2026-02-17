@@ -61,16 +61,6 @@ class FredService:
     _FETCH_COOLDOWN = 3600  # Skip refetch within 1 hour of a failed advance
 
     @classmethod
-    def has_api_key(cls) -> bool:
-        """Check if a FRED API key is available."""
-        return FredApiKeyService.has_api_key()
-
-    @classmethod
-    def set_api_key(cls, key: str) -> None:
-        """Save FRED API key to .env file."""
-        FredApiKeyService.set_api_key(key)
-
-    @classmethod
     def _load_api_key(cls) -> Optional[str]:
         """Load FRED_API_KEY from .env file (delegated to shared service)."""
         return FredApiKeyService.get_api_key()

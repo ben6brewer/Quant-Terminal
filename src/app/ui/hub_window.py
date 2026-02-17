@@ -549,6 +549,7 @@ class HubWindow(QMainWindow):
         self._is_maximized = True
         self.max_btn.setText("❐")
 
+
     def _open_settings(self) -> None:
         """Open Settings module from home screen button."""
         self.open_module("settings")

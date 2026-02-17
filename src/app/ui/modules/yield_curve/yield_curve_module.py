@@ -5,12 +5,11 @@ from __future__ import annotations
 from datetime import date, timedelta
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtCore import Signal, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common.loading_overlay import LoadingOverlay
-from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.ui.modules.base_module import BaseModule
 
 from .services.fred_service import FredService, TENOR_LABELS, TENOR_YEARS
 from .services.yield_curve_interpolation import YieldCurveInterpolation
@@ -35,7 +34,7 @@ class _FetchWorker(QObject):
             self.error.emit(str(e))
 
 
-class YieldCurveModule(LazyThemeMixin, QWidget):
+class YieldCurveModule(BaseModule):
     """
     Yield Curve module.
 
@@ -43,12 +42,8 @@ class YieldCurveModule(LazyThemeMixin, QWidget):
     historical overlay comparisons and interpolation toggle.
     """
 
-    home_clicked = Signal()
-
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False
+        super().__init__(theme_manager, parent)
 
         # State
         self._yield_data: Optional[pd.DataFrame] = None
@@ -57,7 +52,6 @@ class YieldCurveModule(LazyThemeMixin, QWidget):
         self._current_interpolation: str = "Cubic Spline"
 
         # Loading
-        self._loading_overlay: Optional[LoadingOverlay] = None
         self._fetch_thread: Optional[QThread] = None
         self._fetch_worker: Optional[_FetchWorker] = None
         self._data_initialized = False
@@ -89,14 +83,19 @@ class YieldCurveModule(LazyThemeMixin, QWidget):
 
     def showEvent(self, event):
         super().showEvent(event)
-        self._check_theme_dirty()
         if not self._data_initialized:
             self._data_initialized = True
             self._initialize_data()
 
+    def hideEvent(self, event):
+        self._cancel_fetch()
+        super().hideEvent(event)
+
     def _initialize_data(self):
         """Check for API key and start data fetch."""
-        if not FredService.has_api_key():
+        from app.services.fred_api_key_service import FredApiKeyService
+
+        if not FredApiKeyService.has_api_key():
             self._show_api_key_dialog()
         else:
             self._fetch_data()
@@ -104,12 +103,13 @@ class YieldCurveModule(LazyThemeMixin, QWidget):
     def _show_api_key_dialog(self):
         """Show the FRED API key dialog on initial load when key is missing."""
         from app.ui.widgets.common.api_key_dialog import APIKeyDialog
+        from app.services.fred_api_key_service import FredApiKeyService
 
         dialog = APIKeyDialog(self.theme_manager, parent=self)
         if dialog.exec():
             key = dialog.get_api_key()
             if key:
-                FredService.set_api_key(key)
+                FredApiKeyService.set_api_key(key)
                 self._fetch_data()
         else:
             self.chart.show_placeholder(
@@ -296,36 +296,3 @@ class YieldCurveModule(LazyThemeMixin, QWidget):
             smooth_y=smooth_y,
             color_index=color_index,
         )
-
-    # ========== Loading Overlay ==========
-
-    def _show_loading(self, message: str = "Loading..."):
-        if self._loading_overlay is None:
-            self._loading_overlay = LoadingOverlay(self, self.theme_manager, message)
-        else:
-            self._loading_overlay.set_message(message)
-        self._loading_overlay.show()
-        self._loading_overlay.raise_()
-
-    def _hide_loading(self):
-        if self._loading_overlay:
-            self._loading_overlay.hide()
-
-    # ========== Theme ==========
-
-    def _apply_theme(self):
-        """Apply theme styling."""
-        theme = self.theme_manager.current_theme
-        if theme == "dark":
-            bg_color = "#1e1e1e"
-        elif theme == "light":
-            bg_color = "#ffffff"
-        else:  # bloomberg
-            bg_color = "#0d1420"
-        self.setStyleSheet(f"background-color: {bg_color};")
-
-    def resizeEvent(self, event):
-        """Handle resize to reposition loading overlay."""
-        super().resizeEvent(event)
-        if self._loading_overlay:
-            self._loading_overlay.resize(self.size())

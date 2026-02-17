@@ -2,13 +2,12 @@
 
 from typing import Optional
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
-from PySide6.QtCore import Signal, Qt, QThread, QObject
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
+from PySide6.QtCore import Signal, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
-from app.ui.widgets.common.loading_overlay import LoadingOverlay
-from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.ui.modules.base_module import BaseModule
 
 from .services.analysis_settings_manager import AnalysisSettingsManager
 from .widgets.analysis_controls import AnalysisControls
@@ -45,22 +44,15 @@ class _EFWorker(QObject):
             self.error.emit(str(e))
 
 
-class EfficientFrontierModule(LazyThemeMixin, QWidget):
+class EfficientFrontierModule(BaseModule):
     """Efficient Frontier module with Monte Carlo scatter, frontier curve,
     tangency/min-vol/sortino portfolios, CML, and weights table.
     """
 
-    home_clicked = Signal()
-
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False
+        super().__init__(theme_manager, parent)
 
         self.settings_manager = AnalysisSettingsManager()
-        self._loading_overlay: Optional[LoadingOverlay] = None
-        self._worker: Optional[_EFWorker] = None
-        self._thread: Optional[QThread] = None
         self._last_results: Optional[dict] = None
 
         self._setup_ui()
@@ -107,14 +99,6 @@ class EfficientFrontierModule(LazyThemeMixin, QWidget):
         self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
-
-    def showEvent(self, event):
-        super().showEvent(event)
-        self._check_theme_dirty()
-
-    def hideEvent(self, event):
-        self._cancel_worker()
-        super().hideEvent(event)
 
     def _load_settings(self):
         lookback = self.settings_manager.get_lookback_days()
@@ -207,49 +191,6 @@ class EfficientFrontierModule(LazyThemeMixin, QWidget):
         self._hide_loading()
         self._cleanup_worker()
 
-    def _cleanup_worker(self):
-        """Safely stop thread and release references."""
-        if self._thread is not None:
-            self._thread.quit()
-            self._thread.wait()
-        if self._worker is not None:
-            self._worker.deleteLater()
-        if self._thread is not None:
-            self._thread.deleteLater()
-        self._worker = None
-        self._thread = None
-
-    def _cancel_worker(self):
-        if self._thread is not None and self._thread.isRunning():
-            self._thread.quit()
-            self._thread.wait(2000)
-        self._worker = None
-        self._thread = None
-
-    def _show_loading(self, message: str = "Loading..."):
-        if self._loading_overlay is None:
-            self._loading_overlay = LoadingOverlay(self, self.theme_manager, message)
-        else:
-            self._loading_overlay.set_message(message)
-        self._loading_overlay.show()
-        self._loading_overlay.raise_()
-
-    def _hide_loading(self):
-        if self._loading_overlay:
-            self._loading_overlay.hide()
-
     def _apply_theme(self):
-        theme = self.theme_manager.current_theme
-        if theme == "dark":
-            bg = "#1e1e1e"
-        elif theme == "light":
-            bg = "#ffffff"
-        else:
-            bg = "#0d1420"
-        self.setStyleSheet(f"background-color: {bg};")
-        self.chart.set_theme(theme)
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        if self._loading_overlay:
-            self._loading_overlay.resize(self.size())
+        self.setStyleSheet(f"background-color: {self._get_theme_bg()};")
+        self.chart.set_theme(self.theme_manager.current_theme)

@@ -619,6 +619,57 @@ class YahooFinanceService:
             return {}
 
     @classmethod
+    def fetch_batch_short_history(
+        cls,
+        tickers: list[str],
+        period: str = "5d",
+    ) -> "pd.DataFrame":
+        """
+        Fetch short-period close prices for multiple tickers in a single API call.
+
+        Lightweight batch download without parquet caching, useful for
+        short-lived instruments like futures contracts.
+
+        Args:
+            tickers: List of ticker symbols
+            period: Yahoo Finance period string (e.g. "5d", "90d")
+
+        Returns:
+            DataFrame with DatetimeIndex and one column per ticker (close prices).
+            Empty DataFrame if fetch fails.
+        """
+        import pandas as pd
+        import yfinance as yf
+
+        if not tickers:
+            return pd.DataFrame()
+
+        ticker_str = " ".join(tickers) if len(tickers) > 1 else tickers[0]
+
+        try:
+            data = yf.download(
+                ticker_str,
+                period=period,
+                progress=False,
+                threads=True,
+            )
+
+            if data.empty:
+                return pd.DataFrame()
+
+            # Normalize to always have ticker columns
+            if isinstance(data.columns, pd.MultiIndex):
+                close_data = data["Close"]
+            else:
+                # Single ticker case
+                close_data = pd.DataFrame({tickers[0]: data["Close"]})
+
+            return close_data.dropna(how="all")
+
+        except Exception:
+            return pd.DataFrame()
+
+    @classmethod
     def is_valid_ticker(cls, ticker: str) -> bool:
         """
         Check if a ticker exists on Yahoo Finance.

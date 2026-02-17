@@ -61,6 +61,16 @@ def _create_covariance_matrix_module(theme_manager):
     return CovarianceMatrixModule(theme_manager)
 
 
+def _create_rolling_correlation_module(theme_manager):
+    from app.ui.modules.analysis import RollingCorrelationModule
+    return RollingCorrelationModule(theme_manager)
+
+
+def _create_rolling_covariance_module(theme_manager):
+    from app.ui.modules.analysis import RollingCovarianceModule
+    return RollingCovarianceModule(theme_manager)
+
+
 def _create_yield_curve_module(theme_manager):
     from app.ui.modules.yield_curve import YieldCurveModule
     return YieldCurveModule(theme_manager)
@@ -155,6 +165,16 @@ def main() -> int:
     hub.add_module(
         "covariance_matrix",
         lambda: _create_covariance_matrix_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "rolling_correlation",
+        lambda: _create_rolling_correlation_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "rolling_covariance",
+        lambda: _create_rolling_covariance_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module(
