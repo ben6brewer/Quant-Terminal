@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Signal, Qt
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common import LazyThemeMixin, AutoSelectLineEdit, ThemedDialog
+from app.ui.widgets.common import LazyThemeMixin, AutoSelectLineEdit, ThemedDialog, VerticalLabel
 from app.services.theme_stylesheet_service import ThemeStylesheetService
 from ..services.ticker_list_persistence import TickerListPersistence
 
@@ -215,6 +215,9 @@ class TickerListPanel(LazyThemeMixin, QWidget):
     Provides an input field, scrollable list with delete buttons, and clear all.
     """
 
+    _EXPANDED_WIDTH = 200
+    _COLLAPSED_WIDTH = 36
+
     tickers_changed = Signal(list)
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
@@ -222,8 +225,9 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         self.theme_manager = theme_manager
         self._theme_dirty = False
         self._tickers: List[str] = []
+        self._expanded = True
 
-        self.setFixedWidth(200)
+        self.setFixedWidth(self._EXPANDED_WIDTH)
         self._setup_ui()
         self._apply_theme()
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -233,15 +237,34 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         self._check_theme_dirty()
 
     def _setup_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(6)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setSpacing(0)
 
-        # Header
-        header = QLabel("Tickers")
-        header.setObjectName("panel_header")
-        header.setAlignment(Qt.AlignCenter)
-        layout.addWidget(header)
+        # Header row (title + toggle button)
+        header_row = QHBoxLayout()
+        header_row.setContentsMargins(4, 6, 4, 2)
+        header_row.setSpacing(4)
+
+        self._header = QLabel("Tickers")
+        self._header.setObjectName("panel_header")
+        self._header.setAlignment(Qt.AlignCenter)
+        header_row.addWidget(self._header, 1)
+
+        self._toggle_btn = QPushButton("\u25B6")
+        self._toggle_btn.setObjectName("collapse_btn")
+        self._toggle_btn.setFixedSize(24, 24)
+        self._toggle_btn.setCursor(Qt.PointingHandCursor)
+        self._toggle_btn.clicked.connect(self._toggle)
+        header_row.addWidget(self._toggle_btn)
+
+        outer.addLayout(header_row)
+
+        # Body (all content below header)
+        self._body = QWidget()
+        body_layout = QVBoxLayout(self._body)
+        body_layout.setContentsMargins(8, 4, 8, 8)
+        body_layout.setSpacing(6)
 
         # Ticker input row
         input_row = QHBoxLayout()
@@ -259,14 +282,14 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         self.add_btn.clicked.connect(self._add_ticker)
         input_row.addWidget(self.add_btn)
 
-        layout.addLayout(input_row)
+        body_layout.addLayout(input_row)
 
         # Ticker list
         self.ticker_list = QListWidget()
         self.ticker_list.setSelectionMode(QAbstractItemView.NoSelection)
         self.ticker_list.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.ticker_list.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        layout.addWidget(self.ticker_list, stretch=1)
+        body_layout.addWidget(self.ticker_list, stretch=1)
 
         # Count label + Clear button
         bottom_row = QHBoxLayout()
@@ -281,7 +304,7 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         self.clear_btn.clicked.connect(self._clear_all)
         bottom_row.addWidget(self.clear_btn)
 
-        layout.addLayout(bottom_row)
+        body_layout.addLayout(bottom_row)
 
         # Save / Load buttons
         save_load_row = QHBoxLayout()
@@ -299,7 +322,27 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         self.load_btn.clicked.connect(self._show_load_dialog)
         save_load_row.addWidget(self.load_btn)
 
-        layout.addLayout(save_load_row)
+        body_layout.addLayout(save_load_row)
+
+        outer.addWidget(self._body)
+
+        # Collapsed vertical label (hidden by default)
+        self._collapsed_label = VerticalLabel("Tickers")
+        self._collapsed_label.setObjectName("collapsed_label")
+        self._collapsed_label.setAlignment(Qt.AlignCenter)
+        self._collapsed_label.hide()
+        outer.addWidget(self._collapsed_label, 1)
+
+    def _toggle(self):
+        """Toggle between expanded and collapsed states."""
+        self._expanded = not self._expanded
+        self._body.setVisible(self._expanded)
+        self._header.setVisible(self._expanded)
+        self._collapsed_label.setVisible(not self._expanded)
+        self._toggle_btn.setText("\u25B6" if self._expanded else "\u25C0")
+        self.setFixedWidth(
+            self._EXPANDED_WIDTH if self._expanded else self._COLLAPSED_WIDTH
+        )
 
     def _add_ticker(self):
         """Add a ticker from the input field."""
@@ -484,5 +527,21 @@ class TickerListPanel(LazyThemeMixin, QWidget):
             QPushButton#save_btn:hover, QPushButton#load_btn:hover {{
                 border-color: {c['accent']};
                 color: {c['accent']};
+            }}
+            QPushButton#collapse_btn {{
+                background: transparent;
+                color: {c['text_muted']};
+                border: none;
+                font-size: 12px;
+                padding: 0px;
+            }}
+            QPushButton#collapse_btn:hover {{
+                color: {c['accent']};
+            }}
+            QLabel#collapsed_label {{
+                font-size: 12px;
+                font-weight: bold;
+                color: {c['text_muted']};
+                background: transparent;
             }}
         """)

@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common import LazyThemeMixin
+from app.ui.widgets.common import LazyThemeMixin, VerticalLabel
 from app.services.theme_stylesheet_service import ThemeStylesheetService
 
 
@@ -117,12 +117,16 @@ class CollapsibleWeightsSection(QWidget):
 class WeightsPanel(LazyThemeMixin, QWidget):
     """Right sidebar showing weights for Tangency, Min Vol, and Max Sortino portfolios."""
 
+    _EXPANDED_WIDTH = 280
+    _COLLAPSED_WIDTH = 36
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(parent)
         self.theme_manager = theme_manager
         self._theme_dirty = False
+        self._expanded = True
 
-        self.setFixedWidth(280)
+        self.setFixedWidth(self._EXPANDED_WIDTH)
         self._setup_ui()
         self._apply_theme()
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -137,50 +141,91 @@ class WeightsPanel(LazyThemeMixin, QWidget):
         self._distribute_heights()
 
     def _setup_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(4)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(0, 0, 0, 0)
+        outer.setSpacing(0)
 
-        # Header
+        # Header row (toggle button + title)
+        header_row = QHBoxLayout()
+        header_row.setContentsMargins(4, 6, 4, 2)
+        header_row.setSpacing(4)
+
+        self._toggle_btn = QPushButton("\u25C0")
+        self._toggle_btn.setObjectName("collapse_btn")
+        self._toggle_btn.setFixedSize(24, 24)
+        self._toggle_btn.setCursor(Qt.PointingHandCursor)
+        self._toggle_btn.clicked.connect(self._toggle)
+        header_row.addWidget(self._toggle_btn)
+
         self._header = QLabel("Portfolio Weights")
         self._header.setObjectName("panel_header")
         self._header.setAlignment(Qt.AlignCenter)
-        layout.addWidget(self._header)
+        header_row.addWidget(self._header, 1)
+
+        outer.addLayout(header_row)
+
+        # Body (all sections)
+        self._body = QWidget()
+        body_layout = QVBoxLayout(self._body)
+        body_layout.setContentsMargins(8, 4, 8, 8)
+        body_layout.setSpacing(4)
 
         # Three collapsible sections
         self.tangency_section = CollapsibleWeightsSection(
             "Max Sharpe", "Sharpe"
         )
-        layout.addWidget(self.tangency_section, stretch=0)
+        body_layout.addWidget(self.tangency_section, stretch=0)
 
         self.min_vol_section = CollapsibleWeightsSection(
             "Min Volatility", "Vol"
         )
-        layout.addWidget(self.min_vol_section, stretch=0)
+        body_layout.addWidget(self.min_vol_section, stretch=0)
 
         self.sortino_section = CollapsibleWeightsSection(
             "Max Sortino", "Sortino"
         )
-        layout.addWidget(self.sortino_section, stretch=0)
+        body_layout.addWidget(self.sortino_section, stretch=0)
 
         self._sections = [self.tangency_section, self.min_vol_section, self.sortino_section]
         for s in self._sections:
             s.toggled.connect(self._distribute_heights)
 
-        layout.addStretch(1)
+        body_layout.addStretch(1)
+
+        outer.addWidget(self._body)
+
+        # Collapsed vertical label (hidden by default)
+        self._collapsed_label = VerticalLabel("Weights")
+        self._collapsed_label.setObjectName("collapsed_label")
+        self._collapsed_label.setAlignment(Qt.AlignCenter)
+        self._collapsed_label.hide()
+        outer.addWidget(self._collapsed_label, 1)
+
+    def _toggle(self):
+        """Toggle between expanded and collapsed states."""
+        self._expanded = not self._expanded
+        self._body.setVisible(self._expanded)
+        self._header.setVisible(self._expanded)
+        self._collapsed_label.setVisible(not self._expanded)
+        self._toggle_btn.setText("\u25C0" if self._expanded else "\u25B6")
+        self.setFixedWidth(
+            self._EXPANDED_WIDTH if self._expanded else self._COLLAPSED_WIDTH
+        )
 
     def _distribute_heights(self):
+        if not self._expanded:
+            return
+
         visible = [s for s in self._sections if s.isVisible()]
         expanded = [s for s in visible if s._expanded]
 
-        if not expanded or self.height() == 0:
+        if not expanded or self._body.height() == 0:
             return
 
-        layout = self.layout()
-        margins = layout.contentsMargins()
+        body_layout = self._body.layout()
+        margins = body_layout.contentsMargins()
         overhead = margins.top() + margins.bottom()
-        overhead += self._header.sizeHint().height()
-        overhead += layout.spacing() * len(visible)  # gaps between header and each section
+        overhead += body_layout.spacing() * len(visible)
 
         for s in visible:
             s_margins = s.layout().contentsMargins()
@@ -191,7 +236,7 @@ class WeightsPanel(LazyThemeMixin, QWidget):
             if s._expanded:
                 overhead += s.layout().spacing()  # gap between section header and table
 
-        available = self.height() - overhead
+        available = self._body.height() - overhead
 
         ideals = [s.ideal_table_height() for s in expanded]
         total_ideal = sum(ideals)
@@ -297,5 +342,21 @@ class WeightsPanel(LazyThemeMixin, QWidget):
                 padding: 3px 6px;
                 font-size: 11px;
                 font-weight: bold;
+            }}
+            QPushButton#collapse_btn {{
+                background: transparent;
+                color: {c['text_muted']};
+                border: none;
+                font-size: 12px;
+                padding: 0px;
+            }}
+            QPushButton#collapse_btn:hover {{
+                color: {c['accent']};
+            }}
+            QLabel#collapsed_label {{
+                font-size: 12px;
+                font-weight: bold;
+                color: {c['text_muted']};
+                background: transparent;
             }}
         """)

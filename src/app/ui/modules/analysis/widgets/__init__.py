@@ -8,6 +8,10 @@ from .weights_panel import WeightsPanel
 from .analysis_settings_dialog import AnalysisSettingsDialog
 from .ef_settings_dialog import EFSettingsDialog
 from .custom_date_dialog import CustomDateDialog
+from .ols_controls import OLSControls
+from .ols_scatter_chart import OLSScatterChart
+from .ols_stats_panel import OLSStatsPanel
+from .ols_settings_dialog import OLSSettingsDialog
 
 __all__ = [
     "AnalysisControls",
@@ -18,4 +22,8 @@ __all__ = [
     "AnalysisSettingsDialog",
     "EFSettingsDialog",
     "CustomDateDialog",
+    "OLSControls",
+    "OLSScatterChart",
+    "OLSStatsPanel",
+    "OLSSettingsDialog",
 ]

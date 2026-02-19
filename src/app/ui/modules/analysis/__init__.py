@@ -5,6 +5,7 @@ from .correlation_matrix_module import CorrelationMatrixModule
 from .covariance_matrix_module import CovarianceMatrixModule
 from .rolling_correlation_module import RollingCorrelationModule
 from .rolling_covariance_module import RollingCovarianceModule
+from .ols_regression_module import OLSRegressionModule
 
 __all__ = [
     "EfficientFrontierModule",
@@ -12,4 +13,5 @@ __all__ = [
     "CovarianceMatrixModule",
     "RollingCorrelationModule",
     "RollingCovarianceModule",
+    "OLSRegressionModule",
 ]

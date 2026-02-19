@@ -16,6 +16,7 @@ from .portfolio_ticker_combo import (
 )
 from .api_key_dialog import APIKeyDialog
 from .smooth_scroll_widgets import SmoothScrollTableWidget, SmoothScrollListWidget
+from .vertical_label import VerticalLabel
 
 __all__ = [
     'CustomMessageBox',
@@ -33,6 +34,7 @@ __all__ = [
     'APIKeyDialog',
     'SmoothScrollTableWidget',
     'SmoothScrollListWidget',
+    'VerticalLabel',
 ]
 
 # Re-export BaseModule for convenient access
