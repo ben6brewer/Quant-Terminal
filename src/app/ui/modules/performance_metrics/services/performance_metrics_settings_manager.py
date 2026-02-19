@@ -25,6 +25,9 @@ class PerformanceMetricsSettingsManager(BaseSettingsManager):
             "show_6_months": True,
             "show_12_months": True,
             "show_ytd": True,
+            # Custom time period
+            "custom_period_enabled": False,
+            "custom_period_years": 5.0,
         }
 
     @property

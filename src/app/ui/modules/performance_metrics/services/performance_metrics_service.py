@@ -22,6 +22,26 @@ class PerformanceMetricsService:
     """
 
     # =========================================================================
+    # Utility Methods
+    # =========================================================================
+
+    @staticmethod
+    def format_period_label(years: float) -> str:
+        """Format a year value into a smart column header label.
+
+        Examples: 10 -> "10Y", 2.5 -> "2.5Y", 0.5 -> "6M", 0.25 -> "3M"
+        """
+        if years >= 1.0:
+            if years == int(years):
+                return f"{int(years)}Y"
+            return f"{years}Y"
+        else:
+            months = years * 12
+            if months == int(months):
+                return f"{int(months)}M"
+            return f"{months:.1f}M"
+
+    # =========================================================================
     # Delegated Methods (for backward compatibility)
     # =========================================================================
 

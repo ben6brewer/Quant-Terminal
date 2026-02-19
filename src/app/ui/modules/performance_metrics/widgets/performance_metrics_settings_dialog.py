@@ -123,6 +123,32 @@ class PerformanceMetricsSettingsDialog(ThemedDialog):
         self.show_ytd_check.setObjectName("settingsCheckbox")
         viz_layout.addWidget(self.show_ytd_check)
 
+        # Custom period row
+        custom_row = QHBoxLayout()
+
+        self.custom_period_check = QCheckBox("Custom Period:")
+        self.custom_period_check.setObjectName("settingsCheckbox")
+        custom_row.addWidget(self.custom_period_check)
+
+        self.custom_period_spin = QDoubleSpinBox()
+        self.custom_period_spin.setRange(0.01, 100.0)
+        self.custom_period_spin.setDecimals(2)
+        self.custom_period_spin.setSuffix(" years")
+        self.custom_period_spin.setSingleStep(1.0)
+        self.custom_period_spin.setFixedWidth(130)
+        self.custom_period_spin.setEnabled(False)
+        custom_row.addWidget(self.custom_period_spin)
+
+        self.custom_period_preview = QLabel("")
+        self.custom_period_preview.setObjectName("settingsDescription")
+        custom_row.addWidget(self.custom_period_preview)
+
+        custom_row.addStretch()
+        viz_layout.addLayout(custom_row)
+
+        self.custom_period_check.toggled.connect(self._on_custom_period_toggled)
+        self.custom_period_spin.valueChanged.connect(self._on_custom_period_value_changed)
+
         viz_group.setLayout(viz_layout)
         layout.addWidget(viz_group)
 
@@ -168,6 +194,35 @@ class PerformanceMetricsSettingsDialog(ThemedDialog):
         self.show_12m_check.setChecked(self.current_settings.get("show_12_months", True))
         self.show_ytd_check.setChecked(self.current_settings.get("show_ytd", True))
 
+        # Custom period
+        self.custom_period_check.setChecked(
+            self.current_settings.get("custom_period_enabled", False)
+        )
+        self.custom_period_spin.setValue(
+            self.current_settings.get("custom_period_years", 5.0)
+        )
+        self.custom_period_spin.setEnabled(self.custom_period_check.isChecked())
+        self._update_custom_period_preview()
+
+    def _on_custom_period_toggled(self, checked: bool):
+        """Enable/disable custom period spinbox based on checkbox state."""
+        self.custom_period_spin.setEnabled(checked)
+        self._update_custom_period_preview()
+
+    def _on_custom_period_value_changed(self, value: float):
+        """Update the preview label when the spinbox value changes."""
+        self._update_custom_period_preview()
+
+    def _update_custom_period_preview(self):
+        """Update the preview label showing the formatted column header."""
+        if self.custom_period_check.isChecked():
+            label = PerformanceMetricsService.format_period_label(
+                self.custom_period_spin.value()
+            )
+            self.custom_period_preview.setText(f"Column: {label}")
+        else:
+            self.custom_period_preview.setText("")
+
     def _save_settings(self):
         """Save settings and close dialog."""
         settings = {
@@ -177,6 +232,8 @@ class PerformanceMetricsSettingsDialog(ThemedDialog):
             "show_6_months": self.show_6m_check.isChecked(),
             "show_12_months": self.show_12m_check.isChecked(),
             "show_ytd": self.show_ytd_check.isChecked(),
+            "custom_period_enabled": self.custom_period_check.isChecked(),
+            "custom_period_years": self.custom_period_spin.value(),
         }
 
         # Close dialog first, then emit signal (so loading overlay shows properly)
@@ -192,6 +249,8 @@ class PerformanceMetricsSettingsDialog(ThemedDialog):
             "show_6_months": self.show_6m_check.isChecked(),
             "show_12_months": self.show_12m_check.isChecked(),
             "show_ytd": self.show_ytd_check.isChecked(),
+            "custom_period_enabled": self.custom_period_check.isChecked(),
+            "custom_period_years": self.custom_period_spin.value(),
         }
 
     def _apply_theme(self):

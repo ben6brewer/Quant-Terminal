@@ -32,13 +32,12 @@ class PerformanceMetricsModule(BaseModule):
     with optional benchmark comparison, in a Bloomberg terminal style.
     """
 
-    # Time period definitions: (name, trading_days or None for YTD)
-    TIME_PERIODS = [
-        ("3 Months", 63),
-        ("6 Months", 126),
-        ("12 Months", 252),
-        ("YTD", None),
-    ]
+    # Fixed period definitions: setting_key -> (label, trading_days)
+    FIXED_PERIODS = {
+        "show_3_months": ("3 Months", 63),
+        "show_6_months": ("6 Months", 126),
+        "show_12_months": ("12 Months", 252),
+    }
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
@@ -57,14 +56,10 @@ class PerformanceMetricsModule(BaseModule):
         self._connect_signals()
         self._apply_theme()
 
-        # Apply saved column visibility settings
+        # Build active periods from settings and pass to table
         settings = self.settings_manager.get_all_settings()
-        self.table.set_visible_periods(
-            settings.get("show_3_months", True),
-            settings.get("show_6_months", True),
-            settings.get("show_12_months", True),
-            settings.get("show_ytd", True),
-        )
+        self._active_periods = self._build_active_periods(settings)
+        self.table.set_visible_periods(self._active_periods)
 
         # Load portfolio list
         self._refresh_portfolio_list()
@@ -156,16 +151,42 @@ class PerformanceMetricsModule(BaseModule):
     def _on_settings_saved(self, settings: Dict[str, Any]):
         """Handle settings saved from dialog."""
         self.settings_manager.update_settings(settings)
-        # Apply column visibility settings
-        self.table.set_visible_periods(
-            settings.get("show_3_months", True),
-            settings.get("show_6_months", True),
-            settings.get("show_12_months", True),
-            settings.get("show_ytd", True),
-        )
+        # Rebuild active periods from new settings
+        self._active_periods = self._build_active_periods(settings)
+        self.table.set_visible_periods(self._active_periods)
         # Only recalculate if a portfolio is selected
         if self._current_portfolio:
             self._update_metrics()
+
+    def _build_active_periods(self, settings: Dict[str, Any] = None) -> list:
+        """Build the sorted list of active time periods from settings.
+
+        Fixed-duration periods sorted by trading days ascending, YTD always last.
+        """
+        if settings is None:
+            settings = self.settings_manager.get_all_settings()
+
+        # Collect enabled fixed periods
+        fixed = []
+        for key, (label, days) in self.FIXED_PERIODS.items():
+            if settings.get(key, True):
+                fixed.append((label, days))
+
+        # Add custom period if enabled
+        if settings.get("custom_period_enabled", False):
+            years = settings.get("custom_period_years", 5.0)
+            trading_days = int(years * 252)
+            label = PerformanceMetricsService.format_period_label(years)
+            fixed.append((label, trading_days))
+
+        # Sort by trading days ascending
+        fixed.sort(key=lambda p: p[1])
+
+        # Append YTD at end if enabled
+        if settings.get("show_ytd", True):
+            fixed.append(("YTD", None))
+
+        return fixed
 
     def _update_metrics(self):
         """Update the metrics table with current settings."""
@@ -186,7 +207,7 @@ class PerformanceMetricsModule(BaseModule):
 
             # Pre-calculate all date ranges to find the earliest start date
             date_ranges: Dict[str, Tuple[str, str]] = {}
-            for period_name, trading_days in self.TIME_PERIODS:
+            for period_name, trading_days in self._active_periods:
                 date_ranges[period_name] = self._get_date_range(trading_days)
 
             # Find the earliest start date across all periods
@@ -241,7 +262,7 @@ class PerformanceMetricsModule(BaseModule):
             # Calculate metrics for each time period by filtering pre-fetched data
             metrics_by_period: Dict[str, Dict[str, Any]] = {}
 
-            for period_name, trading_days in self.TIME_PERIODS:
+            for period_name, trading_days in self._active_periods:
                 start_date, period_end = date_ranges[period_name]
 
                 # Filter portfolio returns by date range

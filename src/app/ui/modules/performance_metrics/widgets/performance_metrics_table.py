@@ -25,14 +25,6 @@ class PerformanceMetricsTable(LazyThemeMixin, QTableWidget):
     benchmark comparison.
     """
 
-    # Time period definitions: (display_name, trading_days or None for YTD)
-    TIME_PERIODS = [
-        ("3 Months", 63),
-        ("6 Months", 126),
-        ("12 Months", 252),
-        ("YTD", None),
-    ]
-
     # Metric definitions: (display_label, metric_key, has_benchmark_value, format_type)
     # format_type: "percent", "ratio", "decimal", "capture"
     RETURN_METRICS = [
@@ -80,7 +72,12 @@ class PerformanceMetricsTable(LazyThemeMixin, QTableWidget):
         self._theme_dirty = False
         self._has_benchmark = False
         self._metrics_by_period: Dict[str, Dict[str, Any]] = {}
-        self._visible_periods = list(self.TIME_PERIODS)  # Default: all visible
+        self._visible_periods = [
+            ("3 Months", 63),
+            ("6 Months", 126),
+            ("12 Months", 252),
+            ("YTD", None),
+        ]
 
         self._setup_table()
         self._apply_theme()
@@ -118,21 +115,15 @@ class PerformanceMetricsTable(LazyThemeMixin, QTableWidget):
             self._has_benchmark = has_benchmark
             self._rebuild_table()
 
-    def set_visible_periods(self, show_3m: bool, show_6m: bool, show_12m: bool, show_ytd: bool):
-        """Set which time periods are visible."""
-        new_visible = []
-        for period_name, trading_days in self.TIME_PERIODS:
-            if period_name == "3 Months" and show_3m:
-                new_visible.append((period_name, trading_days))
-            elif period_name == "6 Months" and show_6m:
-                new_visible.append((period_name, trading_days))
-            elif period_name == "12 Months" and show_12m:
-                new_visible.append((period_name, trading_days))
-            elif period_name == "YTD" and show_ytd:
-                new_visible.append((period_name, trading_days))
+    def set_visible_periods(self, periods: list):
+        """Set visible time periods.
 
-        if new_visible != self._visible_periods:
-            self._visible_periods = new_visible
+        Args:
+            periods: List of (label, trading_days_or_None) tuples,
+                     already sorted with YTD last.
+        """
+        if periods != self._visible_periods:
+            self._visible_periods = list(periods)
             self._rebuild_table()
 
     def _get_filtered_metrics(self, metrics_list):
