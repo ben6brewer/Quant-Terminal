@@ -106,6 +106,12 @@ class EFSettingsDialog(ThemedDialog):
         self.max_sortino_check.setFixedHeight(32)
         layout.addWidget(self.max_sortino_check)
 
+        layout.addSpacing(4)
+
+        self.indifference_check = QCheckBox("Indifference Curve")
+        self.indifference_check.setFixedHeight(32)
+        layout.addWidget(self.indifference_check)
+
         layout.addStretch()
 
         # Buttons
@@ -155,6 +161,9 @@ class EFSettingsDialog(ThemedDialog):
         self.max_sortino_check.setChecked(
             self.current_settings.get("ef_show_max_sortino", True)
         )
+        self.indifference_check.setChecked(
+            self.current_settings.get("ef_show_indifference_curve", True)
+        )
 
     def _save_settings(self):
         """Save settings and close."""
@@ -167,6 +176,7 @@ class EFSettingsDialog(ThemedDialog):
             "ef_show_max_sharpe": self.max_sharpe_check.isChecked(),
             "ef_show_min_vol": self.min_vol_check.isChecked(),
             "ef_show_max_sortino": self.max_sortino_check.isChecked(),
+            "ef_show_indifference_curve": self.indifference_check.isChecked(),
         }
         self.accept()
 

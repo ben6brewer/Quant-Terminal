@@ -249,6 +249,56 @@ class FrontierCalculationService:
             "individual_vols": individual_vols,
             "individual_rets": individual_rets,
             "tickers": tickers,
+            "cov_matrix": cov_values.tolist(),
+            "mean_returns": mean_values.tolist(),
+        }
+
+    @staticmethod
+    def calculate_optimal_portfolio(
+        gamma: float,
+        cov_matrix: List[List[float]],
+        mean_returns: List[float],
+    ) -> Dict[str, Any]:
+        """Find the portfolio that maximizes mean-variance utility U = E(r) - (γ/2)σ².
+
+        Args:
+            gamma: Risk aversion coefficient (> 0)
+            cov_matrix: Annualized covariance matrix (nested list)
+            mean_returns: Annualized expected returns (list)
+
+        Returns dict with optimal_vol, optimal_ret, optimal_weights, utility.
+        """
+        import numpy as np
+        from scipy.optimize import minimize
+
+        cov = np.array(cov_matrix)
+        mu = np.array(mean_returns)
+        n = len(mu)
+
+        def neg_utility(weights):
+            ret = np.dot(weights, mu)
+            vol_sq = np.dot(weights.T, np.dot(cov, weights))
+            return -(ret - (gamma / 2) * vol_sq)
+
+        constraints = {"type": "eq", "fun": lambda x: np.sum(x) - 1}
+        bounds = tuple((0, 1) for _ in range(n))
+        initial = np.array([1 / n] * n)
+
+        result = minimize(
+            neg_utility, initial, method="SLSQP",
+            bounds=bounds, constraints=constraints,
+        )
+
+        w = result.x
+        opt_ret = float(np.dot(w, mu))
+        opt_vol = float(np.sqrt(np.dot(w.T, np.dot(cov, w))))
+        utility = opt_ret - (gamma / 2) * opt_vol ** 2
+
+        return {
+            "optimal_vol": opt_vol,
+            "optimal_ret": opt_ret,
+            "optimal_weights": w.tolist(),
+            "utility": utility,
         }
 
     @staticmethod

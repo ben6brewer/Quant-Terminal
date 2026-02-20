@@ -186,7 +186,13 @@ class WeightsPanel(LazyThemeMixin, QWidget):
         )
         body_layout.addWidget(self.sortino_section, stretch=0)
 
-        self._sections = [self.tangency_section, self.min_vol_section, self.sortino_section]
+        self.optimal_section = CollapsibleWeightsSection(
+            "Optimal", "Utility"
+        )
+        self.optimal_section.hide()
+        body_layout.addWidget(self.optimal_section, stretch=0)
+
+        self._sections = [self.tangency_section, self.min_vol_section, self.sortino_section, self.optimal_section]
         for s in self._sections:
             s.toggled.connect(self._distribute_heights)
 
@@ -255,6 +261,7 @@ class WeightsPanel(LazyThemeMixin, QWidget):
         show_sharpe = True if visibility is None else visibility.get("ef_show_max_sharpe", True)
         show_min_vol = True if visibility is None else visibility.get("ef_show_min_vol", True)
         show_sortino = True if visibility is None else visibility.get("ef_show_max_sortino", True)
+        show_indifference = True if visibility is None else visibility.get("ef_show_indifference_curve", True)
 
         if show_sharpe:
             self.tangency_section.set_data(
@@ -283,6 +290,23 @@ class WeightsPanel(LazyThemeMixin, QWidget):
             self.sortino_section.clear_data()
             self.sortino_section.hide()
 
+        if not show_indifference:
+            self.clear_optimal_results()
+
+        self._distribute_heights()
+
+    def set_optimal_results(self, tickers: List[str], weights: List[float],
+                            utility: float, gamma: float):
+        """Show the optimal portfolio section with given weights."""
+        self.optimal_section.title_label.setText(f"Optimal (\u03b3={gamma:.1f})")
+        self.optimal_section.set_data(tickers, weights, utility)
+        self.optimal_section.show()
+        self._distribute_heights()
+
+    def clear_optimal_results(self):
+        """Hide and clear the optimal portfolio section."""
+        self.optimal_section.clear_data()
+        self.optimal_section.hide()
         self._distribute_heights()
 
     def clear_results(self):
@@ -290,6 +314,7 @@ class WeightsPanel(LazyThemeMixin, QWidget):
         self.tangency_section.clear_data()
         self.min_vol_section.clear_data()
         self.sortino_section.clear_data()
+        self.clear_optimal_results()
         self._distribute_heights()
 
     def _apply_theme(self):

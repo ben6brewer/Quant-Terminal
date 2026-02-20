@@ -49,6 +49,7 @@ class AnalysisSettingsManager(BaseSettingsManager):
             "ef_show_max_sharpe": True,
             "ef_show_min_vol": True,
             "ef_show_max_sortino": True,
+            "ef_show_indifference_curve": True,
         }
 
     @property

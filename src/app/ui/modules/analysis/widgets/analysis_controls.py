@@ -6,10 +6,12 @@ from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
     QLabel,
+    QLineEdit,
     QPushButton,
     QSizePolicy,
 )
 from PySide6.QtCore import Signal
+from PySide6.QtGui import QDoubleValidator
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common import (
@@ -48,6 +50,7 @@ class AnalysisControls(LazyThemeMixin, QWidget):
     portfolio_loaded = Signal(list)
     lookback_changed = Signal(int)
     simulations_changed = Signal(int)
+    risk_aversion_changed = Signal(float)
     run_clicked = Signal()
     settings_clicked = Signal()
 
@@ -55,6 +58,7 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         self,
         theme_manager: ThemeManager,
         show_simulations: bool = False,
+        show_risk_aversion: bool = False,
         run_label: str = "Run",
         parent=None,
     ):
@@ -62,6 +66,7 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         self.theme_manager = theme_manager
         self._theme_dirty = False
         self._show_simulations = show_simulations
+        self._show_risk_aversion = show_risk_aversion
         self._custom_date_range = None
         self._previous_lookback_index = 2  # Default: 5 Years
 
@@ -137,6 +142,22 @@ class AnalysisControls(LazyThemeMixin, QWidget):
             self.sims_combo.currentIndexChanged.connect(self._on_sims_changed)
             layout.addWidget(self.sims_combo)
 
+        # Risk aversion input (EF only)
+        if self._show_risk_aversion:
+            layout.addSpacing(8)
+
+            self.gamma_label = QLabel("Risk Aversion:")
+            self.gamma_label.setObjectName("control_label")
+            layout.addWidget(self.gamma_label)
+
+            self.gamma_input = QLineEdit()
+            self.gamma_input.setPlaceholderText("e.g. 2.0")
+            self.gamma_input.setFixedWidth(70)
+            self.gamma_input.setFixedHeight(40)
+            self.gamma_input.setValidator(QDoubleValidator(0.01, 100.0, 2))
+            self.gamma_input.editingFinished.connect(self._on_gamma_changed)
+            layout.addWidget(self.gamma_input)
+
         layout.addSpacing(8)
 
         # Run button
@@ -199,6 +220,18 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         # Emit 0 for Max (None)
         self.lookback_changed.emit(data if data is not None else 0)
 
+    def _on_gamma_changed(self):
+        if not self._show_risk_aversion:
+            return
+        text = self.gamma_input.text().strip()
+        if text:
+            try:
+                self.risk_aversion_changed.emit(float(text))
+            except ValueError:
+                pass
+        else:
+            self.risk_aversion_changed.emit(0.0)
+
     def _on_sims_changed(self, index: int):
         count = self.sims_combo.currentData()
         if count:
@@ -224,6 +257,18 @@ class AnalysisControls(LazyThemeMixin, QWidget):
             if self.sims_combo.itemData(i) == count:
                 self.sims_combo.setCurrentIndex(i)
                 return
+
+    def get_risk_aversion(self) -> float:
+        """Return current gamma value from the input, or 0.0 if empty/invalid."""
+        if not self._show_risk_aversion:
+            return 0.0
+        text = self.gamma_input.text().strip()
+        if text:
+            try:
+                return float(text)
+            except ValueError:
+                pass
+        return 0.0
 
     @property
     def custom_date_range(self):
@@ -295,6 +340,17 @@ class AnalysisControls(LazyThemeMixin, QWidget):
             QComboBox QAbstractItemView::item:selected {{
                 background-color: {c['accent']};
                 color: {c['text_on_accent']};
+            }}
+            QLineEdit {{
+                background-color: {c['bg_header']};
+                color: {c['text']};
+                border: 1px solid {c['border']};
+                border-radius: 3px;
+                padding: 8px 8px;
+                font-size: 14px;
+            }}
+            QLineEdit:focus {{
+                border-color: {c['accent']};
             }}
             QPushButton {{
                 background-color: {c['bg_header']};

@@ -95,6 +95,7 @@ class FrontierChart(BaseChart):
         self._show_max_sharpe = True
         self._show_min_vol = True
         self._show_max_sortino = True
+        self._show_indifference_curve = True
 
         # Items tracked for clearing
         self._scatter = None
@@ -103,6 +104,8 @@ class FrontierChart(BaseChart):
         self._asset_labels: List[pg.TextItem] = []
         self._marker_items: list = []
         self._legend = None
+        self._indifference_line = None
+        self._optimal_marker = None
 
         # Placeholder
         self._placeholder = None
@@ -119,6 +122,7 @@ class FrontierChart(BaseChart):
         self._show_max_sharpe = settings.get("ef_show_max_sharpe", True)
         self._show_min_vol = settings.get("ef_show_min_vol", True)
         self._show_max_sortino = settings.get("ef_show_max_sortino", True)
+        self._show_indifference_curve = settings.get("ef_show_indifference_curve", True)
 
     def set_theme(self, theme: str) -> None:
         """Apply theme, then fix axis text color overridden by BaseChart._apply_gridlines."""
@@ -311,8 +315,85 @@ class FrontierChart(BaseChart):
         self._placeholder.setPos(0.5, 0.5)
         self.plot_item.addItem(self._placeholder)
 
+    def plot_indifference_curve(self, gamma: float, optimal_vol: float,
+                                optimal_ret: float, utility: float,
+                                max_chart_vol: float):
+        """Plot the indifference curve and optimal portfolio marker.
+
+        Args:
+            gamma: Risk aversion coefficient
+            optimal_vol: Optimal portfolio volatility
+            optimal_ret: Optimal portfolio return
+            utility: Utility value at optimal point
+            max_chart_vol: Maximum volatility on the chart (for curve extent)
+        """
+        import numpy as np
+
+        self.clear_indifference_curve()
+
+        if not self._show_indifference_curve:
+            return
+
+        # Parabola: r = U* + (γ/2)σ²
+        sigma = np.linspace(0, max_chart_vol * 1.1, 200)
+        r = utility + (gamma / 2) * sigma ** 2
+
+        gold_pen = pg.mkPen(color=(255, 215, 0), width=2, style=Qt.DashLine)
+        self._indifference_line = self.plot_item.plot(x=sigma, y=r, pen=gold_pen)
+
+        # Optimal portfolio marker (lime green square)
+        self._optimal_marker = pg.ScatterPlotItem(
+            x=[optimal_vol],
+            y=[optimal_ret],
+            symbol="s",
+            size=14,
+            brush=pg.mkBrush(100, 255, 50),
+            pen=pg.mkPen("w", width=1),
+        )
+        self.plot_item.addItem(self._optimal_marker)
+
+        # Add to legend
+        if self._legend is not None:
+            self._legend.addItem(
+                pg.PlotDataItem(pen=gold_pen),
+                f"Indifference Curve (\u03b3={gamma:.1f})",
+            )
+            self._legend.addItem(
+                self._optimal_marker,
+                f"Optimal Portfolio",
+            )
+
+    def clear_indifference_curve(self):
+        """Remove indifference curve and optimal marker from the chart."""
+        if self._indifference_line is not None:
+            self.plot_item.removeItem(self._indifference_line)
+            self._indifference_line = None
+
+        if self._optimal_marker is not None:
+            self.plot_item.removeItem(self._optimal_marker)
+            self._optimal_marker = None
+
+        # Remove legend entries for indifference items
+        if self._legend is not None:
+            items_to_remove = []
+            for sample, label in self._legend.items:
+                if hasattr(label, 'text') and (
+                    "Indifference" in label.text or "Optimal Portfolio" in label.text
+                ):
+                    items_to_remove.append((sample, label))
+            for sample, label in items_to_remove:
+                self._legend.removeItem(label.text)
+
     def _clear_items(self):
         """Clear all plotted items."""
+        # Clear indifference items (before legend is removed)
+        if self._indifference_line is not None:
+            self.plot_item.removeItem(self._indifference_line)
+            self._indifference_line = None
+        if self._optimal_marker is not None:
+            self.plot_item.removeItem(self._optimal_marker)
+            self._optimal_marker = None
+
         if self._scatter is not None:
             self.plot_item.removeItem(self._scatter)
             self._scatter = None

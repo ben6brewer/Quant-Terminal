@@ -54,6 +54,7 @@ class EfficientFrontierModule(BaseModule):
 
         self.settings_manager = AnalysisSettingsManager()
         self._last_results: Optional[dict] = None
+        self._current_gamma = 0.0
 
         self._setup_ui()
         self._connect_signals()
@@ -69,6 +70,7 @@ class EfficientFrontierModule(BaseModule):
         self.controls = AnalysisControls(
             self.theme_manager,
             show_simulations=True,
+            show_risk_aversion=True,
             run_label="Run",
         )
         layout.addWidget(self.controls)
@@ -95,6 +97,7 @@ class EfficientFrontierModule(BaseModule):
         self.controls.portfolio_loaded.connect(self._on_portfolio_loaded)
         self.controls.lookback_changed.connect(self._on_lookback_changed)
         self.controls.simulations_changed.connect(self._on_simulations_changed)
+        self.controls.risk_aversion_changed.connect(self._on_risk_aversion_changed)
         self.controls.run_clicked.connect(self._run)
         self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
@@ -131,6 +134,14 @@ class EfficientFrontierModule(BaseModule):
     def _on_simulations_changed(self, count: int):
         self.settings_manager.update_settings({"num_simulations": count})
 
+    def _on_risk_aversion_changed(self, gamma: float):
+        self._current_gamma = gamma
+        if gamma > 0 and self._last_results is not None:
+            self._compute_and_plot_indifference(gamma)
+        else:
+            self.chart.clear_indifference_curve()
+            self.weights_panel.clear_optimal_results()
+
     def _on_settings_clicked(self):
         from PySide6.QtWidgets import QDialog
         dialog = EFSettingsDialog(
@@ -147,7 +158,46 @@ class EfficientFrontierModule(BaseModule):
                 if self._last_results is not None:
                     self.chart.plot_results(self._last_results)
                     self.weights_panel.set_results(self._last_results, all_settings)
+                    # Re-apply or clear indifference curve based on new settings
+                    if self._current_gamma > 0 and all_settings.get("ef_show_indifference_curve", True):
+                        self._compute_and_plot_indifference(self._current_gamma)
+                    else:
+                        self.chart.clear_indifference_curve()
+                        self.weights_panel.clear_optimal_results()
                 self.chart.set_theme(self.theme_manager.current_theme)
+
+    def _compute_and_plot_indifference(self, gamma: float):
+        """Calculate and plot the indifference curve for the given risk aversion."""
+        results = self._last_results
+        if results is None:
+            return
+
+        all_settings = self.settings_manager.get_all_settings()
+        if not all_settings.get("ef_show_indifference_curve", True):
+            return
+
+        from .services.frontier_calculation_service import FrontierCalculationService
+        optimal = FrontierCalculationService.calculate_optimal_portfolio(
+            gamma, results["cov_matrix"], results["mean_returns"]
+        )
+
+        # Determine max chart vol for curve extent
+        max_chart_vol = max(results.get("frontier_vols", [0.5]) or [0.5])
+
+        self.chart.plot_indifference_curve(
+            gamma,
+            optimal["optimal_vol"],
+            optimal["optimal_ret"],
+            optimal["utility"],
+            max_chart_vol,
+        )
+
+        self.weights_panel.set_optimal_results(
+            results["tickers"],
+            optimal["optimal_weights"],
+            optimal["utility"],
+            gamma,
+        )
 
     def _run(self):
         tickers = self.ticker_panel.get_tickers()
@@ -182,7 +232,13 @@ class EfficientFrontierModule(BaseModule):
         self._last_results = results
         self.chart.plot_results(results)
         self.chart.set_theme(self.theme_manager.current_theme)
-        self.weights_panel.set_results(results, self.settings_manager.get_all_settings())
+        all_settings = self.settings_manager.get_all_settings()
+        self.weights_panel.set_results(results, all_settings)
+        # Read gamma directly from input to avoid signal-timing issues
+        gamma = self.controls.get_risk_aversion()
+        self._current_gamma = gamma
+        if gamma > 0 and all_settings.get("ef_show_indifference_curve", True):
+            self._compute_and_plot_indifference(gamma)
         self._hide_loading()
         self._cleanup_worker()
 
