@@ -112,6 +112,12 @@ class EFSettingsDialog(ThemedDialog):
         self.indifference_check.setFixedHeight(32)
         layout.addWidget(self.indifference_check)
 
+        layout.addSpacing(4)
+
+        self.leverage_check = QCheckBox("Allow Leverage")
+        self.leverage_check.setFixedHeight(32)
+        layout.addWidget(self.leverage_check)
+
         layout.addStretch()
 
         # Buttons
@@ -164,6 +170,9 @@ class EFSettingsDialog(ThemedDialog):
         self.indifference_check.setChecked(
             self.current_settings.get("ef_show_indifference_curve", True)
         )
+        self.leverage_check.setChecked(
+            self.current_settings.get("ef_allow_leverage", True)
+        )
 
     def _save_settings(self):
         """Save settings and close."""
@@ -177,6 +186,7 @@ class EFSettingsDialog(ThemedDialog):
             "ef_show_min_vol": self.min_vol_check.isChecked(),
             "ef_show_max_sortino": self.max_sortino_check.isChecked(),
             "ef_show_indifference_curve": self.indifference_check.isChecked(),
+            "ef_allow_leverage": self.leverage_check.isChecked(),
         }
         self.accept()
 

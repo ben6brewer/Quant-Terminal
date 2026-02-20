@@ -302,6 +302,47 @@ class FrontierCalculationService:
         }
 
     @staticmethod
+    def calculate_optimal_portfolio_leveraged(
+        gamma: float,
+        tangency_vol: float,
+        tangency_ret: float,
+        tangency_weights: List[float],
+        risk_free_rate: float,
+    ) -> Dict[str, Any]:
+        """Find the optimal portfolio on the Capital Market Line (closed-form).
+
+        With leverage allowed, the investor can lend/borrow at the risk-free rate
+        and invest in the tangency portfolio. The optimal allocation is a
+        closed-form solution — no optimizer needed.
+
+        Args:
+            gamma: Risk aversion coefficient (> 0)
+            tangency_vol: Volatility of the tangency portfolio
+            tangency_ret: Return of the tangency portfolio
+            tangency_weights: Asset weights of the tangency portfolio
+            risk_free_rate: Annualized risk-free rate
+
+        Returns dict with optimal_vol, optimal_ret, optimal_weights, utility,
+        risk_free_weight, leverage_factor.
+        """
+        sharpe = (tangency_ret - risk_free_rate) / tangency_vol if tangency_vol > 1e-10 else 0.0
+        optimal_vol = sharpe / gamma
+        optimal_ret = risk_free_rate + sharpe * optimal_vol
+        utility = risk_free_rate + sharpe ** 2 / (2 * gamma)
+        leverage = optimal_vol / tangency_vol if tangency_vol > 1e-10 else 0.0
+        risk_free_weight = 1 - leverage
+        optimal_weights = [w * leverage for w in tangency_weights]
+
+        return {
+            "optimal_vol": optimal_vol,
+            "optimal_ret": optimal_ret,
+            "optimal_weights": optimal_weights,
+            "utility": utility,
+            "risk_free_weight": risk_free_weight,
+            "leverage_factor": leverage,
+        }
+
+    @staticmethod
     def calculate_correlation_matrix(
         tickers: List[str],
         lookback_days: Optional[int] = 1825,

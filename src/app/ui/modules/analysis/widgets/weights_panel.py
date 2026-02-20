@@ -108,6 +108,28 @@ class CollapsibleWeightsSection(QWidget):
             weight_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self.table.setItem(row, 1, weight_item)
 
+    def set_data_with_risk_free(self, tickers: list, weights: list,
+                                risk_free_weight: float, metric_value: float):
+        """Populate the table with leveraged weights data.
+
+        Shows tickers with |weight| > 0.1%, plus a Risk-Free row at the bottom.
+        """
+        self.metric_value.setText(f"{self._metric_label}: {metric_value:.3f}")
+
+        pairs = [(t, w) for t, w in zip(tickers, weights) if abs(w) > 0.001]
+        pairs.sort(key=lambda p: p[1], reverse=True)
+        pairs.append(("Risk-Free", risk_free_weight))
+
+        self.table.setRowCount(len(pairs))
+        for row, (ticker, weight) in enumerate(pairs):
+            ticker_item = QTableWidgetItem(ticker)
+            ticker_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+            self.table.setItem(row, 0, ticker_item)
+
+            weight_item = QTableWidgetItem(f"{weight * 100:.2f}%")
+            weight_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.table.setItem(row, 1, weight_item)
+
     def clear_data(self):
         self.table.setRowCount(0)
         self.table.setFixedHeight(0)
@@ -170,7 +192,13 @@ class WeightsPanel(LazyThemeMixin, QWidget):
         body_layout.setContentsMargins(8, 4, 8, 8)
         body_layout.setSpacing(4)
 
-        # Three collapsible sections
+        # Collapsible sections (Optimal at top, hidden until gamma is set)
+        self.optimal_section = CollapsibleWeightsSection(
+            "Optimal", "Utility"
+        )
+        self.optimal_section.hide()
+        body_layout.addWidget(self.optimal_section, stretch=0)
+
         self.tangency_section = CollapsibleWeightsSection(
             "Max Sharpe", "Sharpe"
         )
@@ -186,13 +214,7 @@ class WeightsPanel(LazyThemeMixin, QWidget):
         )
         body_layout.addWidget(self.sortino_section, stretch=0)
 
-        self.optimal_section = CollapsibleWeightsSection(
-            "Optimal", "Utility"
-        )
-        self.optimal_section.hide()
-        body_layout.addWidget(self.optimal_section, stretch=0)
-
-        self._sections = [self.tangency_section, self.min_vol_section, self.sortino_section, self.optimal_section]
+        self._sections = [self.optimal_section, self.tangency_section, self.min_vol_section, self.sortino_section]
         for s in self._sections:
             s.toggled.connect(self._distribute_heights)
 
@@ -300,6 +322,15 @@ class WeightsPanel(LazyThemeMixin, QWidget):
         """Show the optimal portfolio section with given weights."""
         self.optimal_section.title_label.setText(f"Optimal (\u03b3={gamma:.1f})")
         self.optimal_section.set_data(tickers, weights, utility)
+        self.optimal_section.show()
+        self._distribute_heights()
+
+    def set_optimal_results_leveraged(self, tickers: list, weights: list,
+                                      risk_free_weight: float, utility: float,
+                                      gamma: float):
+        """Show the optimal portfolio section with leveraged weights (includes Risk-Free row)."""
+        self.optimal_section.title_label.setText(f"Optimal (\u03b3={gamma:.1f})")
+        self.optimal_section.set_data_with_risk_free(tickers, weights, risk_free_weight, utility)
         self.optimal_section.show()
         self._distribute_heights()
 

@@ -177,9 +177,22 @@ class EfficientFrontierModule(BaseModule):
             return
 
         from .services.frontier_calculation_service import FrontierCalculationService
-        optimal = FrontierCalculationService.calculate_optimal_portfolio(
-            gamma, results["cov_matrix"], results["mean_returns"]
-        )
+
+        allow_leverage = all_settings.get("ef_allow_leverage", True)
+        show_cml = all_settings.get("ef_show_cml", True)
+
+        if allow_leverage:
+            optimal = FrontierCalculationService.calculate_optimal_portfolio_leveraged(
+                gamma,
+                results["tangency_vol"],
+                results["tangency_ret"],
+                results["tangency_weights"],
+                results["risk_free_rate"],
+            )
+        else:
+            optimal = FrontierCalculationService.calculate_optimal_portfolio(
+                gamma, results["cov_matrix"], results["mean_returns"]
+            )
 
         # Determine max chart vol for curve extent
         max_chart_vol = max(results.get("frontier_vols", [0.5]) or [0.5])
@@ -190,14 +203,25 @@ class EfficientFrontierModule(BaseModule):
             optimal["optimal_ret"],
             optimal["utility"],
             max_chart_vol,
+            allow_leverage=allow_leverage,
+            show_cml=show_cml,
         )
 
-        self.weights_panel.set_optimal_results(
-            results["tickers"],
-            optimal["optimal_weights"],
-            optimal["utility"],
-            gamma,
-        )
+        if allow_leverage:
+            self.weights_panel.set_optimal_results_leveraged(
+                results["tickers"],
+                optimal["optimal_weights"],
+                optimal["risk_free_weight"],
+                optimal["utility"],
+                gamma,
+            )
+        else:
+            self.weights_panel.set_optimal_results(
+                results["tickers"],
+                optimal["optimal_weights"],
+                optimal["utility"],
+                gamma,
+            )
 
     def _run(self):
         tickers = self.ticker_panel.get_tickers()

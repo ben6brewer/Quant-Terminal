@@ -107,6 +107,11 @@ class FrontierChart(BaseChart):
         self._indifference_line = None
         self._optimal_marker = None
 
+        # CML params (stored for leveraged extension)
+        self._cml_rf = 0.0
+        self._cml_sharpe = 0.0
+        self._cml_max_vol = 0.0
+
         # Placeholder
         self._placeholder = None
 
@@ -182,13 +187,18 @@ class FrontierChart(BaseChart):
         tangency_vol = results["tangency_vol"]
         tangency_ret = results["tangency_ret"]
 
+        # Always compute CML params (needed for leveraged optimal even when CML hidden)
+        sharpe = (tangency_ret - rf) / tangency_vol if tangency_vol > 1e-10 else 0
+        if results["frontier_vols"]:
+            cml_max_vol = max(results["frontier_vols"]) * 1.3
+        else:
+            cml_max_vol = max(sim_vols) * 1.2
+        self._cml_rf = rf
+        self._cml_sharpe = sharpe
+        self._cml_max_vol = cml_max_vol
+
         if self._show_cml:
-            if results["frontier_vols"]:
-                max_vol = max(results["frontier_vols"]) * 1.3
-            else:
-                max_vol = max(sim_vols) * 1.2
-            cml_x = np.linspace(0, max_vol, 100)
-            sharpe = (tangency_ret - rf) / tangency_vol if tangency_vol > 1e-10 else 0
+            cml_x = np.linspace(0, cml_max_vol, 100)
             cml_y = rf + sharpe * cml_x
 
             cml_pen = pg.mkPen(color=(180, 180, 180), width=1.5, style=Qt.DashLine)
@@ -317,7 +327,9 @@ class FrontierChart(BaseChart):
 
     def plot_indifference_curve(self, gamma: float, optimal_vol: float,
                                 optimal_ret: float, utility: float,
-                                max_chart_vol: float):
+                                max_chart_vol: float,
+                                allow_leverage: bool = False,
+                                show_cml: bool = False):
         """Plot the indifference curve and optimal portfolio marker.
 
         Args:
@@ -326,6 +338,8 @@ class FrontierChart(BaseChart):
             optimal_ret: Optimal portfolio return
             utility: Utility value at optimal point
             max_chart_vol: Maximum volatility on the chart (for curve extent)
+            allow_leverage: Whether leverage mode is on (optimal on CML)
+            show_cml: Whether CML is currently visible
         """
         import numpy as np
 
@@ -334,8 +348,28 @@ class FrontierChart(BaseChart):
         if not self._show_indifference_curve:
             return
 
+        # If leveraged optimal extends beyond current CML, redraw CML to cover it
+        if allow_leverage and optimal_vol > self._cml_max_vol:
+            extended_vol = optimal_vol * 1.2
+            if show_cml and self._cml_line is not None:
+                self.plot_item.removeItem(self._cml_line)
+                cml_x = np.linspace(0, extended_vol, 100)
+                cml_y = self._cml_rf + self._cml_sharpe * cml_x
+                cml_pen = pg.mkPen(color=(180, 180, 180), width=1.5, style=Qt.DashLine)
+                self._cml_line = self.plot_item.plot(x=cml_x, y=cml_y, pen=cml_pen)
+            self._cml_max_vol = extended_vol
+            # Expand view range to cover the optimal point
+            vr = self.view_box.viewRange()
+            if optimal_vol > vr[0][1] * 0.9:
+                self.view_box.setRange(
+                    xRange=(vr[0][0], optimal_vol * 1.15),
+                    yRange=(vr[1][0], max(vr[1][1], optimal_ret * 1.1)),
+                    padding=0,
+                )
+
         # Parabola: r = U* + (γ/2)σ²
-        sigma = np.linspace(0, max_chart_vol * 1.1, 200)
+        curve_extent = max(max_chart_vol * 1.1, optimal_vol * 1.2)
+        sigma = np.linspace(0, curve_extent, 200)
         r = utility + (gamma / 2) * sigma ** 2
 
         gold_pen = pg.mkPen(color=(255, 215, 0), width=2, style=Qt.DashLine)
@@ -353,6 +387,7 @@ class FrontierChart(BaseChart):
         self.plot_item.addItem(self._optimal_marker)
 
         # Add to legend
+        label = "Optimal Portfolio (Leveraged)" if allow_leverage else "Optimal Portfolio"
         if self._legend is not None:
             self._legend.addItem(
                 pg.PlotDataItem(pen=gold_pen),
@@ -360,7 +395,7 @@ class FrontierChart(BaseChart):
             )
             self._legend.addItem(
                 self._optimal_marker,
-                f"Optimal Portfolio",
+                label,
             )
 
     def clear_indifference_curve(self):
@@ -423,3 +458,7 @@ class FrontierChart(BaseChart):
         if self._placeholder is not None:
             self.plot_item.removeItem(self._placeholder)
             self._placeholder = None
+
+        self._cml_rf = 0.0
+        self._cml_sharpe = 0.0
+        self._cml_max_vol = 0.0
