@@ -92,6 +92,9 @@ class AggregatePortfolioTable(LazyThemeMixin, QTableWidget):
         self.setVerticalScrollMode(QTableWidget.ScrollPerPixel)
         self.setHorizontalScrollMode(QTableWidget.ScrollPerPixel)
 
+        # Hide vertical scrollbar visually but keep wheel scrolling
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         # Disable built-in sorting - we handle it manually to keep TOTAL row pinned
         self.setSortingEnabled(False)
 

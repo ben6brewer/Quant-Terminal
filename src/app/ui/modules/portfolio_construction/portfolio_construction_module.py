@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget, QApplication, QFileDialog
-from PySide6.QtCore import Qt, QTimer, Signal
+from PySide6.QtCore import Qt, QTimer, QThread, QObject, Signal
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common import CustomMessageBox
@@ -26,6 +26,28 @@ from .widgets import (
     ViewTabBar
 )
 from .widgets.portfolio_settings_dialog import PortfolioSettingsDialog
+
+
+class _PriceLoadWorker(QObject):
+    """Background worker for fetching prices and names from Yahoo Finance."""
+
+    finished = Signal(dict, dict)  # prices, names
+    error = Signal(str)
+
+    def __init__(self, tickers):
+        super().__init__()
+        self._tickers = tickers
+
+    def run(self):
+        try:
+            from app.services.market_data import fetch_price_history_batch
+            fetch_price_history_batch(self._tickers)
+
+            prices = PortfolioService.fetch_current_prices(self._tickers)
+            names = PortfolioService.fetch_ticker_names(self._tickers)
+            self.finished.emit(prices, names)
+        except Exception as e:
+            self.error.emit(str(e))
 
 
 class PortfolioConstructionModule(LazyThemeMixin, QWidget):
@@ -64,6 +86,12 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
         # Loading overlay (created on demand)
         self._loading_overlay = None
+
+        # Background price load worker
+        self._load_thread: Optional[QThread] = None
+        self._load_worker: Optional[_PriceLoadWorker] = None
+        self._loading_portfolio_name: Optional[str] = None
+        self._loading_tickers: List[str] = []
 
         # Live price polling timer
         self._live_poll_timer: Optional[QTimer] = None
@@ -361,7 +389,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
                 self._load_portfolio(name)
 
     def _load_portfolio(self, name: str):
-        """Load portfolio by name."""
+        """Load portfolio by name using background thread for price fetching."""
         portfolio = PortfolioPersistence.load_portfolio(name)
 
         if not portfolio:
@@ -373,33 +401,120 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
             )
             return
 
+        # Cancel any in-progress load
+        self._cancel_load_worker()
+
         # Show loading overlay
         self._show_loading_overlay()
 
-        try:
-            # Clear caches when loading new portfolio
-            self._cached_prices.clear()
-            self._cached_names.clear()
-            self._cached_tickers.clear()
+        # Clear caches when loading new portfolio
+        self._cached_prices.clear()
+        self._cached_names.clear()
+        self._cached_tickers.clear()
 
-            self.current_portfolio = portfolio
-            self._populate_transaction_table()
-            # Force fetch all prices on portfolio load
-            self._update_aggregate_table(force_fetch=True)
+        self.current_portfolio = portfolio
+        self._populate_transaction_table()
 
-            # Record visit for recent ordering
+        # Determine tickers that need price fetching
+        transactions = self.transaction_table.get_all_transactions()
+        tickers_to_fetch = list(set(
+            t["ticker"] for t in transactions
+            if t["ticker"] and t["ticker"].upper() != PortfolioService.FREE_CASH_TICKER
+        ))
+
+        if not tickers_to_fetch:
+            # No tickers to fetch - finish immediately
+            self._on_portfolio_load_complete({}, {})
+            return
+
+        # Store context for completion callback
+        self._loading_portfolio_name = name
+        self._loading_tickers = tickers_to_fetch
+
+        # Start background fetch
+        self._load_thread = QThread()
+        self._load_worker = _PriceLoadWorker(tickers_to_fetch)
+        self._load_worker.moveToThread(self._load_thread)
+
+        self._load_thread.started.connect(self._load_worker.run)
+        self._load_worker.finished.connect(self._on_portfolio_load_complete)
+        self._load_worker.error.connect(self._on_portfolio_load_error)
+        self._load_thread.start()
+
+    def _on_portfolio_load_complete(self, prices: dict, names: dict):
+        """Handle successful price fetch - update UI on main thread."""
+        name = self._loading_portfolio_name or (
+            self.current_portfolio.get("name", "") if self.current_portfolio else ""
+        )
+
+        # Update caches
+        self._cached_prices.update(prices)
+        self._cached_names.update(names)
+        self._cached_tickers.update(self._loading_tickers)
+
+        # Update UI tables (no fetch needed - all tickers are cached)
+        self._update_aggregate_table(force_fetch=False)
+
+        # Record visit for recent ordering
+        if name:
             PortfolioPersistence.record_visit(name)
-
-            # Update controls and enable buttons (with recent ordering)
             portfolios = PortfolioPersistence.list_portfolios_by_recent()
             self.controls.update_portfolio_list(portfolios, name)
-            self.controls._update_button_states(True)
 
-            # Start live price updates for this portfolio
-            self._start_live_updates()
-        finally:
-            # Hide loading overlay
-            self._hide_loading_overlay()
+        self.controls._update_button_states(True)
+
+        # Start live price updates for this portfolio
+        self._start_live_updates()
+
+        # Hide loading overlay
+        self._hide_loading_overlay()
+        self._cleanup_load_worker()
+
+    def _on_portfolio_load_error(self, error_msg: str):
+        """Handle price fetch error - still show portfolio with available data."""
+        name = self._loading_portfolio_name or (
+            self.current_portfolio.get("name", "") if self.current_portfolio else ""
+        )
+
+        # Mark tickers as cached so _update_aggregate_table won't re-fetch
+        self._cached_tickers.update(self._loading_tickers)
+
+        # Update UI with whatever data we have
+        self._update_aggregate_table(force_fetch=False)
+
+        if name:
+            PortfolioPersistence.record_visit(name)
+            portfolios = PortfolioPersistence.list_portfolios_by_recent()
+            self.controls.update_portfolio_list(portfolios, name)
+
+        self.controls._update_button_states(True)
+        self._start_live_updates()
+        self._hide_loading_overlay()
+        self._cleanup_load_worker()
+
+    def _cancel_load_worker(self):
+        """Disconnect signals from any in-progress load to prevent stale callbacks."""
+        if self._load_worker is not None:
+            try:
+                self._load_worker.finished.disconnect()
+                self._load_worker.error.disconnect()
+            except RuntimeError:
+                pass
+        if self._load_thread is not None:
+            self._load_thread.quit()
+        self._load_thread = None
+        self._load_worker = None
+
+    def _cleanup_load_worker(self):
+        """Clean up load worker and thread after completion."""
+        if self._load_thread is not None:
+            self._load_thread.quit()
+            self._load_thread.wait(2000)
+            self._load_thread.deleteLater()
+            self._load_thread = None
+        if self._load_worker is not None:
+            self._load_worker.deleteLater()
+            self._load_worker = None
 
     def _show_loading_overlay(self, message: str = "Loading Portfolio..."):
         """Show loading overlay over the tab bar and table area."""
