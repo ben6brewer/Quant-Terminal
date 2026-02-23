@@ -1,6 +1,7 @@
 """Portfolio Construction Module - Main Orchestrator"""
 
 import threading
+import weakref
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
@@ -230,6 +231,9 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         """
         Recalculate and update aggregate table.
 
+        Fetches prices in a background thread if new tickers need data,
+        then applies results on the main thread.
+
         Args:
             force_fetch: If True, fetch prices for all tickers (used on portfolio load)
         """
@@ -246,34 +250,71 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         )
 
         # Determine which tickers need price fetching
+        tickers_to_fetch = []
         if tickers:
             if force_fetch:
-                # Full refresh - fetch all tickers
                 tickers_to_fetch = list(tickers)
             else:
-                # Only fetch prices for NEW tickers (not already cached)
                 tickers_to_fetch = [t for t in tickers if t not in self._cached_tickers]
 
-            # Fetch prices and names only for tickers that need it
-            if tickers_to_fetch:
-                # Batch fetch all tickers first (single Yahoo call)
-                # This pre-populates the cache so individual lookups are instant
-                from app.services.market_data import fetch_price_history_batch
-                fetch_price_history_batch(tickers_to_fetch)
+        if tickers_to_fetch:
+            # Fetch in background thread to avoid blocking UI
+            self._cancel_load_worker()
 
-                new_prices = PortfolioService.fetch_current_prices(tickers_to_fetch)
-                new_names = PortfolioService.fetch_ticker_names(tickers_to_fetch)
-                # Update caches
-                self._cached_prices.update(new_prices)
-                self._cached_names.update(new_names)
-                self._cached_tickers.update(tickers_to_fetch)
+            from app.services.calculation_worker import CalculationWorker
 
-            # Remove cached tickers that are no longer in use
-            removed_tickers = self._cached_tickers - tickers
-            for ticker in removed_tickers:
-                self._cached_tickers.discard(ticker)
-                self._cached_prices.pop(ticker, None)
-                self._cached_names.pop(ticker, None)
+            # Store context for the completion callback
+            self._pending_tickers = tickers
+            self._pending_tickers_to_fetch = tickers_to_fetch
+            self._pending_transactions = transactions
+
+            self._load_thread = QThread()
+            self._load_worker = CalculationWorker(
+                _fetch_prices_and_names, tickers_to_fetch
+            )
+            self._load_worker.moveToThread(self._load_thread)
+
+            self._load_thread.started.connect(self._load_worker.run)
+            self._load_worker.finished.connect(self._on_aggregate_fetch_complete)
+            self._load_worker.error.connect(self._on_aggregate_fetch_error)
+            self._load_thread.start()
+        else:
+            # No new tickers to fetch — apply directly with cached data
+            self._apply_aggregate_update(tickers, transactions)
+
+    def _on_aggregate_fetch_complete(self, result):
+        """Handle background price/name fetch for aggregate table."""
+        prices, names = result
+        tickers = getattr(self, "_pending_tickers", set())
+        tickers_to_fetch = getattr(self, "_pending_tickers_to_fetch", [])
+        transactions = getattr(self, "_pending_transactions", [])
+
+        # Update caches
+        self._cached_prices.update(prices)
+        self._cached_names.update(names)
+        self._cached_tickers.update(tickers_to_fetch)
+
+        self._apply_aggregate_update(tickers, transactions)
+        self._cleanup_load_worker()
+
+    def _on_aggregate_fetch_error(self, error_msg: str):
+        """Handle error during aggregate fetch — apply with available data."""
+        tickers = getattr(self, "_pending_tickers", set())
+        tickers_to_fetch = getattr(self, "_pending_tickers_to_fetch", [])
+        transactions = getattr(self, "_pending_transactions", [])
+
+        self._cached_tickers.update(tickers_to_fetch)
+        self._apply_aggregate_update(tickers, transactions)
+        self._cleanup_load_worker()
+
+    def _apply_aggregate_update(self, tickers: set, transactions: list):
+        """Apply aggregate table update using cached data (runs on main thread)."""
+        # Remove cached tickers that are no longer in use
+        removed_tickers = self._cached_tickers - tickers
+        for ticker in removed_tickers:
+            self._cached_tickers.discard(ticker)
+            self._cached_prices.pop(ticker, None)
+            self._cached_names.pop(ticker, None)
 
         # Use cached prices for calculations
         current_prices = {t: self._cached_prices.get(t) for t in tickers}
@@ -494,10 +535,11 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
             try:
                 self._load_worker.finished.disconnect()
                 self._load_worker.error.disconnect()
-            except RuntimeError:
+            except (RuntimeError, TypeError):
                 pass
         if self._load_thread is not None:
             self._load_thread.quit()
+            self._load_thread.wait(3000)
         self._load_thread = None
         self._load_worker = None
 
@@ -898,6 +940,9 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
         print(f"[Live Updates] Fetching prices for: {tickers}")
 
+        # Prevent segfault: capture weakref so thread won't emit to destroyed widget
+        weak_self = weakref.ref(self)
+
         # Run in background thread to avoid blocking UI
         def fetch_and_update():
             try:
@@ -906,8 +951,12 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
                 prices = YahooFinanceService.fetch_batch_current_prices(tickers)
                 if prices:
                     print(f"[Live Updates] Received prices: {prices}")
-                    # Emit signal to update UI on main thread
-                    self._live_prices_received.emit(prices)
+                    obj = weak_self()
+                    if obj is not None:
+                        try:
+                            obj._live_prices_received.emit(prices)
+                        except RuntimeError:
+                            pass
                 else:
                     print("[Live Updates] No prices returned")
             except Exception as e:

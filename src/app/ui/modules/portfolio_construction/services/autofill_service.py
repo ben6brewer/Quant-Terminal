@@ -5,6 +5,7 @@ thread-safe signal emission for UI updates.
 """
 
 import threading
+import weakref
 from datetime import datetime
 from typing import Callable, Dict, Optional, Set
 
@@ -145,6 +146,8 @@ class AutoFillService(QObject):
 
         today_str = datetime.now().strftime("%Y-%m-%d")
 
+        weak_self = weakref.ref(self)
+
         def fetch_and_emit():
             """Background thread: fetch price, then emit signal."""
             try:
@@ -158,7 +161,12 @@ class AutoFillService(QObject):
                     price = results.get(ticker_upper, {}).get(date)
 
                 if price is not None:
-                    self.price_ready.emit(row, price)
+                    obj = weak_self()
+                    if obj is not None:
+                        try:
+                            obj.price_ready.emit(row, price)
+                        except RuntimeError:
+                            pass
             except Exception:
                 pass  # Silently fail
 
@@ -194,14 +202,21 @@ class AutoFillService(QObject):
             self.name_ready.emit(row, self._cached_names[ticker_upper])
             return
 
+        weak_self = weakref.ref(self)
+
         def fetch_and_emit():
             """Background thread: fetch name, then emit signal."""
             try:
                 names = PortfolioService.fetch_ticker_names([ticker_upper])
                 name = names.get(ticker_upper, "")
                 if name:
-                    self._cached_names[ticker_upper] = name
-                    self.name_ready.emit(row, name)
+                    obj = weak_self()
+                    if obj is not None:
+                        obj._cached_names[ticker_upper] = name
+                        try:
+                            obj.name_ready.emit(row, name)
+                        except RuntimeError:
+                            pass
             except Exception:
                 pass  # Silently fail
 
@@ -233,12 +248,16 @@ class AutoFillService(QObject):
         if not to_fetch:
             return
 
+        weak_self = weakref.ref(self)
+
         def fetch_batch():
             try:
                 names = PortfolioService.fetch_ticker_names(to_fetch)
-                for ticker, name in names.items():
-                    if name:
-                        self._cached_names[ticker.upper()] = name
+                obj = weak_self()
+                if obj is not None:
+                    for ticker, name in names.items():
+                        if name:
+                            obj._cached_names[ticker.upper()] = name
             except Exception:
                 pass
 

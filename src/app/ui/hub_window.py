@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QWidget,
     QApplication,
 )
-from PySide6.QtCore import Qt, QPoint, QRect, QTimer
+from PySide6.QtCore import Qt, QObject, QPoint, QRect, QTimer
 from PySide6.QtGui import QMouseEvent, QRegion
 
 from app.core.theme_manager import ThemeManager
@@ -494,6 +494,24 @@ class HubWindow(QMainWindow):
         if current_container != self.home_screen:
             self._destroy_module_container(current_container)
 
+    def _disconnect_theme_signals(self, container: QWidget) -> None:
+        """Disconnect theme_changed slots from all children before destroying."""
+        _THEME_SLOTS = (
+            "_on_theme_changed_lazy",
+            "_on_theme_changed",
+            "_on_theme_changed_lazy_chart",
+            "_on_theme_changed_lazy_panel",
+            "_on_external_theme_change",
+        )
+        for child in container.findChildren(QObject):
+            for slot_name in _THEME_SLOTS:
+                slot = getattr(child, slot_name, None)
+                if slot is not None:
+                    try:
+                        self.theme_manager.theme_changed.disconnect(slot)
+                    except (RuntimeError, TypeError):
+                        pass
+
     def _destroy_module_container(self, container: QWidget) -> None:
         """Destroy a specific module container to free memory."""
         if container == self.home_screen:
@@ -508,6 +526,9 @@ class HubWindow(QMainWindow):
 
         if module_id is None:
             return
+
+        # Disconnect theme signals before destroying to prevent stale callbacks
+        self._disconnect_theme_signals(container)
 
         # Remove from stack first
         self.main_stack.removeWidget(container)

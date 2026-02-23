@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import threading
+import weakref
 from typing import Callable
 
 from PySide6.QtCore import QObject, QTimer, Signal
@@ -149,11 +150,18 @@ class LiveUpdateManager(QObject):
 
     def _fetch_today_bar(self, ticker: str) -> None:
         """Fetch today's OHLCV bar in a background thread and emit signal."""
+        weak_self = weakref.ref(self)
+
         def _fetch():
             try:
                 today_bar = YahooFinanceService.fetch_today_ohlcv(ticker)
                 if today_bar is not None and not today_bar.empty:
-                    self.bar_received.emit(ticker, today_bar)
+                    obj = weak_self()
+                    if obj is not None:
+                        try:
+                            obj.bar_received.emit(ticker, today_bar)
+                        except RuntimeError:
+                            pass
             except Exception:
                 pass
 

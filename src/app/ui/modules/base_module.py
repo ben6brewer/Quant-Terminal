@@ -86,7 +86,7 @@ class BaseModule(LazyThemeMixin, QWidget):
         """Safely stop thread and release references."""
         if self._thread is not None:
             self._thread.quit()
-            self._thread.wait()
+            self._thread.wait(5000)
         if self._worker is not None:
             self._worker.deleteLater()
         if self._thread is not None:
@@ -96,6 +96,12 @@ class BaseModule(LazyThemeMixin, QWidget):
 
     def _cancel_worker(self):
         """Cancel any running worker with timeout."""
+        if self._worker is not None:
+            try:
+                self._worker.finished.disconnect()
+                self._worker.error.disconnect()
+            except (RuntimeError, TypeError):
+                pass
         if self._thread is not None and self._thread.isRunning():
             self._thread.quit()
             self._thread.wait(2000)

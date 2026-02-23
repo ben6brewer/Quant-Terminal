@@ -151,8 +151,13 @@ class MonteCarloModule(BaseModule):
     def _cancel_running_simulation(self):
         """Cancel any in-progress simulation."""
         if self._simulation_worker is not None:
+            try:
+                self._simulation_worker.simulation_complete.disconnect()
+                self._simulation_worker.simulation_error.disconnect()
+            except (RuntimeError, TypeError):
+                pass
             self._simulation_worker.request_cancellation()
-            self._simulation_worker.wait(1000)  # Wait up to 1 second
+            self._simulation_worker.wait(5000)
             self._simulation_worker = None
 
     def _run_simulation(self):

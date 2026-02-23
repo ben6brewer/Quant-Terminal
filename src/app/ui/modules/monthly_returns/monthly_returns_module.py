@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QApplication
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget
 
 from app.core.config import DEFAULT_TICKER
 from app.core.theme_manager import ThemeManager
@@ -89,32 +89,46 @@ class MonthlyReturnsModule(BaseModule):
         if not self._current_portfolio:
             return
 
-        self._show_loading_overlay("Computing monthly returns...")
+        self.table_container.hide()
 
-        try:
-            grid = MonthlyReturnsService.compute_monthly_grid(
-                self._current_portfolio, self._is_ticker_mode
+        self._run_worker(
+            MonthlyReturnsService.compute_monthly_grid,
+            self._current_portfolio,
+            self._is_ticker_mode,
+            loading_message="Computing monthly returns...",
+            on_complete=self._on_heatmap_complete,
+            on_error=self._on_heatmap_error,
+        )
+
+    def _on_heatmap_complete(self, grid):
+        """Handle completed heatmap computation."""
+        self._hide_loading()
+        self._cleanup_worker()
+
+        if grid.empty:
+            CustomMessageBox.information(
+                self.theme_manager, self, "No Data",
+                "No data available for the selected ticker or portfolio."
             )
-            if grid.empty:
-                CustomMessageBox.information(
-                    self.theme_manager, self, "No Data",
-                    "No data available for the selected ticker or portfolio."
-                )
-            else:
-                s = self._settings_manager.get_all_settings()
-                self.table.update_grid(
-                    grid,
-                    colorscale=s["colorscale"],
-                    use_gradient=s["use_gradient"],
-                    decimals=s["decimals"],
-                    show_ytd=s["show_ytd"],
-                )
-        except Exception as e:
-            CustomMessageBox.critical(
-                self.theme_manager, self, "Load Error", str(e)
+        else:
+            s = self._settings_manager.get_all_settings()
+            self.table.update_grid(
+                grid,
+                colorscale=s["colorscale"],
+                use_gradient=s["use_gradient"],
+                decimals=s["decimals"],
+                show_ytd=s["show_ytd"],
             )
-        finally:
-            self._hide_loading_overlay()
+        self.table_container.show()
+
+    def _on_heatmap_error(self, error_msg: str):
+        """Handle heatmap computation error."""
+        self._hide_loading()
+        self._cleanup_worker()
+        self.table_container.show()
+        CustomMessageBox.critical(
+            self.theme_manager, self, "Load Error", error_msg
+        )
 
     def _apply_theme(self):
         bg = self._get_theme_bg()
@@ -122,27 +136,6 @@ class MonthlyReturnsModule(BaseModule):
             MonthlyReturnsModule {{ background-color: {bg}; }}
             QWidget {{ background-color: {bg}; }}
         """)
-
-    def _show_loading_overlay(self, message: str = "Loading..."):
-        from app.ui.widgets.common.loading_overlay import LoadingOverlay
-
-        self.table_container.hide()
-        if self._loading_overlay is None:
-            self._loading_overlay = LoadingOverlay(self, self.theme_manager, message)
-        else:
-            self._loading_overlay.set_message(message)
-        self._loading_overlay.setGeometry(self.rect())
-        self._loading_overlay.show()
-        self._loading_overlay.raise_()
-        self._loading_overlay.repaint()
-        QApplication.processEvents()
-
-    def _hide_loading_overlay(self):
-        if self._loading_overlay is not None:
-            self._loading_overlay.hide()
-            self._loading_overlay.deleteLater()
-            self._loading_overlay = None
-        self.table_container.show()
 
     def refresh(self):
         self._refresh_portfolio_list()

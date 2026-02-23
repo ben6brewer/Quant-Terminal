@@ -2117,6 +2117,9 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
         # Determine if today or historical
         today_str = datetime.now().strftime("%Y-%m-%d")
 
+        import weakref
+        weak_self = weakref.ref(self)
+
         def fetch_and_apply():
             """Background thread: fetch price, then emit signal for main thread."""
             try:
@@ -2127,16 +2130,25 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
                     results = PortfolioService.fetch_historical_closes_batch([(ticker, tx_date)])
                     price = results.get(ticker, {}).get(tx_date)
 
+                obj = weak_self()
+                if obj is None:
+                    return
+
                 if price is not None:
                     # Only auto-fill price if user didn't manually enter one
                     if not user_entered_price:
-                        self._price_autofill_ready.emit(row, price)
+                        try:
+                            obj._price_autofill_ready.emit(row, price)
+                        except RuntimeError:
+                            pass
                 else:
                     # Price is None - check if date is before ticker history
                     first_date = PortfolioService.get_first_available_date(ticker)
                     if first_date and tx_date < first_date:
-                        # Emit signal for main thread to show dialog and correct date
-                        self._date_correction_needed.emit(row, first_date, ticker)
+                        try:
+                            obj._date_correction_needed.emit(row, first_date, ticker)
+                        except RuntimeError:
+                            pass
             except Exception:
                 pass  # Silently fail
 
@@ -2272,6 +2284,8 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
 
         # Fetch in background thread
         import threading
+        import weakref
+        weak_self = weakref.ref(self)
 
         def fetch_name():
             """Background thread: fetch name, then emit signal for main thread."""
@@ -2279,10 +2293,13 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
                 names = PortfolioService.fetch_ticker_names([ticker_upper])
                 name = names.get(ticker_upper, "")
                 if name:
-                    # Cache the name
-                    self._cached_names[ticker_upper] = name
-                    # Emit signal to update UI from main thread
-                    self._name_autofill_ready.emit(row, name)
+                    obj = weak_self()
+                    if obj is not None:
+                        obj._cached_names[ticker_upper] = name
+                        try:
+                            obj._name_autofill_ready.emit(row, name)
+                        except RuntimeError:
+                            pass
             except Exception as e:
                 print(f"Error fetching name for {ticker_upper}: {e}")
 
