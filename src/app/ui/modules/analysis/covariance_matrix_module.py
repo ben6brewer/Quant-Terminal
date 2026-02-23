@@ -1,7 +1,6 @@
 """Covariance Matrix Module - Annualized covariance heatmap for selected tickers."""
 
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
-from PySide6.QtCore import Signal, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
@@ -12,31 +11,6 @@ from .widgets.analysis_controls import AnalysisControls
 from .widgets.ticker_list_panel import TickerListPanel
 from .widgets.matrix_heatmap import MatrixHeatmap
 from .widgets.analysis_settings_dialog import AnalysisSettingsDialog
-
-
-class _CovWorker(QObject):
-    """Background worker for covariance matrix calculation."""
-
-    finished = Signal(object)  # pd.DataFrame
-    error = Signal(str)
-
-    def __init__(self, tickers, lookback_days, start_date=None, end_date=None):
-        super().__init__()
-        self._tickers = tickers
-        self._lookback_days = lookback_days
-        self._start_date = start_date
-        self._end_date = end_date
-
-    def run(self):
-        try:
-            from .services.frontier_calculation_service import FrontierCalculationService
-            result = FrontierCalculationService.calculate_covariance_matrix(
-                self._tickers, self._lookback_days,
-                start_date=self._start_date, end_date=self._end_date,
-            )
-            self.finished.emit(result)
-        except Exception as e:
-            self.error.emit(str(e))
 
 
 class CovarianceMatrixModule(BaseModule):
@@ -135,9 +109,6 @@ class CovarianceMatrixModule(BaseModule):
             self.heatmap.show_placeholder("Add at least 2 tickers to run")
             return
 
-        self._cancel_worker()
-        self._show_loading("Computing covariance matrix...")
-
         custom_range = self.controls.custom_date_range
         if custom_range:
             lookback = None
@@ -146,15 +117,16 @@ class CovarianceMatrixModule(BaseModule):
             lookback = self.settings_manager.get_lookback_days()
             start_date, end_date = None, None
 
-        self._thread = QThread()
-        self._worker = _CovWorker(tickers, lookback, start_date, end_date)
-        self._worker.moveToThread(self._thread)
+        from .services.frontier_calculation_service import FrontierCalculationService
 
-        self._thread.started.connect(self._worker.run)
-        self._worker.finished.connect(self._on_complete)
-        self._worker.error.connect(self._on_error)
-
-        self._thread.start()
+        self._run_worker(
+            FrontierCalculationService.calculate_covariance_matrix,
+            tickers, lookback,
+            start_date=start_date, end_date=end_date,
+            loading_message="Computing covariance matrix...",
+            on_complete=self._on_complete,
+            on_error=self._on_error,
+        )
 
     def _on_complete(self, cov_matrix):
         self._last_matrix = cov_matrix

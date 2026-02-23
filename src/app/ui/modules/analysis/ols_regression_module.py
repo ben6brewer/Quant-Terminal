@@ -1,7 +1,6 @@
 """OLS Regression Module - Scatter plot with regression line and statistics panel."""
 
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
-from PySide6.QtCore import Signal, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
@@ -10,37 +9,6 @@ from .services.ols_settings_manager import OLSSettingsManager
 from .widgets.ols_controls import OLSControls
 from .widgets.ols_scatter_chart import OLSScatterChart
 from .widgets.ols_stats_panel import OLSStatsPanel
-
-
-class _OLSWorker(QObject):
-    """Background worker for OLS regression calculation."""
-
-    finished = Signal(object)  # OLSRegressionResult
-    error = Signal(str)
-
-    def __init__(self, ticker_x, ticker_y, data_mode, frequency,
-                 lookback_days, start_date=None, end_date=None):
-        super().__init__()
-        self._ticker_x = ticker_x
-        self._ticker_y = ticker_y
-        self._data_mode = data_mode
-        self._frequency = frequency
-        self._lookback_days = lookback_days
-        self._start_date = start_date
-        self._end_date = end_date
-
-    def run(self):
-        try:
-            from .services.ols_regression_service import OLSRegressionService
-            result = OLSRegressionService.compute_regression(
-                self._ticker_x, self._ticker_y, self._data_mode,
-                frequency=self._frequency,
-                lookback_days=self._lookback_days,
-                start_date=self._start_date, end_date=self._end_date,
-            )
-            self.finished.emit(result)
-        except Exception as e:
-            self.error.emit(str(e))
 
 
 class OLSRegressionModule(BaseModule):
@@ -123,9 +91,6 @@ class OLSRegressionModule(BaseModule):
             "frequency": frequency,
         })
 
-        self._cancel_worker()
-        self._show_loading("Computing OLS regression...")
-
         custom_range = self.controls.custom_date_range
         if custom_range:
             lookback = None
@@ -134,17 +99,18 @@ class OLSRegressionModule(BaseModule):
             lookback = self.settings_manager.get_lookback_days()
             start_date, end_date = None, None
 
-        self._thread = QThread()
-        self._worker = _OLSWorker(
-            tx, ty, data_mode, frequency, lookback, start_date, end_date
+        from .services.ols_regression_service import OLSRegressionService
+
+        self._run_worker(
+            OLSRegressionService.compute_regression,
+            tx, ty, data_mode,
+            frequency=frequency,
+            lookback_days=lookback,
+            start_date=start_date, end_date=end_date,
+            loading_message="Computing OLS regression...",
+            on_complete=self._on_complete,
+            on_error=self._on_error,
         )
-        self._worker.moveToThread(self._thread)
-
-        self._thread.started.connect(self._worker.run)
-        self._worker.finished.connect(self._on_complete)
-        self._worker.error.connect(self._on_error)
-
-        self._thread.start()
 
     def _on_complete(self, result):
         self._last_result = result

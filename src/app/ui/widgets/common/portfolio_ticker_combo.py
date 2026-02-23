@@ -1,10 +1,23 @@
 """Portfolio/Ticker ComboBox - Reusable editable combo for portfolios and tickers."""
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from PySide6.QtWidgets import QComboBox, QAbstractItemView, QListView
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QWheelEvent
+
+PORTFOLIO_PREFIX = "[Port] "
+
+
+def parse_portfolio_value(value: str) -> Tuple[str, bool]:
+    """Parse a combo value into (name, is_portfolio).
+
+    ``'[Port] My Portfolio'`` → ``('My Portfolio', True)``
+    ``'SPY'``                 → ``('SPY', False)``
+    """
+    if value and value.startswith(PORTFOLIO_PREFIX):
+        return value[len(PORTFOLIO_PREFIX):], True
+    return value, False
 
 
 class SmoothScrollListView(QListView):

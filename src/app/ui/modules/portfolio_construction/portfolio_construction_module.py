@@ -1,19 +1,18 @@
 """Portfolio Construction Module - Main Orchestrator"""
 
-import csv
 import threading
 from datetime import datetime
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget, QApplication, QFileDialog
-from PySide6.QtCore import Qt, QTimer, QThread, QObject, Signal
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget, QApplication
+from PySide6.QtCore import Qt, QTimer, QThread, Signal
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common import CustomMessageBox
+from app.ui.widgets.common import CustomMessageBox, parse_portfolio_value
 from app.ui.widgets.common.loading_overlay import LoadingOverlay
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
 
-from .services import PortfolioService, PortfolioPersistence, PortfolioSettingsManager
+from .services import PortfolioService, PortfolioPersistence, PortfolioSettingsManager, PortfolioExportService
 from .widgets import (
     PortfolioControls,
     TransactionLogTable,
@@ -28,26 +27,14 @@ from .widgets import (
 from .widgets.portfolio_settings_dialog import PortfolioSettingsDialog
 
 
-class _PriceLoadWorker(QObject):
-    """Background worker for fetching prices and names from Yahoo Finance."""
+def _fetch_prices_and_names(tickers):
+    """Fetch prices and names for tickers (runs in background thread)."""
+    from app.services.market_data import fetch_price_history_batch
 
-    finished = Signal(dict, dict)  # prices, names
-    error = Signal(str)
-
-    def __init__(self, tickers):
-        super().__init__()
-        self._tickers = tickers
-
-    def run(self):
-        try:
-            from app.services.market_data import fetch_price_history_batch
-            fetch_price_history_batch(self._tickers)
-
-            prices = PortfolioService.fetch_current_prices(self._tickers)
-            names = PortfolioService.fetch_ticker_names(self._tickers)
-            self.finished.emit(prices, names)
-        except Exception as e:
-            self.error.emit(str(e))
+    fetch_price_history_batch(tickers)
+    prices = PortfolioService.fetch_current_prices(tickers)
+    names = PortfolioService.fetch_ticker_names(tickers)
+    return (prices, names)
 
 
 class PortfolioConstructionModule(LazyThemeMixin, QWidget):
@@ -89,7 +76,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
         # Background price load worker
         self._load_thread: Optional[QThread] = None
-        self._load_worker: Optional[_PriceLoadWorker] = None
+        self._load_worker = None
         self._loading_portfolio_name: Optional[str] = None
         self._loading_tickers: List[str] = []
 
@@ -432,14 +419,23 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self._loading_tickers = tickers_to_fetch
 
         # Start background fetch
+        from app.services.calculation_worker import CalculationWorker
+
         self._load_thread = QThread()
-        self._load_worker = _PriceLoadWorker(tickers_to_fetch)
+        self._load_worker = CalculationWorker(
+            _fetch_prices_and_names, tickers_to_fetch
+        )
         self._load_worker.moveToThread(self._load_thread)
 
         self._load_thread.started.connect(self._load_worker.run)
-        self._load_worker.finished.connect(self._on_portfolio_load_complete)
+        self._load_worker.finished.connect(self._on_prices_loaded)
         self._load_worker.error.connect(self._on_portfolio_load_error)
         self._load_thread.start()
+
+    def _on_prices_loaded(self, result):
+        """Unpack (prices, names) tuple from CalculationWorker."""
+        prices, names = result
+        self._on_portfolio_load_complete(prices, names)
 
     def _on_portfolio_load_complete(self, prices: dict, names: dict):
         """Handle successful price fetch - update UI on main thread."""
@@ -779,8 +775,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio selection change in dropdown."""
         # Strip "[Port] " prefix if present
-        if name.startswith("[Port] "):
-            name = name[7:]
+        name, _ = parse_portfolio_value(name)
 
         if not name:
             return
@@ -985,11 +980,22 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
         # Get data based on current view
         current_view = self.table_stack.currentIndex()
+        portfolio_name = self.current_portfolio.get("name", "portfolio")
 
         if current_view == 0:  # Transaction Log
-            data, columns, prefix = self._get_transaction_export_data()
+            data, columns, prefix = PortfolioExportService.get_transaction_export_data(
+                self.transaction_table.get_all_transactions(),
+                self._cached_prices,
+                self._cached_names,
+                self.transaction_table._historical_prices,
+                portfolio_name,
+            )
         else:  # Holdings
-            data, columns, prefix = self._get_holdings_export_data()
+            data, columns, prefix = PortfolioExportService.get_holdings_export_data(
+                self.aggregate_table._holdings_data,
+                self._cached_names,
+                portfolio_name,
+            )
 
         if not data:
             CustomMessageBox.information(
@@ -1001,258 +1007,6 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
             return
 
         if export_format == "csv":
-            self._export_to_csv(data, columns, prefix)
+            PortfolioExportService.export_to_csv(self, self.theme_manager, data, columns, prefix)
         else:
-            self._export_to_excel(data, columns, prefix)
-
-    def _get_transaction_export_data(self) -> Tuple[List[Dict[str, Any]], List[str], str]:
-        """
-        Get transaction data for export.
-
-        Returns:
-            Tuple of (data rows, column headers, filename prefix)
-        """
-        transactions = self.transaction_table.get_all_transactions()
-
-        columns = [
-            "Date", "Ticker", "Name", "Quantity", "Execution Price",
-            "Fees", "Type", "Daily Closing Price", "Live Price",
-            "Principal", "Market Value"
-        ]
-
-        export_data = []
-        for tx in transactions:
-            ticker = tx.get("ticker", "")
-            quantity = tx.get("quantity", 0) or 0
-            entry_price = tx.get("entry_price", 0) or 0
-            fees = tx.get("fees", 0) or 0
-            current_price = self._cached_prices.get(ticker, 0) or 0
-
-            # Get historical price for this transaction date
-            tx_date = tx.get("date", "")
-            historical_prices = self.transaction_table._historical_prices
-            daily_close = historical_prices.get(ticker, {}).get(tx_date, "")
-
-            # Calculate principal and market value
-            principal = quantity * entry_price + fees
-            market_value = quantity * current_price if current_price else ""
-
-            row = {
-                "Date": tx_date,
-                "Ticker": ticker,
-                "Name": self._cached_names.get(ticker, ""),
-                "Quantity": quantity,
-                "Execution Price": entry_price,
-                "Fees": fees,
-                "Type": tx.get("transaction_type", ""),
-                "Daily Closing Price": daily_close,
-                "Live Price": current_price if current_price else "",
-                "Principal": principal,
-                "Market Value": market_value
-            }
-            export_data.append(row)
-
-        portfolio_name = self.current_portfolio.get("name", "portfolio")
-        return export_data, columns, f"{portfolio_name}_transactions"
-
-    def _get_holdings_export_data(self) -> Tuple[List[Dict[str, Any]], List[str], str]:
-        """
-        Get holdings data for export (excludes TOTAL row).
-
-        Returns:
-            Tuple of (data rows, column headers, filename prefix)
-        """
-        holdings = self.aggregate_table._holdings_data
-
-        columns = [
-            "Ticker", "Name", "Quantity", "Avg Cost Basis",
-            "Current Price", "Market Value", "P&L", "Weight %"
-        ]
-
-        export_data = []
-        for holding in holdings:
-            ticker = holding.get("ticker", "")
-            is_free_cash = holding.get("_is_free_cash", False)
-
-            row = {
-                "Ticker": ticker,
-                "Name": self._cached_names.get(ticker, "") if not is_free_cash else "",
-                "Quantity": holding.get("total_quantity", 0),
-                "Avg Cost Basis": holding.get("avg_cost_basis", 0),
-                "Current Price": holding.get("current_price", "") if not is_free_cash else "",
-                "Market Value": holding.get("market_value", ""),
-                "P&L": holding.get("total_pnl", 0) if not is_free_cash else "",
-                "Weight %": holding.get("weight_pct", 0)
-            }
-            export_data.append(row)
-
-        portfolio_name = self.current_portfolio.get("name", "portfolio")
-        return export_data, columns, f"{portfolio_name}_holdings"
-
-    def _export_to_csv(self, data: List[Dict[str, Any]], columns: List[str], filename_prefix: str):
-        """
-        Export data to CSV file.
-
-        Args:
-            data: List of row dictionaries
-            columns: List of column headers
-            filename_prefix: Default filename without extension
-        """
-        default_name = f"{filename_prefix}.csv"
-        file_path, _ = QFileDialog.getSaveFileName(
-            self,
-            "Export to CSV",
-            default_name,
-            "CSV Files (*.csv);;All Files (*)"
-        )
-
-        if not file_path:
-            return  # User cancelled
-
-        try:
-            with open(file_path, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.DictWriter(f, fieldnames=columns)
-                writer.writeheader()
-                writer.writerows(data)
-
-            CustomMessageBox.information(
-                self.theme_manager,
-                self,
-                "Export Complete",
-                f"Data exported to:\n{file_path}"
-            )
-        except Exception as e:
-            CustomMessageBox.critical(
-                self.theme_manager,
-                self,
-                "Export Error",
-                f"Failed to export data:\n{str(e)}"
-            )
-
-    def _export_to_excel(self, data: List[Dict[str, Any]], columns: List[str], sheet_name: str):
-        """
-        Export data to Excel.
-
-        On Windows: Uses COM automation to open Excel directly.
-        On macOS/Linux: Creates .xlsx file with openpyxl and opens with default app.
-
-        Args:
-            data: List of row dictionaries
-            columns: List of column headers
-            sheet_name: Name for the worksheet
-        """
-        import sys
-
-        if sys.platform == 'win32':
-            self._export_to_excel_windows(data, columns, sheet_name)
-        else:
-            self._export_to_excel_crossplatform(data, columns, sheet_name)
-
-    def _export_to_excel_windows(self, data: List[Dict[str, Any]], columns: List[str], sheet_name: str):
-        """Export to Excel using Windows COM automation."""
-        try:
-            import win32com.client
-        except ImportError:
-            # Fall back to cross-platform method
-            self._export_to_excel_crossplatform(data, columns, sheet_name)
-            return
-
-        try:
-            # Create Excel application
-            excel = win32com.client.Dispatch("Excel.Application")
-            excel.Visible = True
-
-            # Create new workbook
-            workbook = excel.Workbooks.Add()
-            worksheet = workbook.ActiveSheet
-            worksheet.Name = sheet_name[:31]  # Excel sheet names max 31 chars
-
-            # Write headers
-            for col_idx, col_name in enumerate(columns, start=1):
-                worksheet.Cells(1, col_idx).Value = col_name
-                worksheet.Cells(1, col_idx).Font.Bold = True
-
-            # Write data
-            for row_idx, row_data in enumerate(data, start=2):
-                for col_idx, col_name in enumerate(columns, start=1):
-                    value = row_data.get(col_name, "")
-                    worksheet.Cells(row_idx, col_idx).Value = value
-
-            # Auto-fit columns
-            worksheet.Columns.AutoFit()
-
-        except Exception as e:
-            CustomMessageBox.critical(
-                self.theme_manager,
-                self,
-                "Excel Error",
-                f"Failed to open Excel:\n{str(e)}\n\n"
-                "Make sure Microsoft Excel is installed."
-            )
-
-    def _export_to_excel_crossplatform(self, data: List[Dict[str, Any]], columns: List[str], sheet_name: str):
-        """Export to Excel using openpyxl (works on macOS/Linux)."""
-        import subprocess
-        import sys
-        import tempfile
-        import os
-
-        try:
-            from openpyxl import Workbook
-            from openpyxl.styles import Font
-        except ImportError:
-            CustomMessageBox.warning(
-                self.theme_manager,
-                self,
-                "Excel Not Available",
-                "Excel export requires the 'openpyxl' package.\n\n"
-                "Install it with: pip install openpyxl"
-            )
-            return
-
-        try:
-            # Create workbook
-            wb = Workbook()
-            ws = wb.active
-            ws.title = sheet_name[:31]  # Excel sheet names max 31 chars
-
-            # Write headers with bold font
-            bold_font = Font(bold=True)
-            for col_idx, col_name in enumerate(columns, start=1):
-                cell = ws.cell(row=1, column=col_idx, value=col_name)
-                cell.font = bold_font
-
-            # Write data
-            for row_idx, row_data in enumerate(data, start=2):
-                for col_idx, col_name in enumerate(columns, start=1):
-                    value = row_data.get(col_name, "")
-                    ws.cell(row=row_idx, column=col_idx, value=value)
-
-            # Auto-fit columns (approximate)
-            for col_idx, col_name in enumerate(columns, start=1):
-                max_length = len(str(col_name))
-                for row_data in data:
-                    cell_value = str(row_data.get(col_name, ""))
-                    max_length = max(max_length, len(cell_value))
-                ws.column_dimensions[ws.cell(row=1, column=col_idx).column_letter].width = min(max_length + 2, 50)
-
-            # Save to temp file
-            temp_dir = tempfile.gettempdir()
-            file_path = os.path.join(temp_dir, f"{sheet_name}.xlsx")
-            wb.save(file_path)
-
-            # Open with default application
-            if sys.platform == 'darwin':  # macOS
-                subprocess.run(['open', file_path], check=True)
-            elif sys.platform == 'win32':  # Windows fallback
-                os.startfile(file_path)
-            else:  # Linux
-                subprocess.run(['xdg-open', file_path], check=True)
-
-        except Exception as e:
-            CustomMessageBox.critical(
-                self.theme_manager,
-                self,
-                "Excel Error",
-                f"Failed to create Excel file:\n{str(e)}"
-            )
+            PortfolioExportService.export_to_excel(self, self.theme_manager, data, columns, prefix)

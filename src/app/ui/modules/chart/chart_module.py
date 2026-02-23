@@ -25,15 +25,13 @@ from app.ui.modules.chart.widgets.depth_chart import OrderBookPanel
 from app.ui.modules.chart.widgets import EditPluginAppearanceDialog
 from app.ui.widgets.common import CustomMessageBox
 from app.services.market_data import fetch_price_history, fetch_price_history_yahoo
-from app.services.live_bar_aggregator import LiveBarAggregator
-from app.services.yahoo_finance_service import YahooFinanceService
-from app.utils.market_hours import is_crypto_ticker, is_market_open_extended
 from .services import (
     TickerEquationParser,
     IndicatorService,
     ChartSettingsManager,
     ChartThemeService,
-    BinanceOrderBook
+    BinanceOrderBook,
+    LiveUpdateManager,
 )
 from app.core.theme_manager import ThemeManager
 from app.core.config import (
@@ -57,9 +55,6 @@ class ChartModule(LazyThemeMixin, QWidget):
     # Signal emitted when user clicks home button
     home_clicked = Signal()
 
-    # Signal for crypto price updates (from background thread to main thread)
-    _crypto_bar_received = Signal(str, object)  # ticker, DataFrame
-
     # Flag indicating this module has its own home button
     has_own_home_button = True
 
@@ -74,19 +69,14 @@ class ChartModule(LazyThemeMixin, QWidget):
         # Initialize chart settings manager
         self.chart_settings_manager = ChartSettingsManager()
 
-        self._live_aggregator = LiveBarAggregator()
-        self._live_updates_enabled = True  # Can be toggled by user
-
-        # Crypto polling timer (Yahoo Finance updates ~every minute)
-        self._crypto_poll_timer: QTimer | None = None
-        self._CRYPTO_POLL_INTERVAL_MS = 60000  # 1 minute
-
-        # Stock polling timer (only during market hours)
-        self._stock_poll_timer: QTimer | None = None
-        self._STOCK_POLL_INTERVAL_MS = 60000  # 1 minute
-
-        # Connect crypto bar signal (for thread-safe UI updates)
-        self._crypto_bar_received.connect(self._update_crypto_bar)
+        # Live price polling manager
+        self._live_update_manager = LiveUpdateManager(
+            get_ticker=lambda: self.state.get("ticker"),
+            get_interval=self.current_interval,
+            is_equation=self.equation_parser.is_equation,
+            parent=self,
+        )
+        self._live_update_manager.bar_received.connect(self._update_crypto_bar)
 
         self._setup_ui()
         self._setup_state()
@@ -635,8 +625,8 @@ class ChartModule(LazyThemeMixin, QWidget):
 
             self.render_from_cache()
 
-            # Start live updates for this ticker (WebSocket)
-            self._start_live_updates(display_name)
+            # Start live updates for this ticker
+            self._live_update_manager.start(display_name)
 
         except Exception as e:
             CustomMessageBox.critical(self.theme_manager, self, "Load Error", str(e))
@@ -644,121 +634,8 @@ class ChartModule(LazyThemeMixin, QWidget):
             self.equation_parser.clear_cache()
 
     # =========================================================================
-    # WebSocket Live Updates
+    # Live Updates
     # =========================================================================
-
-    def _start_live_updates(self, ticker: str) -> None:
-        """
-        Start live updates for a ticker.
-
-        For stocks: Uses QTimer polling with Yahoo Finance (only during market hours)
-        For crypto: Uses QTimer polling with Yahoo Finance (24/7)
-
-        Args:
-            ticker: Ticker symbol to subscribe to
-        """
-        if not self._live_updates_enabled:
-            return
-
-        # Don't start for equations (only single tickers)
-        if self.equation_parser.is_equation(ticker):
-            return
-
-        # Check if this is a crypto ticker
-        if is_crypto_ticker(ticker):
-            # Use polling timer for crypto (Yahoo Finance, 24/7)
-            self._start_crypto_polling(ticker)
-        else:
-            # Use polling timer for stocks (Yahoo Finance, only during market hours)
-            if is_market_open_extended():
-                self._start_stock_polling(ticker)
-
-    def _start_stock_polling(self, ticker: str) -> None:
-        """Start polling timer for stock live updates via Yahoo Finance."""
-        # Stop any existing timer
-        self._stop_stock_polling()
-
-        # Create and start timer
-        self._stock_poll_timer = QTimer(self)
-        self._stock_poll_timer.timeout.connect(self._on_stock_poll_tick)
-        self._stock_poll_timer.start(self._STOCK_POLL_INTERVAL_MS)
-        # Fire first poll immediately (runs on next event loop tick)
-        QTimer.singleShot(0, self._on_stock_poll_tick)
-
-    def _stop_stock_polling(self) -> None:
-        """Stop the stock polling timer."""
-        if self._stock_poll_timer is not None:
-            self._stock_poll_timer.stop()
-            self._stock_poll_timer.deleteLater()
-            self._stock_poll_timer = None
-
-    def _on_stock_poll_tick(self) -> None:
-        """Handle stock polling timer tick - check market hours and fetch if open."""
-        ticker = self.state.get("ticker")
-        if not ticker or is_crypto_ticker(ticker):
-            return
-
-        # Check if market is still open
-        if not is_market_open_extended():
-            self._stop_stock_polling()
-            return
-
-        # Only update for daily interval
-        if self.current_interval().lower() != "daily":
-            return
-
-        # Fetch in background thread to avoid blocking UI
-        def fetch_and_update():
-            try:
-                today_bar = YahooFinanceService.fetch_today_ohlcv(ticker)
-                if today_bar is not None and not today_bar.empty:
-                    self._crypto_bar_received.emit(ticker, today_bar)
-            except Exception:
-                pass
-
-        thread = threading.Thread(target=fetch_and_update, daemon=True)
-        thread.start()
-
-    def _start_crypto_polling(self, ticker: str) -> None:
-        """Start polling timer for crypto live updates via Yahoo Finance."""
-        # Stop any existing timer
-        self._stop_crypto_polling()
-
-        # Create and start timer
-        self._crypto_poll_timer = QTimer(self)
-        self._crypto_poll_timer.timeout.connect(self._on_crypto_poll_tick)
-        self._crypto_poll_timer.start(self._CRYPTO_POLL_INTERVAL_MS)
-        # Fire first poll immediately (runs on next event loop tick)
-        QTimer.singleShot(0, self._on_crypto_poll_tick)
-
-    def _stop_crypto_polling(self) -> None:
-        """Stop the crypto polling timer."""
-        if self._crypto_poll_timer is not None:
-            self._crypto_poll_timer.stop()
-            self._crypto_poll_timer.deleteLater()
-            self._crypto_poll_timer = None
-
-    def _on_crypto_poll_tick(self) -> None:
-        """Handle crypto polling timer tick - fetch latest price from Yahoo."""
-        ticker = self.state.get("ticker")
-        if not ticker or not is_crypto_ticker(ticker):
-            return
-
-        # Only update for daily interval
-        if self.current_interval().lower() != "daily":
-            return
-
-        # Fetch in background thread to avoid blocking UI
-        def fetch_and_update():
-            try:
-                today_bar = YahooFinanceService.fetch_today_ohlcv(ticker)
-                if today_bar is not None and not today_bar.empty:
-                    self._crypto_bar_received.emit(ticker, today_bar)
-            except Exception:
-                pass
-
-        thread = threading.Thread(target=fetch_and_update, daemon=True)
-        thread.start()
 
     def _update_crypto_bar(self, ticker: str, today_bar) -> None:
         """Update the chart with the latest bar from Yahoo (for both stocks and crypto)."""
@@ -826,82 +703,7 @@ class ChartModule(LazyThemeMixin, QWidget):
         else:
             self.chart.update_last_bar(self.state["df"], old_close)
 
-    def _stop_live_updates(self) -> None:
-        """Stop all live updates (polling timers)."""
-        # Stop stock polling timer
-        self._stop_stock_polling()
-
-        # Stop crypto polling timer
-        self._stop_crypto_polling()
-
-        self._live_aggregator.reset()
-
-    def _on_live_bar_received(self, ticker: str, bar_data: dict) -> None:
-        """
-        Handle incoming minute bar from WebSocket.
-
-        Args:
-            ticker: Ticker symbol the bar is for
-            bar_data: Dict with OHLCV data
-        """
-        # Only process if this is the current ticker
-        current_ticker = self.state.get("ticker")
-        if not current_ticker or ticker.upper() != current_ticker.upper():
-            return
-
-        # Only update for daily interval (minute bars aggregate to daily)
-        if self.current_interval().lower() != "daily":
-            return
-
-        # Aggregate minute bar into daily bar
-        daily_bar = self._live_aggregator.add_minute_bar(bar_data)
-
-        if daily_bar is None:
-            return
-
-        # Update the last row of the DataFrame with aggregated daily bar
-        df = self.state.get("df")
-        if df is not None and not df.empty:
-            import pandas as pd
-            from datetime import datetime
-
-            bar_date = daily_bar.get("Date")
-            last_date = df.index[-1].date()
-
-            if bar_date and bar_date > last_date:
-                # New day - append a new row
-                new_row = pd.DataFrame(
-                    [{
-                        "Open": daily_bar["Open"],
-                        "High": daily_bar["High"],
-                        "Low": daily_bar["Low"],
-                        "Close": daily_bar["Close"],
-                        "Volume": daily_bar["Volume"],
-                    }],
-                    index=pd.DatetimeIndex([bar_date]),
-                )
-                self.state["df"] = pd.concat([df, new_row])
-            else:
-                # Same day - update last row
-                df.iloc[-1, df.columns.get_loc("Open")] = daily_bar["Open"]
-                df.iloc[-1, df.columns.get_loc("High")] = daily_bar["High"]
-                df.iloc[-1, df.columns.get_loc("Low")] = daily_bar["Low"]
-                df.iloc[-1, df.columns.get_loc("Close")] = daily_bar["Close"]
-                df.iloc[-1, df.columns.get_loc("Volume")] = daily_bar["Volume"]
-
-            # Re-render chart
-            self.render_from_cache()
-
-    def _on_ws_status(self, status: str) -> None:
-        """Handle WebSocket connection status changes."""
-        if status == "connected":
-            print("WebSocket connected")
-        elif status == "disconnected":
-            print("WebSocket disconnected")
-        elif status.startswith("error:"):
-            print(f"WebSocket error: {status}")
-
     def hideEvent(self, event) -> None:
         """Stop live updates when module is hidden."""
-        self._stop_live_updates()
+        self._live_update_manager.stop()
         super().hideEvent(event)

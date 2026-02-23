@@ -76,6 +76,11 @@ def _create_ols_regression_module(theme_manager):
     return OLSRegressionModule(theme_manager)
 
 
+def _create_monthly_returns_module(theme_manager):
+    from app.ui.modules.monthly_returns import MonthlyReturnsModule
+    return MonthlyReturnsModule(theme_manager)
+
+
 def _create_yield_curve_module(theme_manager):
     from app.ui.modules.yield_curve import YieldCurveModule
     return YieldCurveModule(theme_manager)
@@ -185,6 +190,11 @@ def main() -> int:
     hub.add_module(
         "ols_regression",
         lambda: _create_ols_regression_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "monthly_returns",
+        lambda: _create_monthly_returns_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module(

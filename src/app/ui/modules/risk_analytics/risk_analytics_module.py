@@ -17,6 +17,7 @@ from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
 from app.ui.widgets.common.custom_message_box import CustomMessageBox
+from app.ui.widgets.common import parse_portfolio_value
 from app.ui.modules.base_module import BaseModule
 from app.utils.market_hours import is_crypto_ticker
 
@@ -204,8 +205,7 @@ class RiskAnalyticsModule(BaseModule):
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio selection change (just update state, don't analyze)."""
         # Strip "[Port] " prefix if present
-        if name.startswith("[Port] "):
-            name = name[7:]
+        name, _ = parse_portfolio_value(name)
 
         if name == self._current_portfolio:
             return
@@ -283,10 +283,7 @@ class RiskAnalyticsModule(BaseModule):
         portfolio_value = self.controls.get_current_portfolio()
 
         # Strip "[Port] " prefix if present
-        if portfolio_value.startswith("[Port] "):
-            self._current_portfolio = portfolio_value[7:]
-        else:
-            self._current_portfolio = portfolio_value
+        self._current_portfolio, _ = parse_portfolio_value(portfolio_value)
 
         # Get ETF benchmark for attribution
         self._current_etf_benchmark = self.controls.get_current_etf_benchmark()

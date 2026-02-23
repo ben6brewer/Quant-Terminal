@@ -111,6 +111,7 @@ MODULE_SECTIONS = {
         {"id": "rolling_correlation", "label": "Rolling Correlation"},
         {"id": "rolling_covariance", "label": "Rolling Covariance"},
         {"id": "ols_regression", "label": "OLS Regression"},
+        {"id": "monthly_returns", "label": "Monthly Returns"},
     ],
     "Fixed Income": [
         {"id": "yield_curve", "label": "Yield Curve"},

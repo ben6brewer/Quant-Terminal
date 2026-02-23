@@ -1,6 +1,6 @@
 """Theme Stylesheet Service - Centralized widget stylesheets by theme."""
 
-from typing import Dict
+from typing import Dict, Tuple
 
 
 class ThemeStylesheetService:
@@ -432,3 +432,280 @@ class ThemeStylesheetService:
                 width: 0px;
             }}
         """
+
+    # ------------------------------------------------------------------
+    # Layout stylesheet color palettes (preserves exact ThemeManager values)
+    # ------------------------------------------------------------------
+
+    _SIDEBAR = {
+        "dark": {
+            "bg": "#2d2d2d", "text": "#ffffff", "header_bg": "#1a1a1a",
+            "accent": "#00d4ff", "footer": "#666666", "nav_text": "#cccccc",
+            "hover_bg": "#3d3d3d", "hover_text": "#ffffff",
+            "text_on_accent": "#000000",
+        },
+        "light": {
+            "bg": "#f5f5f5", "text": "#000000", "header_bg": "#e0e0e0",
+            "accent": "#0066cc", "footer": "#999999", "nav_text": "#333333",
+            "hover_bg": "#e8e8e8", "hover_text": "#000000",
+            "text_on_accent": "#ffffff",
+        },
+        "bloomberg": {
+            "bg": "#0d1420", "text": "#e8e8e8", "header_bg": "#000814",
+            "accent": "#FF8000", "footer": "#666666", "nav_text": "#b0b0b0",
+            "hover_bg": "#162030", "hover_text": "#e8e8e8",
+            "text_on_accent": "#000000",
+        },
+    }
+
+    _CONTENT = {
+        "dark": {
+            "bg": "#1e1e1e", "text": "#ffffff", "text_muted": "#cccccc",
+            "groupbox_bg": "#2d2d2d", "groupbox_extra": "",
+        },
+        "light": {
+            "bg": "#ffffff", "text": "#000000", "text_muted": "#333333",
+            "groupbox_bg": "#f5f5f5", "groupbox_extra": "border: 2px solid #d0d0d0;",
+        },
+        "bloomberg": {
+            "bg": "#000814", "text": "#e8e8e8", "text_muted": "#b0b0b0",
+            "groupbox_bg": "#0a1018",
+            "groupbox_extra": 'border: 1px solid #1a2332; font-family: "Segoe UI", "Arial", sans-serif;',
+        },
+    }
+
+    _CONTROLS = {
+        "dark": {
+            "bg": "#2d2d2d", "accent": "#00d4ff", "label_color": "#b0b0b0",
+            "label_size": "12px", "input_bg": "#1e1e1e", "input_text": "#ffffff",
+            "input_border": "#3d3d3d", "input_padding": "7px 10px", "input_font": "",
+            "selection_color": "#000000", "hover_bg": "#252525", "focus_bg": "#252525",
+            "arrow_color": "#cccccc", "dropdown_bg": "#2d2d2d", "dropdown_text": "#ffffff",
+        },
+        "light": {
+            "bg": "#f5f5f5", "accent": "#0066cc", "label_color": "#555555",
+            "label_size": "12px", "input_bg": "#ffffff", "input_text": "#000000",
+            "input_border": "#cccccc", "input_padding": "7px 10px", "input_font": "",
+            "selection_color": "#ffffff", "hover_bg": "#f9f9f9", "focus_bg": "#ffffff",
+            "arrow_color": "#555555", "dropdown_bg": "#ffffff", "dropdown_text": "#000000",
+        },
+        "bloomberg": {
+            "bg": "#0d1420", "accent": "#FF8000", "label_color": "#b0b0b0",
+            "label_size": "11px", "input_bg": "#0a1018", "input_text": "#e8e8e8",
+            "input_border": "#1a2332", "input_padding": "6px 10px",
+            "input_font": 'font-family: "Menlo", "Consolas", "Courier New", monospace;',
+            "selection_color": "#000000", "hover_bg": "#0d1420", "focus_bg": "#0d1420",
+            "arrow_color": "#b0b0b0", "dropdown_bg": "#0d1420", "dropdown_text": "#e8e8e8",
+        },
+    }
+
+    _BUTTON = {
+        "dark": {
+            "text": "#ffffff", "accent": "#00d4ff",
+            "accent_rgba": "rgba(0, 212, 255, 0.15)",
+            "text_on_accent": "#000000",
+        },
+        "light": {
+            "text": "#000000", "accent": "#0066cc",
+            "accent_rgba": "rgba(0, 102, 204, 0.15)",
+            "text_on_accent": "#ffffff",
+        },
+        "bloomberg": {
+            "text": "#e8e8e8", "accent": "#FF8000",
+            "accent_rgba": "rgba(255, 128, 0, 0.15)",
+            "text_on_accent": "#000000",
+        },
+    }
+
+    # ------------------------------------------------------------------
+    # Layout stylesheets
+    # ------------------------------------------------------------------
+
+    @classmethod
+    def get_sidebar_stylesheet(cls, theme: str) -> str:
+        """Get sidebar stylesheet for a theme."""
+        s = cls._SIDEBAR.get(theme, cls._SIDEBAR["dark"])
+        mono = 'font-family: "Menlo", "Consolas", "Courier New", monospace;' if theme == "bloomberg" else ""
+        hover_border = f"border-left: 3px solid {s['accent']};" if theme == "bloomberg" else ""
+        return f"""
+            #sidebar {{ background-color: {s['bg']}; color: {s['text']}; }}
+            #sidebarHeader {{
+                background-color: {s['header_bg']}; color: {s['accent']};
+                font-size: 14px; font-weight: bold; {mono}
+                padding: 20px 10px; border-bottom: 2px solid {s['accent']};
+            }}
+            #sidebarFooter {{ color: {s['footer']}; font-size: 10px; {mono} padding: 10px; }}
+            #navButton {{
+                text-align: left; padding: 15px 20px; border: none;
+                background-color: transparent; color: {s['nav_text']};
+                font-size: 13px; font-weight: 500;
+            }}
+            #navButton:hover {{
+                background-color: {s['hover_bg']}; color: {s['hover_text']}; {hover_border}
+            }}
+            #navButton:checked {{
+                background-color: {s['accent']}; color: {s['text_on_accent']};
+                font-weight: bold;
+            }}
+        """
+
+    @classmethod
+    def get_content_stylesheet(cls, theme: str) -> str:
+        """Get content area stylesheet for a theme."""
+        s = cls._CONTENT.get(theme, cls._CONTENT["dark"])
+        return f"""
+            QStackedWidget {{ background-color: {s['bg']}; }}
+            QScrollArea {{ background-color: {s['bg']}; border: none; }}
+            QGroupBox {{ color: {s['text']}; background-color: {s['groupbox_bg']}; {s['groupbox_extra']} }}
+            QLabel {{ color: {s['text_muted']}; }}
+            QRadioButton {{ color: {s['text_muted']}; }}
+            QWidget {{ background-color: {s['bg']}; color: {s['text']}; }}
+        """
+
+    @classmethod
+    def get_controls_stylesheet(cls, theme: str) -> str:
+        """Get chart controls bar stylesheet for a theme."""
+        s = cls._CONTROLS.get(theme, cls._CONTROLS["dark"])
+        return f"""
+            QWidget {{
+                background-color: {s['bg']};
+                border-bottom: 2px solid {s['accent']};
+            }}
+            QLabel {{
+                color: {s['label_color']};
+                font-size: {s['label_size']};
+                font-weight: bold;
+                font-family: "Segoe UI", "Arial", sans-serif;
+                letter-spacing: 0.5px;
+                padding: 0px 5px;
+            }}
+            QLineEdit {{
+                background-color: {s['input_bg']};
+                color: {s['input_text']};
+                border: 1px solid {s['input_border']};
+                border-radius: 2px;
+                padding: {s['input_padding']};
+                font-size: 13px;
+                font-weight: 600;
+                {s['input_font']}
+                selection-background-color: {s['accent']};
+                selection-color: {s['selection_color']};
+            }}
+            QLineEdit:hover {{
+                border: 1px solid {s['accent']};
+                background-color: {s['hover_bg']};
+            }}
+            QLineEdit:focus {{
+                border: 1px solid {s['accent']};
+                background-color: {s['focus_bg']};
+            }}
+            QComboBox {{
+                background-color: {s['input_bg']};
+                color: {s['input_text']};
+                border: 1px solid {s['input_border']};
+                border-radius: 2px;
+                padding: {s['input_padding']};
+                font-size: 13px;
+                font-weight: 500;
+            }}
+            QComboBox:hover {{
+                border: 1px solid {s['accent']};
+                background-color: {s['hover_bg']};
+            }}
+            QComboBox::drop-down {{
+                border: none;
+                width: 20px;
+            }}
+            QComboBox::down-arrow {{
+                image: none;
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-top: 5px solid {s['arrow_color']};
+                margin-right: 5px;
+            }}
+            QComboBox::down-arrow:hover {{
+                border-top-color: {s['accent']};
+            }}
+            QComboBox QAbstractItemView {{
+                background-color: {s['dropdown_bg']};
+                color: {s['dropdown_text']};
+                selection-background-color: {s['accent']};
+                selection-color: {s['selection_color']};
+                border: 1px solid {s['accent']};
+            }}
+        """
+
+    @classmethod
+    def get_home_button_stylesheet(cls, theme: str) -> str:
+        """Get home/settings button stylesheet for a theme."""
+        s = cls._BUTTON.get(theme, cls._BUTTON["dark"])
+        font = 'font-family: "Segoe UI", "Arial", sans-serif;' if theme == "bloomberg" else ""
+        return f"""
+            #homeButton, #chartSettingsButton, #settingsButton {{
+                background-color: transparent;
+                color: {s['text']};
+                border: 1px solid transparent;
+                border-radius: 2px;
+                font-size: 13px;
+                font-weight: bold;
+                {font}
+            }}
+            #settingsButton {{
+                margin: 5px 10px;
+            }}
+            #homeButton:hover, #chartSettingsButton:hover, #settingsButton:hover {{
+                background-color: {s['accent_rgba']};
+                border: 1px solid {s['accent']};
+            }}
+            #homeButton:pressed, #chartSettingsButton:pressed, #settingsButton:pressed {{
+                background-color: {s['accent']};
+                color: {s['text_on_accent']};
+                border: 1px solid {s['accent']};
+            }}
+        """
+
+    @classmethod
+    def get_button_stylesheet(cls, theme: str) -> str:
+        """Get universal QPushButton stylesheet for a theme."""
+        s = cls._BUTTON.get(theme, cls._BUTTON["dark"])
+        return f"""
+            QPushButton {{
+                background-color: transparent;
+                color: {s['text']};
+                border: 1px solid transparent;
+                border-radius: 2px;
+                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {s['accent_rgba']};
+                border: 1px solid {s['accent']};
+            }}
+            QPushButton:pressed {{
+                background-color: {s['accent']};
+                color: {s['text_on_accent']};
+                border: 1px solid {s['accent']};
+            }}
+            QPushButton:checked {{
+                background-color: {s['accent']};
+                color: {s['text_on_accent']};
+                border: 1px solid {s['accent']};
+            }}
+            QPushButton:disabled {{
+                opacity: 0.4;
+            }}
+        """
+
+    @classmethod
+    def get_chart_background_color(cls, theme: str) -> str:
+        """Get chart background color for a theme."""
+        return {"light": "w", "bloomberg": "#000814"}.get(theme, "#1e1e1e")
+
+    @classmethod
+    def get_chart_line_color(cls, theme: str) -> Tuple[int, int, int]:
+        """Get chart line color RGB tuple for a theme."""
+        return {
+            "light": (0, 0, 0),
+            "bloomberg": (0, 212, 255),
+        }.get(theme, (76, 175, 80))

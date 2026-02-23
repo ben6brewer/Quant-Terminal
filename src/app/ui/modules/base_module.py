@@ -49,6 +49,39 @@ class BaseModule(LazyThemeMixin, QWidget):
 
     # ── Worker Thread Lifecycle ──────────────────────────────────────
 
+    def _run_worker(self, fn, *args, loading_message="Loading...",
+                    on_complete=None, on_error=None, **kwargs):
+        """Run *fn* in a background QThread via CalculationWorker.
+
+        Cancels any existing worker, shows loading overlay, and wires
+        finished/error signals to *on_complete*/*on_error* (falling back
+        to ``_on_worker_complete`` / ``_on_worker_error``).
+        """
+        from app.services.calculation_worker import CalculationWorker
+
+        self._cancel_worker()
+        self._show_loading(loading_message)
+
+        self._thread = QThread()
+        self._worker = CalculationWorker(fn, *args, **kwargs)
+        self._worker.moveToThread(self._thread)
+
+        self._thread.started.connect(self._worker.run)
+        self._worker.finished.connect(on_complete or self._on_worker_complete)
+        self._worker.error.connect(on_error or self._on_worker_error)
+
+        self._thread.start()
+
+    def _on_worker_complete(self, result):
+        """Default completion handler — subclasses should override."""
+        self._hide_loading()
+        self._cleanup_worker()
+
+    def _on_worker_error(self, error_msg: str):
+        """Default error handler — subclasses should override."""
+        self._hide_loading()
+        self._cleanup_worker()
+
     def _cleanup_worker(self):
         """Safely stop thread and release references."""
         if self._thread is not None:

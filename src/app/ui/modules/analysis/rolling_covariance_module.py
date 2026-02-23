@@ -1,7 +1,6 @@
 """Rolling Covariance Module - Time-series rolling covariance between two tickers."""
 
 from PySide6.QtWidgets import QVBoxLayout
-from PySide6.QtCore import Signal, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
@@ -9,35 +8,6 @@ from app.ui.modules.base_module import BaseModule
 from .services.rolling_settings_manager import RollingSettingsManager
 from .widgets.rolling_controls import RollingControls
 from .widgets.rolling_chart import RollingChart
-
-
-class _RollingCovWorker(QObject):
-    """Background worker for rolling covariance calculation."""
-
-    finished = Signal(object, object)  # (dates, values)
-    error = Signal(str)
-
-    def __init__(self, ticker1, ticker2, window, lookback_days,
-                 start_date=None, end_date=None):
-        super().__init__()
-        self._ticker1 = ticker1
-        self._ticker2 = ticker2
-        self._window = window
-        self._lookback_days = lookback_days
-        self._start_date = start_date
-        self._end_date = end_date
-
-    def run(self):
-        try:
-            from .services.rolling_calculation_service import RollingCalculationService
-            dates, values = RollingCalculationService.compute_rolling_covariance(
-                self._ticker1, self._ticker2, self._window,
-                lookback_days=self._lookback_days,
-                start_date=self._start_date, end_date=self._end_date,
-            )
-            self.finished.emit(dates, values)
-        except Exception as e:
-            self.error.emit(str(e))
 
 
 class RollingCovarianceModule(BaseModule):
@@ -93,9 +63,6 @@ class RollingCovarianceModule(BaseModule):
         # Persist tickers
         self.settings_manager.update_settings({"ticker1": t1, "ticker2": t2})
 
-        self._cancel_worker()
-        self._show_loading("Computing rolling covariance...")
-
         window = self.controls.get_rolling_window()
         self.settings_manager.update_settings({"rolling_window": window})
 
@@ -107,19 +74,20 @@ class RollingCovarianceModule(BaseModule):
             lookback = self.settings_manager.get_lookback_days()
             start_date, end_date = None, None
 
-        self._thread = QThread()
-        self._worker = _RollingCovWorker(
-            t1, t2, window, lookback, start_date, end_date
+        from .services.rolling_calculation_service import RollingCalculationService
+
+        self._run_worker(
+            RollingCalculationService.compute_rolling_covariance,
+            t1, t2, window,
+            lookback_days=lookback,
+            start_date=start_date, end_date=end_date,
+            loading_message="Computing rolling covariance...",
+            on_complete=self._on_complete,
+            on_error=self._on_error,
         )
-        self._worker.moveToThread(self._thread)
 
-        self._thread.started.connect(self._worker.run)
-        self._worker.finished.connect(self._on_complete)
-        self._worker.error.connect(self._on_error)
-
-        self._thread.start()
-
-    def _on_complete(self, dates, values):
+    def _on_complete(self, result):
+        dates, values = result
         settings = self.settings_manager.get_all_settings()
         self.chart.plot_rolling_data(dates, values, settings)
         self.chart.set_theme(self.theme_manager.current_theme)

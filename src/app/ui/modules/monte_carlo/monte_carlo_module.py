@@ -8,6 +8,8 @@ from PySide6.QtCore import Signal
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
+from app.services.ticker_returns_service import TickerReturnsService
+from app.ui.widgets.common import parse_portfolio_value
 from app.ui.modules.base_module import BaseModule
 
 from .services.monte_carlo_service import SimulationResult
@@ -111,12 +113,13 @@ class MonteCarloModule(BaseModule):
 
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio/ticker selection change."""
+        # Strip "[Port] " prefix if present
+        name, is_portfolio = parse_portfolio_value(name)
+
         if name == self._current_portfolio:
             return
 
-        # Strip "[Port] " prefix if present (7 characters)
-        if name.startswith("[Port] "):
-            name = name[7:]
+        if is_portfolio:
             self._is_ticker_mode = False
         else:
             self._is_ticker_mode = name not in self._portfolio_list
@@ -142,8 +145,7 @@ class MonteCarloModule(BaseModule):
 
     def _on_benchmark_changed(self, benchmark: str):
         """Handle benchmark selection change."""
-        if benchmark.startswith("[Port] "):
-            benchmark = benchmark[7:]
+        benchmark, _ = parse_portfolio_value(benchmark)
         self._current_benchmark = benchmark
 
     def _cancel_running_simulation(self):
@@ -167,7 +169,7 @@ class MonteCarloModule(BaseModule):
         try:
             # Get historical returns for portfolio (quick operation on main thread)
             if self._is_ticker_mode:
-                portfolio_returns = ReturnsDataService.get_ticker_returns(
+                portfolio_returns = TickerReturnsService.get_ticker_returns(
                     self._current_portfolio, interval="daily"
                 )
             else:
@@ -189,7 +191,7 @@ class MonteCarloModule(BaseModule):
                 try:
                     is_benchmark_ticker = self._current_benchmark not in self._portfolio_list
                     if is_benchmark_ticker:
-                        benchmark_returns = ReturnsDataService.get_ticker_returns(
+                        benchmark_returns = TickerReturnsService.get_ticker_returns(
                             self._current_benchmark, interval="daily"
                         )
                     else:

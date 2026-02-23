@@ -68,14 +68,23 @@ class BaseSettingsManager(ABC):
             print(f"Error saving settings to {self._save_path}: {e}")
 
     def load_settings(self) -> None:
-        """Load settings from disk."""
+        """Load settings from disk, merging with current defaults.
+
+        New default keys are automatically added; stale keys that no
+        longer appear in ``DEFAULT_SETTINGS`` are dropped.
+        """
         try:
             if not self._save_path.exists():
                 return
             with open(self._save_path, 'r') as f:
                 data = json.load(f)
             deserialized = self._deserialize_settings(data)
-            self._settings.update(deserialized)
+            # Start from defaults, overlay only recognised saved keys
+            merged = self.DEFAULT_SETTINGS.copy()
+            for key in merged:
+                if key in deserialized:
+                    merged[key] = deserialized[key]
+            self._settings = merged
         except Exception as e:
             print(f"Error loading settings from {self._save_path}: {e}")
             self._settings = self.DEFAULT_SETTINGS.copy()

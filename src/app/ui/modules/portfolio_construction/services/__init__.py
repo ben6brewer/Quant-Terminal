@@ -6,6 +6,7 @@ from .portfolio_settings_manager import PortfolioSettingsManager
 from .row_index_mapper import RowIndexMapper
 from .autofill_service import AutoFillService
 from .focus_manager import FocusManager
+from .portfolio_export_service import PortfolioExportService
 
 __all__ = [
     "PortfolioService",
@@ -14,4 +15,5 @@ __all__ = [
     "RowIndexMapper",
     "AutoFillService",
     "FocusManager",
+    "PortfolioExportService",
 ]

@@ -9,6 +9,8 @@ from .themed_dialog import ThemedDialog
 from .editable_table_base import EditableTableBase
 from .lazy_theme_mixin import LazyThemeMixin
 from .portfolio_ticker_combo import (
+    PORTFOLIO_PREFIX,
+    parse_portfolio_value,
     PortfolioTickerComboBox,
     BenchmarkComboBox,
     PortfolioComboBox,
@@ -27,6 +29,8 @@ __all__ = [
     'ThemedDialog',
     'EditableTableBase',
     'LazyThemeMixin',
+    'PORTFOLIO_PREFIX',
+    'parse_portfolio_value',
     'PortfolioTickerComboBox',
     'BenchmarkComboBox',
     'PortfolioComboBox',

@@ -6,12 +6,11 @@ from datetime import date, datetime
 from typing import TYPE_CHECKING, List, Optional, Tuple
 
 from PySide6.QtWidgets import QVBoxLayout, QStackedWidget
-from PySide6.QtCore import Signal, QThread, QObject
+from PySide6.QtCore import QThread
 
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
 
-from .services.fomc_calendar_service import FomcCalendarService
 from .services.rate_probability_service import RateProbabilityService
 from .services.rate_probability_settings_manager import RateProbabilitySettingsManager
 from .widgets.rate_probability_toolbar import RateProbabilityToolbar
@@ -21,122 +20,6 @@ from .widgets.probability_evolution_chart import ProbabilityEvolutionChart
 
 if TYPE_CHECKING:
     import pandas as pd
-
-
-class _FetchWorker(QObject):
-    """Background worker for fetching futures data and calculating probabilities."""
-
-    finished = Signal(object)  # dict with all results
-    error = Signal(str)
-
-    def run(self):
-        try:
-            # 1. Get FOMC meetings
-            meetings = FomcCalendarService.get_upcoming_meetings(count=12)
-
-            # 2. Fetch futures prices
-            futures_df = RateProbabilityService.fetch_futures_prices()
-
-            # 3. Fetch target rate from FRED
-            target_rate = RateProbabilityService.fetch_target_rate()
-
-            # 4. Calculate probabilities
-            import pandas as pd
-
-            if not futures_df.empty and meetings:
-                prob_df = RateProbabilityService.calculate_meeting_probabilities(
-                    futures_df, target_rate, meetings,
-                )
-            else:
-                prob_df = pd.DataFrame()
-
-            # 5. Get implied rate path
-            rate_path = RateProbabilityService.get_implied_rate_path(prob_df)
-
-            result = {
-                "meetings": meetings,
-                "futures_df": futures_df,
-                "target_rate": target_rate,
-                "probabilities_df": prob_df,
-                "rate_path": rate_path,
-                "next_meeting": FomcCalendarService.get_next_meeting(),
-                "days_until": FomcCalendarService.days_until_next_meeting(),
-            }
-
-            self.finished.emit(result)
-
-        except Exception as e:
-            self.error.emit(str(e))
-
-
-class _EvolutionFetchWorker(QObject):
-    """Background worker for fetching historical probability evolution."""
-
-    finished = Signal(object)  # DataFrame
-    error = Signal(str)
-
-    def __init__(self, meeting_date: date, meetings: List[date],
-                 target_rate: Tuple[float, float], lookback_days: int):
-        super().__init__()
-        self._meeting_date = meeting_date
-        self._meetings = meetings
-        self._target_rate = target_rate
-        self._lookback_days = lookback_days
-
-    def run(self):
-        try:
-            from .services.rate_probability_service import (
-                RateProbabilityService,
-                CODE_TO_MONTH,
-            )
-
-            # Generate ticker for the meeting month contract
-            month_code = CODE_TO_MONTH.get(self._meeting_date.month)
-            if not month_code:
-                self.finished.emit(None)
-                return
-
-            year_suffix = str(self._meeting_date.year)[-2:]
-            target_ticker = f"ZQ{month_code}{year_suffix}.CBT"
-
-            # Also fetch next-month contract for late-month meeting handling
-            tickers_to_fetch = [target_ticker]
-            import calendar
-            total_days = calendar.monthrange(self._meeting_date.year, self._meeting_date.month)[1]
-            pre_days = self._meeting_date.day - 1
-            post_days = total_days - pre_days
-            if post_days <= 7:
-                next_month = self._meeting_date.month + 1
-                next_year = self._meeting_date.year
-                if next_month > 12:
-                    next_month = 1
-                    next_year += 1
-                next_code = CODE_TO_MONTH.get(next_month)
-                if next_code:
-                    next_suffix = str(next_year)[-2:]
-                    tickers_to_fetch.append(f"ZQ{next_code}{next_suffix}.CBT")
-
-            # Fetch historical futures data
-            historical = RateProbabilityService.fetch_historical_futures(
-                tickers_to_fetch, lookback_days=self._lookback_days
-            )
-
-            if historical.empty:
-                self.finished.emit(None)
-                return
-
-            # Calculate evolution
-            evolution_df = RateProbabilityService.calculate_historical_probabilities(
-                self._meeting_date,
-                historical,
-                self._target_rate,
-                self._meetings,
-            )
-
-            self.finished.emit(evolution_df)
-
-        except Exception as e:
-            self.error.emit(str(e))
 
 
 class RateProbabilityModule(BaseModule):
@@ -156,11 +39,9 @@ class RateProbabilityModule(BaseModule):
         self._meetings: List[date] = []
         self._rate_path = None
 
-        # Workers
-        self._fetch_thread: Optional[QThread] = None
-        self._fetch_worker: Optional[_FetchWorker] = None
+        # Second worker pair for evolution fetch (runs concurrently with primary)
         self._evolution_thread: Optional[QThread] = None
-        self._evolution_worker: Optional[_EvolutionFetchWorker] = None
+        self._evolution_worker = None
 
         self._setup_ui()
         self._connect_signals()
@@ -206,7 +87,7 @@ class RateProbabilityModule(BaseModule):
             self._initialize_data()
 
     def hideEvent(self, event):
-        self._cancel_fetch()
+        self._cancel_worker()
         self._cancel_evolution_fetch()
         super().hideEvent(event)
 
@@ -240,28 +121,12 @@ class RateProbabilityModule(BaseModule):
 
     def _fetch_data(self):
         """Fetch all data in background thread."""
-        self._cancel_fetch()
-        self._show_loading("Fetching fed funds futures...")
-
-        self._fetch_thread = QThread()
-        self._fetch_worker = _FetchWorker()
-        self._fetch_worker.moveToThread(self._fetch_thread)
-
-        self._fetch_thread.started.connect(self._fetch_worker.run)
-        self._fetch_worker.finished.connect(self._on_data_fetched)
-        self._fetch_worker.error.connect(self._on_fetch_error)
-        self._fetch_worker.finished.connect(self._fetch_thread.quit)
-        self._fetch_worker.error.connect(self._fetch_thread.quit)
-
-        self._fetch_thread.start()
-
-    def _cancel_fetch(self):
-        """Cancel any in-progress fetch."""
-        if self._fetch_thread is not None and self._fetch_thread.isRunning():
-            self._fetch_thread.quit()
-            self._fetch_thread.wait(1000)
-        self._fetch_thread = None
-        self._fetch_worker = None
+        self._run_worker(
+            RateProbabilityService.fetch_all_data,
+            loading_message="Fetching fed funds futures...",
+            on_complete=self._on_data_fetched,
+            on_error=self._on_fetch_error,
+        )
 
     def _cancel_evolution_fetch(self):
         """Cancel any in-progress evolution fetch."""
@@ -274,6 +139,7 @@ class RateProbabilityModule(BaseModule):
     def _on_data_fetched(self, result):
         """Handle successful data fetch."""
         self._hide_loading()
+        self._cleanup_worker()
 
         if result is None:
             self.table_view.show_placeholder("Failed to fetch data.")
@@ -315,6 +181,7 @@ class RateProbabilityModule(BaseModule):
     def _on_fetch_error(self, error_msg: str):
         """Handle fetch error."""
         self._hide_loading()
+        self._cleanup_worker()
         self.table_view.show_placeholder(f"Error fetching data: {error_msg}")
 
     def _on_view_changed(self, index: int):
@@ -343,23 +210,25 @@ class RateProbabilityModule(BaseModule):
 
         lookback = self.evolution_view.get_lookback_days()
 
+        from app.services.calculation_worker import CalculationWorker
+
         self._evolution_thread = QThread()
-        self._evolution_worker = _EvolutionFetchWorker(
-            meeting_date, self._meetings, self._target_rate, lookback
+        self._evolution_worker = CalculationWorker(
+            RateProbabilityService.fetch_evolution_data,
+            meeting_date, self._meetings, self._target_rate, lookback,
         )
         self._evolution_worker.moveToThread(self._evolution_thread)
 
         self._evolution_thread.started.connect(self._evolution_worker.run)
         self._evolution_worker.finished.connect(self._on_evolution_fetched)
         self._evolution_worker.error.connect(self._on_evolution_error)
-        self._evolution_worker.finished.connect(self._evolution_thread.quit)
-        self._evolution_worker.error.connect(self._evolution_thread.quit)
 
         self._evolution_thread.start()
 
     def _on_evolution_fetched(self, evolution_df):
         """Handle evolution data fetch."""
         self._hide_loading()
+        self._cleanup_evolution_worker()
         import pandas as pd
         if evolution_df is not None and isinstance(evolution_df, pd.DataFrame) and not evolution_df.empty:
             self.evolution_view.update_data(evolution_df)
@@ -371,7 +240,20 @@ class RateProbabilityModule(BaseModule):
     def _on_evolution_error(self, error_msg: str):
         """Handle evolution fetch error."""
         self._hide_loading()
+        self._cleanup_evolution_worker()
         self.evolution_view.show_placeholder(f"Error: {error_msg}")
+
+    def _cleanup_evolution_worker(self):
+        """Clean up the evolution worker and thread."""
+        if self._evolution_thread is not None:
+            self._evolution_thread.quit()
+            self._evolution_thread.wait()
+        if self._evolution_worker is not None:
+            self._evolution_worker.deleteLater()
+        if self._evolution_thread is not None:
+            self._evolution_thread.deleteLater()
+        self._evolution_worker = None
+        self._evolution_thread = None
 
     # ========== Settings ==========
 

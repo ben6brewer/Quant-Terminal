@@ -6,7 +6,6 @@ from datetime import date, timedelta
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 from PySide6.QtWidgets import QVBoxLayout
-from PySide6.QtCore import Signal, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
@@ -18,20 +17,6 @@ from .widgets.yield_curve_toolbar import YieldCurveToolbar
 
 if TYPE_CHECKING:
     import pandas as pd
-
-
-class _FetchWorker(QObject):
-    """Background worker for fetching FRED data."""
-
-    finished = Signal(object)  # DataFrame or None
-    error = Signal(str)
-
-    def run(self):
-        try:
-            df = FredService.fetch_all_yields()
-            self.finished.emit(df)
-        except Exception as e:
-            self.error.emit(str(e))
 
 
 class YieldCurveModule(BaseModule):
@@ -51,9 +36,6 @@ class YieldCurveModule(BaseModule):
         self._custom_dates: List[str] = []  # YYYY-MM-DD strings
         self._current_interpolation: str = "Cubic Spline"
 
-        # Loading
-        self._fetch_thread: Optional[QThread] = None
-        self._fetch_worker: Optional[_FetchWorker] = None
         self._data_initialized = False
 
         self._setup_ui()
@@ -88,7 +70,7 @@ class YieldCurveModule(BaseModule):
             self._initialize_data()
 
     def hideEvent(self, event):
-        self._cancel_fetch()
+        self._cancel_worker()
         super().hideEvent(event)
 
     def _initialize_data(self):
@@ -118,36 +100,19 @@ class YieldCurveModule(BaseModule):
 
     def _fetch_data(self):
         """Fetch yield data in background thread."""
-        # Cancel any existing fetch
-        self._cancel_fetch()
-
-        self._show_loading("Fetching Treasury yields...")
-
-        self._fetch_thread = QThread()
-        self._fetch_worker = _FetchWorker()
-        self._fetch_worker.moveToThread(self._fetch_thread)
-
-        self._fetch_thread.started.connect(self._fetch_worker.run)
-        self._fetch_worker.finished.connect(self._on_data_fetched)
-        self._fetch_worker.error.connect(self._on_fetch_error)
-        self._fetch_worker.finished.connect(self._fetch_thread.quit)
-        self._fetch_worker.error.connect(self._fetch_thread.quit)
-
-        self._fetch_thread.start()
-
-    def _cancel_fetch(self):
-        """Cancel any in-progress fetch."""
-        if self._fetch_thread is not None and self._fetch_thread.isRunning():
-            self._fetch_thread.quit()
-            self._fetch_thread.wait(1000)
-        self._fetch_thread = None
-        self._fetch_worker = None
+        self._run_worker(
+            FredService.fetch_all_yields,
+            loading_message="Fetching Treasury yields...",
+            on_complete=self._on_data_fetched,
+            on_error=self._on_fetch_error,
+        )
 
     def _on_data_fetched(self, df):
         """Handle successful data fetch."""
         import pandas as pd
 
         self._hide_loading()
+        self._cleanup_worker()
 
         if df is None or (isinstance(df, pd.DataFrame) and df.empty):
             self.chart.show_placeholder("No yield data available. Check your FRED API key.")
@@ -159,6 +124,7 @@ class YieldCurveModule(BaseModule):
     def _on_fetch_error(self, error_msg: str):
         """Handle fetch error."""
         self._hide_loading()
+        self._cleanup_worker()
         self.chart.show_placeholder(f"Error fetching data: {error_msg}")
 
     def _on_interpolation_changed(self, method: str):

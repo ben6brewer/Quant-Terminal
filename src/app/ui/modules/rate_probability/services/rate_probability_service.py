@@ -547,6 +547,88 @@ class RateProbabilityService:
         return df
 
     @classmethod
+    def fetch_all_data(cls) -> dict:
+        """Fetch all rate probability data in one call (for background worker).
+
+        Returns dict with keys: meetings, futures_df, target_rate,
+        probabilities_df, rate_path, next_meeting, days_until.
+        """
+        import pandas as pd
+        from .fomc_calendar_service import FomcCalendarService
+
+        meetings = FomcCalendarService.get_upcoming_meetings(count=12)
+        futures_df = cls.fetch_futures_prices()
+        target_rate = cls.fetch_target_rate()
+
+        if not futures_df.empty and meetings:
+            prob_df = cls.calculate_meeting_probabilities(
+                futures_df, target_rate, meetings,
+            )
+        else:
+            prob_df = pd.DataFrame()
+
+        rate_path = cls.get_implied_rate_path(prob_df)
+
+        return {
+            "meetings": meetings,
+            "futures_df": futures_df,
+            "target_rate": target_rate,
+            "probabilities_df": prob_df,
+            "rate_path": rate_path,
+            "next_meeting": FomcCalendarService.get_next_meeting(),
+            "days_until": FomcCalendarService.days_until_next_meeting(),
+        }
+
+    @classmethod
+    def fetch_evolution_data(
+        cls,
+        meeting_date: date,
+        meetings: List[date],
+        target_rate: Tuple[float, float],
+        lookback_days: int,
+    ) -> Optional["pd.DataFrame"]:
+        """Fetch historical probability evolution for a meeting (for background worker).
+
+        Returns evolution DataFrame or None if data unavailable.
+        """
+        import calendar as _calendar
+
+        month_code = CODE_TO_MONTH.get(meeting_date.month)
+        if not month_code:
+            return None
+
+        year_suffix = str(meeting_date.year)[-2:]
+        target_ticker = f"ZQ{month_code}{year_suffix}.CBT"
+
+        tickers_to_fetch = [target_ticker]
+        total_days = _calendar.monthrange(meeting_date.year, meeting_date.month)[1]
+        pre_days = meeting_date.day - 1
+        post_days = total_days - pre_days
+        if post_days <= 7:
+            next_month = meeting_date.month + 1
+            next_year = meeting_date.year
+            if next_month > 12:
+                next_month = 1
+                next_year += 1
+            next_code = CODE_TO_MONTH.get(next_month)
+            if next_code:
+                next_suffix = str(next_year)[-2:]
+                tickers_to_fetch.append(f"ZQ{next_code}{next_suffix}.CBT")
+
+        historical = cls.fetch_historical_futures(
+            tickers_to_fetch, lookback_days=lookback_days
+        )
+
+        if historical.empty:
+            return None
+
+        evolution_df = cls.calculate_historical_probabilities(
+            meeting_date, historical, target_rate, meetings,
+        )
+
+        return evolution_df
+
+    @classmethod
     def _classify_rate_change(cls, change_bp: int, current_midpoint: float) -> Dict[str, float]:
         """Classify expected rate change into probability buckets.
 

@@ -577,141 +577,51 @@ class HubWindow(QMainWindow):
 
     def _apply_theme(self) -> None:
         """Apply the current theme to the window."""
+        from app.services.theme_stylesheet_service import ThemeStylesheetService
+
         theme = self.theme_manager.current_theme
+        content_css = ThemeStylesheetService.get_content_stylesheet(theme)
+        title_bar_css = self._get_title_bar_style(theme)
+        self.setStyleSheet(content_css + title_bar_css)
 
-        if theme == "light":
-            stylesheet = self._get_light_stylesheet()
-        elif theme == "bloomberg":
-            stylesheet = self._get_bloomberg_stylesheet()
-        else:
-            stylesheet = self._get_dark_stylesheet()
+    @staticmethod
+    def _get_title_bar_style(theme: str) -> str:
+        """Get title bar stylesheet for the given theme."""
+        from app.services.theme_stylesheet_service import ThemeStylesheetService
 
-        self.setStyleSheet(stylesheet)
-
-    def _get_dark_stylesheet(self) -> str:
-        """Get complete dark theme stylesheet."""
-        return (
-            self.theme_manager.get_dark_content_style() +
-            self._get_dark_title_bar_style()
-        )
-
-    def _get_light_stylesheet(self) -> str:
-        """Get complete light theme stylesheet."""
-        return (
-            self.theme_manager.get_light_content_style() +
-            self._get_light_title_bar_style()
-        )
-
-    def _get_bloomberg_stylesheet(self) -> str:
-        """Get complete Bloomberg theme stylesheet."""
-        return (
-            self.theme_manager.get_bloomberg_content_style() +
-            self._get_bloomberg_title_bar_style()
-        )
-
-    def _get_dark_title_bar_style(self) -> str:
-        """Get dark theme title bar stylesheet."""
-        return """
-            #titleBar {
-                background-color: #2d2d2d;
-                border-bottom: 1px solid #3d3d3d;
-            }
-            #titleLabel {
+        c = ThemeStylesheetService.get_colors(theme)
+        hover_bg = "#3d3d3d" if theme == "dark" else "#e0e0e0" if theme == "light" else "#162030"
+        close_hover_color = "" if theme == "dark" else "color: #ffffff;"
+        return f"""
+            #titleBar {{
+                background-color: {c['bg_header']};
+                border-bottom: 1px solid {c['border']};
+            }}
+            #titleLabel {{
                 background-color: transparent;
-                color: #ffffff;
+                color: {c['text']};
                 font-size: 13px;
                 font-weight: 500;
-            }
-            #titleBarButton {
+            }}
+            #titleBarButton {{
                 background-color: transparent;
-                color: #ffffff;
+                color: {c['text']};
                 border: none;
                 font-size: 16px;
                 font-weight: bold;
-            }
-            #titleBarButton:hover {
-                background-color: #3d3d3d;
-            }
-            #titleBarCloseButton {
+            }}
+            #titleBarButton:hover {{
+                background-color: {hover_bg};
+            }}
+            #titleBarCloseButton {{
                 background-color: transparent;
-                color: #ffffff;
+                color: {c['text']};
                 border: none;
                 font-size: 14px;
                 font-weight: bold;
-            }
-            #titleBarCloseButton:hover {
+            }}
+            #titleBarCloseButton:hover {{
                 background-color: #d32f2f;
-            }
-        """
-
-    def _get_light_title_bar_style(self) -> str:
-        """Get light theme title bar stylesheet."""
-        return """
-            #titleBar {
-                background-color: #f5f5f5;
-                border-bottom: 1px solid #cccccc;
-            }
-            #titleLabel {
-                background-color: transparent;
-                color: #000000;
-                font-size: 13px;
-                font-weight: 500;
-            }
-            #titleBarButton {
-                background-color: transparent;
-                color: #000000;
-                border: none;
-                font-size: 16px;
-                font-weight: bold;
-            }
-            #titleBarButton:hover {
-                background-color: #e0e0e0;
-            }
-            #titleBarCloseButton {
-                background-color: transparent;
-                color: #000000;
-                border: none;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            #titleBarCloseButton:hover {
-                background-color: #d32f2f;
-                color: #ffffff;
-            }
-        """
-
-    def _get_bloomberg_title_bar_style(self) -> str:
-        """Get Bloomberg theme title bar stylesheet."""
-        return """
-            #titleBar {
-                background-color: #0d1420;
-                border-bottom: 1px solid #1a2332;
-            }
-            #titleLabel {
-                background-color: transparent;
-                color: #e8e8e8;
-                font-size: 13px;
-                font-weight: 500;
-            }
-            #titleBarButton {
-                background-color: transparent;
-                color: #e8e8e8;
-                border: none;
-                font-size: 16px;
-                font-weight: bold;
-            }
-            #titleBarButton:hover {
-                background-color: #162030;
-            }
-            #titleBarCloseButton {
-                background-color: transparent;
-                color: #e8e8e8;
-                border: none;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            #titleBarCloseButton:hover {
-                background-color: #d32f2f;
-                color: #ffffff;
-            }
+                {close_hover_color}
+            }}
         """

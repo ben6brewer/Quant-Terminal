@@ -11,7 +11,9 @@ from PySide6.QtCore import Signal
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
+from app.services.ticker_returns_service import TickerReturnsService
 from app.ui.widgets.common.custom_message_box import CustomMessageBox
+from app.ui.widgets.common import parse_portfolio_value
 from app.ui.modules.base_module import BaseModule
 
 from .services.performance_metrics_service import PerformanceMetricsService
@@ -111,8 +113,7 @@ class PerformanceMetricsModule(BaseModule):
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio/ticker selection change."""
         # Strip "[Port] " prefix if present
-        if name.startswith("[Port] "):
-            name = name[7:]
+        name, _ = parse_portfolio_value(name)
 
         if name == self._current_portfolio:
             return
@@ -124,16 +125,13 @@ class PerformanceMetricsModule(BaseModule):
 
     def _on_benchmark_changed(self, benchmark: str):
         """Handle benchmark selection change."""
+        # Determine if benchmark is a portfolio and strip prefix
+        benchmark, self._is_benchmark_portfolio = parse_portfolio_value(benchmark)
+
         if benchmark == self._current_benchmark:
             return
 
         self._current_benchmark = benchmark
-
-        # Determine if benchmark is a portfolio
-        if benchmark:
-            self._is_benchmark_portfolio = benchmark.startswith("[Port] ")
-        else:
-            self._is_benchmark_portfolio = False
 
         # Update table structure
         self.table.set_has_benchmark(bool(benchmark))
@@ -232,10 +230,6 @@ class PerformanceMetricsModule(BaseModule):
             if self._current_benchmark:
                 benchmark_name = self._current_benchmark
                 is_portfolio = self._is_benchmark_portfolio
-
-                if is_portfolio:
-                    # Remove "[Port] " prefix
-                    benchmark_name = benchmark_name.replace("[Port] ", "")
 
                 full_benchmark_returns = self._get_returns(
                     benchmark_name,
@@ -345,14 +339,15 @@ class PerformanceMetricsModule(BaseModule):
     ) -> "pd.Series":
         """Get returns for a portfolio or ticker with live return appended."""
         if is_ticker:
-            returns = ReturnsDataService.get_ticker_returns(
+            returns = TickerReturnsService.get_ticker_returns(
                 name,
                 start_date=start_date,
                 end_date=end_date,
                 interval="daily",
             )
             # Append today's live return if eligible
-            returns = ReturnsDataService.append_live_return(returns, name)
+            from app.services.live_return_service import LiveReturnService
+            returns = LiveReturnService.append_live_return(returns, name)
         else:
             returns = ReturnsDataService.get_time_varying_portfolio_returns(
                 name,
@@ -362,7 +357,8 @@ class PerformanceMetricsModule(BaseModule):
                 interval="daily",
             )
             # Append today's live portfolio return if eligible
-            returns = ReturnsDataService.append_live_portfolio_return(
+            from app.services.live_return_service import LiveReturnService
+            returns = LiveReturnService.append_live_portfolio_return(
                 returns, name, include_cash=False
             )
 

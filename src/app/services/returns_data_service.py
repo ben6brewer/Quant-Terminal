@@ -13,7 +13,6 @@ if TYPE_CHECKING:
     import numpy as np
     import pandas as pd
 
-from app.services.market_data import fetch_price_history
 from app.services.portfolio_data_service import PortfolioDataService
 
 
@@ -385,7 +384,7 @@ class ReturnsDataService:
         return volatility.dropna()
 
     # =========================================================================
-    # Time-Varying Position and Weight Methods (for accurate portfolio returns)
+    # Time-Varying Position and Weight Methods (delegated to PositionHistoryService)
     # =========================================================================
 
     @classmethod
@@ -396,101 +395,11 @@ class ReturnsDataService:
         end_date: Optional[str] = None,
         include_cash: bool = True,
     ) -> "pd.DataFrame":
-        """
-        Reconstruct position quantities for each date from transaction history.
-
-        This method processes the transaction log to determine how many shares/units
-        were held of each ticker on each trading day.
-
-        Args:
-            portfolio_name: Name of the portfolio
-            start_date: Optional start date filter (YYYY-MM-DD)
-            end_date: Optional end date filter (YYYY-MM-DD)
-            include_cash: If True, includes FREE CASH positions
-
-        Returns:
-            DataFrame with:
-            - Index: dates (DatetimeIndex)
-            - Columns: ticker symbols
-            - Values: position quantities (shares/units held at end of each day)
-        """
-        import pandas as pd
-
-        transactions = PortfolioDataService.get_transactions(portfolio_name)
-        if not transactions:
-            return pd.DataFrame()
-
-        # Filter transactions by ticker inclusion
-        if not include_cash:
-            transactions = [t for t in transactions if t.ticker.upper() != "FREE CASH"]
-
-        if not transactions:
-            return pd.DataFrame()
-
-        # Sort transactions by date and sequence
-        transactions = sorted(transactions, key=lambda t: (t.date, t.sequence))
-
-        # Get all unique tickers
-        tickers = list(set(t.ticker for t in transactions))
-
-        # Build position changes by date
-        # Dict of date -> Dict of ticker -> quantity change
-        position_changes: Dict[str, Dict[str, float]] = {}
-
-        for tx in transactions:
-            date = tx.date
-            ticker = tx.ticker
-
-            if date not in position_changes:
-                position_changes[date] = {}
-
-            if ticker not in position_changes[date]:
-                position_changes[date][ticker] = 0.0
-
-            # Buy increases position, Sell decreases
-            if tx.transaction_type == "Buy":
-                position_changes[date][ticker] += tx.quantity
-            else:  # Sell
-                position_changes[date][ticker] -= tx.quantity
-
-        # Get date range
-        transaction_dates = sorted(position_changes.keys())
-        if not transaction_dates:
-            return pd.DataFrame()
-
-        first_tx_date = pd.to_datetime(transaction_dates[0])
-
-        # Determine end date for position history
-        if end_date:
-            last_date = pd.to_datetime(end_date)
-        else:
-            last_date = pd.Timestamp.now().normalize()
-
-        # Create date range (trading days approximation - all calendar days for simplicity)
-        all_dates = pd.date_range(start=first_tx_date, end=last_date, freq="D")
-
-        # Build cumulative positions
-        positions = pd.DataFrame(0.0, index=all_dates, columns=tickers)
-
-        current_position = {ticker: 0.0 for ticker in tickers}
-
-        for date in all_dates:
-            date_str = date.strftime("%Y-%m-%d")
-
-            # Apply any position changes for this date
-            if date_str in position_changes:
-                for ticker, change in position_changes[date_str].items():
-                    current_position[ticker] += change
-
-            # Record position for this date
-            for ticker in tickers:
-                positions.loc[date, ticker] = current_position[ticker]
-
-        # Apply start_date filter
-        if start_date:
-            positions = positions[positions.index >= pd.to_datetime(start_date)]
-
-        return positions
+        """Delegate to PositionHistoryService.get_position_history."""
+        from app.services.position_history_service import PositionHistoryService
+        return PositionHistoryService.get_position_history(
+            portfolio_name, start_date, end_date, include_cash
+        )
 
     @classmethod
     def get_daily_weights(
@@ -500,83 +409,11 @@ class ReturnsDataService:
         end_date: Optional[str] = None,
         include_cash: bool = True,
     ) -> "pd.DataFrame":
-        """
-        Calculate portfolio weights for each date based on market values.
-
-        Uses position history and daily prices to compute the weight of each
-        position in the portfolio on each day.
-
-        Args:
-            portfolio_name: Name of the portfolio
-            start_date: Optional start date filter (YYYY-MM-DD)
-            end_date: Optional end date filter (YYYY-MM-DD)
-            include_cash: If True, includes FREE CASH with weight contribution
-
-        Returns:
-            DataFrame with:
-            - Index: dates (DatetimeIndex)
-            - Columns: ticker symbols
-            - Values: weights (0.0 to 1.0, summing to ~1.0 per row)
-        """
-        import numpy as np
-        import pandas as pd
-
-        # Get position quantities over time
-        positions = cls.get_position_history(
+        """Delegate to PositionHistoryService.get_daily_weights."""
+        from app.services.position_history_service import PositionHistoryService
+        return PositionHistoryService.get_daily_weights(
             portfolio_name, start_date, end_date, include_cash
         )
-        if positions.empty:
-            return pd.DataFrame()
-
-        tickers = positions.columns.tolist()
-
-        # Batch fetch daily close prices for all tickers (except FREE CASH)
-        from app.services.market_data import fetch_price_history_batch
-
-        tickers_to_fetch = [t for t in tickers if t.upper() != "FREE CASH"]
-        batch_data = fetch_price_history_batch(tickers_to_fetch)
-
-        # Extract close prices from batch results
-        price_data: Dict[str, Any] = {}
-        for ticker in tickers_to_fetch:
-            if ticker in batch_data:
-                df = batch_data[ticker]
-                if df is not None and not df.empty:
-                    close = df["Close"]
-                    close.index = pd.to_datetime(close.index)
-                    price_data[ticker] = close
-
-        # Calculate market values for each position on each day
-        market_values = pd.DataFrame(index=positions.index, columns=tickers, dtype=float)
-
-        for ticker in tickers:
-            if ticker.upper() == "FREE CASH":
-                # FREE CASH: market value = quantity (price is always $1)
-                market_values[ticker] = positions[ticker]
-            elif ticker in price_data:
-                # Regular ticker: market value = quantity * price
-                prices = price_data[ticker].reindex(positions.index, method="ffill")
-                market_values[ticker] = positions[ticker] * prices
-            else:
-                # No price data - use 0 market value
-                market_values[ticker] = 0.0
-
-        # Fill any remaining NaN with 0
-        market_values = market_values.fillna(0)
-
-        # Calculate total portfolio value per day
-        total_values = market_values.sum(axis=1)
-
-        # Calculate weights (avoid division by zero)
-        weights = market_values.copy()
-        for col in weights.columns:
-            weights[col] = np.where(
-                total_values > 0,
-                market_values[col] / total_values,
-                0.0
-            )
-
-        return weights
 
     @classmethod
     def get_time_varying_portfolio_returns(
@@ -1039,231 +876,7 @@ class ReturnsDataService:
     # Single Ticker Returns (for benchmark comparisons)
     # =========================================================================
 
-    @classmethod
-    def get_ticker_returns(
-        cls,
-        ticker: str,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        interval: str = "daily",
-    ) -> "pd.Series":
-        """
-        Get returns for a single ticker.
-
-        Args:
-            ticker: Ticker symbol (e.g., "SPY", "BTC-USD")
-            start_date: Optional start date filter (YYYY-MM-DD)
-            end_date: Optional end date filter (YYYY-MM-DD)
-            interval: Return interval - "daily", "weekly", "monthly", "yearly"
-
-        Returns:
-            Series of returns (as decimals, e.g., 0.05 = 5%)
-        """
-        import pandas as pd
-
-        # skip_live_bar=True - returns calculations use daily closes, not intraday
-        df = fetch_price_history(ticker, period="max", interval="1d", skip_live_bar=True)
-        if df.empty:
-            return pd.Series(dtype=float)
-
-        # Calculate daily returns
-        returns = df["Close"].pct_change().dropna()
-        returns.name = ticker
-
-        # Filter date range
-        if start_date or end_date:
-            returns_df = returns.to_frame()
-            returns_df = cls._filter_date_range(returns_df, start_date, end_date)
-            returns = returns_df[ticker] if ticker in returns_df.columns else returns_df.iloc[:, 0]
-
-        # Resample if needed
-        if interval.lower() != "daily":
-            returns = cls._resample_returns(returns, interval)
-
-        return returns
-
-    @classmethod
-    def get_ticker_volatility(
-        cls,
-        ticker: str,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-    ) -> "pd.Series":
-        """
-        Calculate annualized volatility series for a single ticker.
-
-        Returns a series of rolling 21-day volatility values (annualized).
-
-        Args:
-            ticker: Ticker symbol (e.g., "SPY", "BTC-USD")
-            start_date: Optional start date filter (YYYY-MM-DD)
-            end_date: Optional end date filter (YYYY-MM-DD)
-
-        Returns:
-            Series of annualized volatility values (as decimals, e.g., 0.20 = 20%)
-        """
-        import numpy as np
-        import pandas as pd
-
-        returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
-
-        if returns.empty or len(returns) < 21:
-            return pd.Series(dtype=float)
-
-        # Calculate rolling 21-day volatility, annualized
-        rolling_vol = returns.rolling(window=21).std() * np.sqrt(252)
-
-        return rolling_vol.dropna()
-
-    @classmethod
-    def get_ticker_rolling_volatility(
-        cls,
-        ticker: str,
-        window_days: int,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-    ) -> "pd.Series":
-        """
-        Calculate rolling volatility with specified window for a single ticker.
-
-        Args:
-            ticker: Ticker symbol (e.g., "SPY", "BTC-USD")
-            window_days: Rolling window in trading days (21=1m, 63=3m, 126=6m, 252=1y)
-            start_date: Optional start date filter (YYYY-MM-DD)
-            end_date: Optional end date filter (YYYY-MM-DD)
-
-        Returns:
-            Series of annualized volatility values (as decimals)
-        """
-        import numpy as np
-        import pandas as pd
-
-        returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
-
-        if returns.empty or len(returns) < window_days:
-            return pd.Series(dtype=float)
-
-        # Calculate rolling volatility, annualized
-        rolling_vol = returns.rolling(window=window_days).std() * np.sqrt(252)
-
-        return rolling_vol.dropna()
-
-    @classmethod
-    def get_ticker_drawdowns(
-        cls,
-        ticker: str,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-    ) -> "pd.Series":
-        """
-        Calculate drawdown series for a single ticker.
-
-        Args:
-            ticker: Ticker symbol (e.g., "SPY", "BTC-USD")
-            start_date: Optional start date filter (YYYY-MM-DD)
-            end_date: Optional end date filter (YYYY-MM-DD)
-
-        Returns:
-            Series of drawdown values (as negative decimals, e.g., -0.15 = -15%)
-        """
-        import pandas as pd
-
-        returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
-
-        if returns.empty:
-            return pd.Series(dtype=float)
-
-        # Calculate cumulative returns (wealth index)
-        cumulative = (1 + returns).cumprod()
-
-        # Calculate running maximum
-        running_max = cumulative.cummax()
-
-        # Drawdown = current / peak - 1
-        drawdowns = cumulative / running_max - 1
-
-        return drawdowns
-
-    @classmethod
-    def get_ticker_rolling_returns(
-        cls,
-        ticker: str,
-        window_days: int,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-    ) -> "pd.Series":
-        """
-        Calculate rolling returns with specified window for a single ticker.
-
-        Args:
-            ticker: Ticker symbol (e.g., "SPY", "BTC-USD")
-            window_days: Rolling window in trading days (21=1m, 63=3m, 252=1y, etc.)
-            start_date: Optional start date filter (YYYY-MM-DD)
-            end_date: Optional end date filter (YYYY-MM-DD)
-
-        Returns:
-            Series of rolling return values (as decimals, e.g., 0.10 = 10%)
-        """
-        import pandas as pd
-
-        returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
-
-        if returns.empty or len(returns) < window_days:
-            return pd.Series(dtype=float)
-
-        # Calculate rolling compounded returns
-        def compound_return(window):
-            return (1 + window).prod() - 1
-
-        rolling_returns = returns.rolling(window=window_days).apply(
-            compound_return, raw=False
-        )
-
-        return rolling_returns.dropna()
-
-    @classmethod
-    def get_ticker_time_under_water(
-        cls,
-        ticker: str,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-    ) -> "pd.Series":
-        """
-        Calculate time under water for a single ticker.
-
-        Args:
-            ticker: Ticker symbol (e.g., "SPY", "BTC-USD")
-            start_date: Optional start date filter (YYYY-MM-DD)
-            end_date: Optional end date filter (YYYY-MM-DD)
-
-        Returns:
-            Series of days under water (integer values)
-        """
-        import pandas as pd
-
-        returns = cls.get_ticker_returns(ticker, start_date, end_date, interval="daily")
-
-        if returns.empty:
-            return pd.Series(dtype=float)
-
-        # Calculate cumulative returns (wealth index)
-        cumulative = (1 + returns).cumprod()
-
-        # Calculate running maximum
-        running_max = cumulative.cummax()
-
-        # Track days under water
-        days_under_water = pd.Series(0, index=cumulative.index, dtype=int)
-
-        current_underwater_days = 0
-        for i, (cum, peak) in enumerate(zip(cumulative, running_max)):
-            if cum < peak:
-                current_underwater_days += 1
-            else:
-                current_underwater_days = 0
-            days_under_water.iloc[i] = current_underwater_days
-
-        return days_under_water
+    # Ticker-level methods moved to TickerReturnsService (services/ticker_returns_service.py)
 
     # =========================================================================
     # Risk-Adjusted Performance Metrics
@@ -1361,49 +974,6 @@ class ReturnsDataService:
         # Annualize: multiply by sqrt(252)
         return (excess_returns.mean() / downside_std) * np.sqrt(252)
 
-    # =========================================================================
-    # Benchmark-Relative Metrics
-    # =========================================================================
-    # Delegated to StatisticsService to avoid duplication.
-
-    @classmethod
-    def get_beta(cls, portfolio_returns, benchmark_returns):
-        """Calculate portfolio beta. Delegates to StatisticsService."""
-        from app.services.statistics_service import StatisticsService
-        return StatisticsService.get_beta(portfolio_returns, benchmark_returns)
-
-    @classmethod
-    def get_alpha(cls, portfolio_returns, benchmark_returns, risk_free_rate=0.0):
-        """Calculate Jensen's alpha (annualized). Delegates to StatisticsService."""
-        from app.services.statistics_service import StatisticsService
-        return StatisticsService.get_alpha(portfolio_returns, benchmark_returns, risk_free_rate)
-
-    @classmethod
-    def get_tracking_error(cls, portfolio_returns, benchmark_returns):
-        """Calculate annualized tracking error. Delegates to StatisticsService."""
-        from app.services.statistics_service import StatisticsService
-        return StatisticsService.get_tracking_error(portfolio_returns, benchmark_returns)
-
-    @classmethod
-    def get_information_ratio(cls, portfolio_returns, benchmark_returns):
-        """Calculate information ratio. Delegates to StatisticsService."""
-        from app.services.statistics_service import StatisticsService
-        return StatisticsService.get_information_ratio(portfolio_returns, benchmark_returns)
-
-    @classmethod
-    def get_correlation(cls, portfolio_returns, benchmark_returns):
-        """Calculate correlation. Delegates to StatisticsService."""
-        from app.services.statistics_service import StatisticsService
-        return StatisticsService.get_correlation(portfolio_returns, benchmark_returns)
-
-    @classmethod
-    def get_r_squared(cls, portfolio_returns, benchmark_returns):
-        """Calculate R-squared. Delegates to StatisticsService."""
-        from app.services.statistics_service import StatisticsService
-        corr = StatisticsService.get_correlation(portfolio_returns, benchmark_returns)
-        import numpy as np
-        return float("nan") if np.isnan(corr) else corr ** 2
-
     @classmethod
     def get_benchmark_returns(
         cls,
@@ -1437,170 +1007,10 @@ class ReturnsDataService:
                 benchmark, start_date, end_date, include_cash, interval
             )
         else:
-            return cls.get_ticker_returns(benchmark, start_date, end_date, interval)
+            from app.services.ticker_returns_service import TickerReturnsService
+            return TickerReturnsService.get_ticker_returns(benchmark, start_date, end_date, interval)
 
-    @classmethod
-    def append_live_return(
-        cls,
-        returns: "pd.Series",
-        ticker: str,
-    ) -> "pd.Series":
-        """
-        Append today's live return to a returns series if eligible.
-
-        Only appends if:
-        - Today is a trading day (stocks) or any day (crypto)
-        - Current time is within extended market hours (stocks) or any time (crypto)
-        - Returns series doesn't already include today
-
-        Args:
-            returns: Existing returns series with DatetimeIndex
-            ticker: Ticker symbol to fetch live price for
-
-        Returns:
-            Returns series with today's live return appended (if applicable),
-            or original series if not eligible for update
-        """
-        import pandas as pd
-        from app.utils.market_hours import is_crypto_ticker, is_market_open_extended
-
-        if returns is None or returns.empty:
-            return returns
-
-        # Check if ticker is eligible for live update
-        is_crypto = is_crypto_ticker(ticker)
-        if not is_crypto and not is_market_open_extended():
-            return returns  # Stocks outside market hours
-
-        # Check if returns already includes today
-        today = pd.Timestamp.now().normalize()
-        if returns.index.max() >= today:
-            return returns  # Already have today's data
-
-        # Get yesterday's close (last value in the price series)
-        # We need to fetch the actual close price, not the return
-        from app.services.market_data import fetch_price_history
-
-        df = fetch_price_history(ticker, period="5d", interval="1d", skip_live_bar=True)
-        if df is None or df.empty or len(df) < 2:
-            return returns
-
-        yesterday_close = df["Close"].iloc[-1]
-
-        # Fetch live price
-        from app.services.yahoo_finance_service import YahooFinanceService
-
-        live_prices = YahooFinanceService.fetch_batch_current_prices([ticker])
-        if not live_prices or ticker not in live_prices:
-            return returns
-
-        live_price = live_prices[ticker]
-
-        # Calculate today's return
-        todays_return = (live_price / yesterday_close) - 1
-
-        # Append to returns series
-        new_entry = pd.Series([todays_return], index=[today], name=returns.name)
-        updated_returns = pd.concat([returns, new_entry])
-
-        print(f"[Live Return] {ticker}: yesterday=${yesterday_close:.2f}, live=${live_price:.2f}, return={todays_return:.4f}")
-
-        return updated_returns
-
-    @classmethod
-    def append_live_portfolio_return(
-        cls,
-        returns: "pd.Series",
-        portfolio_name: str,
-        include_cash: bool = False,
-    ) -> "pd.Series":
-        """
-        Append today's live portfolio return based on current holdings.
-
-        Fetches live prices for all eligible tickers and calculates
-        the weighted portfolio return for today.
-
-        Args:
-            returns: Existing portfolio returns series
-            portfolio_name: Name of the portfolio
-            include_cash: Whether to include cash in weight calculation
-
-        Returns:
-            Returns series with today's live return appended (if applicable)
-        """
-        import pandas as pd
-        from app.utils.market_hours import is_crypto_ticker, is_market_open_extended
-        from app.services.yahoo_finance_service import YahooFinanceService
-        from app.services.market_data import fetch_price_history
-
-        if returns is None or returns.empty:
-            return returns
-
-        # Check if returns already includes today
-        today = pd.Timestamp.now().normalize()
-        if returns.index.max() >= today:
-            return returns
-
-        # Get current positions and weights from latest date
-        weights = cls.get_daily_weights(portfolio_name, include_cash=include_cash)
-        if weights.empty:
-            return returns
-
-        # Get latest weights (last row)
-        latest_weights = weights.iloc[-1]
-        tickers = [t for t in latest_weights.index if t.upper() != "FREE CASH" and latest_weights[t] > 0]
-
-        if not tickers:
-            return returns
-
-        # Determine which tickers are eligible for live update
-        is_extended_hours = is_market_open_extended()
-        eligible_tickers = []
-        for ticker in tickers:
-            if is_crypto_ticker(ticker) or is_extended_hours:
-                eligible_tickers.append(ticker)
-
-        if not eligible_tickers:
-            return returns
-
-        # Fetch live prices in batch
-        live_prices = YahooFinanceService.fetch_batch_current_prices(eligible_tickers)
-        if not live_prices:
-            return returns
-
-        # Get yesterday's closes for eligible tickers
-        yesterday_closes = {}
-        for ticker in eligible_tickers:
-            df = fetch_price_history(ticker, period="5d", interval="1d", skip_live_bar=True)
-            if df is not None and not df.empty:
-                yesterday_closes[ticker] = df["Close"].iloc[-1]
-
-        # Calculate weighted portfolio return for today
-        portfolio_return = 0.0
-        total_weight = 0.0
-
-        for ticker in eligible_tickers:
-            if ticker in live_prices and ticker in yesterday_closes:
-                weight = latest_weights[ticker]
-                yesterday = yesterday_closes[ticker]
-                live = live_prices[ticker]
-                ticker_return = (live / yesterday) - 1
-                portfolio_return += weight * ticker_return
-                total_weight += weight
-
-        if total_weight == 0:
-            return returns
-
-        # Note: Non-eligible tickers contribute 0 return but keep their weight
-        # This is a simplification - ideally we'd use yesterday's return for them
-
-        # Append to returns series
-        new_entry = pd.Series([portfolio_return], index=[today], name=returns.name)
-        updated_returns = pd.concat([returns, new_entry])
-
-        print(f"[Live Return] Portfolio {portfolio_name}: {len(eligible_tickers)} tickers updated, return={portfolio_return:.4f}")
-
-        return updated_returns
+    # Live return injection moved to LiveReturnService (services/live_return_service.py)
 
     @classmethod
     def get_risk_metrics(
@@ -1670,17 +1080,22 @@ class ReturnsDataService:
                 "benchmark_volatility": float("nan"),
             }
 
-        # Calculate all metrics
+        # Calculate all metrics via StatisticsService
+        from app.services.statistics_service import StatisticsService
+
+        corr = StatisticsService.get_correlation(portfolio_returns, benchmark_returns)
+        r_squared = float("nan") if np.isnan(corr) else corr ** 2
+
         return {
-            "beta": cls.get_beta(portfolio_returns, benchmark_returns),
-            "alpha": cls.get_alpha(portfolio_returns, benchmark_returns, risk_free_rate),
-            "tracking_error": cls.get_tracking_error(portfolio_returns, benchmark_returns),
-            "information_ratio": cls.get_information_ratio(portfolio_returns, benchmark_returns),
+            "beta": StatisticsService.get_beta(portfolio_returns, benchmark_returns),
+            "alpha": StatisticsService.get_alpha(portfolio_returns, benchmark_returns, risk_free_rate),
+            "tracking_error": StatisticsService.get_tracking_error(portfolio_returns, benchmark_returns),
+            "information_ratio": StatisticsService.get_information_ratio(portfolio_returns, benchmark_returns),
             "sharpe_ratio": cls.get_sharpe_ratio(portfolio_returns, risk_free_rate),
             "sortino_ratio": cls.get_sortino_ratio(portfolio_returns, risk_free_rate),
             "benchmark_sharpe": cls.get_sharpe_ratio(benchmark_returns, risk_free_rate),
-            "correlation": cls.get_correlation(portfolio_returns, benchmark_returns),
-            "r_squared": cls.get_r_squared(portfolio_returns, benchmark_returns),
+            "correlation": corr,
+            "r_squared": r_squared,
             "portfolio_volatility": portfolio_returns.std() * np.sqrt(252),
             "benchmark_volatility": benchmark_returns.std() * np.sqrt(252),
         }

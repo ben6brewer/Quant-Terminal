@@ -3,7 +3,6 @@
 from typing import Optional
 
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
-from PySide6.QtCore import Signal, QThread, QObject
 
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
@@ -15,33 +14,6 @@ from .widgets.ticker_list_panel import TickerListPanel
 from .widgets.frontier_chart import FrontierChart
 from .widgets.weights_panel import WeightsPanel
 from .widgets.ef_settings_dialog import EFSettingsDialog
-
-
-class _EFWorker(QObject):
-    """Background worker for efficient frontier calculation."""
-
-    finished = Signal(dict)
-    error = Signal(str)
-
-    def __init__(self, tickers, num_simulations, lookback_days,
-                 start_date=None, end_date=None):
-        super().__init__()
-        self._tickers = tickers
-        self._num_simulations = num_simulations
-        self._lookback_days = lookback_days
-        self._start_date = start_date
-        self._end_date = end_date
-
-    def run(self):
-        try:
-            from .services.frontier_calculation_service import FrontierCalculationService
-            results = FrontierCalculationService.calculate_efficient_frontier(
-                self._tickers, self._num_simulations, self._lookback_days,
-                start_date=self._start_date, end_date=self._end_date,
-            )
-            self.finished.emit(results)
-        except Exception as e:
-            self.error.emit(str(e))
 
 
 class EfficientFrontierModule(BaseModule):
@@ -229,9 +201,6 @@ class EfficientFrontierModule(BaseModule):
             self.chart.show_placeholder("Add at least 2 tickers to run")
             return
 
-        self._cancel_worker()
-        self._show_loading("Calculating efficient frontier...")
-
         sims = self.settings_manager.get_num_simulations()
 
         custom_range = self.controls.custom_date_range
@@ -242,15 +211,16 @@ class EfficientFrontierModule(BaseModule):
             lookback = self.settings_manager.get_lookback_days()
             start_date, end_date = None, None
 
-        self._thread = QThread()
-        self._worker = _EFWorker(tickers, sims, lookback, start_date, end_date)
-        self._worker.moveToThread(self._thread)
+        from .services.frontier_calculation_service import FrontierCalculationService
 
-        self._thread.started.connect(self._worker.run)
-        self._worker.finished.connect(self._on_complete)
-        self._worker.error.connect(self._on_error)
-
-        self._thread.start()
+        self._run_worker(
+            FrontierCalculationService.calculate_efficient_frontier,
+            tickers, sims, lookback,
+            start_date=start_date, end_date=end_date,
+            loading_message="Calculating efficient frontier...",
+            on_complete=self._on_complete,
+            on_error=self._on_error,
+        )
 
     def _on_complete(self, results: dict):
         self._last_results = results

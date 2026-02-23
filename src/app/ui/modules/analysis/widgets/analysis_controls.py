@@ -18,6 +18,7 @@ from app.ui.widgets.common import (
     LazyThemeMixin,
     NoScrollComboBox,
     PortfolioTickerComboBox,
+    parse_portfolio_value,
 )
 from app.services.theme_stylesheet_service import ThemeStylesheetService
 
@@ -185,8 +186,8 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         """Handle portfolio selection - load tickers from portfolio."""
         if not value:
             return
-        if value.startswith("[Port] "):
-            portfolio_name = value[7:]
+        portfolio_name, is_portfolio = parse_portfolio_value(value)
+        if is_portfolio:
             try:
                 from app.services.portfolio_data_service import PortfolioDataService
                 data = PortfolioDataService.get_portfolio(portfolio_name)

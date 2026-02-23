@@ -6,7 +6,9 @@ from PySide6.QtCore import Signal
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
 from app.services.returns_data_service import ReturnsDataService
+from app.services.ticker_returns_service import TickerReturnsService
 from app.ui.widgets.common.custom_message_box import CustomMessageBox
+from app.ui.widgets.common import parse_portfolio_value
 from app.ui.modules.base_module import BaseModule
 
 from .services.distribution_settings_manager import DistributionSettingsManager
@@ -100,8 +102,7 @@ class ReturnDistributionModule(BaseModule):
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio/ticker selection change."""
         # Strip "[Port] " prefix if present
-        if name.startswith("[Port] "):
-            name = name[7:]
+        name, _ = parse_portfolio_value(name)
 
         if name == self._current_portfolio:
             return
@@ -275,7 +276,7 @@ class ReturnDistributionModule(BaseModule):
 
         if metric == "Returns":
             if is_ticker:
-                return ReturnsDataService.get_ticker_returns(
+                return TickerReturnsService.get_ticker_returns(
                     name, start_date=start_date, end_date=end_date,
                     interval=self._current_interval,
                 )
@@ -287,7 +288,7 @@ class ReturnDistributionModule(BaseModule):
 
         elif metric == "Volatility":
             if is_ticker:
-                return ReturnsDataService.get_ticker_volatility(
+                return TickerReturnsService.get_ticker_volatility(
                     name, start_date=start_date, end_date=end_date,
                 )
             else:
@@ -299,7 +300,7 @@ class ReturnDistributionModule(BaseModule):
         elif metric == "Rolling Volatility":
             window_days = self.WINDOW_TO_DAYS.get(self._current_window, 21)
             if is_ticker:
-                return ReturnsDataService.get_ticker_rolling_volatility(
+                return TickerReturnsService.get_ticker_rolling_volatility(
                     name, window_days=window_days,
                     start_date=start_date, end_date=end_date,
                 )
@@ -312,7 +313,7 @@ class ReturnDistributionModule(BaseModule):
 
         elif metric == "Drawdown":
             if is_ticker:
-                return ReturnsDataService.get_ticker_drawdowns(
+                return TickerReturnsService.get_ticker_drawdowns(
                     name, start_date=start_date, end_date=end_date,
                 )
             else:
@@ -324,7 +325,7 @@ class ReturnDistributionModule(BaseModule):
         elif metric == "Rolling Return":
             window_days = self.WINDOW_TO_DAYS.get(self._current_window, 252)
             if is_ticker:
-                return ReturnsDataService.get_ticker_rolling_returns(
+                return TickerReturnsService.get_ticker_rolling_returns(
                     name, window_days=window_days,
                     start_date=start_date, end_date=end_date,
                 )
@@ -337,7 +338,7 @@ class ReturnDistributionModule(BaseModule):
 
         elif metric == "Time Under Water":
             if is_ticker:
-                return ReturnsDataService.get_ticker_time_under_water(
+                return TickerReturnsService.get_ticker_time_under_water(
                     name, start_date=start_date, end_date=end_date,
                 )
             else:
@@ -349,7 +350,7 @@ class ReturnDistributionModule(BaseModule):
         else:
             # Default to returns
             if is_ticker:
-                return ReturnsDataService.get_ticker_returns(
+                return TickerReturnsService.get_ticker_returns(
                     name, start_date=start_date, end_date=end_date,
                     interval=self._current_interval,
                 )
@@ -363,13 +364,7 @@ class ReturnDistributionModule(BaseModule):
         """Get benchmark data for the current metric."""
         import pandas as pd
 
-        benchmark = self._current_benchmark
-        is_portfolio = benchmark.startswith("[Port] ")
-
-        if is_portfolio:
-            benchmark_name = benchmark.replace("[Port] ", "")
-        else:
-            benchmark_name = benchmark
+        benchmark_name, is_portfolio = parse_portfolio_value(self._current_benchmark)
 
         try:
             data = self._get_benchmark_metric_data(
@@ -403,7 +398,7 @@ class ReturnDistributionModule(BaseModule):
                     include_cash=include_cash, interval=self._current_interval,
                 )
             else:
-                return ReturnsDataService.get_ticker_returns(
+                return TickerReturnsService.get_ticker_returns(
                     benchmark_name, start_date=start_date, end_date=end_date,
                     interval=self._current_interval,
                 )
@@ -415,7 +410,7 @@ class ReturnDistributionModule(BaseModule):
                     include_cash=include_cash,
                 )
             else:
-                return ReturnsDataService.get_ticker_volatility(
+                return TickerReturnsService.get_ticker_volatility(
                     benchmark_name, start_date=start_date, end_date=end_date,
                 )
 
@@ -428,7 +423,7 @@ class ReturnDistributionModule(BaseModule):
                     include_cash=include_cash,
                 )
             else:
-                return ReturnsDataService.get_ticker_rolling_volatility(
+                return TickerReturnsService.get_ticker_rolling_volatility(
                     benchmark_name, window_days=window_days,
                     start_date=start_date, end_date=end_date,
                 )
@@ -440,7 +435,7 @@ class ReturnDistributionModule(BaseModule):
                     include_cash=include_cash,
                 )
             else:
-                return ReturnsDataService.get_ticker_drawdowns(
+                return TickerReturnsService.get_ticker_drawdowns(
                     benchmark_name, start_date=start_date, end_date=end_date,
                 )
 
@@ -453,7 +448,7 @@ class ReturnDistributionModule(BaseModule):
                     include_cash=include_cash,
                 )
             else:
-                return ReturnsDataService.get_ticker_rolling_returns(
+                return TickerReturnsService.get_ticker_rolling_returns(
                     benchmark_name, window_days=window_days,
                     start_date=start_date, end_date=end_date,
                 )
@@ -465,7 +460,7 @@ class ReturnDistributionModule(BaseModule):
                     include_cash=include_cash,
                 )
             else:
-                return ReturnsDataService.get_ticker_time_under_water(
+                return TickerReturnsService.get_ticker_time_under_water(
                     benchmark_name, start_date=start_date, end_date=end_date,
                 )
 
@@ -477,7 +472,7 @@ class ReturnDistributionModule(BaseModule):
                     include_cash=include_cash, interval=self._current_interval,
                 )
             else:
-                return ReturnsDataService.get_ticker_returns(
+                return TickerReturnsService.get_ticker_returns(
                     benchmark_name, start_date=start_date, end_date=end_date,
                     interval=self._current_interval,
                 )
