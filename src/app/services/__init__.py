@@ -17,6 +17,7 @@ __all__ = [
     "ISharesHoldingsService",
     "BenchmarkReturnsService",
     "FMPHoldingsService",
+    "TickerListPersistence",
 ]
 
 
@@ -65,5 +66,10 @@ def __getattr__(name: str):
         from app.services.fmp_holdings_service import FMPHoldingsService
         globals()["FMPHoldingsService"] = FMPHoldingsService
         return FMPHoldingsService
+
+    if name == "TickerListPersistence":
+        from app.services.ticker_list_persistence import TickerListPersistence
+        globals()["TickerListPersistence"] = TickerListPersistence
+        return TickerListPersistence
 
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

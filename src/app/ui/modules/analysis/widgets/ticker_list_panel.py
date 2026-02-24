@@ -97,16 +97,27 @@ class SaveTickerListDialog(ThemedDialog):
 
 
 class LoadTickerListDialog(ThemedDialog):
-    """Dialog for loading a saved ticker list."""
+    """Dialog for loading a saved ticker list (optionally including portfolios)."""
 
-    def __init__(self, theme_manager: ThemeManager, parent=None):
+    PORTFOLIO_PREFIX = "[Port] "
+
+    def __init__(self, theme_manager: ThemeManager, parent=None,
+                 include_portfolios: bool = False):
         self.selected_name = None
+        self.selected_tickers = None  # Set when a portfolio is selected
+        self._include_portfolios = include_portfolios
         super().__init__(theme_manager, "Load Ticker List", parent, min_width=320, min_height=300)
 
     def _setup_content(self, layout):
-        names = TickerListPersistence.list_all()
+        # Gather portfolio names (if enabled)
+        portfolio_names = []
+        if self._include_portfolios:
+            from app.services.portfolio_data_service import PortfolioDataService
+            portfolio_names = PortfolioDataService.list_portfolios_by_recent()
 
-        if not names:
+        list_names = TickerListPersistence.list_all()
+
+        if not portfolio_names and not list_names:
             empty_label = QLabel("No saved ticker lists.")
             empty_label.setObjectName("descLabel")
             empty_label.setAlignment(Qt.AlignCenter)
@@ -119,10 +130,34 @@ class LoadTickerListDialog(ThemedDialog):
         self.list_widget.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.list_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        for name in names:
+        # Portfolios first (no delete button)
+        for name in portfolio_names:
+            self._add_portfolio_row(name)
+
+        # Then saved ticker lists (with delete button)
+        for name in list_names:
             self._add_list_row(name)
 
         layout.addWidget(self.list_widget, stretch=1)
+
+    def _add_portfolio_row(self, name: str):
+        """Add a portfolio row (no delete button)."""
+        item = QListWidgetItem()
+        item.setSizeHint(item.sizeHint().__class__(0, 36))
+
+        row_widget = QWidget()
+        row_layout = QHBoxLayout(row_widget)
+        row_layout.setContentsMargins(8, 4, 4, 4)
+        row_layout.setSpacing(6)
+
+        name_btn = QPushButton(f"{self.PORTFOLIO_PREFIX}{name}")
+        name_btn.setObjectName("listNameBtn")
+        name_btn.setCursor(Qt.PointingHandCursor)
+        name_btn.clicked.connect(lambda checked, n=name: self._on_select_portfolio(n))
+        row_layout.addWidget(name_btn, stretch=1)
+
+        self.list_widget.addItem(item)
+        self.list_widget.setItemWidget(item, row_widget)
 
     def _add_list_row(self, name: str):
         item = QListWidgetItem()
@@ -149,18 +184,34 @@ class LoadTickerListDialog(ThemedDialog):
         self.list_widget.addItem(item)
         self.list_widget.setItemWidget(item, row_widget)
 
+    def _on_select_portfolio(self, name: str):
+        """Handle portfolio selection — resolve tickers and accept."""
+        from app.services.portfolio_data_service import PortfolioDataService
+
+        portfolio = PortfolioDataService.get_portfolio(name)
+        if portfolio and portfolio.tickers:
+            self.selected_tickers = portfolio.tickers
+            self.accept()
+
     def _on_select(self, name: str):
         self.selected_name = name
         self.accept()
 
     def _on_delete(self, name: str):
         TickerListPersistence.delete_list(name)
-        # Rebuild list
+        # Rebuild list (portfolios + remaining ticker lists)
+        self._rebuild_list()
+
+    def _rebuild_list(self):
+        """Rebuild the list widget after a delete."""
         self.list_widget.clear()
+        if self._include_portfolios:
+            from app.services.portfolio_data_service import PortfolioDataService
+            for n in PortfolioDataService.list_portfolios_by_recent():
+                self._add_portfolio_row(n)
         for n in TickerListPersistence.list_all():
             self._add_list_row(n)
         if self.list_widget.count() == 0:
-            # No more lists — close dialog
             self.reject()
 
     def _apply_theme(self):
@@ -220,12 +271,14 @@ class TickerListPanel(LazyThemeMixin, QWidget):
 
     tickers_changed = Signal(list)
 
-    def __init__(self, theme_manager: ThemeManager, parent=None):
+    def __init__(self, theme_manager: ThemeManager, parent=None,
+                 include_portfolios: bool = False):
         super().__init__(parent)
         self.theme_manager = theme_manager
         self._theme_dirty = False
         self._tickers: List[str] = []
         self._expanded = True
+        self._include_portfolios = include_portfolios
 
         self.setFixedWidth(self._EXPANDED_WIDTH)
         self._setup_ui()
@@ -418,14 +471,23 @@ class TickerListPanel(LazyThemeMixin, QWidget):
             TickerListPersistence.save_list(dialog.saved_name, self._tickers)
 
     def _show_load_dialog(self):
-        """Open dialog to load a saved ticker list."""
-        dialog = LoadTickerListDialog(self.theme_manager, self)
-        if dialog.exec() and dialog.selected_name:
-            tickers = TickerListPersistence.load_list(dialog.selected_name)
-            if tickers is not None:
-                self._tickers = tickers
+        """Open dialog to load a saved ticker list or portfolio."""
+        dialog = LoadTickerListDialog(
+            self.theme_manager, self,
+            include_portfolios=self._include_portfolios,
+        )
+        if dialog.exec():
+            # Portfolio selection returns tickers directly
+            if dialog.selected_tickers is not None:
+                self._tickers = list(dialog.selected_tickers)
                 self._refresh_list()
                 self.tickers_changed.emit(list(self._tickers))
+            elif dialog.selected_name:
+                tickers = TickerListPersistence.load_list(dialog.selected_name)
+                if tickers is not None:
+                    self._tickers = tickers
+                    self._refresh_list()
+                    self.tickers_changed.emit(list(self._tickers))
 
     def _apply_theme(self):
         c = ThemeStylesheetService.get_colors(self.theme_manager.current_theme)

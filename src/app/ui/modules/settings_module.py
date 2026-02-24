@@ -469,7 +469,7 @@ class SettingsModule(QWidget):
             CustomMessageBox.Ok | CustomMessageBox.Cancel,
         )
         if result == CustomMessageBox.Ok:
-            from app.ui.modules.analysis.services.ticker_list_persistence import TickerListPersistence
+            from app.services.ticker_list_persistence import TickerListPersistence
             try:
                 TickerListPersistence.clear_all()
             except Exception as e:
@@ -576,7 +576,7 @@ class SettingsModule(QWidget):
                 errors.append(f"IWV holdings: {e}")
 
             try:
-                from app.ui.modules.analysis.services.ticker_list_persistence import TickerListPersistence
+                from app.services.ticker_list_persistence import TickerListPersistence
                 TickerListPersistence.clear_all()
             except Exception as e:
                 errors.append(f"Ticker lists: {e}")
