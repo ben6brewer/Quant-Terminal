@@ -1,7 +1,5 @@
 """Analysis Controls Widget - Shared top control bar for analysis modules."""
 
-from typing import List
-
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -17,8 +15,6 @@ from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common import (
     LazyThemeMixin,
     NoScrollComboBox,
-    PortfolioTickerComboBox,
-    parse_portfolio_value,
 )
 from app.services.theme_stylesheet_service import ThemeStylesheetService
 
@@ -30,6 +26,15 @@ LOOKBACK_OPTIONS = [
     ("5 Years", 1825),
     ("Max", None),
     ("Custom", -1),
+]
+
+# Periodicity options: label -> value
+PERIODICITY_OPTIONS = [
+    ("Daily", "daily"),
+    ("Weekly", "weekly"),
+    ("Monthly", "monthly"),
+    ("Quarterly", "quarterly"),
+    ("Yearly", "yearly"),
 ]
 
 # Simulation count options
@@ -48,8 +53,8 @@ class AnalysisControls(LazyThemeMixin, QWidget):
     """
 
     home_clicked = Signal()
-    portfolio_loaded = Signal(list)
     lookback_changed = Signal(int)
+    periodicity_changed = Signal(str)
     simulations_changed = Signal(int)
     risk_aversion_changed = Signal(float)
     run_clicked = Signal()
@@ -60,6 +65,7 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         theme_manager: ThemeManager,
         show_simulations: bool = False,
         show_risk_aversion: bool = False,
+        show_periodicity: bool = False,
         run_label: str = "Run",
         parent=None,
     ):
@@ -68,6 +74,7 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         self._theme_dirty = False
         self._show_simulations = show_simulations
         self._show_risk_aversion = show_risk_aversion
+        self._show_periodicity = show_periodicity
         self._custom_date_range = None
         self._previous_lookback_index = 2  # Default: 5 Years
 
@@ -96,20 +103,6 @@ class AnalysisControls(LazyThemeMixin, QWidget):
 
         layout.addStretch(1)
 
-        # Portfolio combo (load tickers from portfolio)
-        self.portfolio_label = QLabel("Load Portfolio:")
-        self.portfolio_label.setObjectName("control_label")
-        layout.addWidget(self.portfolio_label)
-        self.portfolio_combo = PortfolioTickerComboBox()
-        self.portfolio_combo.setMinimumWidth(140)
-        self.portfolio_combo.setMaximumWidth(250)
-        self.portfolio_combo.setFixedHeight(40)
-        self.portfolio_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        self.portfolio_combo.value_changed.connect(self._on_portfolio_selected)
-        layout.addWidget(self.portfolio_combo)
-
-        layout.addSpacing(10)
-
         # Lookback selector
         self.lookback_label = QLabel("Lookback:")
         self.lookback_label.setObjectName("control_label")
@@ -124,6 +117,24 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         self.lookback_combo.setCurrentIndex(2)  # Default: 5 Years
         self.lookback_combo.currentIndexChanged.connect(self._on_lookback_changed)
         layout.addWidget(self.lookback_combo)
+
+        # Periodicity selector (correlation/covariance only)
+        if self._show_periodicity:
+            layout.addSpacing(8)
+
+            self.periodicity_label = QLabel("Periodicity:")
+            self.periodicity_label.setObjectName("control_label")
+            layout.addWidget(self.periodicity_label)
+            self.periodicity_combo = NoScrollComboBox()
+            self.periodicity_combo.setMinimumWidth(85)
+            self.periodicity_combo.setMaximumWidth(120)
+            self.periodicity_combo.setFixedHeight(40)
+            self.periodicity_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+            for label, value in PERIODICITY_OPTIONS:
+                self.periodicity_combo.addItem(label, value)
+            self.periodicity_combo.setCurrentIndex(0)  # Default: Daily
+            self.periodicity_combo.currentIndexChanged.connect(self._on_periodicity_changed)
+            layout.addWidget(self.periodicity_combo)
 
         # Simulations selector (EF only)
         if self._show_simulations:
@@ -182,20 +193,6 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         self.settings_btn.clicked.connect(self.settings_clicked.emit)
         layout.addWidget(self.settings_btn)
 
-    def _on_portfolio_selected(self, value: str):
-        """Handle portfolio selection - load tickers from portfolio."""
-        if not value:
-            return
-        portfolio_name, is_portfolio = parse_portfolio_value(value)
-        if is_portfolio:
-            try:
-                from app.services.portfolio_data_service import PortfolioDataService
-                data = PortfolioDataService.get_portfolio(portfolio_name)
-                if data and data.tickers:
-                    self.portfolio_loaded.emit(data.tickers)
-            except Exception:
-                pass
-
     def _on_lookback_changed(self, index: int):
         data = self.lookback_combo.currentData()
 
@@ -233,14 +230,15 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         else:
             self.risk_aversion_changed.emit(0.0)
 
+    def _on_periodicity_changed(self, index: int):
+        value = self.periodicity_combo.currentData()
+        if value:
+            self.periodicity_changed.emit(value)
+
     def _on_sims_changed(self, index: int):
         count = self.sims_combo.currentData()
         if count:
             self.simulations_changed.emit(count)
-
-    def set_portfolio_list(self, portfolios: List[str]):
-        """Set available portfolios in the dropdown."""
-        self.portfolio_combo.set_portfolios(portfolios)
 
     def set_lookback(self, days: int):
         """Set the lookback combo to match the given days value."""
@@ -257,6 +255,21 @@ class AnalysisControls(LazyThemeMixin, QWidget):
         for i in range(self.sims_combo.count()):
             if self.sims_combo.itemData(i) == count:
                 self.sims_combo.setCurrentIndex(i)
+                return
+
+    def get_periodicity(self) -> str:
+        """Return the currently selected periodicity value."""
+        if not self._show_periodicity:
+            return "daily"
+        return self.periodicity_combo.currentData() or "daily"
+
+    def set_periodicity(self, value: str):
+        """Set the periodicity combo to match the given value."""
+        if not self._show_periodicity:
+            return
+        for i in range(self.periodicity_combo.count()):
+            if self.periodicity_combo.itemData(i) == value:
+                self.periodicity_combo.setCurrentIndex(i)
                 return
 
     def get_risk_aversion(self) -> float:

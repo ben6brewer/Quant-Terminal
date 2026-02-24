@@ -41,6 +41,7 @@ class AnalysisSettingsManager(BaseSettingsManager):
             "corr_decimals": 3,
             "cov_decimals": 4,
             "matrix_colorscale": "Green-Yellow-Red",
+            "corr_fixed_color_scale": True,
             "ef_show_gridlines": True,
             "ef_colorscale": "Magma",
             "ef_show_individual_securities": True,
@@ -51,6 +52,7 @@ class AnalysisSettingsManager(BaseSettingsManager):
             "ef_show_max_sortino": True,
             "ef_show_indifference_curve": True,
             "ef_allow_leverage": True,
+            "periodicity": "daily",
         }
 
     @property
@@ -87,11 +89,24 @@ class AnalysisSettingsManager(BaseSettingsManager):
     def set_cov_decimals(self, value: int) -> None:
         self.update_settings({"cov_decimals": value})
 
+    def get_periodicity(self) -> str:
+        return self.get_setting("periodicity") or "daily"
+
+    def set_periodicity(self, value: str) -> None:
+        self.update_settings({"periodicity": value})
+
     def get_matrix_colorscale(self) -> str:
         return self.get_setting("matrix_colorscale") or "Green-Yellow-Red"
 
     def set_matrix_colorscale(self, value: str) -> None:
         self.update_settings({"matrix_colorscale": value})
+
+    def get_corr_fixed_color_scale(self) -> bool:
+        val = self.get_setting("corr_fixed_color_scale")
+        return val if val is not None else True
+
+    def set_corr_fixed_color_scale(self, value: bool) -> None:
+        self.update_settings({"corr_fixed_color_scale": value})
 
     def get_ef_show_gridlines(self) -> bool:
         val = self.get_setting("ef_show_gridlines")

@@ -13,10 +13,11 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
     QLineEdit,
 )
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Signal, Qt, QThread
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common import LazyThemeMixin, AutoSelectLineEdit, ThemedDialog, VerticalLabel
+from app.ui.widgets.common import LazyThemeMixin, AutoSelectLineEdit, ThemedDialog, VerticalLabel, CustomMessageBox
+from app.services.calculation_worker import CalculationWorker
 from app.services.theme_stylesheet_service import ThemeStylesheetService
 from ..services.ticker_list_persistence import TickerListPersistence
 
@@ -249,13 +250,17 @@ class LoadTickerListDialog(ThemedDialog):
             }}
             QPushButton#deleteBtn {{
                 background: transparent;
-                color: {c['text_muted']};
+                color: {c['text']};
                 border: none;
                 font-size: 13px;
                 font-weight: bold;
+                padding: 0px;
             }}
             QPushButton#deleteBtn:hover {{
                 color: {delete_hover};
+            }}
+            QScrollBar:vertical {{
+                width: 0px;
             }}
         """)
 
@@ -279,6 +284,9 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         self._tickers: List[str] = []
         self._expanded = True
         self._include_portfolios = include_portfolios
+        self._validate_thread = None
+        self._validate_worker = None
+        self._pending_ticker = None
 
         self.setFixedWidth(self._EXPANDED_WIDTH)
         self._setup_ui()
@@ -398,16 +406,90 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         )
 
     def _add_ticker(self):
-        """Add a ticker from the input field."""
+        """Add a ticker from the input field after validating against Yahoo Finance."""
         text = self.ticker_input.text().strip().upper()
         if not text or text in self._tickers:
             self.ticker_input.clear()
             return
 
-        self._tickers.append(text)
-        self._refresh_list()
+        # Cancel any in-flight validation
+        self._cancel_validate_worker()
+
+        # Disable input while validating
+        self._pending_ticker = text
+        self.ticker_input.setEnabled(False)
+        self.add_btn.setEnabled(False)
         self.ticker_input.clear()
-        self.tickers_changed.emit(list(self._tickers))
+        self.ticker_input.setPlaceholderText("Validating...")
+
+        # Spin up background validation
+        from app.services.yahoo_finance_service import YahooFinanceService
+
+        self._validate_thread = QThread()
+        self._validate_worker = CalculationWorker(YahooFinanceService.is_valid_ticker, text)
+        self._validate_worker.moveToThread(self._validate_thread)
+        self._validate_thread.started.connect(self._validate_worker.run)
+        self._validate_worker.finished.connect(self._on_validation_done)
+        self._validate_worker.error.connect(self._on_validation_error)
+        self._validate_thread.start()
+
+    def _on_validation_error(self, error):
+        """Handle validation error as invalid ticker."""
+        self._on_validation_done(False)
+
+    def _on_validation_done(self, valid: bool):
+        """Handle the result of ticker validation."""
+        ticker = self._pending_ticker
+        self._pending_ticker = None
+
+        # Clean up thread (deferred — not inside the signal handler's thread)
+        self._cleanup_validate_worker()
+
+        # Re-enable input
+        self.ticker_input.setPlaceholderText("Add ticker...")
+        self.ticker_input.setEnabled(True)
+        self.add_btn.setEnabled(True)
+        self.ticker_input.setFocus()
+
+        if valid and ticker:
+            if ticker not in self._tickers:
+                self._tickers.append(ticker)
+                self._refresh_list()
+                self.tickers_changed.emit(list(self._tickers))
+        elif ticker:
+            CustomMessageBox.warning(
+                self.theme_manager,
+                self,
+                "Invalid Ticker",
+                f"'{ticker}' was not found on Yahoo Finance.",
+            )
+
+    def _cancel_validate_worker(self):
+        """Cancel any in-flight validation, disconnecting signals first."""
+        if self._validate_worker is not None:
+            try:
+                self._validate_worker.finished.disconnect(self._on_validation_done)
+            except RuntimeError:
+                pass
+            try:
+                self._validate_worker.error.disconnect(self._on_validation_error)
+            except RuntimeError:
+                pass
+        self._cleanup_validate_worker()
+        self._pending_ticker = None
+
+    def _cleanup_validate_worker(self):
+        """Quit/wait/terminate the validation thread safely."""
+        if self._validate_thread is not None:
+            self._validate_thread.quit()
+            if not self._validate_thread.wait(5000):
+                self._validate_thread.terminate()
+                self._validate_thread.wait(1000)
+            self._validate_thread.deleteLater()
+            self._validate_thread = None
+        if self._validate_worker is not None:
+            self._validate_worker.deleteLater()
+            self._validate_worker = None
 
     def _remove_ticker(self, ticker: str):
         """Remove a specific ticker."""

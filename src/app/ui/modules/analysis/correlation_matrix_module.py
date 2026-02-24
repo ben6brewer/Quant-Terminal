@@ -3,7 +3,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 
 from app.core.theme_manager import ThemeManager
-from app.services.portfolio_data_service import PortfolioDataService
 from app.ui.modules.base_module import BaseModule
 
 from .services.analysis_settings_manager import AnalysisSettingsManager
@@ -35,6 +34,7 @@ class CorrelationMatrixModule(BaseModule):
         self.controls = AnalysisControls(
             self.theme_manager,
             show_simulations=False,
+            show_periodicity=True,
             run_label="Run",
         )
         layout.addWidget(self.controls)
@@ -44,7 +44,7 @@ class CorrelationMatrixModule(BaseModule):
         body.setContentsMargins(0, 0, 0, 0)
         body.setSpacing(0)
 
-        self.ticker_panel = TickerListPanel(self.theme_manager)
+        self.ticker_panel = TickerListPanel(self.theme_manager, include_portfolios=True)
         body.addWidget(self.ticker_panel, stretch=0)
 
         self.heatmap = MatrixHeatmap()
@@ -55,8 +55,8 @@ class CorrelationMatrixModule(BaseModule):
 
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
-        self.controls.portfolio_loaded.connect(self._on_portfolio_loaded)
         self.controls.lookback_changed.connect(self._on_lookback_changed)
+        self.controls.periodicity_changed.connect(self._on_periodicity_changed)
         self.controls.run_clicked.connect(self._run)
         self.controls.settings_clicked.connect(self._show_settings_dialog)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
@@ -65,13 +65,7 @@ class CorrelationMatrixModule(BaseModule):
     def _load_settings(self):
         lookback = self.settings_manager.get_lookback_days()
         self.controls.set_lookback(lookback)
-
-        portfolios = PortfolioDataService.list_portfolios_by_recent()
-        self.controls.set_portfolio_list(portfolios)
-
-    def _on_portfolio_loaded(self, tickers: list):
-        self.ticker_panel.set_tickers(tickers)
-        self.settings_manager.set_tickers(tickers)
+        self.controls.set_periodicity(self.settings_manager.get_periodicity())
 
     def _on_tickers_changed(self, tickers: list):
         self.settings_manager.set_tickers(tickers)
@@ -83,10 +77,14 @@ class CorrelationMatrixModule(BaseModule):
             {"lookback_days": days if days > 0 else None}
         )
 
+    def _on_periodicity_changed(self, value: str):
+        self.settings_manager.set_periodicity(value)
+
     def _show_settings_dialog(self):
         current = {
             "corr_decimals": self.settings_manager.get_corr_decimals(),
             "matrix_colorscale": self.settings_manager.get_matrix_colorscale(),
+            "corr_fixed_color_scale": self.settings_manager.get_corr_fixed_color_scale(),
         }
         dialog = AnalysisSettingsDialog(
             self.theme_manager, current, mode="correlation", parent=self
@@ -99,7 +97,8 @@ class CorrelationMatrixModule(BaseModule):
                 colorscale = settings.get("matrix_colorscale", "Green-Yellow-Red")
                 self.heatmap.begin_update()
                 self.heatmap.set_theme(self.theme_manager.current_theme)
-                self.heatmap.set_data(self._last_matrix, f".{decimals}f", colorscale)
+                self.heatmap.set_data(self._last_matrix, f".{decimals}f", colorscale,
+                                     absolute_colors=settings.get("corr_fixed_color_scale", True))
                 self.heatmap.end_update()
                 self.heatmap.flush_and_repaint()
 
@@ -123,6 +122,7 @@ class CorrelationMatrixModule(BaseModule):
             FrontierCalculationService.calculate_correlation_matrix,
             tickers, lookback,
             start_date=start_date, end_date=end_date,
+            periodicity=self.controls.get_periodicity(),
             loading_message="Computing correlation matrix...",
             on_complete=self._on_complete,
             on_error=self._on_error,
@@ -134,7 +134,8 @@ class CorrelationMatrixModule(BaseModule):
         colorscale = self.settings_manager.get_matrix_colorscale()
         self.heatmap.begin_update()
         self.heatmap.set_theme(self.theme_manager.current_theme)
-        self.heatmap.set_data(corr_matrix, f".{decimals}f", colorscale)
+        fixed = self.settings_manager.get_corr_fixed_color_scale()
+        self.heatmap.set_data(corr_matrix, f".{decimals}f", colorscale, absolute_colors=fixed)
         self._hide_loading()
         self.heatmap.end_update()
         self.heatmap.flush_and_repaint()

@@ -5,7 +5,6 @@ from typing import Optional
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 
 from app.core.theme_manager import ThemeManager
-from app.services.portfolio_data_service import PortfolioDataService
 from app.ui.modules.base_module import BaseModule
 
 from .services.analysis_settings_manager import AnalysisSettingsManager
@@ -52,7 +51,7 @@ class EfficientFrontierModule(BaseModule):
         content.setContentsMargins(0, 0, 0, 0)
         content.setSpacing(0)
 
-        self.ticker_panel = TickerListPanel(self.theme_manager)
+        self.ticker_panel = TickerListPanel(self.theme_manager, include_portfolios=True)
         content.addWidget(self.ticker_panel)
 
         self.chart = FrontierChart()
@@ -66,7 +65,6 @@ class EfficientFrontierModule(BaseModule):
 
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
-        self.controls.portfolio_loaded.connect(self._on_portfolio_loaded)
         self.controls.lookback_changed.connect(self._on_lookback_changed)
         self.controls.simulations_changed.connect(self._on_simulations_changed)
         self.controls.risk_aversion_changed.connect(self._on_risk_aversion_changed)
@@ -84,14 +82,6 @@ class EfficientFrontierModule(BaseModule):
 
         # Apply EF chart settings
         self.chart.apply_settings(self.settings_manager.get_all_settings())
-
-        # Populate portfolio dropdown
-        portfolios = PortfolioDataService.list_portfolios_by_recent()
-        self.controls.set_portfolio_list(portfolios)
-
-    def _on_portfolio_loaded(self, tickers: list):
-        self.ticker_panel.set_tickers(tickers)
-        self.settings_manager.set_tickers(tickers)
 
     def _on_tickers_changed(self, tickers: list):
         self.settings_manager.set_tickers(tickers)

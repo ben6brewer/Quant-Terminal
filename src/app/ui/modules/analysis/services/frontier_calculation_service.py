@@ -343,19 +343,41 @@ class FrontierCalculationService:
         }
 
     @staticmethod
+    def _resample_returns(
+        prices: "pd.DataFrame",
+        periodicity: str = "daily",
+    ) -> "pd.DataFrame":
+        """Resample prices to the given periodicity and compute returns.
+
+        For daily, just computes pct_change on the prices directly.
+        For other periodicities, resamples prices first.
+        """
+        freq_map = {
+            "weekly": "W-FRI",
+            "monthly": "ME",
+            "quarterly": "QE",
+            "yearly": "YE",
+        }
+        if periodicity in freq_map:
+            prices = prices.resample(freq_map[periodicity]).last().dropna()
+        return prices.pct_change().dropna()
+
+    @staticmethod
     def calculate_correlation_matrix(
         tickers: List[str],
         lookback_days: Optional[int] = 1825,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
+        periodicity: str = "daily",
     ) -> "pd.DataFrame":
         """Calculate the Pearson correlation matrix for the given tickers."""
-        _, daily_returns = FrontierCalculationService.compute_daily_returns(
+        prices, daily_returns = FrontierCalculationService.compute_daily_returns(
             tickers, lookback_days, start_date=start_date, end_date=end_date
         )
         if daily_returns.empty:
             raise ValueError("No data available for the selected tickers")
-        return daily_returns.corr()
+        returns = FrontierCalculationService._resample_returns(prices, periodicity)
+        return returns.corr()
 
     @staticmethod
     def calculate_covariance_matrix(
@@ -363,11 +385,20 @@ class FrontierCalculationService:
         lookback_days: Optional[int] = 1825,
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
+        periodicity: str = "daily",
     ) -> "pd.DataFrame":
         """Calculate the annualized covariance matrix for the given tickers."""
-        _, daily_returns = FrontierCalculationService.compute_daily_returns(
+        annualization = {
+            "daily": 252,
+            "weekly": 52,
+            "monthly": 12,
+            "quarterly": 4,
+            "yearly": 1,
+        }
+        prices, daily_returns = FrontierCalculationService.compute_daily_returns(
             tickers, lookback_days, start_date=start_date, end_date=end_date
         )
         if daily_returns.empty:
             raise ValueError("No data available for the selected tickers")
-        return daily_returns.cov() * 252
+        returns = FrontierCalculationService._resample_returns(prices, periodicity)
+        return returns.cov() * annualization.get(periodicity, 252)

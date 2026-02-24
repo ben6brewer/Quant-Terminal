@@ -86,13 +86,15 @@ class MatrixHeatmap(BaseChart):
         super().set_theme(theme)
         self.end_update()
 
-    def set_data(self, matrix: "pd.DataFrame", value_format: str = ".3f", colorscale: str = "Green-Yellow-Red"):
+    def set_data(self, matrix: "pd.DataFrame", value_format: str = ".3f", colorscale: str = "Green-Yellow-Red", absolute_colors: bool = False):
         """Render the matrix as a lower-triangle heatmap.
 
         Args:
             matrix: Square DataFrame (correlation or covariance matrix)
             value_format: Format string for cell values (e.g., ".3f", ".4f")
             colorscale: Name of colorscale from COLORSCALES dict
+            absolute_colors: When True, map abs(value) to 0→1 so correlation
+                             strength drives color regardless of sign.
         """
         import numpy as np
 
@@ -103,12 +105,15 @@ class MatrixHeatmap(BaseChart):
         n = len(labels)
         vals = matrix.values
 
-        # Collect lower triangle values (exclude diagonal) for normalization
-        lower = [vals[i, j] for i in range(n) for j in range(i)]
-        if lower:
-            v_min, v_max = min(lower), max(lower)
+        # Determine color normalization range
+        if absolute_colors:
+            v_min, v_max = 0.0, 1.0
         else:
-            v_min, v_max = float(vals.min()), float(vals.max())
+            lower = [vals[i, j] for i in range(n) for j in range(i)]
+            if lower:
+                v_min, v_max = min(lower), max(lower)
+            else:
+                v_min, v_max = float(vals.min()), float(vals.max())
         v_range = v_max - v_min if v_max != v_min else 1.0
 
         # Build RGBA image (n x n x 4)
@@ -137,7 +142,8 @@ class MatrixHeatmap(BaseChart):
                     img[j, i] = [0, 0, 0, 0]
                 else:
                     val = vals[i, j]
-                    norm = max(0.0, min(1.0, (val - v_min) / v_range))
+                    color_val = abs(val) if absolute_colors else val
+                    norm = max(0.0, min(1.0, (color_val - v_min) / v_range))
                     rgba = cmap.map([norm], mode="byte")[0]
                     img[j, i] = rgba
 

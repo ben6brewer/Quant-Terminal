@@ -3,7 +3,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 
 from app.core.theme_manager import ThemeManager
-from app.services.portfolio_data_service import PortfolioDataService
 from app.ui.modules.base_module import BaseModule
 
 from .services.analysis_settings_manager import AnalysisSettingsManager
@@ -35,6 +34,7 @@ class CovarianceMatrixModule(BaseModule):
         self.controls = AnalysisControls(
             self.theme_manager,
             show_simulations=False,
+            show_periodicity=True,
             run_label="Run",
         )
         layout.addWidget(self.controls)
@@ -44,7 +44,7 @@ class CovarianceMatrixModule(BaseModule):
         body.setContentsMargins(0, 0, 0, 0)
         body.setSpacing(0)
 
-        self.ticker_panel = TickerListPanel(self.theme_manager)
+        self.ticker_panel = TickerListPanel(self.theme_manager, include_portfolios=True)
         body.addWidget(self.ticker_panel, stretch=0)
 
         self.heatmap = MatrixHeatmap()
@@ -55,8 +55,8 @@ class CovarianceMatrixModule(BaseModule):
 
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
-        self.controls.portfolio_loaded.connect(self._on_portfolio_loaded)
         self.controls.lookback_changed.connect(self._on_lookback_changed)
+        self.controls.periodicity_changed.connect(self._on_periodicity_changed)
         self.controls.run_clicked.connect(self._run)
         self.controls.settings_clicked.connect(self._show_settings_dialog)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
@@ -65,13 +65,7 @@ class CovarianceMatrixModule(BaseModule):
     def _load_settings(self):
         lookback = self.settings_manager.get_lookback_days()
         self.controls.set_lookback(lookback)
-
-        portfolios = PortfolioDataService.list_portfolios_by_recent()
-        self.controls.set_portfolio_list(portfolios)
-
-    def _on_portfolio_loaded(self, tickers: list):
-        self.ticker_panel.set_tickers(tickers)
-        self.settings_manager.set_tickers(tickers)
+        self.controls.set_periodicity(self.settings_manager.get_periodicity())
 
     def _on_tickers_changed(self, tickers: list):
         self.settings_manager.set_tickers(tickers)
@@ -82,6 +76,9 @@ class CovarianceMatrixModule(BaseModule):
         self.settings_manager.update_settings(
             {"lookback_days": days if days > 0 else None}
         )
+
+    def _on_periodicity_changed(self, value: str):
+        self.settings_manager.set_periodicity(value)
 
     def _show_settings_dialog(self):
         current = {
@@ -123,6 +120,7 @@ class CovarianceMatrixModule(BaseModule):
             FrontierCalculationService.calculate_covariance_matrix,
             tickers, lookback,
             start_date=start_date, end_date=end_date,
+            periodicity=self.controls.get_periodicity(),
             loading_message="Computing covariance matrix...",
             on_complete=self._on_complete,
             on_error=self._on_error,

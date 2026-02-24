@@ -93,6 +93,12 @@ class AnalysisSettingsDialog(ThemedDialog):
         color_row.addStretch()
         layout.addLayout(color_row)
 
+        if self._mode == "correlation":
+            from PySide6.QtWidgets import QCheckBox
+            self.fixed_color_cb = QCheckBox("Fixed Color Scale (0 = neutral, ±1 = strong)")
+            self.fixed_color_cb.setFixedHeight(32)
+            layout.addWidget(self.fixed_color_cb)
+
         layout.addStretch()
 
         # Buttons
@@ -128,12 +134,18 @@ class AnalysisSettingsDialog(ThemedDialog):
         if idx >= 0:
             self.colorscale_combo.setCurrentIndex(idx)
 
+        if self._mode == "correlation":
+            fixed = self.current_settings.get("corr_fixed_color_scale", True)
+            self.fixed_color_cb.setChecked(fixed)
+
     def _save_settings(self):
         """Save settings and close."""
         self.result = {
             self._decimals_key: self.decimals_combo.currentData(),
             "matrix_colorscale": self.colorscale_combo.currentText(),
         }
+        if self._mode == "correlation":
+            self.result["corr_fixed_color_scale"] = self.fixed_color_cb.isChecked()
         self.accept()
 
     def get_settings(self) -> dict:
