@@ -149,7 +149,7 @@ class MonteCarloModule(BaseModule):
         self._current_benchmark = benchmark
 
     def _cancel_running_simulation(self):
-        """Cancel any in-progress simulation."""
+        """Cancel any in-progress simulation with proper Qt cleanup."""
         if self._simulation_worker is not None:
             try:
                 self._simulation_worker.simulation_complete.disconnect()
@@ -157,7 +157,10 @@ class MonteCarloModule(BaseModule):
             except (RuntimeError, TypeError):
                 pass
             self._simulation_worker.request_cancellation()
-            self._simulation_worker.wait(5000)
+            if not self._simulation_worker.wait(5000):
+                self._simulation_worker.terminate()
+                self._simulation_worker.wait(1000)
+            self._simulation_worker.deleteLater()
             self._simulation_worker = None
 
     def _run_simulation(self):
@@ -251,13 +254,17 @@ class MonteCarloModule(BaseModule):
         )
 
         self._hide_loading()
-        self._simulation_worker = None
+        if self._simulation_worker is not None:
+            self._simulation_worker.deleteLater()
+            self._simulation_worker = None
 
     def _on_simulation_error(self, error_msg: str):
         """Handle simulation error."""
         self.chart.show_placeholder(f"Error: {error_msg}")
         self._hide_loading()
-        self._simulation_worker = None
+        if self._simulation_worker is not None:
+            self._simulation_worker.deleteLater()
+            self._simulation_worker = None
 
     def _show_settings_dialog(self):
         """Show settings dialog."""

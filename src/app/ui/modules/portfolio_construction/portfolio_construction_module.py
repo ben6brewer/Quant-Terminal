@@ -109,7 +109,8 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
             self._start_live_updates()
 
     def hideEvent(self, event):
-        """Handle hide event - pause live updates when module is hidden."""
+        """Handle hide event - cancel load worker and pause live updates."""
+        self._cancel_load_worker()
         self._stop_live_updates()
         super().hideEvent(event)
 
@@ -530,29 +531,28 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self._cleanup_load_worker()
 
     def _cancel_load_worker(self):
-        """Disconnect signals from any in-progress load to prevent stale callbacks."""
+        """Cancel any in-progress load worker with proper Qt cleanup."""
         if self._load_worker is not None:
             try:
                 self._load_worker.finished.disconnect()
                 self._load_worker.error.disconnect()
             except (RuntimeError, TypeError):
                 pass
-        if self._load_thread is not None:
-            self._load_thread.quit()
-            self._load_thread.wait(3000)
-        self._load_thread = None
-        self._load_worker = None
+        self._cleanup_load_worker()
 
     def _cleanup_load_worker(self):
         """Clean up load worker and thread after completion."""
         if self._load_thread is not None:
             self._load_thread.quit()
-            self._load_thread.wait(2000)
-            self._load_thread.deleteLater()
-            self._load_thread = None
+            if not self._load_thread.wait(5000):
+                self._load_thread.terminate()
+                self._load_thread.wait(1000)
         if self._load_worker is not None:
             self._load_worker.deleteLater()
-            self._load_worker = None
+        if self._load_thread is not None:
+            self._load_thread.deleteLater()
+        self._load_worker = None
+        self._load_thread = None
 
     def _show_loading_overlay(self, message: str = "Loading Portfolio..."):
         """Show loading overlay over the tab bar and table area."""

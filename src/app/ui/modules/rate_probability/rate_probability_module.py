@@ -129,12 +129,14 @@ class RateProbabilityModule(BaseModule):
         )
 
     def _cancel_evolution_fetch(self):
-        """Cancel any in-progress evolution fetch."""
-        if self._evolution_thread is not None and self._evolution_thread.isRunning():
-            self._evolution_thread.quit()
-            self._evolution_thread.wait(1000)
-        self._evolution_thread = None
-        self._evolution_worker = None
+        """Cancel any in-progress evolution fetch with proper Qt cleanup."""
+        if self._evolution_worker is not None:
+            try:
+                self._evolution_worker.finished.disconnect()
+                self._evolution_worker.error.disconnect()
+            except (RuntimeError, TypeError):
+                pass
+        self._cleanup_evolution_worker()
 
     def _on_data_fetched(self, result):
         """Handle successful data fetch."""
@@ -247,7 +249,9 @@ class RateProbabilityModule(BaseModule):
         """Clean up the evolution worker and thread."""
         if self._evolution_thread is not None:
             self._evolution_thread.quit()
-            self._evolution_thread.wait()
+            if not self._evolution_thread.wait(5000):
+                self._evolution_thread.terminate()
+                self._evolution_thread.wait(1000)
         if self._evolution_worker is not None:
             self._evolution_worker.deleteLater()
         if self._evolution_thread is not None:

@@ -205,24 +205,22 @@ class AssetClassReturnsModule(BaseModule):
         self._cleanup_custom_worker()
 
     def _cancel_custom_worker(self):
-        """Cancel any running custom worker."""
+        """Cancel any running custom worker with proper Qt cleanup."""
         if self._custom_worker is not None:
             try:
                 self._custom_worker.finished.disconnect()
                 self._custom_worker.error.disconnect()
             except (RuntimeError, TypeError):
                 pass
-        if self._custom_thread is not None and self._custom_thread.isRunning():
-            self._custom_thread.quit()
-            self._custom_thread.wait(2000)
-        self._custom_worker = None
-        self._custom_thread = None
+        self._cleanup_custom_worker()
 
     def _cleanup_custom_worker(self):
         """Safely stop custom thread and release references."""
         if self._custom_thread is not None:
             self._custom_thread.quit()
-            self._custom_thread.wait(5000)
+            if not self._custom_thread.wait(5000):
+                self._custom_thread.terminate()
+                self._custom_thread.wait(1000)
         if self._custom_worker is not None:
             self._custom_worker.deleteLater()
         if self._custom_thread is not None:

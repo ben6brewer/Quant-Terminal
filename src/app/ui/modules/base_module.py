@@ -72,6 +72,13 @@ class BaseModule(LazyThemeMixin, QWidget):
 
         self._thread.start()
 
+        # Verify thread started (QThread.start() can fail silently)
+        if not self._thread.isRunning():
+            self._hide_loading()
+            self._cleanup_worker()
+            error_handler = on_error or self._on_worker_error
+            error_handler("Failed to start background thread")
+
     def _on_worker_complete(self, result):
         """Default completion handler — subclasses should override."""
         self._hide_loading()
@@ -83,10 +90,12 @@ class BaseModule(LazyThemeMixin, QWidget):
         self._cleanup_worker()
 
     def _cleanup_worker(self):
-        """Safely stop thread and release references."""
+        """Safely stop thread and release references with proper Qt cleanup."""
         if self._thread is not None:
             self._thread.quit()
-            self._thread.wait(5000)
+            if not self._thread.wait(5000):
+                self._thread.terminate()
+                self._thread.wait(1000)
         if self._worker is not None:
             self._worker.deleteLater()
         if self._thread is not None:
@@ -95,18 +104,14 @@ class BaseModule(LazyThemeMixin, QWidget):
         self._thread = None
 
     def _cancel_worker(self):
-        """Cancel any running worker with timeout."""
+        """Cancel any running worker with proper Qt cleanup."""
         if self._worker is not None:
             try:
                 self._worker.finished.disconnect()
                 self._worker.error.disconnect()
             except (RuntimeError, TypeError):
                 pass
-        if self._thread is not None and self._thread.isRunning():
-            self._thread.quit()
-            self._thread.wait(2000)
-        self._worker = None
-        self._thread = None
+        self._cleanup_worker()
 
     # ── Theme ────────────────────────────────────────────────────────
 
