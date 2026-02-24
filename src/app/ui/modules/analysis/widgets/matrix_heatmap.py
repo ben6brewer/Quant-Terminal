@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import pyqtgraph as pg
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QLabel
 
 from app.ui.widgets.charting.base_chart import BaseChart
 
@@ -57,6 +58,10 @@ class MatrixHeatmap(BaseChart):
         # Placeholder text
         self._placeholder = None
 
+        # Summary overlay (pixel-based QLabel)
+        self._overlay_label = None
+        self._overlay_data = None
+
         self.set_theme("dark")
 
     def begin_update(self):
@@ -84,9 +89,10 @@ class MatrixHeatmap(BaseChart):
     def set_theme(self, theme: str) -> None:
         self.begin_update()
         super().set_theme(theme)
+        self._update_overlay_theme()
         self.end_update()
 
-    def set_data(self, matrix: "pd.DataFrame", value_format: str = ".3f", colorscale: str = "Green-Yellow-Red", absolute_colors: bool = False):
+    def set_data(self, matrix: "pd.DataFrame", value_format: str = ".3f", colorscale: str = "Green-Yellow-Red", absolute_colors: bool = False, metadata: Optional[Dict] = None):
         """Render the matrix as a lower-triangle heatmap.
 
         Args:
@@ -95,6 +101,7 @@ class MatrixHeatmap(BaseChart):
             colorscale: Name of colorscale from COLORSCALES dict
             absolute_colors: When True, map abs(value) to 0→1 so correlation
                              strength drives color regardless of sign.
+            metadata: Optional dict with num_observations, date_start, date_end, periodicity.
         """
         import numpy as np
 
@@ -196,6 +203,10 @@ class MatrixHeatmap(BaseChart):
         self.view_box.invertY(True)
         self.plot_item.setXRange(0, n, padding=0)
         self.plot_item.setYRange(0, n, padding=0)
+
+        # Render summary overlay in upper-right triangle
+        self._render_overlay(matrix, value_format, metadata)
+
         self.end_update()
 
     def show_placeholder(self, message: str = "Run analysis to see results"):
@@ -224,7 +235,132 @@ class MatrixHeatmap(BaseChart):
         for item in self._text_items:
             self.plot_item.removeItem(item)
         self._text_items.clear()
+        self._clear_overlay()
 
         if self._placeholder is not None:
             self.plot_item.removeItem(self._placeholder)
             self._placeholder = None
+
+    def _clear_overlay(self):
+        """Remove summary overlay label."""
+        if self._overlay_label is not None:
+            self._overlay_label.deleteLater()
+            self._overlay_label = None
+        self._overlay_data = None
+
+    def _render_overlay(self, matrix: "pd.DataFrame", value_format: str, metadata: Optional[Dict] = None):
+        """Render a pixel-based summary overlay anchored to the top-right corner."""
+        import numpy as np
+
+        if metadata is None:
+            return
+
+        n = len(matrix)
+        labels = list(matrix.index)
+        vals = matrix.values
+
+        # Extract lower-triangle off-diagonal values
+        tri_rows, tri_cols = np.tril_indices(n, k=-1)
+        off_diag = vals[tri_rows, tri_cols]
+
+        if len(off_diag) == 0:
+            return
+
+        mean_val = float(np.mean(off_diag))
+        median_val = float(np.median(off_diag))
+        min_idx = int(np.argmin(off_diag))
+        max_idx = int(np.argmax(off_diag))
+        min_val = float(off_diag[min_idx])
+        max_val = float(off_diag[max_idx])
+        min_pair = f"{labels[tri_rows[min_idx]]}-{labels[tri_cols[min_idx]]}"
+        max_pair = f"{labels[tri_rows[max_idx]]}-{labels[tri_cols[max_idx]]}"
+
+        def _fmt(v):
+            raw = f"{v:{value_format}}"
+            if raw.startswith("0."):
+                raw = raw[1:]
+            elif raw.startswith("-0."):
+                raw = "-" + raw[2:]
+            return raw
+
+        self._overlay_data = {
+            "num_obs": metadata.get("num_observations", "?"),
+            "periodicity": metadata.get("periodicity", "daily").capitalize(),
+            "date_start": metadata.get("date_start", ""),
+            "date_end": metadata.get("date_end", ""),
+            "mean": _fmt(mean_val),
+            "median": _fmt(median_val),
+            "min_val": _fmt(min_val),
+            "max_val": _fmt(max_val),
+            "min_pair": min_pair,
+            "max_pair": max_pair,
+        }
+
+        self._overlay_label = QLabel(self)
+        self._apply_overlay_style()
+        self._overlay_label.adjustSize()
+        self._position_overlay()
+        self._overlay_label.show()
+
+    def _apply_overlay_style(self):
+        """Set overlay HTML content and stylesheet from current theme."""
+        if self._overlay_label is None or self._overlay_data is None:
+            return
+
+        d = self._overlay_data
+        text_color = self._get_label_text_color()
+        accent = self._get_theme_accent_color()
+        bg_rgb = self._get_background_rgb()
+
+        text_hex = f"#{text_color[0]:02x}{text_color[1]:02x}{text_color[2]:02x}"
+        accent_hex = f"#{accent[0]:02x}{accent[1]:02x}{accent[2]:02x}"
+        bg_rgba = f"rgba({bg_rgb[0]},{bg_rgb[1]},{bg_rgb[2]},200)"
+        border_rgba = f"rgba({accent[0]},{accent[1]},{accent[2]},120)"
+
+        self._overlay_label.setStyleSheet(
+            f"QLabel {{ background-color: {bg_rgba}; border: 1px solid {border_rgba};"
+            f" border-radius: 4px; padding: 8px; color: {text_hex}; }}"
+        )
+
+        # Build aligned text lines
+        val_w = max(len(d["min_val"]), len(d["max_val"]))
+        min_line = f"Min  {d['min_val']:>{val_w}}  {d['min_pair']}"
+        max_line = f"Max  {d['max_val']:>{val_w}}  {d['max_pair']}"
+
+        html = (
+            f'<div style="font-family:monospace; font-size:11px; white-space:pre; line-height:1.4;">'
+            f'<b style="color:{accent_hex};">Observations</b><br/>'
+            f"{d['num_obs']} {d['periodicity']} periods<br/>"
+            f"{d['date_start']} \u2192 {d['date_end']}<br/>"
+            f"<br/>"
+            f'<b style="color:{accent_hex};">Distribution</b><br/>'
+            f"{'Mean':<8}{d['mean']}<br/>"
+            f"{'Median':<8}{d['median']}<br/>"
+            f"{min_line}<br/>"
+            f"{max_line}"
+            f"</div>"
+        )
+        self._overlay_label.setText(html)
+        self._overlay_label.setTextFormat(Qt.RichText)
+
+    def _position_overlay(self):
+        """Position overlay label in the top-right corner."""
+        if self._overlay_label is None:
+            return
+        self._overlay_label.move(
+            self.width() - self._overlay_label.width() - 10, 10
+        )
+
+    def _update_overlay_theme(self):
+        """Update overlay colors when theme changes."""
+        if self._overlay_label is None:
+            return
+        self._apply_overlay_style()
+        self._overlay_label.adjustSize()
+        self._position_overlay()
+
+    def resizeEvent(self, event):
+        """Reposition overlay on resize to stay anchored to top-right."""
+        super().resizeEvent(event)
+        if hasattr(self, "_overlay_label"):
+            self._position_overlay()

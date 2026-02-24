@@ -369,15 +369,24 @@ class FrontierCalculationService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         periodicity: str = "daily",
-    ) -> "pd.DataFrame":
-        """Calculate the Pearson correlation matrix for the given tickers."""
+    ) -> dict:
+        """Calculate the Pearson correlation matrix for the given tickers.
+
+        Returns dict with keys: matrix, num_observations, date_start, date_end, periodicity.
+        """
         prices, daily_returns = FrontierCalculationService.compute_daily_returns(
             tickers, lookback_days, start_date=start_date, end_date=end_date
         )
         if daily_returns.empty:
             raise ValueError("No data available for the selected tickers")
         returns = FrontierCalculationService._resample_returns(prices, periodicity)
-        return returns.corr()
+        return {
+            "matrix": returns.corr(),
+            "num_observations": len(returns),
+            "date_start": str(returns.index.min().date()),
+            "date_end": str(returns.index.max().date()),
+            "periodicity": periodicity,
+        }
 
     @staticmethod
     def calculate_covariance_matrix(
@@ -386,8 +395,11 @@ class FrontierCalculationService:
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         periodicity: str = "daily",
-    ) -> "pd.DataFrame":
-        """Calculate the annualized covariance matrix for the given tickers."""
+    ) -> dict:
+        """Calculate the annualized covariance matrix for the given tickers.
+
+        Returns dict with keys: matrix, num_observations, date_start, date_end, periodicity.
+        """
         annualization = {
             "daily": 252,
             "weekly": 52,
@@ -401,4 +413,10 @@ class FrontierCalculationService:
         if daily_returns.empty:
             raise ValueError("No data available for the selected tickers")
         returns = FrontierCalculationService._resample_returns(prices, periodicity)
-        return returns.cov() * annualization.get(periodicity, 252)
+        return {
+            "matrix": returns.cov() * annualization.get(periodicity, 252),
+            "num_observations": len(returns),
+            "date_start": str(returns.index.min().date()),
+            "date_end": str(returns.index.max().date()),
+            "periodicity": periodicity,
+        }

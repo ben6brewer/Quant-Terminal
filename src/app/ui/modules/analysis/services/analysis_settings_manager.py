@@ -42,6 +42,7 @@ class AnalysisSettingsManager(BaseSettingsManager):
             "cov_decimals": 4,
             "matrix_colorscale": "Green-Yellow-Red",
             "corr_fixed_color_scale": True,
+            "show_matrix_overlay": True,
             "ef_show_gridlines": True,
             "ef_colorscale": "Magma",
             "ef_show_individual_securities": True,
@@ -107,6 +108,10 @@ class AnalysisSettingsManager(BaseSettingsManager):
 
     def set_corr_fixed_color_scale(self, value: bool) -> None:
         self.update_settings({"corr_fixed_color_scale": value})
+
+    def get_show_matrix_overlay(self) -> bool:
+        val = self.get_setting("show_matrix_overlay")
+        return val if val is not None else True
 
     def get_ef_show_gridlines(self) -> bool:
         val = self.get_setting("ef_show_gridlines")

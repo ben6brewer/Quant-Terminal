@@ -20,6 +20,7 @@ class CovarianceMatrixModule(BaseModule):
 
         self.settings_manager = AnalysisSettingsManager()
         self._last_matrix = None
+        self._last_metadata = None
 
         self._setup_ui()
         self._connect_signals()
@@ -84,6 +85,7 @@ class CovarianceMatrixModule(BaseModule):
         current = {
             "cov_decimals": self.settings_manager.get_cov_decimals(),
             "matrix_colorscale": self.settings_manager.get_matrix_colorscale(),
+            "show_matrix_overlay": self.settings_manager.get_show_matrix_overlay(),
         }
         dialog = AnalysisSettingsDialog(
             self.theme_manager, current, mode="covariance", parent=self
@@ -96,7 +98,9 @@ class CovarianceMatrixModule(BaseModule):
                 colorscale = settings.get("matrix_colorscale", "Green-Yellow-Red")
                 self.heatmap.begin_update()
                 self.heatmap.set_theme(self.theme_manager.current_theme)
-                self.heatmap.set_data(self._last_matrix, f".{decimals}f", colorscale)
+                show_overlay = settings.get("show_matrix_overlay", True)
+                self.heatmap.set_data(self._last_matrix, f".{decimals}f", colorscale,
+                                     metadata=self._last_metadata if show_overlay else None)
                 self.heatmap.end_update()
                 self.heatmap.flush_and_repaint()
 
@@ -126,13 +130,17 @@ class CovarianceMatrixModule(BaseModule):
             on_error=self._on_error,
         )
 
-    def _on_complete(self, cov_matrix):
+    def _on_complete(self, result):
+        cov_matrix = result["matrix"]
         self._last_matrix = cov_matrix
+        self._last_metadata = result
         decimals = self.settings_manager.get_cov_decimals()
         colorscale = self.settings_manager.get_matrix_colorscale()
         self.heatmap.begin_update()
         self.heatmap.set_theme(self.theme_manager.current_theme)
-        self.heatmap.set_data(cov_matrix, f".{decimals}f", colorscale)
+        show_overlay = self.settings_manager.get_show_matrix_overlay()
+        self.heatmap.set_data(cov_matrix, f".{decimals}f", colorscale,
+                             metadata=result if show_overlay else None)
         self._hide_loading()
         self.heatmap.end_update()
         self.heatmap.flush_and_repaint()

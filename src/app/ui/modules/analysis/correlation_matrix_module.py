@@ -20,6 +20,7 @@ class CorrelationMatrixModule(BaseModule):
 
         self.settings_manager = AnalysisSettingsManager()
         self._last_matrix = None
+        self._last_metadata = None
 
         self._setup_ui()
         self._connect_signals()
@@ -85,6 +86,7 @@ class CorrelationMatrixModule(BaseModule):
             "corr_decimals": self.settings_manager.get_corr_decimals(),
             "matrix_colorscale": self.settings_manager.get_matrix_colorscale(),
             "corr_fixed_color_scale": self.settings_manager.get_corr_fixed_color_scale(),
+            "show_matrix_overlay": self.settings_manager.get_show_matrix_overlay(),
         }
         dialog = AnalysisSettingsDialog(
             self.theme_manager, current, mode="correlation", parent=self
@@ -97,8 +99,10 @@ class CorrelationMatrixModule(BaseModule):
                 colorscale = settings.get("matrix_colorscale", "Green-Yellow-Red")
                 self.heatmap.begin_update()
                 self.heatmap.set_theme(self.theme_manager.current_theme)
+                show_overlay = settings.get("show_matrix_overlay", True)
                 self.heatmap.set_data(self._last_matrix, f".{decimals}f", colorscale,
-                                     absolute_colors=settings.get("corr_fixed_color_scale", True))
+                                     absolute_colors=settings.get("corr_fixed_color_scale", True),
+                                     metadata=self._last_metadata if show_overlay else None)
                 self.heatmap.end_update()
                 self.heatmap.flush_and_repaint()
 
@@ -128,14 +132,18 @@ class CorrelationMatrixModule(BaseModule):
             on_error=self._on_error,
         )
 
-    def _on_complete(self, corr_matrix):
+    def _on_complete(self, result):
+        corr_matrix = result["matrix"]
         self._last_matrix = corr_matrix
+        self._last_metadata = result
         decimals = self.settings_manager.get_corr_decimals()
         colorscale = self.settings_manager.get_matrix_colorscale()
         self.heatmap.begin_update()
         self.heatmap.set_theme(self.theme_manager.current_theme)
         fixed = self.settings_manager.get_corr_fixed_color_scale()
-        self.heatmap.set_data(corr_matrix, f".{decimals}f", colorscale, absolute_colors=fixed)
+        show_overlay = self.settings_manager.get_show_matrix_overlay()
+        self.heatmap.set_data(corr_matrix, f".{decimals}f", colorscale, absolute_colors=fixed,
+                             metadata=result if show_overlay else None)
         self._hide_loading()
         self.heatmap.end_update()
         self.heatmap.flush_and_repaint()

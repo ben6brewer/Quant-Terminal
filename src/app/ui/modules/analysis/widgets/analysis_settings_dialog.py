@@ -99,6 +99,11 @@ class AnalysisSettingsDialog(ThemedDialog):
             self.fixed_color_cb.setFixedHeight(32)
             layout.addWidget(self.fixed_color_cb)
 
+        from PySide6.QtWidgets import QCheckBox
+        self.overlay_cb = QCheckBox("Show Summary Overlay")
+        self.overlay_cb.setFixedHeight(32)
+        layout.addWidget(self.overlay_cb)
+
         layout.addStretch()
 
         # Buttons
@@ -138,11 +143,14 @@ class AnalysisSettingsDialog(ThemedDialog):
             fixed = self.current_settings.get("corr_fixed_color_scale", True)
             self.fixed_color_cb.setChecked(fixed)
 
+        self.overlay_cb.setChecked(self.current_settings.get("show_matrix_overlay", True))
+
     def _save_settings(self):
         """Save settings and close."""
         self.result = {
             self._decimals_key: self.decimals_combo.currentData(),
             "matrix_colorscale": self.colorscale_combo.currentText(),
+            "show_matrix_overlay": self.overlay_cb.isChecked(),
         }
         if self._mode == "correlation":
             self.result["corr_fixed_color_scale"] = self.fixed_color_cb.isChecked()
