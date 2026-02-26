@@ -220,8 +220,8 @@ class CpiHeadlineChart(BaseChart):
 
         # Update crosshair lines
         if self._show_crosshair:
-            self._crosshair_v.setPos(idx)
-            self._crosshair_h.setPos(self._values[idx])
+            self._crosshair_v.setPos(view_pos.x())
+            self._crosshair_h.setPos(view_pos.y())
             self._crosshair_v.setVisible(True)
             self._crosshair_h.setVisible(True)
 
