@@ -114,6 +114,9 @@ MODULE_SECTIONS = {
         {"id": "monthly_returns", "label": "Monthly Returns"},
         {"id": "asset_class_returns", "label": "Asset Class Returns"},
     ],
+    "Economics": [
+        {"id": "cpi", "label": "CPI"},
+    ],
     "Fixed Income": [
         {"id": "yield_curve", "label": "Yield Curve"},
         {"id": "rate_probability", "label": "Rate Probabilities"},

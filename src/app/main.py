@@ -86,6 +86,11 @@ def _create_asset_class_returns_module(theme_manager):
     return AssetClassReturnsModule(theme_manager)
 
 
+def _create_cpi_module(theme_manager):
+    from app.ui.modules.cpi import CpiModule
+    return CpiModule(theme_manager)
+
+
 def _create_yield_curve_module(theme_manager):
     from app.ui.modules.yield_curve import YieldCurveModule
     return YieldCurveModule(theme_manager)
@@ -205,6 +210,11 @@ def main() -> int:
     hub.add_module(
         "asset_class_returns",
         lambda: _create_asset_class_returns_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "cpi",
+        lambda: _create_cpi_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module(
