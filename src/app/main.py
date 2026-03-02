@@ -91,36 +91,14 @@ def _create_cpi_module(theme_manager):
     return CpiModule(theme_manager)
 
 
-def _create_yield_curve_module(theme_manager):
-    from app.ui.modules.yield_curve import YieldCurveModule
-    return YieldCurveModule(theme_manager)
+def _create_treasury_module(theme_manager):
+    from app.ui.modules.treasury import TreasuryModule
+    return TreasuryModule(theme_manager)
 
 
 def _create_rate_probability_module(theme_manager):
     from app.ui.modules.rate_probability import RateProbabilityModule
     return RateProbabilityModule(theme_manager)
-
-
-def _create_placeholder_module(class_name):
-    from app.ui.modules.placeholder_modules import (
-        CryptoDashboardModule,
-        DeFiModule,
-        NFTModule,
-        NewsModule,
-        PortfolioModule,
-        ScreenerModule,
-        WatchlistModule,
-    )
-    modules = {
-        "CryptoDashboardModule": CryptoDashboardModule,
-        "DeFiModule": DeFiModule,
-        "NFTModule": NFTModule,
-        "NewsModule": NewsModule,
-        "PortfolioModule": PortfolioModule,
-        "ScreenerModule": ScreenerModule,
-        "WatchlistModule": WatchlistModule,
-    }
-    return modules[class_name]()
 
 
 def main() -> int:
@@ -140,10 +118,6 @@ def main() -> int:
 
     # Add modules - all use lazy factory functions (imported only when first opened)
     hub.add_module("charts", lambda: _create_chart_module(theme_manager))
-    hub.add_module("crypto_dashboard", lambda: _create_placeholder_module("CryptoDashboardModule"))
-    hub.add_module("defi", lambda: _create_placeholder_module("DeFiModule"))
-    hub.add_module("nft", lambda: _create_placeholder_module("NFTModule"))
-    hub.add_module("portfolio", lambda: _create_placeholder_module("PortfolioModule"))
     hub.add_module(
         "portfolio_construction",
         lambda: _create_portfolio_construction_module(theme_manager),
@@ -169,9 +143,6 @@ def main() -> int:
         lambda: _create_monte_carlo_module(theme_manager),
         has_own_home_button=True,
     )
-    hub.add_module("watchlist", lambda: _create_placeholder_module("WatchlistModule"))
-    hub.add_module("news", lambda: _create_placeholder_module("NewsModule"))
-    hub.add_module("screener", lambda: _create_placeholder_module("ScreenerModule"))
     hub.add_module(
         "efficient_frontier",
         lambda: _create_efficient_frontier_module(theme_manager),
@@ -218,8 +189,8 @@ def main() -> int:
         has_own_home_button=True,
     )
     hub.add_module(
-        "yield_curve",
-        lambda: _create_yield_curve_module(theme_manager),
+        "yields",
+        lambda: _create_treasury_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module(

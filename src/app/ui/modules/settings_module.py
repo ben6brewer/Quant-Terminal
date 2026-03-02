@@ -323,8 +323,8 @@ class SettingsModule(QWidget):
 
         # Invalidate service caches
         if env_var == "FRED_API_KEY":
-            from app.ui.modules.yield_curve.services.fred_service import FredService
-            FredService._api_key = None
+            from app.services.fred_api_key_service import FredApiKeyService
+            FredApiKeyService._api_key = None
 
         self._api_key_exit_edit(env_var)
 

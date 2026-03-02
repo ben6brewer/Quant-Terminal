@@ -86,23 +86,12 @@ MODULE_SECTIONS = {
     "Charting": [
         {"id": "charts", "label": "Charts"}
     ],
-    "Crypto": [
-        {"id": "crypto_dashboard", "label": "Crypto Dashboard"},
-        {"id": "defi", "label": "DeFi"},
-        {"id": "nft", "label": "NFT Tracker"}
-    ],
     "Portfolio": [
-        {"id": "portfolio", "label": "Portfolio"},
         {"id": "portfolio_construction", "label": "Portfolio Construction"},
         {"id": "performance_metrics", "label": "Performance Metrics"},
         {"id": "risk_analytics", "label": "Risk Analytics"},
         {"id": "distribution_metrics", "label": "Distribution Metrics"},
         {"id": "monte_carlo", "label": "Monte Carlo"},
-        {"id": "watchlist", "label": "Watchlist"}
-    ],
-    "Market Data": [
-        {"id": "news", "label": "News"},
-        {"id": "screener", "label": "Screener"}
     ],
     "Analysis": [
         {"id": "efficient_frontier", "label": "Efficient Frontier"},
@@ -116,9 +105,9 @@ MODULE_SECTIONS = {
     ],
     "Economics": [
         {"id": "cpi", "label": "CPI"},
+        {"id": "yields", "label": "Yields"},
     ],
     "Fixed Income": [
-        {"id": "yield_curve", "label": "Yield Curve"},
         {"id": "rate_probability", "label": "Rate Probabilities"},
     ]
 }

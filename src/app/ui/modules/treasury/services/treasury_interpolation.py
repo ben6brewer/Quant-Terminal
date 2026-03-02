@@ -1,11 +1,11 @@
-"""Yield Curve Interpolation - Cubic spline and Nelson-Siegel fitting."""
+"""Treasury Interpolation - Cubic spline, Nelson-Siegel, and linear fitting."""
 
 from __future__ import annotations
 
 from typing import Tuple
 
 
-class YieldCurveInterpolation:
+class TreasuryInterpolation:
     """
     Provides interpolation methods for yield curve smoothing.
 
@@ -49,8 +49,8 @@ class YieldCurveInterpolation:
         Fit a cubic spline through the yield curve data points.
 
         Args:
-            maturities: Tenor maturities in years (e.g., [0.083, 0.25, ..., 30])
-            yields: Yield values in percent (e.g., [4.5, 4.6, ...])
+            maturities: Tenor maturities in years
+            yields: Yield values in percent
             n_points: Number of interpolated points
 
         Returns:
@@ -128,6 +128,6 @@ class YieldCurveInterpolation:
             return x_smooth.tolist(), y_smooth.tolist()
 
         except Exception:
-            return YieldCurveInterpolation.interpolate_cubic_spline(
+            return TreasuryInterpolation.interpolate_cubic_spline(
                 maturities, yields, n_points
             )
