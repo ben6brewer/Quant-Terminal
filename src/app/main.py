@@ -96,6 +96,31 @@ def _create_treasury_module(theme_manager):
     return TreasuryModule(theme_manager)
 
 
+def _create_labor_market_overview_module(theme_manager):
+    from app.ui.modules.labor_market_overview import LaborMarketOverviewModule
+    return LaborMarketOverviewModule(theme_manager)
+
+
+def _create_payrolls_module(theme_manager):
+    from app.ui.modules.payrolls import PayrollsModule
+    return PayrollsModule(theme_manager)
+
+
+def _create_labor_claims_module(theme_manager):
+    from app.ui.modules.labor_claims import LaborClaimsModule
+    return LaborClaimsModule(theme_manager)
+
+
+def _create_demographics_module(theme_manager):
+    from app.ui.modules.demographics import DemographicsModule
+    return DemographicsModule(theme_manager)
+
+
+def _create_jolts_module(theme_manager):
+    from app.ui.modules.jolts import JoltsModule
+    return JoltsModule(theme_manager)
+
+
 def _create_rate_probability_module(theme_manager):
     from app.ui.modules.rate_probability import RateProbabilityModule
     return RateProbabilityModule(theme_manager)
@@ -191,6 +216,31 @@ def main() -> int:
     hub.add_module(
         "yields",
         lambda: _create_treasury_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "labor_market_overview",
+        lambda: _create_labor_market_overview_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "demographics",
+        lambda: _create_demographics_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "payrolls",
+        lambda: _create_payrolls_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "labor_claims",
+        lambda: _create_labor_claims_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "jolts",
+        lambda: _create_jolts_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module(

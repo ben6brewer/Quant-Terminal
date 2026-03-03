@@ -106,6 +106,11 @@ MODULE_SECTIONS = {
     "Economics": [
         {"id": "cpi", "label": "CPI"},
         {"id": "yields", "label": "Yields"},
+        {"id": "labor_market_overview", "label": "Unemployment Rate"},
+        {"id": "demographics", "label": "Unemployment Demographics"},
+        {"id": "payrolls", "label": "Payrolls"},
+        {"id": "labor_claims", "label": "Unemployment Claims"},
+        {"id": "jolts", "label": "JOLTS"},
     ],
     "Fixed Income": [
         {"id": "rate_probability", "label": "Rate Probabilities"},
