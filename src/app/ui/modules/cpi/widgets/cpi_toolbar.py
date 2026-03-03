@@ -1,14 +1,13 @@
-"""CPI Toolbar - Home button, view tabs, lookback dropdown, info labels, settings."""
+"""CPI Toolbar - Home button, lookback dropdown, info labels, settings."""
 
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QButtonGroup,
     QSizePolicy,
 )
-from PySide6.QtCore import Signal, Qt
+from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common import NoScrollComboBox
@@ -29,10 +28,9 @@ LOOKBACK_OPTIONS = [
 
 
 class CpiToolbar(LazyThemeMixin, QWidget):
-    """Toolbar with home button, view tabs, lookback dropdown, info bar, and settings."""
+    """Toolbar with home button, lookback dropdown, info bar, and settings."""
 
     home_clicked = Signal()
-    view_changed = Signal(int)       # 0=Headline, 1=Breakdown
     lookback_changed = Signal(str)   # "1Y", "2Y", … or ISO date string
     settings_clicked = Signal()
 
@@ -66,26 +64,6 @@ class CpiToolbar(LazyThemeMixin, QWidget):
         self.home_btn.setObjectName("home_btn")
         self.home_btn.clicked.connect(self.home_clicked.emit)
         layout.addWidget(self.home_btn)
-
-        # View tab buttons
-        self.view_group = QButtonGroup(self)
-        self.view_group.setExclusive(True)
-
-        view_names = ["Headline", "Breakdown"]
-        self._view_buttons = []
-        for i, name in enumerate(view_names):
-            btn = QPushButton(name)
-            btn.setObjectName("viewTab")
-            btn.setCheckable(True)
-            btn.setCursor(Qt.PointingHandCursor)
-            btn.setMinimumWidth(110)
-            btn.setFixedHeight(40)
-            if i == 0:
-                btn.setChecked(True)
-            btn.clicked.connect(lambda checked, idx=i: self.view_changed.emit(idx))
-            layout.addWidget(btn)
-            self.view_group.addButton(btn)
-            self._view_buttons.append(btn)
 
         # Separator
         sep1 = QLabel("|")
@@ -167,11 +145,6 @@ class CpiToolbar(LazyThemeMixin, QWidget):
         label = self.lookback_combo.currentText()
         self.lookback_changed.emit(label)
 
-    def set_active_view(self, index: int):
-        """Set active view programmatically."""
-        if 0 <= index < len(self._view_buttons):
-            self._view_buttons[index].setChecked(True)
-
     def set_active_lookback(self, lookback: str):
         """Set active lookback programmatically by label text."""
         for i in range(self.lookback_combo.count()):
@@ -249,24 +222,6 @@ class CpiToolbar(LazyThemeMixin, QWidget):
             }}
             QPushButton:pressed {{
                 background-color: {c['bg']};
-            }}
-            #viewTab {{
-                background-color: transparent;
-                color: {c['text_muted']};
-                border: none;
-                border-radius: 2px;
-                padding: 10px 20px;
-                font-size: 14px;
-                font-weight: 500;
-            }}
-            #viewTab:hover {{
-                background-color: {bg_hover};
-                color: {c['text']};
-            }}
-            #viewTab:checked {{
-                background-color: {c['accent']};
-                color: {c['text_on_accent']};
-                font-weight: bold;
             }}
             QComboBox {{
                 background-color: {c['bg_header']};

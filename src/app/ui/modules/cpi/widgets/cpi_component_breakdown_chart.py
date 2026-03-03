@@ -1,4 +1,4 @@
-"""CPI Component Breakdown Chart - Stacked area chart of CPI components."""
+"""CPI Component Breakdown Chart - Stacked bar chart of CPI components."""
 
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ class _MonthAxisItem(pg.AxisItem):
 
 
 class CpiComponentBreakdownChart(BaseChart):
-    """Stacked area chart showing component contributions to headline CPI."""
+    """Stacked bar chart showing component contributions to headline CPI."""
 
     def __init__(self, parent=None):
         self._placeholder = None
@@ -73,8 +73,8 @@ class CpiComponentBreakdownChart(BaseChart):
         self._show_hover_tooltip = True
 
         # Plot items
-        self._fill_items: list = []
-        self._curve_items: list = []  # boundary curves + legend dummies
+        self._bar_items: list = []
+        self._legend_dummies: list = []  # dummy plot items for legend
         self._ref_lines: list = []
         self._headline_line = None
         self._legend = None
@@ -161,13 +161,13 @@ class CpiComponentBreakdownChart(BaseChart):
 
     def _clear_plot(self):
         """Remove all plot items."""
-        for item in self._fill_items:
+        for item in self._bar_items:
             self.plot_item.removeItem(item)
-        self._fill_items.clear()
+        self._bar_items.clear()
 
-        for item in self._curve_items:
+        for item in self._legend_dummies:
             self.plot_item.removeItem(item)
-        self._curve_items.clear()
+        self._legend_dummies.clear()
 
         for item in self._ref_lines:
             self.plot_item.removeItem(item)
@@ -276,8 +276,8 @@ class CpiComponentBreakdownChart(BaseChart):
         self._contributions = contributions
         self._headline_values = headline_values
 
-        # Build stacked area fills using FillBetweenItem
-        self._build_stacked_areas(n_months, contributions)
+        # Build stacked bar chart
+        self._build_stacked_bars(n_months, contributions)
 
         # Headline CPI overlay line
         if self._show_headline_overlay and headline_values is not None:
@@ -307,15 +307,16 @@ class CpiComponentBreakdownChart(BaseChart):
         # Gridlines
         self.plot_item.showGrid(x=False, y=self._show_gridlines, alpha=0.3)
 
+        self.plot_item.setXRange(-0.5, n_months - 0.5, padding=0.01)
         self.plot_item.autoRange()
 
-    def _build_stacked_areas(self, n_months: int, contributions: List[List[tuple]]):
-        """Build FillBetweenItem stacked areas for each component."""
+    def _build_stacked_bars(self, n_months: int, contributions: List[List[tuple]]):
+        """Build BarGraphItem stacked bars (positive and negative) for each component."""
+        BAR_WIDTH = 0.8
         x = np.arange(n_months, dtype=float)
 
-        # Build per-component contribution arrays in stack order
-        # Only include components that appear in contributions
-        present_components = set()
+        # Determine which components are present
+        present_components: set = set()
         for month_contribs in contributions:
             for comp_name, _ in month_contribs:
                 present_components.add(comp_name)
@@ -333,29 +334,35 @@ class CpiComponentBreakdownChart(BaseChart):
                         break
             comp_values[comp_name] = arr
 
-        # Stack cumulatively
-        cumulative = np.zeros(n_months)
+        pos_cumsum = np.zeros(n_months)
+        neg_cumsum = np.zeros(n_months)
 
         for comp_name in ordered:
-            values = comp_values[comp_name]
-            lower = cumulative.copy()
-            upper = cumulative + values
-
+            vals = comp_values[comp_name]
             color_hex = COMPONENT_COLORS.get(comp_name, "#888888")
             color = QColor(color_hex)
-            brush_color = (color.red(), color.green(), color.blue(), 160)
+            brush = pg.mkBrush(color.red(), color.green(), color.blue(), 200)
 
-            lower_curve = pg.PlotDataItem(x, lower)
-            upper_curve = pg.PlotDataItem(x, upper)
-            lower_curve.setClipToView(True)
-            upper_curve.setClipToView(True)
+            pos_vals = np.where(vals > 0, vals, 0.0)
+            neg_vals = np.where(vals < 0, vals, 0.0)
 
-            fill = pg.FillBetweenItem(lower_curve, upper_curve, brush=brush_color)
-            self.plot_item.addItem(fill)
-            self._fill_items.append(fill)
-            self._curve_items.extend([lower_curve, upper_curve])
+            if np.any(pos_vals != 0):
+                bar = pg.BarGraphItem(
+                    x=x, height=pos_vals, y0=pos_cumsum.copy(),
+                    width=BAR_WIDTH, brush=brush, pen=pg.mkPen(None),
+                )
+                self.plot_item.addItem(bar)
+                self._bar_items.append(bar)
+                pos_cumsum += pos_vals
 
-            cumulative = upper
+            if np.any(neg_vals != 0):
+                bar = pg.BarGraphItem(
+                    x=x, height=neg_vals, y0=neg_cumsum.copy(),
+                    width=BAR_WIDTH, brush=brush, pen=pg.mkPen(None),
+                )
+                self.plot_item.addItem(bar)
+                self._bar_items.append(bar)
+                neg_cumsum += neg_vals
 
     def _add_headline_line(self, n_months: int, headline_values: np.ndarray):
         """Add bold accent-colored headline CPI line on top of the stack."""
@@ -380,9 +387,9 @@ class CpiComponentBreakdownChart(BaseChart):
             color_hex = COMPONENT_COLORS.get(comp_name)
             if color_hex:
                 dummy = self.plot_item.plot(
-                    [], [], pen=pg.mkPen(color_hex, width=3), name=comp_name
+                    [], [], pen=pg.mkPen(color_hex, width=8), name=comp_name
                 )
-                self._curve_items.append(dummy)
+                self._legend_dummies.append(dummy)
 
     # -- Mouse Events / Tooltip -----------------------------------------------
 

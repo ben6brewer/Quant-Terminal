@@ -93,6 +93,21 @@ def _create_cpi_module(theme_manager):
     return CpiModule(theme_manager)
 
 
+def _create_pce_module(theme_manager):
+    from app.ui.modules.pce import PceModule
+    return PceModule(theme_manager)
+
+
+def _create_ppi_module(theme_manager):
+    from app.ui.modules.ppi import PpiModule
+    return PpiModule(theme_manager)
+
+
+def _create_inflation_expectations_module(theme_manager):
+    from app.ui.modules.inflation_expectations import InflationExpectationsModule
+    return InflationExpectationsModule(theme_manager)
+
+
 def _create_treasury_module(theme_manager):
     from app.ui.modules.treasury import TreasuryModule
     return TreasuryModule(theme_manager)
@@ -213,6 +228,21 @@ def main() -> int:
     hub.add_module(
         "cpi",
         lambda: _create_cpi_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "pce",
+        lambda: _create_pce_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "ppi",
+        lambda: _create_ppi_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "inflation_expectations",
+        lambda: _create_inflation_expectations_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module(

@@ -34,9 +34,6 @@ class CpiHeadlineChart(BaseChart):
         self._show_gridlines = True
         self._show_reference_lines = True
         self._show_crosshair = True
-        self._line_width = 2
-        self._line_color = None  # None = use theme accent
-        self._line_style = Qt.SolidLine
 
         # Plot items
         self._line_item = None
@@ -142,9 +139,6 @@ class CpiHeadlineChart(BaseChart):
         self._show_gridlines = settings.get("show_gridlines", True)
         self._show_reference_lines = settings.get("show_reference_lines", True)
         self._show_crosshair = settings.get("show_crosshair", True)
-        self._line_width = settings.get("line_width", 2)
-        self._line_color = settings.get("line_color", None)
-        self._line_style = settings.get("line_style", Qt.SolidLine)
 
         show_value = settings.get("show_value_label", True)
         show_date = settings.get("show_date_label", True)
@@ -164,8 +158,7 @@ class CpiHeadlineChart(BaseChart):
 
         # Plot line
         x = np.arange(len(self._values))
-        line_color = self._line_color if self._line_color else self._get_theme_accent_color()
-        pen = pg.mkPen(color=line_color, width=self._line_width, style=self._line_style)
+        pen = pg.mkPen(color=self._get_theme_accent_color(), width=2, style=Qt.SolidLine)
         self._line_item = self.plot_item.plot(x, self._values, pen=pen)
         self._line_item.setClipToView(True)
 
@@ -264,10 +257,10 @@ class CpiHeadlineChart(BaseChart):
         # Update reference line colors (Fed target stays red)
         # No color change needed for Fed target — it's always red
 
-        # Update line color (only if using theme default)
-        if self._line_item is not None and not self._line_color:
+        # Update line color to theme accent
+        if self._line_item is not None:
             accent = self._get_theme_accent_color()
-            pen = pg.mkPen(color=accent, width=self._line_width, style=self._line_style)
+            pen = pg.mkPen(color=accent, width=2, style=Qt.SolidLine)
             self._line_item.setPen(pen)
 
         # Update placeholder

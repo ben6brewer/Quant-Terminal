@@ -103,17 +103,18 @@ MODULE_SECTIONS = {
         {"id": "monthly_returns", "label": "Monthly Returns"},
         {"id": "asset_class_returns", "label": "Asset Class Returns"},
     ],
-    "Economics": [
+    "Macro": [
         {"id": "cpi", "label": "CPI"},
+        {"id": "pce", "label": "PCE"},
+        {"id": "ppi", "label": "PPI"},
+        {"id": "inflation_expectations", "label": "Inflation Expectations"},
         {"id": "yields", "label": "Yields"},
+        {"id": "rate_probability", "label": "Rate Probabilities"},
         {"id": "labor_market_overview", "label": "Unemployment Rate"},
         {"id": "demographics", "label": "Unemployment Demographics"},
         {"id": "payrolls", "label": "Payrolls"},
         {"id": "labor_claims", "label": "Unemployment Claims"},
         {"id": "jolts", "label": "JOLTS"},
-    ],
-    "Fixed Income": [
-        {"id": "rate_probability", "label": "Rate Probabilities"},
     ]
 }
 

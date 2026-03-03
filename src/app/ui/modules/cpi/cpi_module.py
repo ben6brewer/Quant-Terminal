@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QVBoxLayout, QStackedWidget
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
 
-from .services.cpi_fred_service import CpiFredService
+from app.ui.modules.inflation.services import InflationFredService
 from .services.cpi_settings_manager import CpiSettingsManager
 from .widgets.cpi_toolbar import CpiToolbar
 from .widgets.cpi_headline_chart import CpiHeadlineChart
@@ -40,11 +40,8 @@ class CpiModule(BaseModule):
 
         # State
         self._data_initialized = False
-        self._raw_df: Optional["pd.DataFrame"] = None
         self._yoy_df: Optional["pd.DataFrame"] = None
         self._current_lookback = "2Y"
-        self._headline_stale = False
-        self._breakdown_stale = False
 
         self._setup_ui()
         self._connect_signals()
@@ -74,7 +71,6 @@ class CpiModule(BaseModule):
     def _connect_signals(self):
         """Connect signals to slots."""
         self.toolbar.home_clicked.connect(self.home_clicked.emit)
-        self.toolbar.view_changed.connect(self._on_view_changed)
         self.toolbar.lookback_changed.connect(self._on_lookback_changed)
         self.toolbar.settings_clicked.connect(self._on_settings_clicked)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -116,9 +112,9 @@ class CpiModule(BaseModule):
             )
 
     def _fetch_data(self):
-        """Fetch all CPI data in background thread."""
+        """Fetch all inflation data in background thread."""
         self._run_worker(
-            CpiFredService.fetch_all_cpi_data,
+            InflationFredService.fetch_all_data,
             loading_message="Fetching CPI data from FRED...",
             on_complete=self._on_data_fetched,
             on_error=self._on_fetch_error,
@@ -131,20 +127,27 @@ class CpiModule(BaseModule):
 
         if result is None:
             self.headline_view.show_placeholder("Failed to fetch CPI data.")
+            self.breakdown_view.show_placeholder("Failed to fetch CPI data.")
             return
 
-        self._raw_df = result
-        self._yoy_df = CpiFredService.compute_yoy_pct(result)
+        # InflationFredService returns a dict; "cpi" key holds YoY% DataFrame
+        cpi_df = result.get("cpi")
+        if cpi_df is None or cpi_df.empty:
+            self.headline_view.show_placeholder("Failed to fetch CPI data.")
+            self.breakdown_view.show_placeholder("Failed to fetch CPI data.")
+            return
+
+        self._yoy_df = cpi_df
 
         # Update toolbar info
-        latest = CpiFredService.get_latest_reading(self._yoy_df)
-        if latest:
+        stats = InflationFredService.get_latest_stats(result)
+        if stats and "headline_cpi" in stats:
             self.toolbar.update_info(
-                headline=latest["headline"],
-                date_str=latest["date"],
+                headline=stats["headline_cpi"],
+                date_str=stats.get("date", ""),
             )
 
-        # Push data to all views
+        # Push data to current view
         self._update_all_views()
 
     def _on_fetch_error(self, error_msg: str):
@@ -152,24 +155,20 @@ class CpiModule(BaseModule):
         self._hide_loading()
         self._cleanup_worker()
         self.headline_view.show_placeholder(f"Error fetching CPI data: {error_msg}")
+        self.breakdown_view.show_placeholder(f"Error fetching CPI data: {error_msg}")
 
     def _update_all_views(self):
-        """Slice data by lookback and push to the visible chart; mark the other stale."""
+        """Slice data by lookback and push to the currently visible chart."""
         if self._yoy_df is None or self._yoy_df.empty:
             return
 
         sliced = self._slice_by_lookback(self._yoy_df)
         settings = self.settings_manager.get_all_settings()
 
-        current = self.stack.currentIndex()
-        if current == 0:
-            self.headline_view.update_data(sliced, settings)
-            self._headline_stale = False
-            self._breakdown_stale = True
-        else:
+        if self.stack.currentIndex() == 1:
             self.breakdown_view.update_data(sliced, settings)
-            self._breakdown_stale = False
-            self._headline_stale = True
+        else:
+            self.headline_view.update_data(sliced, settings)
 
     def _slice_by_lookback(self, df: "pd.DataFrame") -> "pd.DataFrame":
         """Slice DataFrame to the current lookback period."""
@@ -181,26 +180,6 @@ class CpiModule(BaseModule):
         if months is None:
             return df
         return df.tail(months)
-
-    def _on_view_changed(self, index: int):
-        """Switch stacked widget view; render stale chart if needed."""
-        self.stack.setCurrentIndex(index)
-        self._flush_stale_view(index)
-
-    def _flush_stale_view(self, index: int):
-        """Re-render the chart at *index* if it was marked stale."""
-        if self._yoy_df is None or self._yoy_df.empty:
-            return
-        if index == 0 and self._headline_stale:
-            sliced = self._slice_by_lookback(self._yoy_df)
-            settings = self.settings_manager.get_all_settings()
-            self.headline_view.update_data(sliced, settings)
-            self._headline_stale = False
-        elif index == 1 and self._breakdown_stale:
-            sliced = self._slice_by_lookback(self._yoy_df)
-            settings = self.settings_manager.get_all_settings()
-            self.breakdown_view.update_data(sliced, settings)
-            self._breakdown_stale = False
 
     def _on_lookback_changed(self, lookback: str):
         """Handle lookback period change."""
@@ -228,10 +207,9 @@ class CpiModule(BaseModule):
                 self._update_all_views()
 
     def _apply_settings(self):
-        """Push current settings to all views and toolbar."""
-        # Always start on headline view
-        self.toolbar.set_active_view(0)
-        self.stack.setCurrentIndex(0)
+        """Push current settings to views and toolbar."""
+        show_breakdown = self.settings_manager.get_setting("show_breakdown")
+        self.stack.setCurrentIndex(1 if show_breakdown else 0)
 
     def _apply_theme(self):
         """Apply theme to all child widgets."""
