@@ -143,6 +143,31 @@ def _create_rate_probability_module(theme_manager):
     return RateProbabilityModule(theme_manager)
 
 
+def _create_money_supply_module(theme_manager):
+    from app.ui.modules.money_supply import MoneySupplyModule
+    return MoneySupplyModule(theme_manager)
+
+
+def _create_fed_balance_sheet_module(theme_manager):
+    from app.ui.modules.fed_balance_sheet import FedBalanceSheetModule
+    return FedBalanceSheetModule(theme_manager)
+
+
+def _create_fed_funds_rate_module(theme_manager):
+    from app.ui.modules.fed_funds_rate import FedFundsRateModule
+    return FedFundsRateModule(theme_manager)
+
+
+def _create_reserve_balances_module(theme_manager):
+    from app.ui.modules.reserve_balances import ReserveBalancesModule
+    return ReserveBalancesModule(theme_manager)
+
+
+def _create_money_velocity_module(theme_manager):
+    from app.ui.modules.money_velocity import MoneyVelocityModule
+    return MoneyVelocityModule(theme_manager)
+
+
 def main() -> int:
     app = QApplication(sys.argv)
 
@@ -278,6 +303,31 @@ def main() -> int:
     hub.add_module(
         "rate_probability",
         lambda: _create_rate_probability_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "money_supply",
+        lambda: _create_money_supply_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "fed_balance_sheet",
+        lambda: _create_fed_balance_sheet_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "fed_funds_rate",
+        lambda: _create_fed_funds_rate_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "reserve_balances",
+        lambda: _create_reserve_balances_module(theme_manager),
+        has_own_home_button=True,
+    )
+    hub.add_module(
+        "money_velocity",
+        lambda: _create_money_velocity_module(theme_manager),
         has_own_home_button=True,
     )
     hub.add_module("settings", lambda: _create_settings_module(theme_manager))

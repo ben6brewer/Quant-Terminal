@@ -115,6 +115,11 @@ MODULE_SECTIONS = {
         {"id": "payrolls", "label": "Payrolls"},
         {"id": "labor_claims", "label": "Unemployment Claims"},
         {"id": "jolts", "label": "JOLTS"},
+        {"id": "money_supply", "label": "Money Supply"},
+        {"id": "fed_balance_sheet", "label": "Fed Balance Sheet"},
+        {"id": "fed_funds_rate", "label": "Fed Funds Rate"},
+        {"id": "reserve_balances", "label": "Reserve Balances"},
+        {"id": "money_velocity", "label": "Money Velocity"},
     ]
 }
 
