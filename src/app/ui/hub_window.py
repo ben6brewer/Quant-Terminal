@@ -477,8 +477,13 @@ class HubWindow(QMainWindow):
         if module_id not in self.modules:
             if module_id in self._module_factories:
                 factory = self._module_factories[module_id]
-                widget = factory()  # Instantiate the module now
-                self._instantiate_module(module_id, widget)
+                try:
+                    widget = factory()
+                    self._instantiate_module(module_id, widget)
+                except Exception:
+                    import traceback
+                    traceback.print_exc()
+                    return  # Module failed to load; stay on home screen
             else:
                 return  # No factory and not instantiated
 

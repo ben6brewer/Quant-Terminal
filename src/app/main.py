@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import signal
 import sys
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QApplication
 
 from app.ui.hub_window import HubWindow
@@ -257,6 +259,18 @@ def main() -> int:
     # DO NOT use showMaximized() - it locks geometry and prevents restore button from working
     hub.show()
     hub.maximize_on_startup()
+
+    # Fix: install SIGINT handler so Ctrl+C (and spurious macOS SIGINTs) quit
+    # cleanly instead of raising KeyboardInterrupt inside Qt C++ callbacks
+    signal.signal(signal.SIGINT, lambda *args: app.quit())
+
+    # Qt's C++ event loop doesn't give Python a chance to check for pending
+    # signals between C++ calls. This no-op timer wakes Python every 200ms so
+    # signal delivery happens at a safe time (not mid-Qt-callback).
+    _signal_timer = QTimer()
+    _signal_timer.start(200)
+    _signal_timer.timeout.connect(lambda: None)
+
     return app.exec()
 
 

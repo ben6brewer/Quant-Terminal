@@ -328,7 +328,7 @@ class MatrixHeatmap(BaseChart):
         max_line = f"Max  {d['max_val']:>{val_w}}  {d['max_pair']}"
 
         html = (
-            f'<div style="font-family:monospace; font-size:11px; white-space:pre; line-height:1.4;">'
+            f'<div style="font-family:"Menlo", "Consolas", "Courier New"; font-size:11px; white-space:pre; line-height:1.4;">'
             f'<b style="color:{accent_hex};">Observations</b><br/>'
             f"{d['num_obs']} {d['periodicity']} periods<br/>"
             f"{d['date_start']} \u2192 {d['date_end']}<br/>"

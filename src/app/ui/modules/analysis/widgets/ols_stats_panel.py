@@ -355,7 +355,7 @@ class OLSStatsPanel(LazyThemeMixin, QWidget):
                 font-size: 11px;
                 color: {c['text_muted']};
                 background: transparent;
-                font-family: monospace;
+                font-family: "Menlo", "Consolas", "Courier New";
             }}
             QLabel#placeholder {{
                 font-size: 13px;

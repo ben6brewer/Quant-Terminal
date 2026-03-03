@@ -493,7 +493,7 @@ class ThemeStylesheetService:
             "bg": "#0d1420", "accent": "#FF8000", "label_color": "#b0b0b0",
             "label_size": "11px", "input_bg": "#0a1018", "input_text": "#e8e8e8",
             "input_border": "#1a2332", "input_padding": "6px 10px",
-            "input_font": 'font-family: "Menlo", "Consolas", "Courier New", monospace;',
+            "input_font": 'font-family: "Menlo", "Consolas", "Courier New";',
             "selection_color": "#000000", "hover_bg": "#0d1420", "focus_bg": "#0d1420",
             "arrow_color": "#b0b0b0", "dropdown_bg": "#0d1420", "dropdown_text": "#e8e8e8",
         },
@@ -525,7 +525,7 @@ class ThemeStylesheetService:
     def get_sidebar_stylesheet(cls, theme: str) -> str:
         """Get sidebar stylesheet for a theme."""
         s = cls._SIDEBAR.get(theme, cls._SIDEBAR["dark"])
-        mono = 'font-family: "Menlo", "Consolas", "Courier New", monospace;' if theme == "bloomberg" else ""
+        mono = 'font-family: "Menlo", "Consolas", "Courier New";' if theme == "bloomberg" else ""
         hover_border = f"border-left: 3px solid {s['accent']};" if theme == "bloomberg" else ""
         return f"""
             #sidebar {{ background-color: {s['bg']}; color: {s['text']}; }}

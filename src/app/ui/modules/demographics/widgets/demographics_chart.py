@@ -94,7 +94,7 @@ class DemographicsChart(BaseChart):
             f"border-radius: 4px;"
             f"padding: 8px 10px;"
             f"font-size: 12px;"
-            f"font-family: monospace;"
+            f'font-family: "Menlo", "Consolas", "Courier New";'
         )
 
     def _setup_placeholder(self):

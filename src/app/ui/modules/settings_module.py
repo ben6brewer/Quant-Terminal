@@ -772,7 +772,7 @@ class SettingsModule(QWidget):
                 border-radius: 4px;
                 padding: 6px 10px;
                 font-size: 13px;
-                font-family: "Menlo", "Consolas", "Courier New", monospace;
+                font-family: "Menlo", "Consolas", "Courier New";
             }
             QLineEdit#apiKeyInput:focus {
                 border-color: #00d4ff;
@@ -920,7 +920,7 @@ class SettingsModule(QWidget):
                 border-radius: 4px;
                 padding: 6px 10px;
                 font-size: 13px;
-                font-family: "Menlo", "Consolas", "Courier New", monospace;
+                font-family: "Menlo", "Consolas", "Courier New";
             }
             QLineEdit#apiKeyInput:focus {
                 border-color: #0066cc;
@@ -1068,7 +1068,7 @@ class SettingsModule(QWidget):
                 border-radius: 4px;
                 padding: 6px 10px;
                 font-size: 13px;
-                font-family: "Menlo", "Consolas", "Courier New", monospace;
+                font-family: "Menlo", "Consolas", "Courier New";
             }
             QLineEdit#apiKeyInput:focus {
                 border-color: #FF8000;
