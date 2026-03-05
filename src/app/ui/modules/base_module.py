@@ -3,7 +3,8 @@
 from typing import Optional
 
 from PySide6.QtWidgets import QWidget
-from PySide6.QtCore import Signal, QThread
+from PySide6.QtCore import Signal, QThread, Qt
+
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
@@ -199,6 +200,11 @@ class BaseModule(LazyThemeMixin, QWidget):
         If the thread is stuck (e.g. yfinance timeout), it will be orphaned
         but won't block the UI. With network timeouts, orphaned threads will
         eventually terminate on their own.
+
+        Uses QueuedConnection for thread.finished cleanup to avoid a
+        GIL/Qt-signal-mutex deadlock: DirectConnection lambdas run on the
+        background thread and need the GIL, while the main thread may hold
+        the GIL and block on QThread::~QThread()->wait() if references drop.
         """
         if self._thread is not None:
             thread = self._thread
@@ -206,17 +212,19 @@ class BaseModule(LazyThemeMixin, QWidget):
             thread.quit()
             # Keep a reference so Python doesn't GC the thread while running
             self._orphaned_threads.append(thread)
-            if worker is not None:
-                thread.finished.connect(worker.deleteLater)
 
-            def _remove_orphan(t=thread):
+            # QueuedConnection ensures this runs on the main thread's event
+            # loop, avoiding the GIL deadlock that DirectConnection causes.
+            def _on_thread_done(t=thread, w=worker):
                 try:
                     self._orphaned_threads.remove(t)
                 except ValueError:
                     pass
+                if w is not None:
+                    w.deleteLater()
+                t.deleteLater()
 
-            thread.finished.connect(_remove_orphan)
-            thread.finished.connect(thread.deleteLater)
+            thread.finished.connect(_on_thread_done, Qt.QueuedConnection)
         self._worker = None
         self._thread = None
 
