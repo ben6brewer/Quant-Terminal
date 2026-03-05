@@ -30,6 +30,8 @@ class BaseModule(LazyThemeMixin, QWidget):
         self._loading_overlay = None
         self._worker = None
         self._thread: Optional[QThread] = None
+        self._worker_complete_cb = None
+        self._worker_error_cb = None
         self.settings_manager = self._create_settings_manager()
 
     # ── Settings ─────────────────────────────────────────────────────
@@ -130,32 +132,25 @@ class BaseModule(LazyThemeMixin, QWidget):
         Callbacks are auto-wrapped to call ``_hide_loading()`` and
         ``_cleanup_worker()`` before invoking the callback, so callers
         do NOT need to call those themselves.
+
+        Signals connect to bound methods on *self* (a QObject) so Qt's
+        AutoConnection correctly queues delivery to the main thread.
         """
         from app.services.calculation_worker import CalculationWorker
 
         self._cancel_worker()
         self._show_loading(loading_message)
 
-        actual_complete = on_complete or self._on_worker_complete
-        actual_error = on_error or self._on_worker_error
-
-        def _wrapped_complete(result):
-            self._hide_loading()
-            self._cleanup_worker()
-            actual_complete(result)
-
-        def _wrapped_error(error_msg):
-            self._hide_loading()
-            self._cleanup_worker()
-            actual_error(error_msg)
+        self._worker_complete_cb = on_complete or self._on_worker_complete
+        self._worker_error_cb = on_error or self._on_worker_error
 
         self._thread = QThread()
         self._worker = CalculationWorker(fn, *args, **kwargs)
         self._worker.moveToThread(self._thread)
 
         self._thread.started.connect(self._worker.run)
-        self._worker.finished.connect(_wrapped_complete)
-        self._worker.error.connect(_wrapped_error)
+        self._worker.finished.connect(self._on_worker_finished)
+        self._worker.error.connect(self._on_worker_errored)
 
         self._thread.start()
 
@@ -163,7 +158,31 @@ class BaseModule(LazyThemeMixin, QWidget):
         if not self._thread.isRunning():
             self._hide_loading()
             self._cleanup_worker()
-            actual_error("Failed to start background thread")
+            cb = self._worker_error_cb
+            self._worker_complete_cb = None
+            self._worker_error_cb = None
+            if cb:
+                cb("Failed to start background thread")
+
+    def _on_worker_finished(self, result):
+        """Internal slot for worker finished — always runs in main thread."""
+        self._hide_loading()
+        self._cleanup_worker()
+        cb = self._worker_complete_cb
+        self._worker_complete_cb = None
+        self._worker_error_cb = None
+        if cb:
+            cb(result)
+
+    def _on_worker_errored(self, error_msg):
+        """Internal slot for worker error — always runs in main thread."""
+        self._hide_loading()
+        self._cleanup_worker()
+        cb = self._worker_error_cb
+        self._worker_complete_cb = None
+        self._worker_error_cb = None
+        if cb:
+            cb(error_msg)
 
     def _on_worker_complete(self, result):
         """Default completion handler — subclasses should override."""
@@ -195,6 +214,8 @@ class BaseModule(LazyThemeMixin, QWidget):
                 self._worker.error.disconnect()
             except (RuntimeError, TypeError):
                 pass
+        self._worker_complete_cb = None
+        self._worker_error_cb = None
         self._cleanup_worker()
 
     # ── Theme ────────────────────────────────────────────────────────

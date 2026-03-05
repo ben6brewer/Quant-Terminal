@@ -140,7 +140,6 @@ class FredDataModule(BaseModule):
             self._initialize_data()
 
     def hideEvent(self, event):
-        self._cancel_worker()
         super().hideEvent(event)
 
     # ── Data Loading ──────────────────────────────────────────────────────
