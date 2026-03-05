@@ -6,9 +6,6 @@ from app.ui.modules.fred_toolbar import FredToolbar
 class CpiToolbar(FredToolbar):
     """CPI toolbar — headline info, supports custom date lookback."""
 
-    def get_default_lookback_index(self):
-        return 1  # 2Y
-
     def supports_custom_date(self):
         return True
 
