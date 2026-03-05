@@ -24,6 +24,15 @@ dependencies = [
   "fredapi>=0.5",
 ]
 
+[project.optional-dependencies]
+test = ["pytest>=8.0", "pytest-qt>=4.3", "pytest-mock>=3.12", "pytest-cov>=5.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = ["ui: Widget/UI tests (skipped unless --full)"]
+addopts = "--tb=short -q"
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 
