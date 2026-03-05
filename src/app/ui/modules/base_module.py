@@ -32,6 +32,7 @@ class BaseModule(LazyThemeMixin, QWidget):
         self._thread: Optional[QThread] = None
         self._worker_complete_cb = None
         self._worker_error_cb = None
+        self._orphaned_threads: list[QThread] = []  # prevent GC of still-running threads
         self.settings_manager = self._create_settings_manager()
 
     # ── Settings ─────────────────────────────────────────────────────
@@ -203,9 +204,18 @@ class BaseModule(LazyThemeMixin, QWidget):
             thread = self._thread
             worker = self._worker
             thread.quit()
-            # Non-blocking: connect finished signal for deferred cleanup
+            # Keep a reference so Python doesn't GC the thread while running
+            self._orphaned_threads.append(thread)
             if worker is not None:
                 thread.finished.connect(worker.deleteLater)
+
+            def _remove_orphan(t=thread):
+                try:
+                    self._orphaned_threads.remove(t)
+                except ValueError:
+                    pass
+
+            thread.finished.connect(_remove_orphan)
             thread.finished.connect(thread.deleteLater)
         self._worker = None
         self._thread = None
