@@ -45,7 +45,7 @@ class QtSettingsSerializationMixin:
         """
         deserialized = {}
         for key, value in data.items():
-            if key.endswith("_line_style") and isinstance(value, str):
+            if (key == "line_style" or key.endswith("_line_style")) and isinstance(value, str):
                 deserialized[key] = self._STR_TO_PENSTYLE.get(value, Qt.SolidLine)
             elif key.endswith("_color") and isinstance(value, list):
                 deserialized[key] = tuple(value) if value else None

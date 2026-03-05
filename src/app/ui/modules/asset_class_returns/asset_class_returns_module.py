@@ -12,8 +12,7 @@ from app.ui.widgets.common import CustomMessageBox
 from app.ui.modules.base_module import BaseModule
 
 from .services.asset_class_returns_service import AssetClassReturnsService
-from .services.asset_class_returns_settings_manager import AssetClassReturnsSettingsManager
-from .widgets.asset_class_returns_controls import AssetClassReturnsControls
+from .widgets.asset_class_returns_toolbar import AssetClassReturnsToolbar
 from .widgets.asset_class_returns_table import AssetClassReturnsTable
 from .widgets.asset_class_returns_tab_bar import AssetClassReturnsTabBar
 from .widgets.asset_class_returns_settings_dialog import AssetClassReturnsSettingsDialog
@@ -22,12 +21,20 @@ from .widgets.asset_class_returns_settings_dialog import AssetClassReturnsSettin
 class AssetClassReturnsModule(BaseModule):
     """Displays a quilt chart of annual returns ranked by asset class."""
 
+    SETTINGS_FILENAME = "asset_class_returns_settings.json"
+    DEFAULT_SETTINGS = {
+        "decimals": 1,
+        "label_mode": "label",
+        "custom_tickers": [],
+        "cagr_years": None,
+        "show_cagr": True,
+    }
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
 
         self._cached_data = None
         self._cached_custom_data = None
-        self._settings_manager = AssetClassReturnsSettingsManager()
 
         # Separate worker for custom tab (BaseModule manages _worker/_thread for asset class)
         self._custom_worker = None
@@ -50,7 +57,7 @@ class AssetClassReturnsModule(BaseModule):
         layout.setSpacing(0)
 
         # Controls bar
-        self.controls = AssetClassReturnsControls(self.theme_manager)
+        self.controls = AssetClassReturnsToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # Tab bar
@@ -87,7 +94,7 @@ class AssetClassReturnsModule(BaseModule):
 
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
-        self.controls.settings_clicked.connect(self._show_settings_dialog)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.tab_bar.view_changed.connect(self._on_tab_changed)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -101,7 +108,7 @@ class AssetClassReturnsModule(BaseModule):
         if index == 1:
             # Restore persisted tickers if panel is empty
             if not self.ticker_panel.get_tickers():
-                saved = self._settings_manager.get_all_settings().get("custom_tickers", [])
+                saved = self.settings_manager.get_all_settings().get("custom_tickers", [])
                 if saved:
                     self.ticker_panel.set_tickers(saved)
                     self._schedule_custom_reload()
@@ -109,7 +116,7 @@ class AssetClassReturnsModule(BaseModule):
     # ── Helpers ──────────────────────────────────────────────────────
 
     def _cagr_header_text(self):
-        cagr_years = self._settings_manager.get_all_settings().get("cagr_years")
+        cagr_years = self.settings_manager.get_all_settings().get("cagr_years")
         if cagr_years is None:
             return "CAGR"
         s = f"{cagr_years:.2f}".rstrip("0").rstrip(".")
@@ -118,7 +125,7 @@ class AssetClassReturnsModule(BaseModule):
     # ── Asset Class Data (uses BaseModule._run_worker) ─────────────
 
     def _load_data(self):
-        cagr_years = self._settings_manager.get_all_settings().get("cagr_years")
+        cagr_years = self.settings_manager.get_all_settings().get("cagr_years")
         self.asset_class_container.hide()
         self._run_worker(
             AssetClassReturnsService.compute_annual_returns,
@@ -129,9 +136,6 @@ class AssetClassReturnsModule(BaseModule):
         )
 
     def _on_data_complete(self, result):
-        self._hide_loading()
-        self._cleanup_worker()
-
         if not result or not result.get("years"):
             CustomMessageBox.information(
                 self.theme_manager, self, "No Data",
@@ -139,14 +143,12 @@ class AssetClassReturnsModule(BaseModule):
             )
         else:
             self._cached_data = result
-            settings = self._settings_manager.get_all_settings()
+            settings = self.settings_manager.get_all_settings()
             self.table.update_data(result, settings["decimals"], settings.get("label_mode", "label"), self._cagr_header_text(), settings.get("show_cagr", True))
             self.table.scroll_to_recent()
         self.asset_class_container.show()
 
     def _on_data_error(self, error_msg: str):
-        self._hide_loading()
-        self._cleanup_worker()
         self.asset_class_container.show()
         CustomMessageBox.critical(
             self.theme_manager, self, "Load Error", error_msg
@@ -156,7 +158,7 @@ class AssetClassReturnsModule(BaseModule):
 
     def _on_tickers_changed(self, tickers: list):
         """Handle ticker list changes — save and schedule reload."""
-        self._settings_manager.update_settings({"custom_tickers": tickers})
+        self.settings_manager.update_settings({"custom_tickers": tickers})
         self._schedule_custom_reload()
 
     def _schedule_custom_reload(self):
@@ -177,7 +179,7 @@ class AssetClassReturnsModule(BaseModule):
 
         from app.services.calculation_worker import CalculationWorker
 
-        cagr_years = self._settings_manager.get_all_settings().get("cagr_years")
+        cagr_years = self.settings_manager.get_all_settings().get("cagr_years")
         self._custom_thread = QThread()
         self._custom_worker = CalculationWorker(
             AssetClassReturnsService.compute_custom_returns, tickers, cagr_years
@@ -195,7 +197,7 @@ class AssetClassReturnsModule(BaseModule):
 
         if result and result.get("years"):
             self._cached_custom_data = result
-            settings = self._settings_manager.get_all_settings()
+            settings = self.settings_manager.get_all_settings()
             self.custom_table.update_data(result, settings["decimals"], "ticker", self._cagr_header_text(), settings.get("show_cagr", True))
             self.custom_table.scroll_to_recent()
         else:
@@ -230,29 +232,23 @@ class AssetClassReturnsModule(BaseModule):
 
     # ── Settings ───────────────────────────────────────────────────
 
-    def _show_settings_dialog(self):
-        settings = self._settings_manager.get_all_settings()
-        old_cagr_years = settings.get("cagr_years")
-        dialog = AssetClassReturnsSettingsDialog(self.theme_manager, settings, self)
-        if dialog.exec():
-            result = dialog.get_settings()
-            if result:
-                self._settings_manager.update_settings(result)
-                new_cagr_years = result.get("cagr_years")
+    def create_settings_dialog(self, current_settings):
+        self._old_cagr_years = current_settings.get("cagr_years")
+        return AssetClassReturnsSettingsDialog(self.theme_manager, current_settings, self)
 
-                show_cagr = result.get("show_cagr", True)
-                if new_cagr_years != old_cagr_years:
-                    # CAGR lookback changed — full recompute
-                    self._load_data()
-                    if self.ticker_panel.get_tickers():
-                        self._load_custom_data()
-                else:
-                    # Only display settings changed — re-render from cache
-                    cagr_header = self._cagr_header_text()
-                    if self._cached_data:
-                        self.table.re_render(result["decimals"], result.get("label_mode", "label"), cagr_header, show_cagr)
-                    if self._cached_custom_data:
-                        self.custom_table.re_render(result["decimals"], "ticker", cagr_header, show_cagr)
+    def _on_settings_changed(self, new_settings):
+        new_cagr_years = new_settings.get("cagr_years")
+        show_cagr = new_settings.get("show_cagr", True)
+        if new_cagr_years != self._old_cagr_years:
+            self._load_data()
+            if self.ticker_panel.get_tickers():
+                self._load_custom_data()
+        else:
+            cagr_header = self._cagr_header_text()
+            if self._cached_data:
+                self.table.re_render(new_settings["decimals"], new_settings.get("label_mode", "label"), cagr_header, show_cagr)
+            if self._cached_custom_data:
+                self.custom_table.re_render(new_settings["decimals"], "ticker", cagr_header, show_cagr)
 
     # ── Theme ──────────────────────────────────────────────────────
 

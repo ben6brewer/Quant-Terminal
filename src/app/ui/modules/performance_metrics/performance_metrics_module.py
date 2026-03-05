@@ -17,8 +17,7 @@ from app.ui.widgets.common import parse_portfolio_value
 from app.ui.modules.base_module import BaseModule
 
 from .services.performance_metrics_service import PerformanceMetricsService
-from .services.performance_metrics_settings_manager import PerformanceMetricsSettingsManager
-from .widgets.performance_metrics_controls import PerformanceMetricsControls
+from .widgets.performance_metrics_toolbar import PerformanceMetricsToolbar
 from .widgets.performance_metrics_table import PerformanceMetricsTable
 from .widgets.performance_metrics_settings_dialog import PerformanceMetricsSettingsDialog
 
@@ -41,11 +40,21 @@ class PerformanceMetricsModule(BaseModule):
         "show_12_months": ("12 Months", 252),
     }
 
+    SETTINGS_FILENAME = "performance_metrics_settings.json"
+    DEFAULT_SETTINGS = {
+        "risk_free_source": "irx",
+        "manual_risk_free_rate": 0.05,
+        "decimal_places": 2,
+        "show_3_months": True,
+        "show_6_months": True,
+        "show_12_months": True,
+        "show_ytd": True,
+        "custom_period_enabled": False,
+        "custom_period_years": 5.0,
+    }
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
-
-        # Settings manager
-        self.settings_manager = PerformanceMetricsSettingsManager()
 
         # Current state
         self._current_portfolio: str = ""
@@ -73,7 +82,7 @@ class PerformanceMetricsModule(BaseModule):
         layout.setSpacing(0)
 
         # Controls bar
-        self.controls = PerformanceMetricsControls(self.theme_manager)
+        self.controls = PerformanceMetricsToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # Container for centering the table horizontally
@@ -99,7 +108,7 @@ class PerformanceMetricsModule(BaseModule):
         self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.portfolio_changed.connect(self._on_portfolio_changed)
         self.controls.benchmark_changed.connect(self._on_benchmark_changed)
-        self.controls.settings_clicked.connect(self._show_settings_dialog)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
 
         # Theme changes
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -137,22 +146,14 @@ class PerformanceMetricsModule(BaseModule):
         self.table.set_has_benchmark(bool(benchmark))
         self._update_metrics()
 
-    def _show_settings_dialog(self):
-        """Show the settings dialog."""
-        current_settings = self.settings_manager.get_all_settings()
-        dialog = PerformanceMetricsSettingsDialog(
+    def create_settings_dialog(self, current_settings):
+        return PerformanceMetricsSettingsDialog(
             self.theme_manager, current_settings, self
         )
-        dialog.settings_saved.connect(self._on_settings_saved)
-        dialog.exec()
 
-    def _on_settings_saved(self, settings: Dict[str, Any]):
-        """Handle settings saved from dialog."""
-        self.settings_manager.update_settings(settings)
-        # Rebuild active periods from new settings
-        self._active_periods = self._build_active_periods(settings)
+    def _on_settings_changed(self, new_settings):
+        self._active_periods = self._build_active_periods(new_settings)
         self.table.set_visible_periods(self._active_periods)
-        # Only recalculate if a portfolio is selected
         if self._current_portfolio:
             self._update_metrics()
 

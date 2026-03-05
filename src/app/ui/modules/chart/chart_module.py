@@ -16,7 +16,7 @@ from PySide6.QtCore import Qt, Signal, QTimer
 
 from app.ui.modules.chart.widgets import (
     PriceChart,
-    ChartControls,
+    ChartToolbar,
     IndicatorPanel,
     CreateIndicatorDialog,
     ChartSettingsDialog,
@@ -132,7 +132,7 @@ class ChartModule(LazyThemeMixin, QWidget):
         root.setSpacing(0)
 
         # Controls bar
-        self.controls = ChartControls(self.theme_manager)
+        self.controls = ChartToolbar(self.theme_manager)
         root.addWidget(self.controls)
 
         # Horizontal layout for chart + panels

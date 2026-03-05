@@ -19,6 +19,7 @@ from .portfolio_ticker_combo import (
 from .api_key_dialog import APIKeyDialog
 from .smooth_scroll_widgets import SmoothScrollTableWidget, SmoothScrollListWidget
 from .vertical_label import VerticalLabel
+from .checkbox_settings_dialog import CheckboxSettingsDialog
 
 __all__ = [
     'CustomMessageBox',
@@ -39,9 +40,5 @@ __all__ = [
     'SmoothScrollTableWidget',
     'SmoothScrollListWidget',
     'VerticalLabel',
+    'CheckboxSettingsDialog',
 ]
-
-# Re-export BaseModule for convenient access
-from app.ui.modules.base_module import BaseModule
-
-__all__.append('BaseModule')

@@ -110,3 +110,20 @@ class BaseSettingsManager(ABC):
         Default implementation returns a shallow copy.
         """
         return data.copy()
+
+
+class GenericSettingsManager(BaseSettingsManager):
+    """Settings manager created from filename + defaults dict (no subclass file needed)."""
+
+    def __init__(self, filename: str, defaults: Dict[str, Any]):
+        self._filename = filename
+        self._defaults = defaults
+        super().__init__()
+
+    @property
+    def settings_filename(self) -> str:
+        return self._filename
+
+    @property
+    def DEFAULT_SETTINGS(self) -> Dict[str, Any]:
+        return self._defaults

@@ -7,8 +7,7 @@ from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
 
-from .services.analysis_settings_manager import AnalysisSettingsManager
-from .widgets.analysis_controls import AnalysisControls
+from .widgets.analysis_toolbar import AnalysisToolbar
 from .widgets.ticker_list_panel import TickerListPanel
 from .widgets.frontier_chart import FrontierChart
 from .widgets.weights_panel import WeightsPanel
@@ -22,8 +21,6 @@ class EfficientFrontierModule(BaseModule):
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
-
-        self.settings_manager = AnalysisSettingsManager()
         self._last_results: Optional[dict] = None
         self._current_gamma = 0.0
 
@@ -38,7 +35,7 @@ class EfficientFrontierModule(BaseModule):
         layout.setSpacing(0)
 
         # Controls bar
-        self.controls = AnalysisControls(
+        self.controls = AnalysisToolbar(
             self.theme_manager,
             show_simulations=True,
             show_risk_aversion=True,
@@ -104,29 +101,27 @@ class EfficientFrontierModule(BaseModule):
             self.chart.clear_indifference_curve()
             self.weights_panel.clear_optimal_results()
 
-    def _on_settings_clicked(self):
-        from PySide6.QtWidgets import QDialog
-        dialog = EFSettingsDialog(
-            self.theme_manager,
-            current_settings=self.settings_manager.get_all_settings(),
-            parent=self,
+    def create_settings_manager(self):
+        from .services.analysis_settings_manager import AnalysisSettingsManager
+        return AnalysisSettingsManager()
+
+    def create_settings_dialog(self, current_settings):
+        return EFSettingsDialog(
+            self.theme_manager, current_settings=current_settings, parent=self,
         )
-        if dialog.exec() == QDialog.Accepted:
-            new_settings = dialog.get_settings()
-            if new_settings:
-                self.settings_manager.update_settings(new_settings)
-                all_settings = self.settings_manager.get_all_settings()
-                self.chart.apply_settings(all_settings)
-                if self._last_results is not None:
-                    self.chart.plot_results(self._last_results)
-                    self.weights_panel.set_results(self._last_results, all_settings)
-                    # Re-apply or clear indifference curve based on new settings
-                    if self._current_gamma > 0 and all_settings.get("ef_show_indifference_curve", True):
-                        self._compute_and_plot_indifference(self._current_gamma)
-                    else:
-                        self.chart.clear_indifference_curve()
-                        self.weights_panel.clear_optimal_results()
-                self.chart.set_theme(self.theme_manager.current_theme)
+
+    def _on_settings_changed(self, new_settings):
+        all_settings = self.settings_manager.get_all_settings()
+        self.chart.apply_settings(all_settings)
+        if self._last_results is not None:
+            self.chart.plot_results(self._last_results)
+            self.weights_panel.set_results(self._last_results, all_settings)
+            if self._current_gamma > 0 and all_settings.get("ef_show_indifference_curve", True):
+                self._compute_and_plot_indifference(self._current_gamma)
+            else:
+                self.chart.clear_indifference_curve()
+                self.weights_panel.clear_optimal_results()
+        self.chart.set_theme(self.theme_manager.current_theme)
 
     def _compute_and_plot_indifference(self, gamma: float):
         """Calculate and plot the indifference curve for the given risk aversion."""
@@ -223,13 +218,9 @@ class EfficientFrontierModule(BaseModule):
         self._current_gamma = gamma
         if gamma > 0 and all_settings.get("ef_show_indifference_curve", True):
             self._compute_and_plot_indifference(gamma)
-        self._hide_loading()
-        self._cleanup_worker()
 
     def _on_error(self, error_msg: str):
         self.chart.show_placeholder(f"Error: {error_msg}")
-        self._hide_loading()
-        self._cleanup_worker()
 
     def _apply_theme(self):
         self.setStyleSheet(f"background-color: {self._get_theme_bg()};")

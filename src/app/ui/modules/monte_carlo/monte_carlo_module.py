@@ -13,13 +13,12 @@ from app.ui.widgets.common import parse_portfolio_value
 from app.ui.modules.base_module import BaseModule
 
 from .services.monte_carlo_service import SimulationResult
-from .services.monte_carlo_settings_manager import MonteCarloSettingsManager
 from .services.simulation_worker import (
     SimulationWorker,
     SimulationParams,
     SimulationResultBundle,
 )
-from .widgets.monte_carlo_controls import MonteCarloControls
+from .widgets.monte_carlo_toolbar import MonteCarloToolbar
 from .widgets.monte_carlo_chart import MonteCarloChart
 
 
@@ -33,9 +32,6 @@ class MonteCarloModule(BaseModule):
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
-
-        # Settings manager
-        self.settings_manager = MonteCarloSettingsManager()
 
         # Current state
         self._current_portfolio: str = ""
@@ -65,7 +61,7 @@ class MonteCarloModule(BaseModule):
         layout.setSpacing(0)
 
         # Controls bar
-        self.controls = MonteCarloControls(self.theme_manager)
+        self.controls = MonteCarloToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # Chart
@@ -82,7 +78,7 @@ class MonteCarloModule(BaseModule):
         self.controls.simulations_changed.connect(self._on_simulations_changed)
         self.controls.benchmark_changed.connect(self._on_benchmark_changed)
         self.controls.run_simulation.connect(self._run_simulation)
-        self.controls.settings_clicked.connect(self._show_settings_dialog)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
 
         # Theme changes (lazy - only apply when visible)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -266,31 +262,18 @@ class MonteCarloModule(BaseModule):
             self._simulation_worker.deleteLater()
             self._simulation_worker = None
 
-    def _show_settings_dialog(self):
-        """Show settings dialog."""
+    def create_settings_manager(self):
+        from .services.monte_carlo_settings_manager import MonteCarloSettingsManager
+        return MonteCarloSettingsManager()
+
+    def create_settings_dialog(self, current_settings):
         from .widgets.monte_carlo_settings_dialog import MonteCarloSettingsDialog
-
-        current_settings = self.settings_manager.get_all_settings()
-        has_benchmark = bool(self._current_benchmark)
-
-        dialog = MonteCarloSettingsDialog(
-            self.theme_manager,
-            current_settings,
-            parent=self,
-            has_benchmark=has_benchmark,
+        return MonteCarloSettingsDialog(
+            self.theme_manager, current_settings, parent=self,
+            has_benchmark=bool(self._current_benchmark),
         )
 
-        if dialog.exec():
-            new_settings = dialog.get_settings()
-            if new_settings:
-                self.settings_manager.update_settings(new_settings)
-                self.settings_manager.save_settings()
-
-                # Update chart with new settings (colors, display options)
-                self.chart.update_chart_settings(new_settings)
-
-                # Re-run simulation if we have a previous result
-                # This applies changes like initial_value, block_size
-                # Runs in background thread to keep UI responsive
-                if self._last_result is not None and self._current_portfolio:
-                    self._run_simulation()
+    def _on_settings_changed(self, new_settings):
+        self.chart.update_chart_settings(new_settings)
+        if self._last_result is not None and self._current_portfolio:
+            self._run_simulation()

@@ -30,6 +30,76 @@ class BaseModule(LazyThemeMixin, QWidget):
         self._loading_overlay = None
         self._worker = None
         self._thread: Optional[QThread] = None
+        self.settings_manager = self._create_settings_manager()
+
+    # ── Settings ─────────────────────────────────────────────────────
+
+    def _create_settings_manager(self):
+        """Create settings manager.
+
+        Tries create_settings_manager() first (for custom manager classes),
+        falls back to GenericSettingsManager from class attributes.
+        """
+        mgr = self.create_settings_manager()
+        if mgr is not None:
+            return mgr
+        if hasattr(self, 'SETTINGS_FILENAME') and hasattr(self, 'DEFAULT_SETTINGS'):
+            from app.services.base_settings_manager import GenericSettingsManager
+            return GenericSettingsManager(self.SETTINGS_FILENAME, self.DEFAULT_SETTINGS)
+        return None
+
+    def create_settings_manager(self):
+        """Override to return a custom settings manager instance."""
+        return None
+
+    def get_settings_options(self) -> list:
+        """Return list of (key, label) for checkbox settings dialog."""
+        return []
+
+    def get_settings_dialog_title(self) -> str:
+        """Title for the settings dialog."""
+        return "Settings"
+
+    def create_settings_dialog(self, current_settings):
+        """Create and return a custom settings dialog.
+
+        Only called if get_settings_options() returns empty list.
+        Must return a dialog with exec() and get_settings() methods.
+        """
+        return None
+
+    def _on_settings_clicked(self):
+        """Open the settings dialog (checkbox or custom)."""
+        if self.settings_manager is None:
+            return
+        from PySide6.QtWidgets import QDialog
+
+        current_settings = self.settings_manager.get_all_settings()
+        options = self.get_settings_options()
+
+        if options:
+            from app.ui.widgets.common.checkbox_settings_dialog import CheckboxSettingsDialog
+            dialog = CheckboxSettingsDialog(
+                self.theme_manager,
+                title=self.get_settings_dialog_title(),
+                options=options,
+                current_settings=current_settings,
+                parent=self,
+            )
+        else:
+            dialog = self.create_settings_dialog(current_settings)
+            if dialog is None:
+                return
+
+        if dialog.exec() == QDialog.Accepted:
+            new_settings = dialog.get_settings()
+            if new_settings:
+                self.settings_manager.update_settings(new_settings)
+                self._on_settings_changed(new_settings)
+
+    def _on_settings_changed(self, new_settings):
+        """Hook for post-settings-update logic. Override in subclass."""
+        pass
 
     # ── Loading Overlay ──────────────────────────────────────────────
 
@@ -56,19 +126,36 @@ class BaseModule(LazyThemeMixin, QWidget):
         Cancels any existing worker, shows loading overlay, and wires
         finished/error signals to *on_complete*/*on_error* (falling back
         to ``_on_worker_complete`` / ``_on_worker_error``).
+
+        Callbacks are auto-wrapped to call ``_hide_loading()`` and
+        ``_cleanup_worker()`` before invoking the callback, so callers
+        do NOT need to call those themselves.
         """
         from app.services.calculation_worker import CalculationWorker
 
         self._cancel_worker()
         self._show_loading(loading_message)
 
+        actual_complete = on_complete or self._on_worker_complete
+        actual_error = on_error or self._on_worker_error
+
+        def _wrapped_complete(result):
+            self._hide_loading()
+            self._cleanup_worker()
+            actual_complete(result)
+
+        def _wrapped_error(error_msg):
+            self._hide_loading()
+            self._cleanup_worker()
+            actual_error(error_msg)
+
         self._thread = QThread()
         self._worker = CalculationWorker(fn, *args, **kwargs)
         self._worker.moveToThread(self._thread)
 
         self._thread.started.connect(self._worker.run)
-        self._worker.finished.connect(on_complete or self._on_worker_complete)
-        self._worker.error.connect(on_error or self._on_worker_error)
+        self._worker.finished.connect(_wrapped_complete)
+        self._worker.error.connect(_wrapped_error)
 
         self._thread.start()
 
@@ -76,18 +163,15 @@ class BaseModule(LazyThemeMixin, QWidget):
         if not self._thread.isRunning():
             self._hide_loading()
             self._cleanup_worker()
-            error_handler = on_error or self._on_worker_error
-            error_handler("Failed to start background thread")
+            actual_error("Failed to start background thread")
 
     def _on_worker_complete(self, result):
         """Default completion handler — subclasses should override."""
-        self._hide_loading()
-        self._cleanup_worker()
+        pass
 
     def _on_worker_error(self, error_msg: str):
         """Default error handler — subclasses should override."""
-        self._hide_loading()
-        self._cleanup_worker()
+        pass
 
     def _cleanup_worker(self):
         """Safely stop thread and release references with proper Qt cleanup."""

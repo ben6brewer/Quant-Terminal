@@ -6,32 +6,11 @@ from typing import Dict, Any, Tuple
 from PySide6.QtCore import Qt
 
 from app.services.base_settings_manager import BaseSettingsManager
+from app.services.qt_settings_mixin import QtSettingsSerializationMixin
 
 
-class ChartSettingsManager(BaseSettingsManager):
-    """
-    Manages chart appearance settings with persistent storage.
-
-    Extends BaseSettingsManager with chart-specific:
-    - Qt.PenStyle serialization for line styles
-    - RGB tuple serialization for colors
-    - Helper methods for candle and line settings
-    """
-
-    # Qt PenStyle mapping for JSON serialization
-    _PENSTYLE_TO_STR = {
-        Qt.SolidLine: "solid",
-        Qt.DashLine: "dash",
-        Qt.DotLine: "dot",
-        Qt.DashDotLine: "dashdot",
-    }
-
-    _STR_TO_PENSTYLE = {
-        "solid": Qt.SolidLine,
-        "dash": Qt.DashLine,
-        "dot": Qt.DotLine,
-        "dashdot": Qt.DashDotLine,
-    }
+class ChartSettingsManager(QtSettingsSerializationMixin, BaseSettingsManager):
+    """Manages chart appearance settings with persistent storage."""
 
     @property
     def DEFAULT_SETTINGS(self) -> Dict[str, Any]:
@@ -63,38 +42,6 @@ class ChartSettingsManager(BaseSettingsManager):
     def settings_filename(self) -> str:
         """Settings file name."""
         return "chart_settings.json"
-
-    def _serialize_settings(self, settings: Dict[str, Any]) -> Dict[str, Any]:
-        """Convert settings to JSON-serializable format."""
-        serialized = {}
-
-        for key, value in settings.items():
-            if isinstance(value, Qt.PenStyle):
-                # Convert Qt.PenStyle to string
-                serialized[key] = self._PENSTYLE_TO_STR.get(value, "solid")
-            elif isinstance(value, tuple):
-                # Convert tuples to lists for JSON
-                serialized[key] = list(value)
-            else:
-                serialized[key] = value
-
-        return serialized
-
-    def _deserialize_settings(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Convert settings from JSON format to runtime format."""
-        deserialized = {}
-
-        for key, value in data.items():
-            if key == "line_style" and isinstance(value, str):
-                # Convert string to Qt.PenStyle
-                deserialized[key] = self._STR_TO_PENSTYLE.get(value, Qt.SolidLine)
-            elif key in ["candle_up_color", "candle_down_color", "line_color"] and isinstance(value, list):
-                # Convert lists to tuples for colors
-                deserialized[key] = tuple(value) if value else None
-            else:
-                deserialized[key] = value
-
-        return deserialized
 
     def get_candle_colors(self) -> Tuple[Tuple[int, int, int], Tuple[int, int, int]]:
         """Get candle up and down colors."""

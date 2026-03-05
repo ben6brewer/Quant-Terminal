@@ -15,7 +15,7 @@ from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
 
 from .services import PortfolioService, PortfolioPersistence, PortfolioSettingsManager, PortfolioExportService
 from .widgets import (
-    PortfolioControls,
+    PortfolioToolbar,
     TransactionLogTable,
     AggregatePortfolioTable,
     NewPortfolioDialog,
@@ -121,7 +121,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         layout.setSpacing(0)
 
         # Controls bar at top
-        self.controls = PortfolioControls(self.theme_manager)
+        self.controls = PortfolioToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # View tab bar

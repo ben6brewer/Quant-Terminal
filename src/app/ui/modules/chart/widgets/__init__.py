@@ -1,7 +1,7 @@
 """Chart module widgets - chart-specific UI components."""
 
 from .price_chart import PriceChart
-from .chart_controls import ChartControls
+from .chart_toolbar import ChartToolbar
 from .chart_settings_dialog import ChartSettingsDialog
 from .indicator_panel import IndicatorPanel
 from .depth_chart import DepthChartWidget, OrderBookPanel
@@ -12,7 +12,7 @@ from .edit_plugin_appearance_dialog import EditPluginAppearanceDialog
 
 __all__ = [
     'PriceChart',
-    'ChartControls',
+    'ChartToolbar',
     'ChartSettingsDialog',
     'IndicatorPanel',
     'DepthChartWidget',

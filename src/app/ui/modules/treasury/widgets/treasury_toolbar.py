@@ -16,13 +16,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Signal, Qt
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common import (
-    LazyThemeMixin,
-    ThemedDialog,
-    DateInputWidget,
-    NoScrollComboBox,
-)
-from app.services.theme_stylesheet_service import ThemeStylesheetService
+from app.ui.widgets.common import ThemedDialog, DateInputWidget, NoScrollComboBox
+from app.ui.modules.module_toolbar import ModuleToolbar
 
 
 # Lookback options: (label, trading_days)  — -1 = custom
@@ -110,52 +105,24 @@ class CustomDateDialog(ThemedDialog):
         return self._selected_date
 
 
-class TreasuryToolbar(LazyThemeMixin, QWidget):
+class TreasuryToolbar(ModuleToolbar):
     """Toolbar with home button, view tabs, curve/lookback controls, info bar, and settings."""
 
-    home_clicked = Signal()
     view_changed = Signal(int)           # 0=Curve, 1=Rates, 2=Spread
     lookback_changed = Signal(str)       # "1Y", "2Y", ... or ISO date string
-    settings_clicked = Signal()
     interpolation_changed = Signal(str)  # "Cubic Spline", "Nelson-Siegel", "Linear"
     overlay_toggled = Signal(str, bool)  # period key, active state
     custom_date_selected = Signal(str)   # YYYY-MM-DD
     overlay_cleared = Signal()
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False
         self._previous_lookback_index = 1  # Default: 2Y
         self._custom_start_date = None
-
         self._overlay_buttons: dict[str, QPushButton] = {}
         self._active_overlays: set[str] = set()
+        super().__init__(theme_manager, parent)
 
-        self._setup_ui()
-        self._apply_theme()
-        self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
-
-    def showEvent(self, event):
-        super().showEvent(event)
-        self._check_theme_dirty()
-
-    def _setup_ui(self):
-        self.setObjectName("treasuryToolbar")
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.setSpacing(8)
-
-        # Home button
-        self.home_btn = QPushButton("Home")
-        self.home_btn.setMinimumWidth(70)
-        self.home_btn.setMaximumWidth(100)
-        self.home_btn.setFixedHeight(40)
-        self.home_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        self.home_btn.setObjectName("home_btn")
-        self.home_btn.clicked.connect(self.home_clicked.emit)
-        layout.addWidget(self.home_btn)
-
+    def setup_center(self, layout: QHBoxLayout):
         # View tab buttons
         self.view_group = QButtonGroup(self)
         self.view_group.setExclusive(True)
@@ -183,9 +150,7 @@ class TreasuryToolbar(LazyThemeMixin, QWidget):
         curve_layout.setContentsMargins(0, 0, 0, 0)
         curve_layout.setSpacing(8)
 
-        sep_c1 = QLabel("|")
-        sep_c1.setObjectName("separator")
-        curve_layout.addWidget(sep_c1)
+        curve_layout.addWidget(self._sep())
 
         # Interpolation dropdown
         interp_label = QLabel("Fit:")
@@ -201,9 +166,7 @@ class TreasuryToolbar(LazyThemeMixin, QWidget):
         self.interp_combo.currentTextChanged.connect(self.interpolation_changed.emit)
         curve_layout.addWidget(self.interp_combo)
 
-        sep_c2 = QLabel("|")
-        sep_c2.setObjectName("separator")
-        curve_layout.addWidget(sep_c2)
+        curve_layout.addWidget(self._sep())
 
         # Overlay period buttons
         for key, tooltip in OVERLAY_PERIODS:
@@ -246,9 +209,7 @@ class TreasuryToolbar(LazyThemeMixin, QWidget):
         lb_layout.setContentsMargins(0, 0, 0, 0)
         lb_layout.setSpacing(8)
 
-        sep_l1 = QLabel("|")
-        sep_l1.setObjectName("separator")
-        lb_layout.addWidget(sep_l1)
+        lb_layout.addWidget(self._sep())
 
         lookback_label = QLabel("Lookback:")
         lookback_label.setObjectName("control_label")
@@ -271,32 +232,24 @@ class TreasuryToolbar(LazyThemeMixin, QWidget):
         self._lookback_zone.setVisible(False)
 
         # ============ Separator + Info labels ============
-        sep_info = QLabel("|")
-        sep_info.setObjectName("separator")
-        layout.addWidget(sep_info)
+        layout.addWidget(self._sep())
 
         self.yield_label = QLabel("10Y: --")
         self.yield_label.setObjectName("info_label")
         layout.addWidget(self.yield_label)
 
-        sep_info2 = QLabel("|")
-        sep_info2.setObjectName("separator")
-        layout.addWidget(sep_info2)
+        layout.addWidget(self._sep())
 
         self.updated_label = QLabel("")
         self.updated_label.setObjectName("info_label_muted")
         layout.addWidget(self.updated_label)
 
-        layout.addStretch(1)
-
-        # Settings button
-        self.settings_btn = QPushButton("Settings")
-        self.settings_btn.setMinimumWidth(70)
-        self.settings_btn.setMaximumWidth(100)
-        self.settings_btn.setFixedHeight(40)
-        self.settings_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        self.settings_btn.clicked.connect(self.settings_clicked.emit)
-        layout.addWidget(self.settings_btn)
+    def get_extra_stylesheet(self) -> str:
+        return """
+            QWidget#curve_zone, QWidget#lookback_zone {
+                background: transparent;
+            }
+        """
 
     def _on_view_tab_clicked(self, index: int):
         """Handle view tab click — update control visibility then emit signal."""
@@ -316,7 +269,6 @@ class TreasuryToolbar(LazyThemeMixin, QWidget):
         else:
             self._active_overlays.discard(key)
         self.overlay_toggled.emit(key, checked)
-        self._apply_theme()  # Update button checked styles
 
     def _on_custom_clicked(self):
         dialog = CustomDateDialog(self.theme_manager, self)
@@ -330,7 +282,6 @@ class TreasuryToolbar(LazyThemeMixin, QWidget):
         for btn in self._overlay_buttons.values():
             btn.setChecked(False)
         self.overlay_cleared.emit()
-        self._apply_theme()
 
     # ---- Lookback controls --------------------------------------------------
 
@@ -381,140 +332,4 @@ class TreasuryToolbar(LazyThemeMixin, QWidget):
     def update_info(self, yield_10y=None, date_str=None):
         if yield_10y is not None:
             self.yield_label.setText(f"10Y: {yield_10y:.2f}%")
-
-        from datetime import datetime
-        self.updated_label.setText(
-            f"Updated: {datetime.now().strftime('%m/%d %I:%M%p').lower()}"
-        )
-
-    # ---- Theme --------------------------------------------------------------
-
-    def _apply_theme(self):
-        c = ThemeStylesheetService.get_colors(self.theme_manager.current_theme)
-
-        if self.theme_manager.current_theme == "dark":
-            bg_hover = "#3d3d3d"
-        elif self.theme_manager.current_theme == "light":
-            bg_hover = "#e8e8e8"
-        else:
-            bg_hover = "#1a2838"
-
-        active_bg = c["accent"]
-        active_text = c["text_on_accent"]
-
-        self.setStyleSheet(f"""
-            #treasuryToolbar {{
-                background-color: {c['bg']};
-            }}
-            QWidget#curve_zone, QWidget#lookback_zone {{
-                background: transparent;
-            }}
-            QLabel {{
-                color: {c['text_muted']};
-                font-size: 13px;
-                background: transparent;
-            }}
-            QLabel#control_label {{
-                color: {c['text']};
-                font-size: 13px;
-                font-weight: 500;
-                background: transparent;
-            }}
-            QLabel#info_label {{
-                color: {c['text']};
-                font-size: 13px;
-                font-weight: 500;
-                background: transparent;
-            }}
-            QLabel#info_label_muted {{
-                color: {c['text_muted']};
-                font-size: 12px;
-                background: transparent;
-            }}
-            QLabel#separator {{
-                color: {c['border']};
-                font-size: 18px;
-                background: transparent;
-                padding: 0 2px;
-            }}
-            QPushButton {{
-                background-color: {c['bg_header']};
-                color: {c['text']};
-                border: 1px solid {c['border']};
-                border-radius: 3px;
-                padding: 6px 12px;
-                font-size: 13px;
-            }}
-            QPushButton:hover {{
-                background-color: {bg_hover};
-                border-color: {c['accent']};
-            }}
-            QPushButton:pressed {{
-                background-color: {c['bg']};
-            }}
-            #viewTab {{
-                background-color: transparent;
-                color: {c['text_muted']};
-                border: none;
-                border-radius: 2px;
-                padding: 10px 20px;
-                font-size: 14px;
-                font-weight: 500;
-            }}
-            #viewTab:hover {{
-                background-color: {bg_hover};
-                color: {c['text']};
-            }}
-            #viewTab:checked {{
-                background-color: {c['accent']};
-                color: {c['text_on_accent']};
-                font-weight: bold;
-            }}
-            QPushButton#overlay_btn {{
-                font-weight: bold;
-            }}
-            QPushButton#overlay_btn:checked {{
-                background-color: {active_bg};
-                color: {active_text};
-                border-color: {active_bg};
-            }}
-            QComboBox {{
-                background-color: {c['bg_header']};
-                color: {c['text']};
-                border: 1px solid {c['border']};
-                border-radius: 3px;
-                padding: 8px 12px;
-                font-size: 13px;
-            }}
-            QComboBox:hover {{
-                border-color: {c['accent']};
-            }}
-            QComboBox::drop-down {{
-                border: none;
-                width: 24px;
-            }}
-            QComboBox::down-arrow {{
-                image: none;
-                border-left: 6px solid transparent;
-                border-right: 6px solid transparent;
-                border-top: 7px solid {c['text']};
-                margin-right: 10px;
-            }}
-            QComboBox QAbstractItemView {{
-                background-color: {c['bg_header']};
-                color: {c['text']};
-                selection-background-color: {c['accent']};
-                selection-color: {c['text_on_accent']};
-                font-size: 13px;
-                padding: 4px;
-                outline: none;
-            }}
-            QComboBox QAbstractItemView::item {{
-                padding: 8px 12px;
-                min-height: 24px;
-            }}
-            QComboBox QAbstractItemView::item:selected {{
-                background-color: {c['accent']};
-                color: {c['text_on_accent']};
-            }}
-        """)
+        self._update_timestamp()

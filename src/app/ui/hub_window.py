@@ -501,6 +501,8 @@ class HubWindow(QMainWindow):
 
     def _disconnect_theme_signals(self, container: QWidget) -> None:
         """Disconnect theme_changed slots from all children before destroying."""
+        import warnings
+
         _THEME_SLOTS = (
             "_on_theme_changed_lazy",
             "_on_theme_changed",
@@ -508,14 +510,16 @@ class HubWindow(QMainWindow):
             "_on_theme_changed_lazy_panel",
             "_on_external_theme_change",
         )
-        for child in container.findChildren(QObject):
-            for slot_name in _THEME_SLOTS:
-                slot = getattr(child, slot_name, None)
-                if slot is not None:
-                    try:
-                        self.theme_manager.theme_changed.disconnect(slot)
-                    except (RuntimeError, TypeError):
-                        pass
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            for child in container.findChildren(QObject):
+                for slot_name in _THEME_SLOTS:
+                    slot = getattr(child, slot_name, None)
+                    if slot is not None:
+                        try:
+                            self.theme_manager.theme_changed.disconnect(slot)
+                        except (RuntimeError, TypeError):
+                            pass
 
     def _destroy_module_container(self, container: QWidget) -> None:
         """Destroy a specific module container to free memory."""

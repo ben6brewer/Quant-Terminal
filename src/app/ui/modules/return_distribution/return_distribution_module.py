@@ -11,8 +11,7 @@ from app.ui.widgets.common.custom_message_box import CustomMessageBox
 from app.ui.widgets.common import parse_portfolio_value
 from app.ui.modules.base_module import BaseModule
 
-from .services.distribution_settings_manager import DistributionSettingsManager
-from .widgets.distribution_controls import DistributionControls
+from .widgets.distribution_toolbar import DistributionToolbar
 from .widgets.distribution_chart import DistributionChart
 from .widgets.distribution_settings_dialog import DistributionSettingsDialog
 from .widgets.date_range_dialog import DateRangeDialog
@@ -38,9 +37,6 @@ class ReturnDistributionModule(BaseModule):
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
-
-        # Settings manager
-        self.settings_manager = DistributionSettingsManager()
 
         # Current state
         self._current_portfolio: str = ""  # Can be portfolio name or ticker
@@ -70,7 +66,7 @@ class ReturnDistributionModule(BaseModule):
         layout.setSpacing(0)
 
         # Controls bar
-        self.controls = DistributionControls(self.theme_manager)
+        self.controls = DistributionToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # Distribution chart (histogram + stats)
@@ -87,7 +83,7 @@ class ReturnDistributionModule(BaseModule):
         self.controls.interval_changed.connect(self._on_interval_changed)
         self.controls.date_range_changed.connect(self._on_date_range_changed)
         self.controls.custom_date_range_requested.connect(self._show_date_range_dialog)
-        self.controls.settings_clicked.connect(self._show_settings_dialog)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.controls.benchmark_changed.connect(self._on_benchmark_changed)
 
         # Theme changes (lazy - only apply when visible)
@@ -157,18 +153,18 @@ class ReturnDistributionModule(BaseModule):
             if start_date and end_date:
                 self.controls.set_custom_date_range(start_date, end_date)
 
-    def _show_settings_dialog(self):
-        """Show the settings dialog."""
-        current_settings = self.settings_manager.get_all_settings()
-        has_benchmark = bool(self._current_benchmark)
-        dialog = DistributionSettingsDialog(
-            self.theme_manager, current_settings, self, has_benchmark=has_benchmark
+    def create_settings_manager(self):
+        from .services.distribution_settings_manager import DistributionSettingsManager
+        return DistributionSettingsManager()
+
+    def create_settings_dialog(self, current_settings):
+        return DistributionSettingsDialog(
+            self.theme_manager, current_settings, self,
+            has_benchmark=bool(self._current_benchmark),
         )
-        if dialog.exec():
-            new_settings = dialog.get_settings()
-            if new_settings:
-                self.settings_manager.update_settings(new_settings)
-                self._update_distribution()
+
+    def _on_settings_changed(self, new_settings):
+        self._update_distribution()
 
     def _update_distribution(self):
         """Update the distribution chart with current settings."""

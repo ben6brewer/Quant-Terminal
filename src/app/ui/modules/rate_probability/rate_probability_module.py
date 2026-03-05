@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QVBoxLayout, QStackedWidget
 from PySide6.QtCore import QThread
 
 from app.core.theme_manager import ThemeManager
-from app.ui.modules.base_module import BaseModule
+from app.ui.modules.fred_base_module import FredDataModule
 
 from .services.rate_probability_service import RateProbabilityService
 from .services.rate_probability_settings_manager import RateProbabilitySettingsManager
@@ -22,39 +22,54 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
-class RateProbabilityModule(BaseModule):
+class RateProbabilityModule(FredDataModule):
     """Rate Probability module - CME FedWatch-style FOMC rate probabilities."""
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(theme_manager, parent)
-
-        # Settings
-        self.settings_manager = RateProbabilitySettingsManager()
-
-        # State
-        self._data_initialized = False
+        # Rate probability state (set before super().__init__)
         self._futures_data = None
         self._target_rate = None
         self._probabilities = None
         self._meetings: List[date] = []
         self._rate_path = None
 
-        # Second worker pair for evolution fetch (runs concurrently with primary)
+        # Second worker pair for evolution fetch
         self._evolution_thread: Optional[QThread] = None
         self._evolution_worker = None
 
-        self._setup_ui()
-        self._connect_signals()
-        self._apply_settings()
-        self._apply_theme()
+        super().__init__(theme_manager, parent)
+
+    # ── Required FredDataModule implementations ──────────────────────────
+
+    def create_toolbar(self):
+        return RateProbabilityToolbar(self.theme_manager)
+
+    def create_chart(self):
+        return ProbabilityTableView(self.theme_manager)
+
+    def create_settings_manager(self):
+        return RateProbabilitySettingsManager()
+
+    def get_fred_service(self):
+        return RateProbabilityService.fetch_all_data
+
+    def get_loading_message(self):
+        return "Fetching fed funds futures..."
+
+    def extract_chart_data(self, result):
+        return ()  # Not used — _on_data_fetched is overridden
+
+    def get_fail_message(self):
+        return "Failed to fetch data."
+
+    # ── UI Setup (override for stacked widget) ───────────────────────────
 
     def _setup_ui(self):
-        """Setup module UI."""
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        self.toolbar = RateProbabilityToolbar(self.theme_manager)
+        self.toolbar = self.create_toolbar()
         layout.addWidget(self.toolbar)
 
         self.stack = QStackedWidget()
@@ -62,6 +77,7 @@ class RateProbabilityModule(BaseModule):
 
         # View 0: FedWatch probability table
         self.table_view = ProbabilityTableView(self.theme_manager)
+        self.chart = self.table_view  # Base class compat
         self.stack.addWidget(self.table_view)
 
         # View 1: Rate path chart
@@ -72,36 +88,13 @@ class RateProbabilityModule(BaseModule):
         self.evolution_view = ProbabilityEvolutionChart(self.theme_manager)
         self.stack.addWidget(self.evolution_view)
 
-    def _connect_signals(self):
-        """Connect signals to slots."""
-        self.toolbar.home_clicked.connect(self.home_clicked.emit)
+    def _connect_extra_signals(self):
         self.toolbar.view_changed.connect(self._on_view_changed)
-        self.toolbar.settings_clicked.connect(self._on_settings_clicked)
         self.evolution_view.meeting_changed.connect(self._on_evolution_meeting_changed)
-        self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
-    def showEvent(self, event):
-        super().showEvent(event)
-        if not self._data_initialized:
-            self._data_initialized = True
-            self._initialize_data()
-
-    def hideEvent(self, event):
-        self._cancel_worker()
-        self._cancel_evolution_fetch()
-        super().hideEvent(event)
-
-    def _initialize_data(self):
-        """Check for API key and start data fetch."""
-        from app.services.fred_api_key_service import FredApiKeyService
-
-        if not FredApiKeyService.has_api_key():
-            self._show_api_key_dialog()
-        else:
-            self._fetch_data()
+    # ── API Key (special: fetch even without key) ────────────────────────
 
     def _show_api_key_dialog(self):
-        """Show the FRED API key dialog."""
         from app.ui.widgets.common.api_key_dialog import APIKeyDialog
         from app.services.fred_api_key_service import FredApiKeyService
 
@@ -110,58 +103,36 @@ class RateProbabilityModule(BaseModule):
             key = dialog.get_api_key()
             if key:
                 FredApiKeyService.set_api_key(key)
-                self._fetch_data()
-        else:
-            self.table_view.show_placeholder(
-                "FRED API key required for target rate data.\n"
-                "Futures data can still be fetched without it."
-            )
-            # Try fetching anyway - futures data doesn't need FRED
-            self._fetch_data()
+        # Always fetch — futures data doesn't need FRED
+        self._fetch_data()
 
-    def _fetch_data(self):
-        """Fetch all data in background thread."""
-        self._run_worker(
-            RateProbabilityService.fetch_all_data,
-            loading_message="Fetching fed funds futures...",
-            on_complete=self._on_data_fetched,
-            on_error=self._on_fetch_error,
-        )
-
-    def _cancel_evolution_fetch(self):
-        """Cancel any in-progress evolution fetch with proper Qt cleanup."""
-        if self._evolution_worker is not None:
-            try:
-                self._evolution_worker.finished.disconnect()
-                self._evolution_worker.error.disconnect()
-            except (RuntimeError, TypeError):
-                pass
-        self._cleanup_evolution_worker()
+    # ── Data & Rendering ─────────────────────────────────────────────────
 
     def _on_data_fetched(self, result):
-        """Handle successful data fetch."""
-        self._hide_loading()
-        self._cleanup_worker()
-
         if result is None:
             self.table_view.show_placeholder("Failed to fetch data.")
             return
 
+        self._data = result
         self._futures_data = result["futures_df"]
         self._target_rate = result["target_rate"]
         self._probabilities = result["probabilities_df"]
         self._meetings = result["meetings"]
         self._rate_path = result["rate_path"]
 
-        # Update toolbar info
         self.toolbar.update_info(
             target_rate=self._target_rate,
             next_meeting=result["next_meeting"],
             days_until=result["days_until"],
         )
 
+        self._render()
+
+    def _render(self):
+        if self._data is None:
+            return
+
         # Update table view
-        import pandas as pd
         if self._probabilities is not None and not self._probabilities.empty:
             self.table_view.update_data(
                 self._futures_data, self._probabilities, self._target_rate
@@ -180,28 +151,26 @@ class RateProbabilityModule(BaseModule):
         if self._meetings:
             self.evolution_view.set_meetings(self._meetings)
 
-    def _on_fetch_error(self, error_msg: str):
-        """Handle fetch error."""
-        self._hide_loading()
-        self._cleanup_worker()
-        self.table_view.show_placeholder(f"Error fetching data: {error_msg}")
+    # ── View switching ───────────────────────────────────────────────────
 
     def _on_view_changed(self, index: int):
-        """Switch stacked widget view."""
         self.stack.setCurrentIndex(index)
-
-        # If switching to evolution view and no data loaded yet, trigger fetch
+        # If switching to evolution view and meetings loaded, trigger fetch
         if index == 2 and self._meetings:
             current_text = self.evolution_view.meeting_combo.currentText()
             if current_text:
                 self._on_evolution_meeting_changed(current_text)
 
+    # ── Evolution data (second worker) ───────────────────────────────────
+
+    def hideEvent(self, event):
+        self._cancel_evolution_fetch()
+        super().hideEvent(event)
+
     def _on_evolution_meeting_changed(self, meeting_str: str):
-        """Fetch historical data for selected meeting in background."""
         if not meeting_str or not self._meetings or not self._target_rate:
             return
 
-        # Parse meeting date from string
         try:
             meeting_date = datetime.strptime(meeting_str, "%b %d, %Y").date()
         except ValueError:
@@ -228,7 +197,6 @@ class RateProbabilityModule(BaseModule):
         self._evolution_thread.start()
 
     def _on_evolution_fetched(self, evolution_df):
-        """Handle evolution data fetch."""
         self._hide_loading()
         self._cleanup_evolution_worker()
         import pandas as pd
@@ -240,13 +208,20 @@ class RateProbabilityModule(BaseModule):
             )
 
     def _on_evolution_error(self, error_msg: str):
-        """Handle evolution fetch error."""
         self._hide_loading()
         self._cleanup_evolution_worker()
         self.evolution_view.show_placeholder(f"Error: {error_msg}")
 
+    def _cancel_evolution_fetch(self):
+        if self._evolution_worker is not None:
+            try:
+                self._evolution_worker.finished.disconnect()
+                self._evolution_worker.error.disconnect()
+            except (RuntimeError, TypeError):
+                pass
+        self._cleanup_evolution_worker()
+
     def _cleanup_evolution_worker(self):
-        """Clean up the evolution worker and thread."""
         if self._evolution_thread is not None:
             self._evolution_thread.quit()
             if not self._evolution_thread.wait(5000):
@@ -259,27 +234,21 @@ class RateProbabilityModule(BaseModule):
         self._evolution_worker = None
         self._evolution_thread = None
 
-    # ========== Settings ==========
+    # ── Settings ─────────────────────────────────────────────────────────
 
-    def _on_settings_clicked(self):
-        """Open settings dialog."""
-        from PySide6.QtWidgets import QDialog
+    def create_settings_dialog(self, current_settings):
         from .widgets.rate_probability_settings_dialog import RateProbabilitySettingsDialog
-
-        dialog = RateProbabilitySettingsDialog(
+        return RateProbabilitySettingsDialog(
             self.theme_manager,
-            current_settings=self.settings_manager.get_all_settings(),
+            current_settings=current_settings,
             parent=self,
         )
-        if dialog.exec() == QDialog.Accepted:
-            new_settings = dialog.get_settings()
-            if new_settings:
-                self.settings_manager.update_settings(new_settings)
-                self._apply_settings()
 
-    def _apply_settings(self):
-        """Push current settings to all views."""
+    def _apply_extra_settings(self):
         settings = self.settings_manager.get_all_settings()
-        self.table_view.apply_settings(settings)
-        self.rate_path_view.apply_settings(settings)
-        self.evolution_view.apply_settings(settings)
+        if hasattr(self, "table_view"):
+            self.table_view.apply_settings(settings)
+        if hasattr(self, "rate_path_view"):
+            self.rate_path_view.apply_settings(settings)
+        if hasattr(self, "evolution_view"):
+            self.evolution_view.apply_settings(settings)

@@ -698,6 +698,209 @@ class ThemeStylesheetService:
         """
 
     @classmethod
+    def get_toolbar_stylesheet(cls, theme: str) -> str:
+        """Get universal toolbar stylesheet for module control bars.
+
+        Covers all widget types used in any toolbar: labels, buttons,
+        combos, line edits, view tabs, overlay toggles, run/delete buttons.
+        """
+        c = cls.get_colors(theme)
+
+        # Derived colors per theme
+        if theme == "dark":
+            bg_hover = "#3d3d3d"
+            bg_pressed = "#1a1a1a"
+            run_hover = "#00bfe6"
+            run_pressed = "#00a6c7"
+            disabled_bg = "#1a1a1a"
+            disabled_text = "#666666"
+            disabled_border = "#2d2d2d"
+            delete_hover_bg = "#5c1a1a"
+        elif theme == "light":
+            bg_hover = "#e8e8e8"
+            bg_pressed = "#d0d0d0"
+            run_hover = "#0055aa"
+            run_pressed = "#004488"
+            disabled_bg = "#e0e0e0"
+            disabled_text = "#999999"
+            disabled_border = "#cccccc"
+            delete_hover_bg = "#ffebee"
+        else:  # bloomberg
+            bg_hover = "#1a2838"
+            bg_pressed = "#060a10"
+            run_hover = "#e67300"
+            run_pressed = "#cc6600"
+            disabled_bg = "#060a10"
+            disabled_text = "#555555"
+            disabled_border = "#1a2838"
+            delete_hover_bg = "#3d1a1a"
+
+        return f"""
+            #moduleToolbar, #treasuryToolbar, #rateProbToolbar {{
+                background-color: {c['bg']};
+            }}
+            QWidget#curve_zone, QWidget#lookback_zone {{
+                background: transparent;
+            }}
+            QLabel {{
+                color: {c['text_muted']};
+                font-size: 13px;
+                background: transparent;
+            }}
+            QLabel#control_label {{
+                color: {c['text']};
+                font-size: 13px;
+                font-weight: 500;
+                background: transparent;
+            }}
+            QLabel#portfolio_label {{
+                color: {c['text']};
+                font-size: 15px;
+                font-weight: 500;
+                background: transparent;
+            }}
+            QLabel#info_label {{
+                color: {c['text']};
+                font-size: 13px;
+                font-weight: 500;
+                background: transparent;
+            }}
+            QLabel#info_label_muted {{
+                color: {c['text_muted']};
+                font-size: 12px;
+                background: transparent;
+            }}
+            QLabel#separator {{
+                color: {c['border']};
+                font-size: 18px;
+                background: transparent;
+                padding: 0 2px;
+            }}
+            QPushButton {{
+                background-color: {c['bg_header']};
+                color: {c['text']};
+                border: 1px solid {c['border']};
+                border-radius: 3px;
+                padding: 6px 12px;
+                font-size: 13px;
+            }}
+            QPushButton:hover {{
+                background-color: {bg_hover};
+                border-color: {c['accent']};
+            }}
+            QPushButton:pressed {{
+                background-color: {c['bg']};
+            }}
+            QPushButton:checked {{
+                background-color: {c['accent']};
+                color: {c['text_on_accent']};
+                border-color: {c['accent']};
+            }}
+            QPushButton:disabled {{
+                background-color: {disabled_bg};
+                color: {disabled_text};
+                border-color: {disabled_border};
+            }}
+            QPushButton#run_btn {{
+                background-color: {c['accent']};
+                color: {c['text_on_accent']};
+                font-weight: bold;
+                border: 1px solid {c['accent']};
+            }}
+            QPushButton#run_btn:hover {{
+                background-color: {run_hover};
+                border-color: {run_hover};
+            }}
+            QPushButton#run_btn:pressed {{
+                background-color: {run_pressed};
+            }}
+            #viewTab {{
+                background-color: transparent;
+                color: {c['text_muted']};
+                border: none;
+                border-radius: 2px;
+                padding: 10px 20px;
+                font-size: 14px;
+                font-weight: 500;
+            }}
+            #viewTab:hover {{
+                background-color: {bg_hover};
+                color: {c['text']};
+            }}
+            #viewTab:checked {{
+                background-color: {c['accent']};
+                color: {c['text_on_accent']};
+                font-weight: bold;
+            }}
+            QPushButton#overlay_btn {{
+                font-weight: bold;
+            }}
+            QPushButton#overlay_btn:checked {{
+                background-color: {c['accent']};
+                color: {c['text_on_accent']};
+                border-color: {c['accent']};
+            }}
+            QPushButton#delete_btn:hover {{
+                background-color: {delete_hover_bg};
+                border-color: #d32f2f;
+            }}
+            QPushButton#delete_btn:pressed {{
+                background-color: #d32f2f;
+                color: #ffffff;
+            }}
+            QComboBox {{
+                background-color: {c['bg_header']};
+                color: {c['text']};
+                border: 1px solid {c['border']};
+                border-radius: 3px;
+                padding: 8px 12px;
+                font-size: 13px;
+            }}
+            QComboBox:hover {{
+                border-color: {c['accent']};
+            }}
+            QComboBox::drop-down {{
+                border: none;
+                width: 24px;
+            }}
+            QComboBox::down-arrow {{
+                image: none;
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-top: 7px solid {c['text']};
+                margin-right: 10px;
+            }}
+            QComboBox QAbstractItemView {{
+                background-color: {c['bg_header']};
+                color: {c['text']};
+                selection-background-color: {c['accent']};
+                selection-color: {c['text_on_accent']};
+                font-size: 13px;
+                padding: 4px;
+                outline: none;
+            }}
+            QComboBox QAbstractItemView::item {{
+                padding: 8px 12px;
+                min-height: 24px;
+            }}
+            QComboBox QAbstractItemView::item:selected {{
+                background-color: {c['accent']};
+                color: {c['text_on_accent']};
+            }}
+            QLineEdit {{
+                background-color: {c['bg_header']};
+                color: {c['text']};
+                border: 1px solid {c['border']};
+                border-radius: 3px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }}
+            QLineEdit:focus {{
+                border-color: {c['accent']};
+            }}
+        """
+
+    @classmethod
     def get_chart_background_color(cls, theme: str) -> str:
         """Get chart background color for a theme."""
         return {"light": "w", "bloomberg": "#000814"}.get(theme, "#1e1e1e")

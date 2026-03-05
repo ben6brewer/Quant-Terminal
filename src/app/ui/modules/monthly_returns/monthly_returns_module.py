@@ -11,8 +11,7 @@ from app.ui.widgets.common import parse_portfolio_value, CustomMessageBox
 from app.ui.modules.base_module import BaseModule
 
 from .services.monthly_returns_service import MonthlyReturnsService
-from .services.monthly_returns_settings_manager import MonthlyReturnsSettingsManager
-from .widgets.monthly_returns_controls import MonthlyReturnsControls
+from .widgets.monthly_returns_toolbar import MonthlyReturnsToolbar
 from .widgets.monthly_returns_table import MonthlyReturnsTable
 from .widgets.monthly_returns_settings_dialog import MonthlyReturnsSettingsDialog
 
@@ -20,13 +19,20 @@ from .widgets.monthly_returns_settings_dialog import MonthlyReturnsSettingsDialo
 class MonthlyReturnsModule(BaseModule):
     """Displays a year×month heatmap of returns for any ticker or portfolio."""
 
+    SETTINGS_FILENAME = "monthly_returns_settings.json"
+    DEFAULT_SETTINGS = {
+        "show_ytd": True,
+        "use_gradient": True,
+        "decimals": 2,
+        "colorscale": "Red-Green",
+    }
+
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
 
         self._current_portfolio: str = ""
         self._is_ticker_mode: bool = False
         self._portfolio_list: list = []
-        self._settings_manager = MonthlyReturnsSettingsManager()
 
         self._setup_ui()
         self._connect_signals()
@@ -45,7 +51,7 @@ class MonthlyReturnsModule(BaseModule):
         layout.setSpacing(0)
 
         # Controls bar
-        self.controls = MonthlyReturnsControls(self.theme_manager)
+        self.controls = MonthlyReturnsToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # Container with padding around the table
@@ -61,7 +67,7 @@ class MonthlyReturnsModule(BaseModule):
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.portfolio_changed.connect(self._on_portfolio_changed)
-        self.controls.settings_clicked.connect(self._show_settings_dialog)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
     def _refresh_portfolio_list(self):
@@ -76,14 +82,11 @@ class MonthlyReturnsModule(BaseModule):
         self._is_ticker_mode = name not in self._portfolio_list
         self._update_heatmap()
 
-    def _show_settings_dialog(self):
-        settings = self._settings_manager.get_all_settings()
-        dialog = MonthlyReturnsSettingsDialog(self.theme_manager, settings, self)
-        if dialog.exec():
-            result = dialog.get_settings()
-            if result:
-                self._settings_manager.update_settings(result)
-                self._update_heatmap()
+    def create_settings_dialog(self, current_settings):
+        return MonthlyReturnsSettingsDialog(self.theme_manager, current_settings, self)
+
+    def _on_settings_changed(self, new_settings):
+        self._update_heatmap()
 
     def _update_heatmap(self):
         if not self._current_portfolio:
@@ -102,16 +105,13 @@ class MonthlyReturnsModule(BaseModule):
 
     def _on_heatmap_complete(self, grid):
         """Handle completed heatmap computation."""
-        self._hide_loading()
-        self._cleanup_worker()
-
         if grid.empty:
             CustomMessageBox.information(
                 self.theme_manager, self, "No Data",
                 "No data available for the selected ticker or portfolio."
             )
         else:
-            s = self._settings_manager.get_all_settings()
+            s = self.settings_manager.get_all_settings()
             self.table.update_grid(
                 grid,
                 colorscale=s["colorscale"],
@@ -123,8 +123,6 @@ class MonthlyReturnsModule(BaseModule):
 
     def _on_heatmap_error(self, error_msg: str):
         """Handle heatmap computation error."""
-        self._hide_loading()
-        self._cleanup_worker()
         self.table_container.show()
         CustomMessageBox.critical(
             self.theme_manager, self, "Load Error", error_msg

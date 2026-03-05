@@ -5,8 +5,7 @@ from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
 
-from .services.ols_settings_manager import OLSSettingsManager
-from .widgets.ols_controls import OLSControls
+from .widgets.ols_toolbar import OLSToolbar
 from .widgets.ols_scatter_chart import OLSScatterChart
 from .widgets.ols_stats_panel import OLSStatsPanel
 
@@ -16,8 +15,6 @@ class OLSRegressionModule(BaseModule):
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
-
-        self.settings_manager = OLSSettingsManager()
         self._last_result = None
 
         self._setup_ui()
@@ -31,7 +28,7 @@ class OLSRegressionModule(BaseModule):
         layout.setSpacing(0)
 
         # Controls bar
-        self.controls = OLSControls(self.theme_manager)
+        self.controls = OLSToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # Content area: chart (stretch) + stats panel (fixed width)
@@ -50,7 +47,7 @@ class OLSRegressionModule(BaseModule):
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.run_clicked.connect(self._run)
-        self.controls.settings_clicked.connect(self._show_settings)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
     def _load_settings(self):
@@ -120,35 +117,28 @@ class OLSRegressionModule(BaseModule):
         self.chart.set_theme(self.theme_manager.current_theme)
         self.stats_panel.update_stats(result)
         self.stats_panel.setVisible(settings.get("show_stats_panel", True))
-        self._hide_loading()
-        self._cleanup_worker()
 
     def _on_error(self, error_msg: str):
         self.chart.show_placeholder(f"Error: {error_msg}")
         self.stats_panel.show_placeholder(error_msg)
-        self._hide_loading()
-        self._cleanup_worker()
 
-    def _show_settings(self):
-        from PySide6.QtWidgets import QDialog
+    def create_settings_manager(self):
+        from .services.ols_settings_manager import OLSSettingsManager
+        return OLSSettingsManager()
+
+    def create_settings_dialog(self, current_settings):
         from .widgets.ols_settings_dialog import OLSSettingsDialog
-
-        dialog = OLSSettingsDialog(
-            self.theme_manager,
-            current_settings=self.settings_manager.get_all_settings(),
-            parent=self,
+        return OLSSettingsDialog(
+            self.theme_manager, current_settings=current_settings, parent=self,
         )
-        if dialog.exec() == QDialog.Accepted:
-            new_settings = dialog.get_settings()
-            if new_settings:
-                self.settings_manager.update_settings(new_settings)
-                settings = self.settings_manager.get_all_settings()
-                self.chart.apply_settings(settings)
-                self.stats_panel.setVisible(settings.get("show_stats_panel", True))
-                # Re-render if data exists
-                if self._last_result is not None:
-                    self.chart.plot_results(self._last_result)
-                    self.chart.set_theme(self.theme_manager.current_theme)
+
+    def _on_settings_changed(self, new_settings):
+        settings = self.settings_manager.get_all_settings()
+        self.chart.apply_settings(settings)
+        self.stats_panel.setVisible(settings.get("show_stats_panel", True))
+        if self._last_result is not None:
+            self.chart.plot_results(self._last_result)
+            self.chart.set_theme(self.theme_manager.current_theme)
 
     def _apply_theme(self):
         self.setStyleSheet(f"background-color: {self._get_theme_bg()};")

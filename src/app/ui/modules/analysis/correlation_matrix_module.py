@@ -5,8 +5,7 @@ from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
 
-from .services.analysis_settings_manager import AnalysisSettingsManager
-from .widgets.analysis_controls import AnalysisControls
+from .widgets.analysis_toolbar import AnalysisToolbar
 from .widgets.ticker_list_panel import TickerListPanel
 from .widgets.matrix_heatmap import MatrixHeatmap
 from .widgets.analysis_settings_dialog import AnalysisSettingsDialog
@@ -17,8 +16,6 @@ class CorrelationMatrixModule(BaseModule):
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
-
-        self.settings_manager = AnalysisSettingsManager()
         self._last_matrix = None
         self._last_metadata = None
 
@@ -32,7 +29,7 @@ class CorrelationMatrixModule(BaseModule):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        self.controls = AnalysisControls(
+        self.controls = AnalysisToolbar(
             self.theme_manager,
             show_simulations=False,
             show_periodicity=True,
@@ -59,7 +56,7 @@ class CorrelationMatrixModule(BaseModule):
         self.controls.lookback_changed.connect(self._on_lookback_changed)
         self.controls.periodicity_changed.connect(self._on_periodicity_changed)
         self.controls.run_clicked.connect(self._run)
-        self.controls.settings_clicked.connect(self._show_settings_dialog)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
@@ -81,30 +78,27 @@ class CorrelationMatrixModule(BaseModule):
     def _on_periodicity_changed(self, value: str):
         self.settings_manager.set_periodicity(value)
 
-    def _show_settings_dialog(self):
-        current = {
-            "corr_decimals": self.settings_manager.get_corr_decimals(),
-            "matrix_colorscale": self.settings_manager.get_matrix_colorscale(),
-            "corr_fixed_color_scale": self.settings_manager.get_corr_fixed_color_scale(),
-            "show_matrix_overlay": self.settings_manager.get_show_matrix_overlay(),
-        }
-        dialog = AnalysisSettingsDialog(
-            self.theme_manager, current, mode="correlation", parent=self
+    def create_settings_manager(self):
+        from .services.analysis_settings_manager import AnalysisSettingsManager
+        return AnalysisSettingsManager()
+
+    def create_settings_dialog(self, current_settings):
+        return AnalysisSettingsDialog(
+            self.theme_manager, current_settings, mode="correlation", parent=self
         )
-        if dialog.exec() and dialog.get_settings():
-            settings = dialog.get_settings()
-            self.settings_manager.update_settings(settings)
-            if self._last_matrix is not None:
-                decimals = settings.get("corr_decimals", 3)
-                colorscale = settings.get("matrix_colorscale", "Green-Yellow-Red")
-                self.heatmap.begin_update()
-                self.heatmap.set_theme(self.theme_manager.current_theme)
-                show_overlay = settings.get("show_matrix_overlay", True)
-                self.heatmap.set_data(self._last_matrix, f".{decimals}f", colorscale,
-                                     absolute_colors=settings.get("corr_fixed_color_scale", True),
-                                     metadata=self._last_metadata if show_overlay else None)
-                self.heatmap.end_update()
-                self.heatmap.flush_and_repaint()
+
+    def _on_settings_changed(self, new_settings):
+        if self._last_matrix is not None:
+            decimals = new_settings.get("corr_decimals", 3)
+            colorscale = new_settings.get("matrix_colorscale", "Green-Yellow-Red")
+            self.heatmap.begin_update()
+            self.heatmap.set_theme(self.theme_manager.current_theme)
+            show_overlay = new_settings.get("show_matrix_overlay", True)
+            self.heatmap.set_data(self._last_matrix, f".{decimals}f", colorscale,
+                                 absolute_colors=new_settings.get("corr_fixed_color_scale", True),
+                                 metadata=self._last_metadata if show_overlay else None)
+            self.heatmap.end_update()
+            self.heatmap.flush_and_repaint()
 
     def _run(self):
         tickers = self.ticker_panel.get_tickers()
@@ -144,15 +138,11 @@ class CorrelationMatrixModule(BaseModule):
         show_overlay = self.settings_manager.get_show_matrix_overlay()
         self.heatmap.set_data(corr_matrix, f".{decimals}f", colorscale, absolute_colors=fixed,
                              metadata=result if show_overlay else None)
-        self._hide_loading()
         self.heatmap.end_update()
         self.heatmap.flush_and_repaint()
-        self._cleanup_worker()
 
     def _on_error(self, error_msg: str):
         self.heatmap.show_placeholder(f"Error: {error_msg}")
-        self._hide_loading()
-        self._cleanup_worker()
 
     def _apply_theme(self):
         self.setStyleSheet(f"background-color: {self._get_theme_bg()};")

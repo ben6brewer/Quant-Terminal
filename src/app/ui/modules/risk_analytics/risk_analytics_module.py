@@ -22,9 +22,8 @@ from app.ui.modules.base_module import BaseModule
 from app.utils.market_hours import is_crypto_ticker
 
 from .services.risk_analytics_service import RiskAnalyticsService
-from .services.risk_analytics_settings_manager import RiskAnalyticsSettingsManager
 from app.services.ticker_metadata_service import TickerMetadataService
-from .widgets.risk_analytics_controls import RiskAnalyticsControls
+from .widgets.risk_analytics_toolbar import RiskAnalyticsToolbar
 from .widgets.risk_summary_panel import RiskSummaryPanel
 from .widgets.risk_decomposition_panel import RiskDecompositionPanel
 from .widgets.security_risk_table import SecurityRiskTable
@@ -91,9 +90,6 @@ class RiskAnalyticsModule(BaseModule):
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
 
-        # Settings manager
-        self.settings_manager = RiskAnalyticsSettingsManager()
-
         # Current state
         self._current_portfolio: str = ""
         self._current_benchmark: str = "IWV"
@@ -130,7 +126,7 @@ class RiskAnalyticsModule(BaseModule):
         layout.setSpacing(0)
 
         # Controls bar
-        self.controls = RiskAnalyticsControls(self.theme_manager)
+        self.controls = RiskAnalyticsToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # Scroll area for main content
@@ -175,7 +171,7 @@ class RiskAnalyticsModule(BaseModule):
         self.controls.portfolio_changed.connect(self._on_portfolio_changed)
         self.controls.etf_benchmark_changed.connect(self._on_etf_benchmark_changed)
         self.controls.analyze_clicked.connect(self._update_risk_analysis)
-        self.controls.settings_clicked.connect(self._show_settings_dialog)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
 
         # Theme changes
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -234,27 +230,21 @@ class RiskAnalyticsModule(BaseModule):
         # Reset universe sectors to include all sectors from new portfolio
         self.settings_manager.update_settings({"portfolio_universe_sectors": None})
 
-    def _show_settings_dialog(self):
-        """Show the settings dialog."""
-        current_settings = self.settings_manager.get_all_settings()
+    def create_settings_manager(self):
+        from .services.risk_analytics_settings_manager import RiskAnalyticsSettingsManager
+        return RiskAnalyticsSettingsManager()
 
-        # Get current portfolio tickers for validation
+    def create_settings_dialog(self, current_settings):
         portfolio_tickers = []
         if self._current_portfolio:
             portfolio_tickers = [
                 t.upper() for t in PortfolioDataService.get_tickers(self._current_portfolio)
             ]
-
-        dialog = RiskAnalyticsSettingsDialog(
+        return RiskAnalyticsSettingsDialog(
             self.theme_manager, current_settings, portfolio_tickers, self
         )
-        dialog.settings_saved.connect(self._on_settings_saved)
-        dialog.exec()
 
-    def _on_settings_saved(self, settings: Dict[str, Any]):
-        """Handle settings saved from dialog."""
-        self.settings_manager.update_settings(settings)
-        # Auto-reanalyze if we have already run analysis
+    def _on_settings_changed(self, new_settings):
         if self._current_portfolio:
             self._update_risk_analysis()
 

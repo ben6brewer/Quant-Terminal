@@ -5,8 +5,7 @@ from PySide6.QtWidgets import QVBoxLayout
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
 
-from .services.rolling_settings_manager import RollingSettingsManager
-from .widgets.rolling_controls import RollingControls
+from .widgets.rolling_toolbar import RollingToolbar
 from .widgets.rolling_chart import RollingChart
 
 
@@ -15,8 +14,6 @@ class RollingCovarianceModule(BaseModule):
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
-
-        self.settings_manager = RollingSettingsManager()
 
         self._setup_ui()
         self._connect_signals()
@@ -28,7 +25,7 @@ class RollingCovarianceModule(BaseModule):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        self.controls = RollingControls(self.theme_manager, mode="covariance")
+        self.controls = RollingToolbar(self.theme_manager, mode="covariance")
         layout.addWidget(self.controls)
 
         self.chart = RollingChart(mode="covariance")
@@ -37,7 +34,7 @@ class RollingCovarianceModule(BaseModule):
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.run_clicked.connect(self._run)
-        self.controls.settings_clicked.connect(self._show_settings)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
     def _load_settings(self):
@@ -91,35 +88,28 @@ class RollingCovarianceModule(BaseModule):
         settings = self.settings_manager.get_all_settings()
         self.chart.plot_rolling_data(dates, values, settings)
         self.chart.set_theme(self.theme_manager.current_theme)
-        self._hide_loading()
-        self._cleanup_worker()
 
     def _on_error(self, error_msg: str):
         self.chart.show_placeholder(f"Error: {error_msg}")
-        self._hide_loading()
-        self._cleanup_worker()
 
-    def _show_settings(self):
-        from PySide6.QtWidgets import QDialog
+    def create_settings_manager(self):
+        from .services.rolling_settings_manager import RollingSettingsManager
+        return RollingSettingsManager()
+
+    def create_settings_dialog(self, current_settings):
         from .widgets.rolling_settings_dialog import RollingSettingsDialog
-
-        dialog = RollingSettingsDialog(
-            self.theme_manager,
-            current_settings=self.settings_manager.get_all_settings(),
-            mode="covariance",
-            parent=self,
+        return RollingSettingsDialog(
+            self.theme_manager, current_settings=current_settings,
+            mode="covariance", parent=self,
         )
-        if dialog.exec() == QDialog.Accepted:
-            new_settings = dialog.get_settings()
-            if new_settings:
-                self.settings_manager.update_settings(new_settings)
-                # Re-render if data exists
-                if self.chart._values is not None:
-                    self.chart.plot_rolling_data(
-                        self.chart._dates, self.chart._values,
-                        self.settings_manager.get_all_settings(),
-                    )
-                    self.chart.set_theme(self.theme_manager.current_theme)
+
+    def _on_settings_changed(self, new_settings):
+        if self.chart._values is not None:
+            self.chart.plot_rolling_data(
+                self.chart._dates, self.chart._values,
+                self.settings_manager.get_all_settings(),
+            )
+            self.chart.set_theme(self.theme_manager.current_theme)
 
     def _apply_theme(self):
         self.setStyleSheet(f"background-color: {self._get_theme_bg()};")
