@@ -16,7 +16,7 @@ from app.ui.widgets.charting.axes.draggable_axis import DraggableAxisItem
 if TYPE_CHECKING:
     import pandas as pd
 
-from ..services.cpi_fred_service import COMPONENT_LABELS, COMPONENT_WEIGHTS
+from ..services import COMPONENT_LABELS, COMPONENT_WEIGHTS
 
 # Stacking order: largest CPI weight first (Housing 40.4% → Apparel 2.5%)
 STACK_ORDER = [
