@@ -92,6 +92,11 @@ MODULE_SECTIONS = {
         {"id": "fed_funds_rate", "label": "Fed Funds Rate", "class": "app.ui.modules.fed_funds_rate:FedFundsRateModule"},
         {"id": "reserve_balances", "label": "Reserve Balances", "class": "app.ui.modules.reserve_balances:ReserveBalancesModule"},
         {"id": "money_velocity", "label": "Money Velocity", "class": "app.ui.modules.money_velocity:MoneyVelocityModule"},
+        {"id": "gdp", "label": "GDP", "class": "app.ui.modules.gdp:GdpModule"},
+        {"id": "industrial_production", "label": "Industrial Production", "class": "app.ui.modules.industrial_production:IndustrialProductionModule"},
+        {"id": "housing_starts", "label": "Housing Starts", "class": "app.ui.modules.housing_starts:HousingStartsModule"},
+        {"id": "housing_permits", "label": "Housing Permits", "class": "app.ui.modules.housing_permits:HousingPermitsModule"},
+        {"id": "consumer_sentiment", "label": "Consumer Sentiment", "class": "app.ui.modules.consumer_sentiment:ConsumerSentimentModule"},
     ],
     "_Settings": [
         {"id": "settings", "label": "Settings", "class": "app.ui.modules.settings_module:SettingsModule", "has_own_home_button": False},

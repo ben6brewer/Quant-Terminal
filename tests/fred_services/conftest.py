@@ -32,6 +32,18 @@ def isolate_fred_cache(tmp_path, monkeypatch):
             "app.ui.modules.treasury.services.treasury_fred_service",
             ["CACHE_DIR", "CACHE_FILE"],
         ),
+        (
+            "app.ui.modules.gdp.services.gdp_fred_service",
+            ["_CACHE_DIR", "_QUARTERLY_CACHE", "_PRODUCTION_CACHE"],
+        ),
+        (
+            "app.ui.modules.housing.services.housing_fred_service",
+            ["_CACHE_DIR", "_HOUSING_CACHE"],
+        ),
+        (
+            "app.ui.modules.consumer.services.consumer_fred_service",
+            ["_CACHE_DIR", "_CONSUMER_CACHE"],
+        ),
     ]
 
     for mod_path, attrs in _modules_and_attrs:
@@ -87,6 +99,24 @@ def reset_fred_class_caches():
             TreasuryFredService,
         )
         TreasuryFredService._data = None
+    except Exception:
+        pass
+
+    try:
+        from app.ui.modules.gdp.services.gdp_fred_service import GdpFredService
+        GdpFredService._data = None
+    except Exception:
+        pass
+
+    try:
+        from app.ui.modules.housing.services.housing_fred_service import HousingFredService
+        HousingFredService._data = None
+    except Exception:
+        pass
+
+    try:
+        from app.ui.modules.consumer.services.consumer_fred_service import ConsumerFredService
+        ConsumerFredService._data = None
     except Exception:
         pass
 
