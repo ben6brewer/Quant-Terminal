@@ -9,11 +9,25 @@ Provides:
 
 from __future__ import annotations
 
+import functools
 from datetime import datetime
 from typing import TYPE_CHECKING, Callable, Optional
 
+import requests as _requests
+
 if TYPE_CHECKING:
     import pandas as pd
+
+# Shared session with 30-second timeout for all yfinance calls
+_session: _requests.Session | None = None
+
+
+def _get_session() -> _requests.Session:
+    global _session
+    if _session is None:
+        _session = _requests.Session()
+        _session.request = functools.partial(_session.request, timeout=30)
+    return _session
 
 
 class YahooFinanceService:
@@ -67,6 +81,8 @@ class YahooFinanceService:
                 auto_adjust=False,
                 progress=False,
                 threads=1,
+                session=_get_session(),
+                timeout=30,
             )
 
             if df is None or df.empty:
@@ -118,6 +134,8 @@ class YahooFinanceService:
                 auto_adjust=False,
                 progress=False,
                 threads=1,
+                session=_get_session(),
+                timeout=30,
             )
 
             if df is None or df.empty:
@@ -217,6 +235,8 @@ class YahooFinanceService:
                 auto_adjust=False,
                 progress=False,
                 threads=1,
+                session=_get_session(),
+                timeout=30,
             )
 
             if df is None or df.empty:
@@ -403,6 +423,8 @@ class YahooFinanceService:
                 progress=False,
                 threads=True,
                 group_by="ticker" if len(tickers) > 1 else "column",
+                session=_get_session(),
+                timeout=30,
             )
 
             if df is None or df.empty:
@@ -509,6 +531,8 @@ class YahooFinanceService:
                     progress=False,
                     threads=True,
                     group_by="ticker" if len(group_tickers) > 1 else "column",
+                    session=_get_session(),
+                    timeout=30,
                 )
 
                 if df is None or df.empty:
@@ -585,6 +609,8 @@ class YahooFinanceService:
                 progress=False,
                 threads=True,
                 group_by="ticker" if len(tickers) > 1 else "column",
+                session=_get_session(),
+                timeout=30,
             )
 
             if df is None or df.empty:
@@ -652,6 +678,8 @@ class YahooFinanceService:
                 period=period,
                 progress=False,
                 threads=True,
+                session=_get_session(),
+                timeout=30,
             )
 
             if data.empty:
@@ -685,7 +713,7 @@ class YahooFinanceService:
         ticker = ticker.strip().upper()
 
         try:
-            info = yf.Ticker(ticker).info
+            info = yf.Ticker(ticker, session=_get_session()).info
             # Check if we got valid data
             return info is not None and info.get("regularMarketPrice") is not None
         except Exception:

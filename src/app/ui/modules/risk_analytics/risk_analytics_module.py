@@ -9,7 +9,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QWidget,
     QScrollArea,
-    QApplication,
 )
 from PySide6.QtCore import Signal, Qt, QThread
 
@@ -248,43 +247,18 @@ class RiskAnalyticsModule(BaseModule):
         if self._current_portfolio:
             self._update_risk_analysis()
 
-    def _prefetch_benchmark_metadata(self, tickers: List[str]) -> None:
-        """Pre-fetch Yahoo Finance metadata for benchmark tickers."""
-        if not tickers:
-            return
-
-        batch_size = 100
-        total = len(tickers)
-
-        for i in range(0, total, batch_size):
-            batch = tickers[i:i + batch_size]
-            TickerMetadataService.get_metadata_batch(batch)
-
-            current = min(i + batch_size, total)
-            if self._loading_overlay:
-                self._loading_overlay.set_progress(
-                    current, total, "Loading metadata"
-                )
-            QApplication.processEvents()
-
     def _update_risk_analysis(self):
-        """Run risk analysis and update all displays."""
-        # Get current selections from controls (user might not have triggered change signals)
+        """Run risk analysis in background worker and update displays."""
+        # Get current selections from controls (main thread only)
         portfolio_value = self.controls.get_current_portfolio()
-
-        # Strip "[Port] " prefix if present
         self._current_portfolio, _ = parse_portfolio_value(portfolio_value)
-
-        # Get ETF benchmark for attribution
         self._current_etf_benchmark = self.controls.get_current_etf_benchmark()
-        self._current_benchmark = self._current_etf_benchmark  # Use ETF as benchmark
+        self._current_benchmark = self._current_etf_benchmark
 
         if not self._current_portfolio:
             self._clear_displays()
             CustomMessageBox.warning(
-                self.theme_manager,
-                self,
-                "No Portfolio",
+                self.theme_manager, self, "No Portfolio",
                 "Please select a portfolio to analyze.",
             )
             return
@@ -292,270 +266,216 @@ class RiskAnalyticsModule(BaseModule):
         if not self._current_benchmark:
             self._clear_displays()
             CustomMessageBox.warning(
-                self.theme_manager,
-                self,
-                "No Benchmark",
+                self.theme_manager, self, "No Benchmark",
                 "Please select a benchmark ETF.",
             )
             return
 
-        # Show loading overlay
-        self._show_loading_overlay("Analyzing risk...")
+        # Capture settings for the worker (main-thread reads)
+        portfolio_name = self._current_portfolio
+        benchmark = self._current_benchmark
+        lookback_days = self.settings_manager.get_setting("lookback_days")
+        custom_start_date = self.settings_manager.get_setting("custom_start_date")
+        custom_end_date = self.settings_manager.get_setting("custom_end_date")
+        universe_sectors = self.settings_manager.get_setting("portfolio_universe_sectors")
 
-        try:
-            # Get portfolio tickers first to fetch current prices
-            tickers_list = PortfolioDataService.get_tickers(self._current_portfolio)
-            if not tickers_list:
-                self._hide_loading_overlay()
-                self._clear_displays()
-                CustomMessageBox.warning(
-                    self.theme_manager,
-                    self,
-                    "No Holdings",
-                    f"Portfolio '{self._current_portfolio}' has no holdings.",
+        def compute():
+            return self._compute_risk_analysis(
+                portfolio_name, benchmark,
+                lookback_days, custom_start_date, custom_end_date,
+                universe_sectors,
+            )
+
+        self._run_worker(
+            compute,
+            loading_message="Analyzing risk...",
+            on_complete=self._on_risk_analysis_complete,
+            on_error=self._on_risk_analysis_error,
+        )
+
+    def _compute_risk_analysis(
+        self, portfolio_name, benchmark,
+        lookback_days, custom_start_date, custom_end_date,
+        universe_sectors,
+    ):
+        """Heavy computation — runs entirely in worker thread."""
+        import pandas as pd
+        from app.services.market_data import fetch_price_history_batch
+        from .services.sector_override_service import SectorOverrideService
+
+        # Get portfolio tickers
+        tickers_list = PortfolioDataService.get_tickers(portfolio_name)
+        if not tickers_list:
+            raise ValueError(f"Portfolio '{portfolio_name}' has no holdings.")
+
+        # Batch fetch current prices
+        batch_data = fetch_price_history_batch(tickers_list)
+        current_prices = {}
+        for ticker in tickers_list:
+            if ticker in batch_data:
+                df = batch_data[ticker]
+                if df is not None and not df.empty:
+                    current_prices[ticker] = df["Close"].iloc[-1]
+
+        holdings = PortfolioDataService.get_holdings(portfolio_name, current_prices)
+        if not holdings:
+            raise ValueError(f"Portfolio '{portfolio_name}' has no holdings.")
+
+        tickers = [h.ticker.upper() for h in holdings if h.ticker != "FREE CASH"]
+        weights = {h.ticker.upper(): h.weight for h in holdings if h.ticker != "FREE CASH"}
+        if not tickers:
+            raise ValueError("No non-cash holdings found.")
+
+        # Prefetch metadata
+        TickerMetadataService.get_metadata_batch(tickers)
+
+        # Filter by universe sectors
+        if universe_sectors:
+            allowed_sectors = set(universe_sectors)
+            filtered_tickers = []
+            filtered_weights = {}
+            for ticker in tickers:
+                sector = SectorOverrideService.get_effective_sector(ticker)
+                if sector in allowed_sectors:
+                    filtered_tickers.append(ticker)
+                    filtered_weights[ticker] = weights[ticker]
+
+            if not filtered_tickers:
+                raise ValueError(
+                    f"No holdings in '{portfolio_name}' match the selected portfolio universe sectors."
                 )
-                return
+            total_weight = sum(filtered_weights.values())
+            if total_weight > 0:
+                filtered_weights = {t: w / total_weight for t, w in filtered_weights.items()}
+            tickers = filtered_tickers
+            weights = filtered_weights
 
-            # Batch fetch current prices for weight calculation
-            from app.services.market_data import fetch_price_history_batch
+        # Portfolio returns
+        portfolio_returns = ReturnsDataService.get_time_varying_portfolio_returns(
+            portfolio_name, include_cash=False
+        )
+        if portfolio_returns is None or portfolio_returns.empty:
+            raise ValueError(f"Could not calculate returns for '{portfolio_name}'.")
 
-            batch_data = fetch_price_history_batch(tickers_list)
-            current_prices = {}
-            for ticker in tickers_list:
-                if ticker in batch_data:
-                    df = batch_data[ticker]
-                    if df is not None and not df.empty:
-                        current_prices[ticker] = df["Close"].iloc[-1]
+        portfolio_returns = self._filter_returns_by_period(
+            portfolio_returns, lookback_days, custom_start_date, custom_end_date
+        )
+        extreme_port = (portfolio_returns.abs() > 0.5).sum()
+        if extreme_port > 0:
+            portfolio_returns = portfolio_returns.clip(lower=-0.5, upper=0.5)
 
-            # Get portfolio data with current prices
-            holdings = PortfolioDataService.get_holdings(self._current_portfolio, current_prices)
-            if not holdings:
-                self._hide_loading_overlay()
-                self._clear_displays()
-                CustomMessageBox.warning(
-                    self.theme_manager,
-                    self,
-                    "No Holdings",
-                    f"Portfolio '{self._current_portfolio}' has no holdings.",
+        # Benchmark returns (this does its own batch fetches internally)
+        benchmark_returns = self._get_benchmark_returns(
+            lookback_days, custom_start_date, custom_end_date
+        )
+        if benchmark_returns is None or benchmark_returns.empty:
+            raise ValueError(f"Could not fetch returns for benchmark '{benchmark}'.")
+
+        # Normalize indices
+        portfolio_returns.index = portfolio_returns.index.normalize()
+        benchmark_returns.index = benchmark_returns.index.normalize()
+        if portfolio_returns.index.duplicated().any():
+            portfolio_returns = portfolio_returns[~portfolio_returns.index.duplicated(keep="last")]
+        if benchmark_returns.index.duplicated().any():
+            benchmark_returns = benchmark_returns[~benchmark_returns.index.duplicated(keep="last")]
+
+        # Pre-fetch benchmark metadata
+        benchmark_holdings = self._benchmark_holdings
+        if benchmark_holdings:
+            benchmark_tickers = list(benchmark_holdings.keys())
+            TickerMetadataService.get_metadata_batch(benchmark_tickers)
+
+        # Ticker returns
+        ticker_returns = self._get_ticker_returns(
+            tickers, lookback_days, custom_start_date, custom_end_date
+        )
+
+        # Benchmark-only ticker returns
+        if benchmark_holdings:
+            portfolio_set = set(t.upper() for t in tickers)
+            benchmark_only_tickers = [
+                ticker for ticker in benchmark_holdings.keys()
+                if ticker.upper() not in portfolio_set
+            ]
+            if benchmark_only_tickers:
+                benchmark_ticker_returns = self._get_ticker_returns(
+                    benchmark_only_tickers, lookback_days, custom_start_date, custom_end_date
                 )
-                return
+                if not benchmark_ticker_returns.empty:
+                    if not ticker_returns.empty:
+                        ticker_returns = pd.concat(
+                            [ticker_returns, benchmark_ticker_returns], axis=1
+                        )
+                        ticker_returns = ticker_returns.loc[:, ~ticker_returns.columns.duplicated()]
+                    else:
+                        ticker_returns = benchmark_ticker_returns
 
-            # Extract tickers and weights (normalize to uppercase for consistent lookups)
-            tickers = [h.ticker.upper() for h in holdings if h.ticker != "FREE CASH"]
-            weights = {h.ticker.upper(): h.weight for h in holdings if h.ticker != "FREE CASH"}
+        # Universe-filtered portfolio returns
+        if universe_sectors and not ticker_returns.empty:
+            filtered_portfolio_returns = pd.Series(0.0, index=ticker_returns.index)
+            for ticker in tickers:
+                if ticker in ticker_returns.columns:
+                    weight = weights.get(ticker, 0.0)
+                    filtered_portfolio_returns += ticker_returns[ticker] * weight
+            portfolio_returns = filtered_portfolio_returns.dropna()
+            if portfolio_returns.empty:
+                raise ValueError("Could not calculate returns for the filtered portfolio universe.")
 
-            if not tickers:
-                self._hide_loading_overlay()
-                self._clear_displays()
-                return
+        # Benchmark weights
+        benchmark_weights = getattr(self, '_benchmark_weights_normalized', {})
+        if not benchmark_weights and benchmark_holdings:
+            total_weight = sum(h.weight for h in benchmark_holdings.values())
+            if total_weight > 0:
+                benchmark_weights = {
+                    ticker.upper(): holding.weight / total_weight
+                    for ticker, holding in benchmark_holdings.items()
+                }
 
-            # Prefetch metadata for all tickers (parallel fetch)
-            TickerMetadataService.get_metadata_batch(tickers)
+        # Ticker price data for constructed factors
+        ticker_price_data = {}
+        for ticker in ticker_returns.columns:
+            ticker_upper = ticker.upper()
+            if ticker in batch_data and batch_data[ticker] is not None:
+                ticker_price_data[ticker_upper] = batch_data[ticker]
+            elif ticker_upper in batch_data and batch_data[ticker_upper] is not None:
+                ticker_price_data[ticker_upper] = batch_data[ticker_upper]
 
-            # Filter by portfolio universe sectors if specified
-            from .services.sector_override_service import SectorOverrideService
+        # Run full analysis
+        analysis = RiskAnalyticsService.get_full_analysis(
+            portfolio_returns, benchmark_returns, ticker_returns,
+            tickers, weights, benchmark_weights,
+            ticker_price_data, benchmark_holdings,
+        )
 
-            universe_sectors = self.settings_manager.get_setting("portfolio_universe_sectors")
-            if universe_sectors:
-                # Filter tickers to only those in allowed sectors
-                allowed_sectors = set(universe_sectors)
-                filtered_tickers = []
-                filtered_weights = {}
+        return {
+            "analysis": analysis,
+            "benchmark_weights": benchmark_weights,
+            "weights": weights,
+            "ticker_returns": ticker_returns,
+            "portfolio_returns": portfolio_returns,
+        }
 
-                for ticker in tickers:
-                    sector = SectorOverrideService.get_effective_sector(ticker)
-                    if sector in allowed_sectors:
-                        filtered_tickers.append(ticker)
-                        filtered_weights[ticker] = weights[ticker]
+    def _on_risk_analysis_complete(self, result):
+        """Handle completed risk analysis (runs on main thread)."""
+        analysis = result["analysis"]
+        benchmark_weights = result["benchmark_weights"]
 
-                if not filtered_tickers:
-                    self._hide_loading_overlay()
-                    self._clear_displays()
-                    CustomMessageBox.warning(
-                        self.theme_manager,
-                        self,
-                        "No Holdings in Universe",
-                        f"No holdings in '{self._current_portfolio}' match the selected "
-                        f"portfolio universe sectors.",
-                    )
-                    return
+        self._current_weights = result["weights"]
+        self._current_ticker_returns = result["ticker_returns"]
+        portfolio_returns = result["portfolio_returns"]
+        if not portfolio_returns.empty:
+            self._period_start = portfolio_returns.index.min().strftime("%Y-%m-%d")
+            self._period_end = portfolio_returns.index.max().strftime("%Y-%m-%d")
 
-                # Renormalize weights to sum to 1.0
-                total_weight = sum(filtered_weights.values())
-                if total_weight > 0:
-                    filtered_weights = {
-                        t: w / total_weight for t, w in filtered_weights.items()
-                    }
+        self._update_displays(analysis, benchmark_weights)
 
-                tickers = filtered_tickers
-                weights = filtered_weights
-
-            # Get lookback settings (either lookback_days or custom date range)
-            lookback_days = self.settings_manager.get_setting("lookback_days")
-            custom_start_date = self.settings_manager.get_setting("custom_start_date")
-            custom_end_date = self.settings_manager.get_setting("custom_end_date")
-
-            # Get portfolio returns using TIME-VARYING weights from transaction history
-            portfolio_returns = ReturnsDataService.get_time_varying_portfolio_returns(
-                self._current_portfolio, include_cash=False
-            )
-
-            if portfolio_returns is None or portfolio_returns.empty:
-                self._hide_loading_overlay()
-                self._clear_displays()
-                CustomMessageBox.warning(
-                    self.theme_manager,
-                    self,
-                    "No Returns Data",
-                    f"Could not calculate returns for '{self._current_portfolio}'.",
-                )
-                return
-
-            # Apply date filtering
-            portfolio_returns = self._filter_returns_by_period(
-                portfolio_returns, lookback_days, custom_start_date, custom_end_date
-            )
-
-            # Clip any extreme portfolio returns (>50% daily is extreme)
-            extreme_port = (portfolio_returns.abs() > 0.5).sum()
-            if extreme_port > 0:
-                portfolio_returns = portfolio_returns.clip(lower=-0.5, upper=0.5)
-
-            # Get benchmark returns
-            benchmark_returns = self._get_benchmark_returns(
-                lookback_days, custom_start_date, custom_end_date
-            )
-
-            if benchmark_returns is None or benchmark_returns.empty:
-                self._hide_loading_overlay()
-                self._clear_displays()
-                CustomMessageBox.warning(
-                    self.theme_manager,
-                    self,
-                    "No Benchmark Data",
-                    f"Could not fetch returns for benchmark '{self._current_benchmark}'.",
-                )
-                return
-
-            # Normalize indices to date-only (remove time component) to ensure alignment
-            portfolio_returns.index = portfolio_returns.index.normalize()
-            benchmark_returns.index = benchmark_returns.index.normalize()
-
-            # Remove any duplicate indices created by normalization (keep last value)
-            if portfolio_returns.index.duplicated().any():
-                portfolio_returns = portfolio_returns[~portfolio_returns.index.duplicated(keep="last")]
-            if benchmark_returns.index.duplicated().any():
-                benchmark_returns = benchmark_returns[~benchmark_returns.index.duplicated(keep="last")]
-
-            # Pre-fetch Yahoo Finance metadata for all benchmark tickers
-            if self._benchmark_holdings:
-                benchmark_tickers = list(self._benchmark_holdings.keys())
-                self._prefetch_benchmark_metadata(benchmark_tickers)
-                self._show_loading_overlay("Running factor analysis...")
-
-            # Get individual ticker returns for CTEV calculation
-            ticker_returns = self._get_ticker_returns(
-                tickers, lookback_days, custom_start_date, custom_end_date
-            )
-
-            # Also fetch returns for ALL benchmark tickers NOT in portfolio
-            if self._benchmark_holdings:
-                import pandas as pd
-
-                portfolio_set = set(t.upper() for t in tickers)
-                benchmark_only_tickers = [
-                    ticker
-                    for ticker in self._benchmark_holdings.keys()
-                    if ticker.upper() not in portfolio_set
-                ]
-
-                if benchmark_only_tickers:
-                    benchmark_ticker_returns = self._get_ticker_returns(
-                        benchmark_only_tickers, lookback_days, custom_start_date, custom_end_date
-                    )
-
-                    if not benchmark_ticker_returns.empty:
-                        if not ticker_returns.empty:
-                            ticker_returns = pd.concat(
-                                [ticker_returns, benchmark_ticker_returns], axis=1
-                            )
-                            ticker_returns = ticker_returns.loc[:, ~ticker_returns.columns.duplicated()]
-                        else:
-                            ticker_returns = benchmark_ticker_returns
-
-            # If universe filtering is active, recalculate portfolio returns from filtered tickers
-            if universe_sectors and not ticker_returns.empty:
-                import pandas as pd
-
-                filtered_portfolio_returns = pd.Series(0.0, index=ticker_returns.index)
-                for ticker in tickers:
-                    if ticker in ticker_returns.columns:
-                        weight = weights.get(ticker, 0.0)
-                        filtered_portfolio_returns += ticker_returns[ticker] * weight
-
-                portfolio_returns = filtered_portfolio_returns.dropna()
-
-                if portfolio_returns.empty:
-                    self._hide_loading_overlay()
-                    self._clear_displays()
-                    CustomMessageBox.warning(
-                        self.theme_manager,
-                        self,
-                        "No Returns Data",
-                        "Could not calculate returns for the filtered portfolio universe.",
-                    )
-                    return
-
-            # Store data for attribution analysis
-            self._current_weights = weights
-            self._current_ticker_returns = ticker_returns
-            if not portfolio_returns.empty:
-                self._period_start = portfolio_returns.index.min().strftime("%Y-%m-%d")
-                self._period_end = portfolio_returns.index.max().strftime("%Y-%m-%d")
-
-            # Use renormalized benchmark weights
-            benchmark_weights = getattr(self, '_benchmark_weights_normalized', {})
-            if not benchmark_weights and self._benchmark_holdings:
-                total_weight = sum(h.weight for h in self._benchmark_holdings.values())
-                if total_weight > 0:
-                    benchmark_weights = {
-                        ticker.upper(): holding.weight / total_weight
-                        for ticker, holding in self._benchmark_holdings.items()
-                    }
-
-            # Build ticker price data dict for constructed factors
-            ticker_price_data = {}
-            for ticker in ticker_returns.columns:
-                ticker_upper = ticker.upper()
-                if ticker in batch_data and batch_data[ticker] is not None:
-                    ticker_price_data[ticker_upper] = batch_data[ticker]
-                elif ticker_upper in batch_data and batch_data[ticker_upper] is not None:
-                    ticker_price_data[ticker_upper] = batch_data[ticker_upper]
-
-            # Run full analysis
-            analysis = RiskAnalyticsService.get_full_analysis(
-                portfolio_returns,
-                benchmark_returns,
-                ticker_returns,
-                tickers,
-                weights,
-                benchmark_weights,
-                ticker_price_data,
-                self._benchmark_holdings,
-            )
-
-            # Update displays
-            self._update_displays(analysis, benchmark_weights)
-
-        except Exception as e:
-            CustomMessageBox.critical(
-                self.theme_manager,
-                self,
-                "Analysis Error",
-                f"Error running risk analysis: {str(e)}",
-            )
-        finally:
-            self._hide_loading_overlay()
+    def _on_risk_analysis_error(self, error_msg):
+        """Handle risk analysis error (runs on main thread)."""
+        self._clear_displays()
+        CustomMessageBox.critical(
+            self.theme_manager, self, "Analysis Error",
+            f"Error running risk analysis: {error_msg}",
+        )
 
     def _filter_returns_by_period(
         self,
@@ -787,19 +707,11 @@ class RiskAnalyticsModule(BaseModule):
 
     def _show_loading_overlay(self, message: str = "Loading..."):
         """Show loading overlay."""
-        from app.ui.widgets.common.loading_overlay import LoadingOverlay
-
-        if self._loading_overlay is None:
-            self._loading_overlay = LoadingOverlay(self, self.theme_manager, message)
-        else:
-            self._loading_overlay.set_message(message)
-        self._loading_overlay.show()
-        QApplication.processEvents()
+        self._show_loading(message)
 
     def _hide_loading_overlay(self):
         """Hide loading overlay."""
-        if self._loading_overlay:
-            self._loading_overlay.hide()
+        self._hide_loading()
 
     def _apply_theme(self):
         """Apply theme-specific styling."""

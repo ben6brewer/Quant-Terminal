@@ -140,24 +140,23 @@ class TickerMetadataService:
             return True
 
     @classmethod
-    def _fetch_from_yfinance(cls, ticker: str, retry_count: int = 0) -> Dict[str, Any]:
+    def _fetch_from_yfinance(cls, ticker: str) -> Dict[str, Any]:
         """
-        Fetch ticker info from yfinance with retry logic.
+        Fetch ticker info from yfinance (single attempt, no retries).
 
         Args:
             ticker: Ticker symbol
-            retry_count: Current retry attempt (for rate limit handling)
 
         Returns:
             Dict with requested fields (values may be None if unavailable)
         """
-        import time
         import yfinance as yf
+        from app.services.yahoo_finance_service import _get_session
 
         result: Dict[str, Any] = {}
 
         try:
-            stock = yf.Ticker(ticker)
+            stock = yf.Ticker(ticker, session=_get_session())
             info = stock.info
 
             # Extract requested fields
@@ -168,17 +167,7 @@ class TickerMetadataService:
             result["shortName"] = info.get("shortName")
 
         except Exception as e:
-            error_str = str(e)
-            # Handle rate limiting with retry
-            if "Too Many Requests" in error_str or "Rate limited" in error_str:
-                if retry_count < 2:
-                    # Wait and retry (exponential backoff)
-                    wait_time = (retry_count + 1) * 2
-                    time.sleep(wait_time)
-                    return cls._fetch_from_yfinance(ticker, retry_count + 1)
-            # Only print warning for non-rate-limit errors or final retry failure
-            if retry_count == 0 or "Too Many Requests" not in error_str:
-                print(f"Warning: Could not fetch metadata for {ticker}: {e}")
+            print(f"Warning: Could not fetch metadata for {ticker}: {e}")
             # Return empty dict with None values
             for field in cls.ALL_FIELDS:
                 result[field] = None
@@ -247,14 +236,11 @@ class TickerMetadataService:
 
         # Fetch missing tickers in parallel (in chunks to avoid rate limiting)
         if tickers_to_fetch:
-            import time
-
             total_to_fetch = len(tickers_to_fetch)
             print(f"[Metadata] Fetching {total_to_fetch} tickers from Yahoo Finance...")
             completed = 0
             chunk_size = 100  # Process in chunks of 100
 
-            # Process in chunks with delays between them
             for chunk_start in range(0, total_to_fetch, chunk_size):
                 chunk = tickers_to_fetch[chunk_start:chunk_start + chunk_size]
 
@@ -283,10 +269,6 @@ class TickerMetadataService:
                 # Progress update and save after each chunk
                 print(f"[Metadata] Progress: {completed}/{total_to_fetch}")
                 cls._save_cache()  # Save after each chunk in case of interruption
-
-                # Brief delay between chunks to avoid rate limiting
-                if chunk_start + chunk_size < total_to_fetch:
-                    time.sleep(1)
 
             print(f"[Metadata] Fetch complete, cache saved")
 

@@ -193,16 +193,20 @@ class BaseModule(LazyThemeMixin, QWidget):
         pass
 
     def _cleanup_worker(self):
-        """Safely stop thread and release references with proper Qt cleanup."""
+        """Non-blocking cleanup: signal thread to quit, let it finish async.
+
+        If the thread is stuck (e.g. yfinance timeout), it will be orphaned
+        but won't block the UI. With network timeouts, orphaned threads will
+        eventually terminate on their own.
+        """
         if self._thread is not None:
-            self._thread.quit()
-            if not self._thread.wait(5000):
-                self._thread.terminate()
-                self._thread.wait(1000)
-        if self._worker is not None:
-            self._worker.deleteLater()
-        if self._thread is not None:
-            self._thread.deleteLater()
+            thread = self._thread
+            worker = self._worker
+            thread.quit()
+            # Non-blocking: connect finished signal for deferred cleanup
+            if worker is not None:
+                thread.finished.connect(worker.deleteLater)
+            thread.finished.connect(thread.deleteLater)
         self._worker = None
         self._thread = None
 

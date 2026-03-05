@@ -72,15 +72,15 @@ class ChartModule(BaseModule):
         # Connect to theme changes (lazy - only apply when visible)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
-        # Auto-load initial ticker
-        self.load_ticker_max(self.controls.get_ticker())
+        # Defer initial load to showEvent
+        self._initial_load_done = False
 
     def create_settings_manager(self):
         """Return the chart-specific settings manager."""
         return ChartSettingsManager()
 
     def showEvent(self, event):
-        """Handle show event - apply pending theme and start indicator init."""
+        """Handle show event - apply pending theme, start indicator init, load data."""
         super().showEvent(event)
 
         # Start background indicator initialization after UI is visible
@@ -88,6 +88,11 @@ class ChartModule(BaseModule):
             self._indicator_init_started = True
             # Use QTimer to defer to next event loop iteration, then run in thread
             QTimer.singleShot(0, self._start_background_indicator_init)
+
+        # Deferred initial ticker load (background worker)
+        if not self._initial_load_done:
+            self._initial_load_done = True
+            self._load_ticker_background(self.controls.get_ticker())
 
     def _start_background_indicator_init(self):
         """Start indicator initialization in background thread."""
@@ -558,63 +563,70 @@ class ChartModule(BaseModule):
         except Exception as e:
             CustomMessageBox.critical(self.theme_manager, self, "Render Error", str(e))
 
-    def load_ticker_max(self, ticker: str) -> None:
-        """Load max history for a ticker or evaluate an equation."""
+    def _load_ticker_background(self, ticker: str) -> None:
+        """Load ticker data in a background worker thread."""
         ticker = (ticker or "").strip()
         if not ticker:
             return
 
         interval = self.current_interval()
+        is_equation = self.equation_parser.is_equation(ticker)
 
-        try:
-            # Check if this is an equation
-            if self.equation_parser.is_equation(ticker):
-                # Parse and evaluate equation
+        def fetch():
+            if is_equation:
                 df, description = self.equation_parser.parse_and_evaluate(
                     ticker, period="max", interval=interval
                 )
-                display_name = description
+                return (df, description, interval)
             else:
-                # Regular ticker - use Yahoo Finance exclusively for chart module
-                ticker = ticker.upper()
-                df = fetch_price_history_yahoo(ticker, period="max", interval=interval)
-                display_name = ticker
+                t = ticker.upper()
+                df = fetch_price_history_yahoo(t, period="max", interval=interval)
+                return (df, t, interval)
 
-            self.state["df"] = df
-            self.state["ticker"] = display_name
-            self.state["interval"] = interval
+        self._run_worker(
+            fetch,
+            loading_message=f"Loading {ticker}...",
+            on_complete=self._on_ticker_loaded,
+            on_error=lambda e: self._on_ticker_load_error(e, ticker),
+        )
 
-            # Check if this ticker is supported on Binance
-            is_binance = BinanceOrderBook.is_binance_ticker(display_name)
+    def _on_ticker_loaded(self, result) -> None:
+        """Handle background ticker load completion (runs on main thread)."""
+        df, display_name, interval = result
 
-            # Enable/disable the depth button
-            self.controls.set_depth_enabled(is_binance)
-            self.controls.set_depth_visible(is_binance)
+        self.state["df"] = df
+        self.state["ticker"] = display_name
+        self.state["interval"] = interval
 
-            if is_binance:
-                self.controls.set_depth_text("Depth")
+        # Check if this ticker is supported on Binance
+        is_binance = BinanceOrderBook.is_binance_ticker(display_name)
 
-                # If depth panel is already visible, update it
-                if self.depth_panel.isVisible():
-                    self.depth_panel.set_ticker(display_name)
-            else:
-                self.controls.set_depth_text("Depth")
+        # Enable/disable the depth button
+        self.controls.set_depth_enabled(is_binance)
+        self.controls.set_depth_visible(is_binance)
 
-                # Hide depth panel if it was visible
-                if self.depth_panel.isVisible():
-                    self.controls.set_depth_checked(False)
-                    self.depth_panel.setVisible(False)
-                    self.depth_panel.stop_updates()
+        if is_binance:
+            self.controls.set_depth_text("Depth")
+            if self.depth_panel.isVisible():
+                self.depth_panel.set_ticker(display_name)
+        else:
+            self.controls.set_depth_text("Depth")
+            if self.depth_panel.isVisible():
+                self.controls.set_depth_checked(False)
+                self.depth_panel.setVisible(False)
+                self.depth_panel.stop_updates()
 
-            self.render_from_cache()
+        self.render_from_cache()
+        self._live_update_manager.start(display_name)
 
-            # Start live updates for this ticker
-            self._live_update_manager.start(display_name)
+    def _on_ticker_load_error(self, error_msg, ticker: str) -> None:
+        """Handle background ticker load error."""
+        CustomMessageBox.critical(self.theme_manager, self, "Load Error", str(error_msg))
+        self.equation_parser.clear_cache()
 
-        except Exception as e:
-            CustomMessageBox.critical(self.theme_manager, self, "Load Error", str(e))
-            # Clear the equation parser cache on error
-            self.equation_parser.clear_cache()
+    def load_ticker_max(self, ticker: str) -> None:
+        """Load max history for a ticker (via background worker)."""
+        self._load_ticker_background(ticker)
 
     # =========================================================================
     # Live Updates
