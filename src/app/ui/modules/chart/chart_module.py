@@ -2,17 +2,8 @@ from __future__ import annotations
 
 import threading
 
-from PySide6.QtWidgets import (
-    QComboBox,
-    QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QListWidget,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-)
-from PySide6.QtCore import Qt, Signal, QTimer
+from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout
+from PySide6.QtCore import QTimer
 
 from app.ui.modules.chart.widgets import (
     PriceChart,
@@ -43,31 +34,27 @@ from app.core.config import (
     CHART_TYPES,
     CHART_SCALES,
 )
-from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
+from app.ui.modules.base_module import BaseModule
 
 
-class ChartModule(LazyThemeMixin, QWidget):
+class ChartModule(BaseModule):
     """
     Charting module with indicator support and order book depth.
     Handles ticker data loading, chart display, and technical indicators.
     """
 
-    # Signal emitted when user clicks home button
-    home_clicked = Signal()
-
     # Flag indicating this module has its own home button
     has_own_home_button = True
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
-        super().__init__(parent)
-        self.theme_manager = theme_manager
-        self._theme_dirty = False  # For lazy theme application
         self._indicator_init_started = False  # Track background init
         self.equation_parser = TickerEquationParser()
         self.indicator_service = IndicatorService()
 
-        # Initialize chart settings manager
-        self.chart_settings_manager = ChartSettingsManager()
+        super().__init__(theme_manager, parent)
+
+        # Alias for backward compatibility
+        self.chart_settings_manager = self.settings_manager
 
         # Live price polling manager
         self._live_update_manager = LiveUpdateManager(
@@ -83,22 +70,18 @@ class ChartModule(LazyThemeMixin, QWidget):
         self._connect_signals()
 
         # Connect to theme changes (lazy - only apply when visible)
-        self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy_chart)
+        self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
         # Auto-load initial ticker
         self.load_ticker_max(self.controls.get_ticker())
 
-    def _on_theme_changed_lazy_chart(self, theme: str) -> None:
-        """Handle theme change with visibility check."""
-        if self.isVisible():
-            self._apply_theme()
-        else:
-            self._theme_dirty = True
+    def create_settings_manager(self):
+        """Return the chart-specific settings manager."""
+        return ChartSettingsManager()
 
     def showEvent(self, event):
-        """Handle show event - apply pending theme if needed."""
+        """Handle show event - apply pending theme and start indicator init."""
         super().showEvent(event)
-        self._check_theme_dirty()
 
         # Start background indicator initialization after UI is visible
         if not self._indicator_init_started:
@@ -703,7 +686,7 @@ class ChartModule(LazyThemeMixin, QWidget):
         else:
             self.chart.update_last_bar(self.state["df"], old_close)
 
-    def hideEvent(self, event) -> None:
+    def hideEvent(self, event):
         """Stop live updates when module is hidden."""
         self._live_update_manager.stop()
         super().hideEvent(event)

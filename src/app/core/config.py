@@ -52,79 +52,59 @@ CHART_SCALES = ["Regular", "Logarithmic"]
 DEFAULT_THEME = "bloomberg"
 AVAILABLE_THEMES = ["dark", "light", "bloomberg"]
 
-# UI Colors - Dark Theme
-DARK_PRIMARY_COLOR = "#00d4ff"
-DARK_BACKGROUND_COLOR = "#1e1e1e"
-DARK_SIDEBAR_COLOR = "#2d2d2d"
-DARK_TEXT_COLOR = "#ffffff"
-DARK_SECONDARY_TEXT_COLOR = "#cccccc"
-
-# UI Colors - Light Theme
-LIGHT_PRIMARY_COLOR = "#0066cc"
-LIGHT_BACKGROUND_COLOR = "#ffffff"
-LIGHT_SIDEBAR_COLOR = "#f5f5f5"
-LIGHT_TEXT_COLOR = "#000000"
-LIGHT_SECONDARY_TEXT_COLOR = "#333333"
-
-# UI Colors - Bloomberg Theme
-BLOOMBERG_PRIMARY_COLOR = "#FF8000"           # Bloomberg signature orange
-BLOOMBERG_BACKGROUND_COLOR = "#000814"        # Deep navy-black
-BLOOMBERG_PANEL_COLOR = "#0a1018"            # Slightly lighter panels
-BLOOMBERG_SIDEBAR_COLOR = "#0d1420"          # Sidebar background
-BLOOMBERG_TEXT_COLOR = "#e8e8e8"             # Primary text
-BLOOMBERG_SECONDARY_TEXT_COLOR = "#b0b0b0"   # Secondary text
-BLOOMBERG_ACCENT_YELLOW = "#FFD700"          # Amber/gold highlights
-BLOOMBERG_BORDER_COLOR = "#1a2332"           # Subtle borders
-BLOOMBERG_HOVER_COLOR = "#162030"            # Hover states
-BLOOMBERG_GRID_COLOR = "#151f2e"             # Chart grid
-BLOOMBERG_CANDLE_UP = "#00FF00"              # Green candles
-BLOOMBERG_CANDLE_DOWN = "#FF0000"            # Red candles
-BLOOMBERG_CHART_LINE = "#00D4FF"             # Cyan line charts
-
 # Module sections and navigation
+# Each entry has "class" for dynamic import: "dotted.module.path:ClassName"
 MODULE_SECTIONS = {
     "Charting": [
-        {"id": "charts", "label": "Charts"}
+        {"id": "charts", "label": "Charts", "class": "app.ui.modules.chart.chart_module:ChartModule", "has_own_home_button": False},
     ],
     "Portfolio": [
-        {"id": "portfolio_construction", "label": "Portfolio Construction"},
-        {"id": "performance_metrics", "label": "Performance Metrics"},
-        {"id": "risk_analytics", "label": "Risk Analytics"},
-        {"id": "distribution_metrics", "label": "Distribution Metrics"},
-        {"id": "monte_carlo", "label": "Monte Carlo"},
+        {"id": "portfolio_construction", "label": "Portfolio Construction", "class": "app.ui.modules.portfolio_construction:PortfolioConstructionModule"},
+        {"id": "performance_metrics", "label": "Performance Metrics", "class": "app.ui.modules.performance_metrics:PerformanceMetricsModule"},
+        {"id": "risk_analytics", "label": "Risk Analytics", "class": "app.ui.modules.risk_analytics:RiskAnalyticsModule"},
+        {"id": "distribution_metrics", "label": "Distribution Metrics", "class": "app.ui.modules.return_distribution:ReturnDistributionModule"},
+        {"id": "monte_carlo", "label": "Monte Carlo", "class": "app.ui.modules.monte_carlo:MonteCarloModule"},
     ],
     "Analysis": [
-        {"id": "efficient_frontier", "label": "Efficient Frontier"},
-        {"id": "correlation_matrix", "label": "Correlation Matrix"},
-        {"id": "covariance_matrix", "label": "Covariance Matrix"},
-        {"id": "rolling_correlation", "label": "Rolling Correlation"},
-        {"id": "rolling_covariance", "label": "Rolling Covariance"},
-        {"id": "ols_regression", "label": "OLS Regression"},
-        {"id": "monthly_returns", "label": "Monthly Returns"},
-        {"id": "asset_class_returns", "label": "Asset Class Returns"},
+        {"id": "efficient_frontier", "label": "Efficient Frontier", "class": "app.ui.modules.analysis:EfficientFrontierModule"},
+        {"id": "correlation_matrix", "label": "Correlation Matrix", "class": "app.ui.modules.analysis:CorrelationMatrixModule"},
+        {"id": "covariance_matrix", "label": "Covariance Matrix", "class": "app.ui.modules.analysis:CovarianceMatrixModule"},
+        {"id": "rolling_correlation", "label": "Rolling Correlation", "class": "app.ui.modules.analysis:RollingCorrelationModule"},
+        {"id": "rolling_covariance", "label": "Rolling Covariance", "class": "app.ui.modules.analysis:RollingCovarianceModule"},
+        {"id": "ols_regression", "label": "OLS Regression", "class": "app.ui.modules.analysis:OLSRegressionModule"},
+        {"id": "monthly_returns", "label": "Monthly Returns", "class": "app.ui.modules.monthly_returns:MonthlyReturnsModule"},
+        {"id": "asset_class_returns", "label": "Asset Class Returns", "class": "app.ui.modules.asset_class_returns:AssetClassReturnsModule"},
     ],
     "Macro": [
-        {"id": "cpi", "label": "CPI"},
-        {"id": "pce", "label": "PCE"},
-        {"id": "ppi", "label": "PPI"},
-        {"id": "inflation_expectations", "label": "Inflation Expectations"},
-        {"id": "yields", "label": "Yields"},
-        {"id": "rate_probability", "label": "Rate Probabilities"},
-        {"id": "labor_market_overview", "label": "Unemployment Rate"},
-        {"id": "demographics", "label": "Unemployment Demographics"},
-        {"id": "payrolls", "label": "Payrolls"},
-        {"id": "labor_claims", "label": "Unemployment Claims"},
-        {"id": "jolts", "label": "JOLTS"},
-        {"id": "money_supply", "label": "Money Supply"},
-        {"id": "fed_balance_sheet", "label": "Fed Balance Sheet"},
-        {"id": "fed_funds_rate", "label": "Fed Funds Rate"},
-        {"id": "reserve_balances", "label": "Reserve Balances"},
-        {"id": "money_velocity", "label": "Money Velocity"},
-    ]
+        {"id": "cpi", "label": "CPI", "class": "app.ui.modules.cpi:CpiModule"},
+        {"id": "pce", "label": "PCE", "class": "app.ui.modules.pce:PceModule"},
+        {"id": "ppi", "label": "PPI", "class": "app.ui.modules.ppi:PpiModule"},
+        {"id": "inflation_expectations", "label": "Inflation Expectations", "class": "app.ui.modules.inflation_expectations:InflationExpectationsModule"},
+        {"id": "yields", "label": "Yields", "class": "app.ui.modules.treasury:TreasuryModule"},
+        {"id": "rate_probability", "label": "Rate Probabilities", "class": "app.ui.modules.rate_probability:RateProbabilityModule"},
+        {"id": "labor_market_overview", "label": "Unemployment Rate", "class": "app.ui.modules.labor_market_overview:LaborMarketOverviewModule"},
+        {"id": "demographics", "label": "Unemployment Demographics", "class": "app.ui.modules.demographics:DemographicsModule"},
+        {"id": "payrolls", "label": "Payrolls", "class": "app.ui.modules.payrolls:PayrollsModule"},
+        {"id": "labor_claims", "label": "Unemployment Claims", "class": "app.ui.modules.labor_claims:LaborClaimsModule"},
+        {"id": "jolts", "label": "JOLTS", "class": "app.ui.modules.jolts:JoltsModule"},
+        {"id": "money_supply", "label": "Money Supply", "class": "app.ui.modules.money_supply:MoneySupplyModule"},
+        {"id": "fed_balance_sheet", "label": "Fed Balance Sheet", "class": "app.ui.modules.fed_balance_sheet:FedBalanceSheetModule"},
+        {"id": "fed_funds_rate", "label": "Fed Funds Rate", "class": "app.ui.modules.fed_funds_rate:FedFundsRateModule"},
+        {"id": "reserve_balances", "label": "Reserve Balances", "class": "app.ui.modules.reserve_balances:ReserveBalancesModule"},
+        {"id": "money_velocity", "label": "Money Velocity", "class": "app.ui.modules.money_velocity:MoneyVelocityModule"},
+    ],
+    "_Settings": [
+        {"id": "settings", "label": "Settings", "class": "app.ui.modules.settings_module:SettingsModule", "has_own_home_button": False},
+    ],
 }
 
-# Flatten all modules for backward compatibility
-ALL_MODULES = [module for section_modules in MODULE_SECTIONS.values() for module in section_modules]
+# Flatten all modules for backward compatibility (exclude internal sections prefixed with _)
+ALL_MODULES = [
+    module
+    for name, section_modules in MODULE_SECTIONS.items()
+    if not name.startswith("_")
+    for module in section_modules
+]
 
 # Tile settings
 TILE_SCREENSHOT_DIR = Path.home() / ".quant_terminal" / "screenshots"

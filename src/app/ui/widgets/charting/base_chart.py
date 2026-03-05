@@ -72,13 +72,8 @@ class BaseChart(pg.GraphicsLayoutWidget):
 
     def _get_background_rgb(self) -> tuple[int, int, int]:
         """Get background color for current theme."""
-        if self._theme == "dark":
-            return (30, 30, 30)
-        elif self._theme == "light":
-            return (255, 255, 255)
-        elif self._theme == "bloomberg":
-            return (13, 20, 32)
-        return (30, 30, 30)
+        from app.services.theme_stylesheet_service import ThemeStylesheetService
+        return ThemeStylesheetService.get_background_rgb(self._theme)
 
     def _apply_gridlines(self):
         """Apply theme-specific gridlines."""
@@ -139,13 +134,8 @@ class BaseChart(pg.GraphicsLayoutWidget):
 
     def _get_crosshair_color(self) -> tuple[int, int, int]:
         """Get crosshair color for current theme."""
-        if self._theme == "dark":
-            return (150, 150, 150)
-        elif self._theme == "light":
-            return (100, 100, 100)
-        elif self._theme == "bloomberg":
-            return (100, 120, 140)
-        return (150, 150, 150)
+        from app.services.theme_stylesheet_service import ThemeStylesheetService
+        return ThemeStylesheetService.get_crosshair_rgb(self._theme)
 
     def _update_crosshair_color(self):
         """Update crosshair color when theme changes."""
@@ -162,20 +152,13 @@ class BaseChart(pg.GraphicsLayoutWidget):
 
     def _get_theme_accent_color(self) -> tuple[int, int, int]:
         """Get theme accent color for highlights."""
-        if self._theme == "dark":
-            return (0, 212, 255)  # Cyan
-        elif self._theme == "light":
-            return (0, 102, 204)  # Blue
-        elif self._theme == "bloomberg":
-            return (255, 128, 0)  # Orange
-        return (0, 212, 255)
+        from app.services.theme_stylesheet_service import ThemeStylesheetService
+        return ThemeStylesheetService.get_accent_rgb(self._theme)
 
     def _get_label_text_color(self) -> tuple[int, int, int]:
         """Get appropriate text color for labels based on theme."""
-        if self._theme == "light":
-            return (0, 0, 0)  # Black text on light background
-        else:
-            return (255, 255, 255)  # White text on dark background
+        from app.services.theme_stylesheet_service import ThemeStylesheetService
+        return ThemeStylesheetService.get_text_rgb(self._theme)
 
     # Event handlers (can be overridden by subclasses)
 

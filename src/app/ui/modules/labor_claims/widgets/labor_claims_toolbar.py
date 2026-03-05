@@ -1,7 +1,5 @@
 """Labor Claims Toolbar - Home, lookback, claims info, settings."""
 
-from PySide6.QtWidgets import QLabel
-
 from app.ui.modules.fred_toolbar import FredToolbar
 
 
@@ -12,12 +10,10 @@ class LaborClaimsToolbar(FredToolbar):
         return True
 
     def setup_info_section(self, layout):
-        self.claims_label = QLabel("Claims: --")
-        self.claims_label.setObjectName("info_label")
+        self.claims_label = self._info_label("Claims: --")
         layout.addWidget(self.claims_label)
         layout.addWidget(self._sep())
-        self.updated_label = QLabel("")
-        self.updated_label.setObjectName("info_label_muted")
+        self.updated_label = self._info_label("", "info_label_muted")
         layout.addWidget(self.updated_label)
 
     def update_info(self, claims=None, **kwargs):

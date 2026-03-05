@@ -1,7 +1,5 @@
 """CPI Toolbar - Home button, lookback dropdown, info labels, settings."""
 
-from PySide6.QtWidgets import QLabel
-
 from app.ui.modules.fred_toolbar import FredToolbar
 
 
@@ -15,12 +13,10 @@ class CpiToolbar(FredToolbar):
         return True
 
     def setup_info_section(self, layout):
-        self.headline_label = QLabel("Headline: --")
-        self.headline_label.setObjectName("info_label")
+        self.headline_label = self._info_label("Headline: --")
         layout.addWidget(self.headline_label)
         layout.addWidget(self._sep())
-        self.updated_label = QLabel("")
-        self.updated_label.setObjectName("info_label_muted")
+        self.updated_label = self._info_label("", "info_label_muted")
         layout.addWidget(self.updated_label)
 
     def update_info(self, headline=None, date_str=None, **kwargs):

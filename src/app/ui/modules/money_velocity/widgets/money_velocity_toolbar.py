@@ -1,7 +1,5 @@
 """Money Velocity Toolbar — Home, lookback, M2V stat, settings."""
 
-from PySide6.QtWidgets import QLabel
-
 from app.ui.modules.fred_toolbar import FredToolbar
 
 
@@ -15,12 +13,10 @@ class MoneyVelocityToolbar(FredToolbar):
         return 3  # Max
 
     def setup_info_section(self, layout):
-        self.m2v_label = QLabel("M2V: --")
-        self.m2v_label.setObjectName("info_label")
+        self.m2v_label = self._info_label("M2V: --")
         layout.addWidget(self.m2v_label)
         layout.addWidget(self._sep())
-        self.updated_label = QLabel("")
-        self.updated_label.setObjectName("info_label_muted")
+        self.updated_label = self._info_label("", "info_label_muted")
         layout.addWidget(self.updated_label)
 
     def update_info(self, m2v=None, **kwargs):

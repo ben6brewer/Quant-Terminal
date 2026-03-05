@@ -64,10 +64,14 @@ class LaborClaimsModule(FredDataModule):
         usrec = result.get("usrec")
         return (claims, usrec)
 
-    def create_settings_dialog(self, current_settings):
-        from .widgets.labor_claims_settings_dialog import LaborClaimsSettingsDialog
-        return LaborClaimsSettingsDialog(
-            self.theme_manager,
-            current_settings=current_settings,
-            parent=self,
-        )
+    def get_settings_options(self):
+        return [
+            ("show_gridlines", "Show Gridlines"),
+            ("show_crosshair", "Show Crosshair"),
+            ("show_legend", "Show Legend"),
+            ("show_hover_tooltip", "Show Hover Tooltip"),
+            ("show_recession_shading", "Show NBER Recession Shading"),
+        ]
+
+    def get_settings_dialog_title(self):
+        return "Labor Claims Settings"

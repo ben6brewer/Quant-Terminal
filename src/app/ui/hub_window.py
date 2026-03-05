@@ -401,65 +401,29 @@ class HubWindow(QMainWindow):
 
     def _apply_overlay_home_btn_style(self, btn: QPushButton) -> None:
         """Apply solid background styling to overlay home button."""
-        theme = self.theme_manager.current_theme
+        from app.services.theme_stylesheet_service import ThemeStylesheetService
 
-        if theme == "dark":
-            btn.setStyleSheet("""
-                #overlayHomeBtn {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                    border: 1px solid #3d3d3d;
-                    border-radius: 3px;
-                    padding: 6px 12px;
-                    font-size: 13px;
-                    font-weight: bold;
-                }
-                #overlayHomeBtn:hover {
-                    background-color: #3d3d3d;
-                    border-color: #00d4ff;
-                }
-                #overlayHomeBtn:pressed {
-                    background-color: #1a1a1a;
-                }
-            """)
-        elif theme == "bloomberg":
-            btn.setStyleSheet("""
-                #overlayHomeBtn {
-                    background-color: #0d1420;
-                    color: #e8e8e8;
-                    border: 1px solid #1a2838;
-                    border-radius: 3px;
-                    padding: 6px 12px;
-                    font-size: 13px;
-                    font-weight: bold;
-                }
-                #overlayHomeBtn:hover {
-                    background-color: #1a2838;
-                    border-color: #FF8000;
-                }
-                #overlayHomeBtn:pressed {
-                    background-color: #060a10;
-                }
-            """)
-        else:  # light theme
-            btn.setStyleSheet("""
-                #overlayHomeBtn {
-                    background-color: #f5f5f5;
-                    color: #000000;
-                    border: 1px solid #cccccc;
-                    border-radius: 3px;
-                    padding: 6px 12px;
-                    font-size: 13px;
-                    font-weight: bold;
-                }
-                #overlayHomeBtn:hover {
-                    background-color: #e8e8e8;
-                    border-color: #0066cc;
-                }
-                #overlayHomeBtn:pressed {
-                    background-color: #d0d0d0;
-                }
-            """)
+        c = ThemeStylesheetService.get_colors(self.theme_manager.current_theme)
+        hover_bg = {"dark": "#3d3d3d", "light": "#e8e8e8"}.get(self.theme_manager.current_theme, "#1a2838")
+        pressed_bg = {"dark": "#1a1a1a", "light": "#d0d0d0"}.get(self.theme_manager.current_theme, "#060a10")
+        btn.setStyleSheet(f"""
+            #overlayHomeBtn {{
+                background-color: {c['bg_header']};
+                color: {c['text']};
+                border: 1px solid {c['border']};
+                border-radius: 3px;
+                padding: 6px 12px;
+                font-size: 13px;
+                font-weight: bold;
+            }}
+            #overlayHomeBtn:hover {{
+                background-color: {hover_bg};
+                border-color: {c['accent']};
+            }}
+            #overlayHomeBtn:pressed {{
+                background-color: {pressed_bg};
+            }}
+        """)
 
     def open_module(self, module_id: str) -> None:
         """Open a module in full screen."""
@@ -506,7 +470,6 @@ class HubWindow(QMainWindow):
         _THEME_SLOTS = (
             "_on_theme_changed_lazy",
             "_on_theme_changed",
-            "_on_theme_changed_lazy_chart",
             "_on_theme_changed_lazy_panel",
             "_on_external_theme_change",
         )

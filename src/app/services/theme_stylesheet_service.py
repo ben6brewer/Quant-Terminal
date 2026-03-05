@@ -901,6 +901,26 @@ class ThemeStylesheetService:
         """
 
     @classmethod
+    def get_background_rgb(cls, theme: str) -> Tuple[int, int, int]:
+        """Get background RGB tuple for PyQtGraph charts."""
+        return {"dark": (30, 30, 30), "light": (255, 255, 255), "bloomberg": (13, 20, 32)}.get(theme, (30, 30, 30))
+
+    @classmethod
+    def get_accent_rgb(cls, theme: str) -> Tuple[int, int, int]:
+        """Get accent color RGB tuple for chart highlights."""
+        return {"dark": (0, 212, 255), "light": (0, 102, 204), "bloomberg": (255, 128, 0)}.get(theme, (0, 212, 255))
+
+    @classmethod
+    def get_text_rgb(cls, theme: str) -> Tuple[int, int, int]:
+        """Get text color RGB tuple for chart labels."""
+        return {"light": (0, 0, 0)}.get(theme, (255, 255, 255))
+
+    @classmethod
+    def get_crosshair_rgb(cls, theme: str) -> Tuple[int, int, int]:
+        """Get crosshair color RGB tuple for charts."""
+        return {"dark": (150, 150, 150), "light": (100, 100, 100), "bloomberg": (100, 120, 140)}.get(theme, (150, 150, 150))
+
+    @classmethod
     def get_chart_background_color(cls, theme: str) -> str:
         """Get chart background color for a theme."""
         return {"light": "w", "bloomberg": "#000814"}.get(theme, "#1e1e1e")

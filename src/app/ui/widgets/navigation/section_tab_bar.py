@@ -65,8 +65,10 @@ class SectionTabBar(LazyThemeMixin, QWidget):
         layout.addWidget(self.home_button)
         self.button_group.addButton(self.home_button)
 
-        # Create tab for each section
+        # Create tab for each section (skip internal sections prefixed with _)
         for section_name in MODULE_SECTIONS.keys():
+            if section_name.startswith("_"):
+                continue
             btn = QPushButton(section_name)
             btn.setObjectName("sectionTab")
             btn.setCheckable(True)

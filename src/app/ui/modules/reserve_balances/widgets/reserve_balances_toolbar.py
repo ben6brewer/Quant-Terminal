@@ -1,7 +1,5 @@
 """Reserve Balances Toolbar — Home, lookback, reserves stat, settings."""
 
-from PySide6.QtWidgets import QLabel
-
 from app.ui.modules.fred_toolbar import FredToolbar
 
 
@@ -12,12 +10,10 @@ class ReserveBalancesToolbar(FredToolbar):
         return 5  # Max
 
     def setup_info_section(self, layout):
-        self.reserves_label = QLabel("Reserves: --")
-        self.reserves_label.setObjectName("info_label")
+        self.reserves_label = self._info_label("Reserves: --")
         layout.addWidget(self.reserves_label)
         layout.addWidget(self._sep())
-        self.updated_label = QLabel("")
-        self.updated_label.setObjectName("info_label_muted")
+        self.updated_label = self._info_label("", "info_label_muted")
         layout.addWidget(self.updated_label)
 
     def update_info(self, reserves=None, **kwargs):

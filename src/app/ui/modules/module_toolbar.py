@@ -97,6 +97,32 @@ class ModuleToolbar(LazyThemeMixin, QWidget):
         s.setObjectName("separator")
         return s
 
+    def _info_label(self, text: str = "", object_name: str = "info_label") -> QLabel:
+        """Create a themed info label."""
+        lbl = QLabel(text)
+        lbl.setObjectName(object_name)
+        return lbl
+
+    def _control_label(self, text: str) -> QLabel:
+        """Create a label for labeling controls (e.g. 'Lookback:')."""
+        lbl = QLabel(text)
+        lbl.setObjectName("control_label")
+        return lbl
+
+    def _combo(self, items=None, min_width: int = 90, max_width: int = 130, height: int = 40):
+        """Create a sized NoScrollComboBox with optional items."""
+        from app.ui.widgets.common import NoScrollComboBox
+
+        cb = NoScrollComboBox()
+        cb.setFixedHeight(height)
+        cb.setMinimumWidth(min_width)
+        cb.setMaximumWidth(max_width)
+        cb.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        if items:
+            for item in items:
+                cb.addItem(item)
+        return cb
+
     def _update_timestamp(self):
         """Update the 'Updated: ...' label if it exists."""
         if hasattr(self, "updated_label"):

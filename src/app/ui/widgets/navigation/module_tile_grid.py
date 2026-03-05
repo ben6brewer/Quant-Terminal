@@ -69,6 +69,8 @@ class ModuleTileGrid(LazyThemeMixin, QScrollArea):
     def _create_all_tiles(self) -> None:
         """Create tiles for all modules."""
         for section_name, modules in MODULE_SECTIONS.items():
+            if section_name.startswith("_"):
+                continue
             for module in modules:
                 module_id = module["id"]
                 label = module["label"]

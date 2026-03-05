@@ -1,7 +1,5 @@
 """Labor Market Overview Toolbar - Home button, lookback, info labels, settings."""
 
-from PySide6.QtWidgets import QLabel
-
 from app.ui.modules.fred_toolbar import FredToolbar
 
 
@@ -9,12 +7,10 @@ class LaborMarketOverviewToolbar(FredToolbar):
     """Labor Market Overview toolbar — shows latest UNRATE reading."""
 
     def setup_info_section(self, layout):
-        self.unrate_label = QLabel("UNRATE: --")
-        self.unrate_label.setObjectName("info_label")
+        self.unrate_label = self._info_label("UNRATE: --")
         layout.addWidget(self.unrate_label)
         layout.addWidget(self._sep())
-        self.updated_label = QLabel("")
-        self.updated_label.setObjectName("info_label_muted")
+        self.updated_label = self._info_label("", "info_label_muted")
         layout.addWidget(self.updated_label)
 
     def update_info(self, unrate=None, **kwargs):

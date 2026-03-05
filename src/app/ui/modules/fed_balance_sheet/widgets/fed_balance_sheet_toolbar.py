@@ -1,7 +1,5 @@
 """Fed Balance Sheet Toolbar — Home, lookback, total assets stat, settings."""
 
-from PySide6.QtWidgets import QLabel
-
 from app.ui.modules.fred_toolbar import FredToolbar
 
 
@@ -12,12 +10,10 @@ class FedBalanceSheetToolbar(FredToolbar):
         return 3  # 10Y
 
     def setup_info_section(self, layout):
-        self.assets_label = QLabel("Total Assets: --")
-        self.assets_label.setObjectName("info_label")
+        self.assets_label = self._info_label("Total Assets: --")
         layout.addWidget(self.assets_label)
         layout.addWidget(self._sep())
-        self.updated_label = QLabel("")
-        self.updated_label.setObjectName("info_label_muted")
+        self.updated_label = self._info_label("", "info_label_muted")
         layout.addWidget(self.updated_label)
 
     def update_info(self, total_assets=None, **kwargs):

@@ -44,10 +44,14 @@ class PayrollsModule(FredDataModule):
         usrec = result.get("usrec")
         return (payrolls, usrec)
 
-    def create_settings_dialog(self, current_settings):
-        from .widgets.payrolls_settings_dialog import PayrollsSettingsDialog
-        return PayrollsSettingsDialog(
-            self.theme_manager,
-            current_settings=current_settings,
-            parent=self,
-        )
+    def get_settings_options(self):
+        return [
+            ("show_gridlines", "Show Gridlines"),
+            ("show_crosshair", "Show Crosshair"),
+            ("show_legend", "Show Legend"),
+            ("show_hover_tooltip", "Show Hover Tooltip"),
+            ("show_recession_shading", "Show NBER Recession Shading"),
+        ]
+
+    def get_settings_dialog_title(self):
+        return "Payrolls Settings"

@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QSizePolicy
+from PySide6.QtWidgets import QHBoxLayout
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
-from app.ui.widgets.common import NoScrollComboBox
 from app.ui.modules.module_toolbar import ModuleToolbar
 
 
@@ -63,26 +62,15 @@ class FredToolbar(ModuleToolbar):
     def setup_center(self, layout: QHBoxLayout):
         layout.addWidget(self._sep())
 
-        # Lookback combo
-        lb_label = QLabel("Lookback:")
-        lb_label.setObjectName("control_label")
-        layout.addWidget(lb_label)
-
-        self.lookback_combo = NoScrollComboBox()
-        self.lookback_combo.setFixedHeight(40)
-        self.lookback_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        layout.addWidget(self._control_label("Lookback:"))
 
         if self.supports_custom_date():
-            self.lookback_combo.setMinimumWidth(110)
-            self.lookback_combo.setMaximumWidth(160)
+            self.lookback_combo = self._combo(min_width=110, max_width=160)
             for opt in self.get_lookback_options():
                 self.lookback_combo.addItem(opt, opt)
             self.lookback_combo.addItem("Custom", "Custom")
         else:
-            self.lookback_combo.setMinimumWidth(90)
-            self.lookback_combo.setMaximumWidth(130)
-            for opt in self.get_lookback_options():
-                self.lookback_combo.addItem(opt)
+            self.lookback_combo = self._combo(items=self.get_lookback_options())
 
         self.lookback_combo.setCurrentIndex(self.get_default_lookback_index())
         self.lookback_combo.currentIndexChanged.connect(self._on_lookback_changed)

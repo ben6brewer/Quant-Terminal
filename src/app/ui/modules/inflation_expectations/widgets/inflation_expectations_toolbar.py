@@ -1,7 +1,5 @@
 """Inflation Expectations Toolbar - Home, lookback, breakeven info, settings."""
 
-from PySide6.QtWidgets import QLabel
-
 from app.ui.modules.fred_toolbar import FredToolbar
 
 
@@ -12,12 +10,10 @@ class InflationExpectationsToolbar(FredToolbar):
         return ["1Y", "2Y", "5Y", "10Y", "Max"]
 
     def setup_info_section(self, layout):
-        self.breakeven_label = QLabel("5Y Breakeven: --")
-        self.breakeven_label.setObjectName("info_label")
+        self.breakeven_label = self._info_label("5Y Breakeven: --")
         layout.addWidget(self.breakeven_label)
         layout.addWidget(self._sep())
-        self.updated_label = QLabel("")
-        self.updated_label.setObjectName("info_label_muted")
+        self.updated_label = self._info_label("", "info_label_muted")
         layout.addWidget(self.updated_label)
 
     def update_info(self, breakeven_5y=None, **kwargs):

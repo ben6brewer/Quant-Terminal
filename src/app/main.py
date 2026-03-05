@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import signal
 import sys
 from PySide6.QtCore import QTimer
@@ -7,165 +8,16 @@ from PySide6.QtWidgets import QApplication
 
 from app.ui.hub_window import HubWindow
 from app.core.theme_manager import ThemeManager
-from app.core.config import DEFAULT_THEME
+from app.core.config import DEFAULT_THEME, MODULE_SECTIONS
 from app.services.favorites_service import FavoritesService
 from app.services.preferences_service import PreferencesService
 
 
-# Lazy factory functions - modules are imported only when first opened
-def _create_chart_module(theme_manager):
-    from app.ui.modules.chart.chart_module import ChartModule
-    return ChartModule(theme_manager)
-
-
-def _create_settings_module(theme_manager):
-    from app.ui.modules.settings_module import SettingsModule
-    return SettingsModule(theme_manager)
-
-
-def _create_portfolio_construction_module(theme_manager):
-    from app.ui.modules.portfolio_construction.portfolio_construction_module import PortfolioConstructionModule
-    return PortfolioConstructionModule(theme_manager)
-
-
-def _create_return_distribution_module(theme_manager):
-    from app.ui.modules.return_distribution import ReturnDistributionModule
-    return ReturnDistributionModule(theme_manager)
-
-
-def _create_monte_carlo_module(theme_manager):
-    from app.ui.modules.monte_carlo import MonteCarloModule
-    return MonteCarloModule(theme_manager)
-
-
-def _create_performance_metrics_module(theme_manager):
-    from app.ui.modules.performance_metrics import PerformanceMetricsModule
-    return PerformanceMetricsModule(theme_manager)
-
-
-def _create_risk_analytics_module(theme_manager):
-    from app.ui.modules.risk_analytics import RiskAnalyticsModule
-    return RiskAnalyticsModule(theme_manager)
-
-
-def _create_efficient_frontier_module(theme_manager):
-    from app.ui.modules.analysis import EfficientFrontierModule
-    return EfficientFrontierModule(theme_manager)
-
-
-def _create_correlation_matrix_module(theme_manager):
-    from app.ui.modules.analysis import CorrelationMatrixModule
-    return CorrelationMatrixModule(theme_manager)
-
-
-def _create_covariance_matrix_module(theme_manager):
-    from app.ui.modules.analysis import CovarianceMatrixModule
-    return CovarianceMatrixModule(theme_manager)
-
-
-def _create_rolling_correlation_module(theme_manager):
-    from app.ui.modules.analysis import RollingCorrelationModule
-    return RollingCorrelationModule(theme_manager)
-
-
-def _create_rolling_covariance_module(theme_manager):
-    from app.ui.modules.analysis import RollingCovarianceModule
-    return RollingCovarianceModule(theme_manager)
-
-
-def _create_ols_regression_module(theme_manager):
-    from app.ui.modules.analysis import OLSRegressionModule
-    return OLSRegressionModule(theme_manager)
-
-
-def _create_monthly_returns_module(theme_manager):
-    from app.ui.modules.monthly_returns import MonthlyReturnsModule
-    return MonthlyReturnsModule(theme_manager)
-
-
-def _create_asset_class_returns_module(theme_manager):
-    from app.ui.modules.asset_class_returns import AssetClassReturnsModule
-    return AssetClassReturnsModule(theme_manager)
-
-
-def _create_cpi_module(theme_manager):
-    from app.ui.modules.cpi import CpiModule
-    return CpiModule(theme_manager)
-
-
-def _create_pce_module(theme_manager):
-    from app.ui.modules.pce import PceModule
-    return PceModule(theme_manager)
-
-
-def _create_ppi_module(theme_manager):
-    from app.ui.modules.ppi import PpiModule
-    return PpiModule(theme_manager)
-
-
-def _create_inflation_expectations_module(theme_manager):
-    from app.ui.modules.inflation_expectations import InflationExpectationsModule
-    return InflationExpectationsModule(theme_manager)
-
-
-def _create_treasury_module(theme_manager):
-    from app.ui.modules.treasury import TreasuryModule
-    return TreasuryModule(theme_manager)
-
-
-def _create_labor_market_overview_module(theme_manager):
-    from app.ui.modules.labor_market_overview import LaborMarketOverviewModule
-    return LaborMarketOverviewModule(theme_manager)
-
-
-def _create_payrolls_module(theme_manager):
-    from app.ui.modules.payrolls import PayrollsModule
-    return PayrollsModule(theme_manager)
-
-
-def _create_labor_claims_module(theme_manager):
-    from app.ui.modules.labor_claims import LaborClaimsModule
-    return LaborClaimsModule(theme_manager)
-
-
-def _create_demographics_module(theme_manager):
-    from app.ui.modules.demographics import DemographicsModule
-    return DemographicsModule(theme_manager)
-
-
-def _create_jolts_module(theme_manager):
-    from app.ui.modules.jolts import JoltsModule
-    return JoltsModule(theme_manager)
-
-
-def _create_rate_probability_module(theme_manager):
-    from app.ui.modules.rate_probability import RateProbabilityModule
-    return RateProbabilityModule(theme_manager)
-
-
-def _create_money_supply_module(theme_manager):
-    from app.ui.modules.money_supply import MoneySupplyModule
-    return MoneySupplyModule(theme_manager)
-
-
-def _create_fed_balance_sheet_module(theme_manager):
-    from app.ui.modules.fed_balance_sheet import FedBalanceSheetModule
-    return FedBalanceSheetModule(theme_manager)
-
-
-def _create_fed_funds_rate_module(theme_manager):
-    from app.ui.modules.fed_funds_rate import FedFundsRateModule
-    return FedFundsRateModule(theme_manager)
-
-
-def _create_reserve_balances_module(theme_manager):
-    from app.ui.modules.reserve_balances import ReserveBalancesModule
-    return ReserveBalancesModule(theme_manager)
-
-
-def _create_money_velocity_module(theme_manager):
-    from app.ui.modules.money_velocity import MoneyVelocityModule
-    return MoneyVelocityModule(theme_manager)
+def _dynamic_import(class_path: str):
+    """Import a class from a 'dotted.module.path:ClassName' string."""
+    module_path, class_name = class_path.rsplit(":", 1)
+    module = importlib.import_module(module_path)
+    return getattr(module, class_name)
 
 
 def main() -> int:
@@ -183,154 +35,15 @@ def main() -> int:
     # Create main hub window with theme manager
     hub = HubWindow(theme_manager)
 
-    # Add modules - all use lazy factory functions (imported only when first opened)
-    hub.add_module("charts", lambda: _create_chart_module(theme_manager))
-    hub.add_module(
-        "portfolio_construction",
-        lambda: _create_portfolio_construction_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "performance_metrics",
-        lambda: _create_performance_metrics_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "risk_analytics",
-        lambda: _create_risk_analytics_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "distribution_metrics",
-        lambda: _create_return_distribution_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "monte_carlo",
-        lambda: _create_monte_carlo_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "efficient_frontier",
-        lambda: _create_efficient_frontier_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "correlation_matrix",
-        lambda: _create_correlation_matrix_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "covariance_matrix",
-        lambda: _create_covariance_matrix_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "rolling_correlation",
-        lambda: _create_rolling_correlation_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "rolling_covariance",
-        lambda: _create_rolling_covariance_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "ols_regression",
-        lambda: _create_ols_regression_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "monthly_returns",
-        lambda: _create_monthly_returns_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "asset_class_returns",
-        lambda: _create_asset_class_returns_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "cpi",
-        lambda: _create_cpi_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "pce",
-        lambda: _create_pce_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "ppi",
-        lambda: _create_ppi_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "inflation_expectations",
-        lambda: _create_inflation_expectations_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "yields",
-        lambda: _create_treasury_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "labor_market_overview",
-        lambda: _create_labor_market_overview_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "demographics",
-        lambda: _create_demographics_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "payrolls",
-        lambda: _create_payrolls_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "labor_claims",
-        lambda: _create_labor_claims_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "jolts",
-        lambda: _create_jolts_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "rate_probability",
-        lambda: _create_rate_probability_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "money_supply",
-        lambda: _create_money_supply_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "fed_balance_sheet",
-        lambda: _create_fed_balance_sheet_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "fed_funds_rate",
-        lambda: _create_fed_funds_rate_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "reserve_balances",
-        lambda: _create_reserve_balances_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module(
-        "money_velocity",
-        lambda: _create_money_velocity_module(theme_manager),
-        has_own_home_button=True,
-    )
-    hub.add_module("settings", lambda: _create_settings_module(theme_manager))
+    # Register all modules from config — lazy loading via importlib
+    for section_modules in MODULE_SECTIONS.values():
+        for entry in section_modules:
+            cp = entry["class"]
+            hub.add_module(
+                entry["id"],
+                lambda cp=cp: _dynamic_import(cp)(theme_manager),
+                has_own_home_button=entry.get("has_own_home_button", True),
+            )
 
     # Show home screen on startup
     hub.show_initial_screen()
