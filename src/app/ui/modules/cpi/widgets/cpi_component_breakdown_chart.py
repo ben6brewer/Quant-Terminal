@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 import numpy as np
@@ -244,37 +245,36 @@ class CpiComponentBreakdownChart(BaseChart):
         self._month_labels = [dt.strftime("%b '%y") for dt in component_df.index]
         self._bottom_axis.set_labels(self._month_labels)
 
-        # Pre-compute weighted contributions so areas sum to headline CPI
+        # Pre-compute weighted contributions (weight * YoY%)
         contributions: List[List[tuple]] = []
         for month_idx in range(n_months):
-            headline = headline_values[month_idx] if headline_values is not None else np.nan
-
-            raw = {}
+            month_contribs = []
             for comp_name in available:
                 val = component_df.iloc[month_idx][comp_name]
                 if np.isnan(val):
                     continue
                 w = COMPONENT_WEIGHTS.get(comp_name, 0.0)
-                raw[comp_name] = w * val
-
-            raw_sum = sum(raw.values())
-
-            if not np.isnan(headline) and raw_sum != 0:
-                scale = headline / raw_sum
-            elif np.isnan(headline):
-                scale = 1.0
-            else:
-                scale = 0.0
-
-            month_contribs = []
-            for comp_name in available:
-                if comp_name in raw:
-                    month_contribs.append((comp_name, raw[comp_name] * scale))
-
+                month_contribs.append((comp_name, w * val))
             contributions.append(month_contribs)
 
         self._contributions = contributions
         self._headline_values = headline_values
+
+        # Sanity-check contributions — flag likely data corruption
+        for month_idx, month_contribs in enumerate(contributions):
+            total = sum(v for _, v in month_contribs)
+            for comp_name, val in month_contribs:
+                if abs(val) > 10:
+                    logging.warning(
+                        "CPI breakdown: %s contribution %.1f%% at month %d — possible data issue",
+                        comp_name, val, month_idx,
+                    )
+                    break
+            if abs(total) > 15:
+                logging.warning(
+                    "CPI breakdown: total contribution %.1f%% at month %d — possible data issue",
+                    total, month_idx,
+                )
 
         # Build stacked bar chart
         self._build_stacked_bars(n_months, contributions)

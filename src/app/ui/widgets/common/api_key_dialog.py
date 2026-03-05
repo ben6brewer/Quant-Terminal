@@ -1,5 +1,6 @@
 """API Key Dialog - FRED API key entry dialog (shared across modules)."""
 
+import logging
 from typing import Optional
 
 from PySide6.QtWidgets import (
@@ -9,9 +10,37 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
 )
+from PySide6.QtCore import Qt, QThread, Signal
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common.themed_dialog import ThemedDialog
+
+logger = logging.getLogger(__name__)
+
+
+class _ValidateKeyThread(QThread):
+    """Background thread to validate a FRED API key."""
+
+    success = Signal()
+    failed = Signal(str)
+
+    def __init__(self, api_key: str, parent=None):
+        super().__init__(parent)
+        self._api_key = api_key
+
+    def run(self):
+        try:
+            from fredapi import Fred
+
+            fred = Fred(api_key=self._api_key)
+            fred.get_series_info("GNPCA")
+            self.success.emit()
+        except Exception as exc:
+            msg = str(exc)
+            if "Bad Request" in msg or "400" in msg:
+                self.failed.emit("Invalid API key. Please check and try again.")
+            else:
+                self.failed.emit(f"Validation failed: {msg}")
 
 
 class APIKeyDialog(ThemedDialog):
@@ -20,15 +49,19 @@ class APIKeyDialog(ThemedDialog):
     def __init__(self, theme_manager: ThemeManager, parent=None, current_key: str = ""):
         self._api_key: Optional[str] = None
         self._current_key = current_key
+        self._validate_thread: Optional[_ValidateKeyThread] = None
         super().__init__(theme_manager, "FRED API Key", parent, min_width=450)
 
     def _setup_content(self, layout: QVBoxLayout):
         """Setup dialog content."""
         desc = QLabel(
-            "Enter your FRED API key to fetch Federal Reserve data.\n"
-            "Get a free key at https://fred.stlouisfed.org/docs/api/api_key.html"
+            'Enter your FRED API key to fetch Federal Reserve data.<br>'
+            'Get a free key at <a href="https://fred.stlouisfed.org/docs/api/api_key.html">'
+            'fred.stlouisfed.org/docs/api/api_key.html</a>'
         )
         desc.setWordWrap(True)
+        desc.setTextFormat(Qt.RichText)
+        desc.setOpenExternalLinks(True)
         desc.setObjectName("description_label")
         layout.addWidget(desc)
 
@@ -58,6 +91,13 @@ class APIKeyDialog(ThemedDialog):
 
         layout.addLayout(key_row)
 
+        # Error label (hidden by default)
+        self._error_label = QLabel()
+        self._error_label.setStyleSheet("color: #ff4444; font-size: 12px;")
+        self._error_label.setWordWrap(True)
+        self._error_label.hide()
+        layout.addWidget(self._error_label)
+
         layout.addStretch()
 
         # Button row
@@ -69,11 +109,11 @@ class APIKeyDialog(ThemedDialog):
         cancel_btn.clicked.connect(self.reject)
         btn_row.addWidget(cancel_btn)
 
-        save_btn = QPushButton("Save")
-        save_btn.setFixedSize(100, 36)
-        save_btn.setObjectName("defaultButton")
-        save_btn.clicked.connect(self._on_save)
-        btn_row.addWidget(save_btn)
+        self._save_btn = QPushButton("Save")
+        self._save_btn.setFixedSize(100, 36)
+        self._save_btn.setObjectName("defaultButton")
+        self._save_btn.clicked.connect(self._on_save)
+        btn_row.addWidget(self._save_btn)
 
         layout.addLayout(btn_row)
 
@@ -87,11 +127,36 @@ class APIKeyDialog(ThemedDialog):
             self.toggle_btn.setText("Show")
 
     def _on_save(self):
-        """Handle save button click."""
+        """Handle save button click — validate key before accepting."""
         key = self.key_input.text().strip()
-        if key:
-            self._api_key = key
-            self.accept()
+        if not key:
+            return
+
+        # Disable UI while validating
+        self._save_btn.setEnabled(False)
+        self._save_btn.setText("Validating...")
+        self._error_label.hide()
+        self.key_input.setEnabled(False)
+
+        self._validate_thread = _ValidateKeyThread(key, self)
+        self._validate_thread.success.connect(lambda: self._on_validation_done(key))
+        self._validate_thread.failed.connect(self._on_validation_failed)
+        self._validate_thread.start()
+
+    def _on_validation_done(self, key: str):
+        """Key validated successfully — accept dialog."""
+        self._api_key = key
+        self.accept()
+
+    def _on_validation_failed(self, message: str):
+        """Key validation failed — show error and re-enable UI."""
+        logger.warning("FRED API key validation failed: %s", message)
+        self._error_label.setText(message)
+        self._error_label.show()
+        self._save_btn.setEnabled(True)
+        self._save_btn.setText("Save")
+        self.key_input.setEnabled(True)
+        self.key_input.setFocus()
 
     def get_api_key(self) -> Optional[str]:
         """Get the entered API key (after dialog accepted)."""

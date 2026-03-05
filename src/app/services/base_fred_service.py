@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Optional
 
@@ -11,6 +12,36 @@ if TYPE_CHECKING:
     import pandas as pd
 
 CACHE_DIR = Path.home() / ".quant_terminal" / "cache" / "fred"
+
+_FRED_CACHE_VERSION = "2"
+_FRED_VERSION_FILE = CACHE_DIR / ".fred_cache_version"
+
+_version_checked = False
+
+
+def _check_fred_cache_version():
+    """One-time wipe of FRED caches when version changes."""
+    global _version_checked
+    if _version_checked:
+        return
+    if _FRED_VERSION_FILE.exists():
+        if _FRED_VERSION_FILE.read_text().strip() == _FRED_CACHE_VERSION:
+            _version_checked = True
+            return
+    # Version mismatch or no version file — delete all parquet files
+    if CACHE_DIR.exists():
+        deleted = list(CACHE_DIR.glob("*.parquet"))
+        for f in deleted:
+            f.unlink(missing_ok=True)
+        if deleted:
+            logging.info(
+                "FRED cache version bump to v%s — deleted %d parquet files",
+                _FRED_CACHE_VERSION,
+                len(deleted),
+            )
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    _FRED_VERSION_FILE.write_text(_FRED_CACHE_VERSION)
+    _version_checked = True
 
 
 class BaseFredService:
@@ -49,8 +80,12 @@ class BaseFredService:
             if df.empty:
                 return None
             valid_cols = [c for c in df.columns if c in series_map]
-            return df[valid_cols] if valid_cols else None
+            if not valid_cols:
+                return None
+            return df[valid_cols]
         except Exception:
+            logging.warning("Failed to read FRED cache %s — deleting", cache_file.name)
+            cache_file.unlink(missing_ok=True)
             return None
 
     @classmethod
@@ -73,6 +108,8 @@ class BaseFredService:
     ) -> "Optional[pd.DataFrame]":
         """Generic cache-with-incremental-update pattern for a group of series."""
         import time
+
+        _check_fred_cache_version()
 
         cached = cls._load_cache(cache_file, series_map)
         if cached is not None:
@@ -105,6 +142,7 @@ class BaseFredService:
 
         api_key = FredApiKeyService.get_api_key()
         if not api_key:
+            logging.warning("No FRED API key — cannot fetch %s", cache_file.name)
             return None
 
         try:
@@ -127,7 +165,7 @@ class BaseFredService:
                         if data is not None and not data.empty:
                             frames[label] = data
                     except Exception:
-                        continue
+                        logging.exception("FRED fetch failed for series %s", futures[future])
 
             if not frames:
                 return None
@@ -141,6 +179,7 @@ class BaseFredService:
             return df
 
         except Exception:
+            logging.exception("FRED full fetch failed for %s", cache_file.name)
             return None
 
     @classmethod
@@ -156,6 +195,7 @@ class BaseFredService:
 
         api_key = FredApiKeyService.get_api_key()
         if not api_key:
+            logging.warning("No FRED API key — cannot fetch %s", cache_file.name)
             return None
 
         try:
@@ -181,7 +221,7 @@ class BaseFredService:
                         if data is not None and not data.empty:
                             frames[label] = data
                     except Exception:
-                        continue
+                        logging.exception("FRED incremental fetch failed for series %s", futures[future])
 
             if not frames:
                 return cached
@@ -198,6 +238,7 @@ class BaseFredService:
             return combined
 
         except Exception:
+            logging.exception("FRED incremental fetch failed for %s", cache_file.name)
             return cached
 
     # ── Transform helpers ─────────────────────────────────────────────────
