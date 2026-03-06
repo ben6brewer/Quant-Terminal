@@ -1,6 +1,6 @@
 """Corporate Spreads Module — Multi-line: Baa-10Y, Aaa-10Y, HY OAS."""
 
-from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_WEEKS
+from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_DAYS
 from app.ui.modules.financial_conditions.services import FinancialConditionsFredService
 from .widgets.corporate_spreads_toolbar import CorporateSpreadsToolbar
 from .widgets.corporate_spreads_chart import CorporateSpreadsChart
@@ -38,7 +38,7 @@ class CorporateSpreadsModule(FredDataModule):
         return "Failed to fetch corporate spread data."
 
     def get_lookback_map(self):
-        return LOOKBACK_WEEKS
+        return LOOKBACK_DAYS
 
     def update_toolbar_info(self, result):
         stats = FinancialConditionsFredService.get_latest_stats(result)

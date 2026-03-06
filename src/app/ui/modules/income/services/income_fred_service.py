@@ -14,6 +14,9 @@ INCOME_SERIES: Dict[str, str] = {
     "Personal Income": "PI",
     "Disposable Income": "DSPI",
     "PCE Level": "PCE",
+    "Real Personal Income": "RPI",
+    "Real Disposable Income": "DSPIC96",
+    "Real PCE Level": "PCEC96",
     "Savings Rate": "PSAVERT",
     "Avg Hourly Earnings": "CES0500000003",
     "ECI Wages": "ECIWAG",
@@ -50,6 +53,15 @@ class IncomeFredService(BaseFredService):
             for col in df.columns:
                 df[col] = df[col] / 1000.0
             result["income"] = df
+
+        # Real income levels (billions → trillions)
+        real_cols = [c for c in ["Real Personal Income", "Real Disposable Income", "Real PCE Level"]
+                     if c in raw.columns]
+        if real_cols:
+            rdf = raw[real_cols].dropna(how="all").copy()
+            for col in rdf.columns:
+                rdf[col] = rdf[col] / 1000.0
+            result["real_income"] = rdf
 
         # Savings rate (already %)
         if "Savings Rate" in raw.columns:

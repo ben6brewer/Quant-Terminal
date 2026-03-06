@@ -1,4 +1,4 @@
-"""Trade Balance Chart — Dual-mode: Raw (exports/imports two-line) or YoY% balance."""
+"""Trade Balance Chart — Dual-mode: Raw or YoY% multi-line (exports/imports/balance)."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ _BALANCE_COLOR = "#4FC3F7"
 
 
 class TradeBalanceChart(BaseChart):
-    """Trade balance chart — two-line Raw or YoY% line."""
+    """Trade balance chart — multi-line in both Raw and YoY% modes."""
 
     def __init__(self, parent=None):
         self._placeholder = None
@@ -194,28 +194,39 @@ class TradeBalanceChart(BaseChart):
     def _render_yoy(self, trade_df, usrec_df, settings):
         import pandas as pd
 
-        if trade_df is None or trade_df.empty or "Trade Balance" not in trade_df.columns:
+        if trade_df is None or trade_df.empty:
             self.show_placeholder("No trade data available.")
             return
 
         show_recession = settings.get("show_recession_bands", True)
-        yoy = trade_df["Trade Balance"].pct_change(periods=12) * 100
-        yoy = yoy.dropna()
-        if yoy.empty:
+
+        # Compute YoY% for each series
+        yoy_map = {}
+        for col in ["Exports", "Imports", "Trade Balance"]:
+            if col in trade_df.columns:
+                s = trade_df[col].pct_change(periods=12) * 100
+                s = s.dropna()
+                if not s.empty:
+                    yoy_map[col] = s
+
+        if not yoy_map:
             self.show_placeholder("Not enough data for YoY% calculation.")
             return
 
+        # Union of all indices
+        combined_idx = next(iter(yoy_map.values())).index
+        for s in yoy_map.values():
+            combined_idx = combined_idx.union(s.index)
+        combined_idx = combined_idx.sort_values()
+
         self._placeholder.setVisible(False)
-        self._dates = yoy.index.values
+        self._dates = combined_idx.values
         self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
-        yoy_vals = yoy.values.astype(float)
-        self._series_values = {"YoY %": yoy_vals}
 
         self._clear_plot()
         dt_index = pd.DatetimeIndex(self._dates)
         self._bottom_axis.set_index(dt_index)
         x = np.arange(len(self._dates))
-        accent = self._get_theme_accent_color()
 
         if show_recession and usrec_df is not None and not usrec_df.empty:
             usrec_series = usrec_df["USREC"].reindex(dt_index, method="ffill").fillna(0)
@@ -226,20 +237,36 @@ class TradeBalanceChart(BaseChart):
         )
         self.plot_item.addItem(self._ref_line)
 
-        line = self.plot_item.plot(x, yoy_vals, pen=pg.mkPen(color=accent, width=2.5))
-        line.setClipToView(True)
-        self._line_items["YoY %"] = line
+        # Plot each YoY% line with same colors as Raw view
+        color_map = {"Exports": _EXPORTS_COLOR, "Imports": _IMPORTS_COLOR, "Trade Balance": _BALANCE_COLOR}
+        all_vals = []
+        for col in ["Exports", "Imports", "Trade Balance"]:
+            if col not in yoy_map:
+                continue
+            vals = yoy_map[col].reindex(combined_idx).values.astype(float)
+            label = f"{col} YoY"
+            self._series_values[label] = vals
+            line = self.plot_item.plot(
+                x, vals,
+                pen=pg.mkPen(color=color_map[col], width=2),
+                name=label,
+            )
+            line.setClipToView(True)
+            self._line_items[label] = line
+            all_vals.append(vals)
 
-        valid = yoy_vals[~np.isnan(yoy_vals)]
-        if len(valid) > 0:
-            y_min, y_max = float(np.nanmin(valid)), float(np.nanmax(valid))
-            y_range = y_max - y_min if y_max != y_min else 2.0
-            pad = y_range * 0.1
-            self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
+        if all_vals:
+            combined = np.concatenate(all_vals)
+            valid = combined[~np.isnan(combined)]
+            if len(valid) > 0:
+                y_min, y_max = float(np.nanmin(valid)), float(np.nanmax(valid))
+                y_range = y_max - y_min if y_max != y_min else 2.0
+                pad = y_range * 0.1
+                self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
 
         self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
         self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
-        self._legend.setVisible(False)
+        self._legend.setVisible(self._show_legend)
 
     def _on_mouse_move(self, ev):
         if self._dates is None or len(self._dates) == 0:
@@ -282,8 +309,10 @@ class TradeBalanceChart(BaseChart):
         date_str = self._date_labels[idx] if idx < len(self._date_labels) else "?"
         lines = [f"<b>{date_str}</b>"]
 
-        color_map = {"Exports": _EXPORTS_COLOR, "Imports": _IMPORTS_COLOR, "Trade Balance": _BALANCE_COLOR}
-        accent = self._get_theme_accent_color()
+        color_map = {
+            "Exports": _EXPORTS_COLOR, "Imports": _IMPORTS_COLOR, "Trade Balance": _BALANCE_COLOR,
+            "Exports YoY": _EXPORTS_COLOR, "Imports YoY": _IMPORTS_COLOR, "Trade Balance YoY": _BALANCE_COLOR,
+        }
 
         for name, vals in self._series_values.items():
             if idx >= len(vals):
@@ -291,11 +320,10 @@ class TradeBalanceChart(BaseChart):
             v = vals[idx]
             if np.isnan(v):
                 continue
-            if name == "YoY %":
-                color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
-                lines.append(f'<span style="color:{color_str};">\u25a0</span> Balance YoY: {v:+.1f}%')
+            color_str = color_map.get(name, "#888888")
+            if name.endswith("YoY"):
+                lines.append(f'<span style="color:{color_str};">\u25a0</span> {name}: {v:+.1f}%')
             else:
-                color_str = color_map.get(name, "#888888")
                 lines.append(f'<span style="color:{color_str};">\u25a0</span> {name}: ${v:,.1f}B')
 
         self._tooltip.setText("<br>".join(lines))

@@ -1,16 +1,18 @@
-"""GDP Toolbar — Home, lookback, view toggle (Raw / YoY %), stats."""
+"""GDP Toolbar — Home, lookback, view toggle (Raw / YoY %), data toggle (Real / Nominal), stats."""
 
 from PySide6.QtCore import Signal
 
 from app.ui.modules.fred_toolbar import FredToolbar
 
 VIEW_OPTIONS = ["Raw", "YoY %"]
+DATA_OPTIONS = ["Real", "Nominal"]
 
 
 class GdpToolbar(FredToolbar):
-    """GDP toolbar — adds view toggle (Raw / YoY %) to standard layout."""
+    """GDP toolbar — adds view toggle (Raw / YoY %) and data toggle (Real / Nominal)."""
 
     view_changed = Signal(str)
+    data_mode_changed = Signal(str)
 
     def get_lookback_options(self):
         return ["5Y", "10Y", "20Y", "Max"]
@@ -27,6 +29,17 @@ class GdpToolbar(FredToolbar):
             lambda _: self.view_changed.emit(self.view_combo.currentText())
         )
         layout.addWidget(self.view_combo)
+
+        layout.addWidget(self._sep())
+
+        layout.addWidget(self._control_label("Data:"))
+
+        self.data_combo = self._combo(items=DATA_OPTIONS)
+        self.data_combo.setCurrentIndex(0)
+        self.data_combo.currentIndexChanged.connect(
+            lambda _: self.data_mode_changed.emit(self.data_combo.currentText())
+        )
+        layout.addWidget(self.data_combo)
 
         layout.addWidget(self._sep())
 
@@ -49,6 +62,14 @@ class GdpToolbar(FredToolbar):
                 self.view_combo.blockSignals(True)
                 self.view_combo.setCurrentIndex(i)
                 self.view_combo.blockSignals(False)
+                return
+
+    def set_active_data_mode(self, mode: str):
+        for i in range(self.data_combo.count()):
+            if self.data_combo.itemText(i) == mode:
+                self.data_combo.blockSignals(True)
+                self.data_combo.setCurrentIndex(i)
+                self.data_combo.blockSignals(False)
                 return
 
     def update_info(self, real_gdp=None, gdp_growth=None, quarter=None, **kwargs):

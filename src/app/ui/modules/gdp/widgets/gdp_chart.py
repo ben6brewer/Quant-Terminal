@@ -1,4 +1,4 @@
-"""GDP Chart — Dual-mode: Raw stacked components or YoY% growth line."""
+"""GDP Chart — Dual-mode: Raw stacked components or YoY% growth line, with Real/Nominal toggle."""
 
 from __future__ import annotations
 
@@ -45,12 +45,15 @@ class GdpChart(BaseChart):
         self._show_legend = True
         self._show_hover_tooltip = True
         self._view_mode = "Raw"
+        self._data_mode = "Real"
         # Tooltip data
         self._pce_values: Optional[np.ndarray] = None
         self._inv_values: Optional[np.ndarray] = None
         self._gov_values: Optional[np.ndarray] = None
         self._exp_values: Optional[np.ndarray] = None
         self._imp_values: Optional[np.ndarray] = None
+        self._real_gdp_values: Optional[np.ndarray] = None
+        self._nominal_gdp_values: Optional[np.ndarray] = None
         self._growth_values: Optional[np.ndarray] = None
 
         self._setup_plots()
@@ -129,7 +132,9 @@ class GdpChart(BaseChart):
     def update_data(
         self,
         comp_df: "Optional[pd.DataFrame]",
+        nom_comp_df: "Optional[pd.DataFrame]",
         growth_df: "Optional[pd.DataFrame]",
+        gdp_df: "Optional[pd.DataFrame]",
         usrec_df: "Optional[pd.DataFrame]",
         settings: dict,
     ):
@@ -138,11 +143,25 @@ class GdpChart(BaseChart):
         self._show_legend = settings.get("show_legend", True)
         self._show_hover_tooltip = settings.get("show_hover_tooltip", True)
         self._view_mode = settings.get("view_mode", "Raw")
+        self._data_mode = settings.get("data_mode", "Real")
+
+        # Store GDP totals for tooltip
+        if gdp_df is not None and not gdp_df.empty:
+            if "Real GDP" in gdp_df.columns:
+                self._real_gdp_values = gdp_df["Real GDP"].values.astype(float)
+            if "Nominal GDP" in gdp_df.columns:
+                self._nominal_gdp_values = gdp_df["Nominal GDP"].values.astype(float)
+            self._gdp_dates = gdp_df.index.values
+        else:
+            self._real_gdp_values = None
+            self._nominal_gdp_values = None
+            self._gdp_dates = None
 
         if self._view_mode == "YoY %":
-            self._render_growth(growth_df, usrec_df, settings)
+            self._render_growth(growth_df, gdp_df, usrec_df, settings)
         else:
-            self._render_components(comp_df, usrec_df, settings)
+            active_comp = nom_comp_df if self._data_mode == "Nominal" else comp_df
+            self._render_components(active_comp, usrec_df, settings)
 
     # ── Raw: stacked area ─────────────────────────────────────────────────
 
@@ -250,17 +269,29 @@ class GdpChart(BaseChart):
 
     # ── YoY %: single growth line ────────────────────────────────────────
 
-    def _render_growth(self, growth_df, usrec_df, settings):
+    def _render_growth(self, growth_df, gdp_df, usrec_df, settings):
         import pandas as pd
-
-        if growth_df is None or growth_df.empty:
-            self.show_placeholder("No GDP growth data available.")
-            return
 
         show_recession = settings.get("show_recession_bands", True)
 
-        col = "GDP Growth" if "GDP Growth" in growth_df.columns else growth_df.columns[0]
-        series = growth_df[col].dropna()
+        if self._data_mode == "Nominal" and gdp_df is not None and "Nominal GDP" in gdp_df.columns:
+            # Compute nominal YoY% from Nominal GDP (quarterly → periods=4)
+            nominal_yoy = gdp_df["Nominal GDP"].pct_change(periods=4) * 100
+            nominal_yoy = nominal_yoy.dropna()
+            if nominal_yoy.empty:
+                self.show_placeholder("Not enough data for Nominal GDP YoY%.")
+                return
+            series = nominal_yoy
+            growth_label = "Nominal GDP YoY"
+        else:
+            # Real mode: use pre-computed GDP Growth (QoQ annualized)
+            if growth_df is None or growth_df.empty:
+                self.show_placeholder("No GDP growth data available.")
+                return
+            col = "GDP Growth" if "GDP Growth" in growth_df.columns else growth_df.columns[0]
+            series = growth_df[col].dropna()
+            growth_label = "GDP Growth"
+
         if series.empty:
             self.show_placeholder("No GDP growth data available.")
             return
@@ -272,6 +303,7 @@ class GdpChart(BaseChart):
             for d in self._dates
         ]
         self._growth_values = series.values.astype(float)
+        self._growth_label = growth_label
 
         self._clear_plot()
         dt_index = pd.DatetimeIndex(self._dates)
@@ -354,12 +386,13 @@ class GdpChart(BaseChart):
 
         if self._view_mode == "YoY %":
             accent = self._get_theme_accent_color()
+            label = getattr(self, "_growth_label", "GDP Growth")
             if self._growth_values is not None and idx < len(self._growth_values):
                 val = self._growth_values[idx]
                 if not np.isnan(val):
                     lines.append(
                         f'<span style="color:rgb({accent[0]},{accent[1]},{accent[2]});">\u25a0</span>'
-                        f" GDP Growth: {val:+.1f}%"
+                        f" {label}: {val:+.1f}%"
                     )
         else:
             for label, vals, color in [
@@ -376,6 +409,17 @@ class GdpChart(BaseChart):
                             f'<span style="color:{color};">\u25a0</span>'
                             f" {label}: ${val:.2f}T"
                         )
+            # Bold total from GDP data
+            gdp_vals = self._nominal_gdp_values if self._data_mode == "Nominal" else self._real_gdp_values
+            gdp_label = "Nominal GDP" if self._data_mode == "Nominal" else "Real GDP"
+            if gdp_vals is not None and self._gdp_dates is not None:
+                import pandas as pd
+                current_date = self._dates[idx]
+                gdp_idx = np.searchsorted(self._gdp_dates, current_date)
+                if gdp_idx < len(gdp_vals):
+                    total = gdp_vals[gdp_idx]
+                    if not np.isnan(total):
+                        lines.append(f"<b>{gdp_label}: ${total:.2f}T</b>")
 
         self._tooltip.setText("<br>".join(lines))
         self._tooltip.adjustSize()

@@ -12,6 +12,7 @@ class GdpModule(FredDataModule):
     SETTINGS_FILENAME = "gdp_settings.json"
     DEFAULT_SETTINGS = {
         "view_mode": "Raw",
+        "data_mode": "Real",
         "show_pce": True,
         "show_investment": True,
         "show_government": True,
@@ -54,19 +55,27 @@ class GdpModule(FredDataModule):
 
     def extract_chart_data(self, result):
         comp_df = self.slice_data(result.get("components"))
+        nom_comp_df = self.slice_data(result.get("nominal_components"))
         growth_df = self.slice_data(result.get("growth"))
+        gdp_df = self.slice_data(result.get("gdp"))
         usrec_df = result.get("usrec")
-        return (comp_df, growth_df, usrec_df)
+        return (comp_df, nom_comp_df, growth_df, gdp_df, usrec_df)
 
     def _connect_extra_signals(self):
         self.toolbar.view_changed.connect(self._on_view_changed)
+        self.toolbar.data_mode_changed.connect(self._on_data_mode_changed)
 
     def _on_view_changed(self, view: str):
         self.settings_manager.update_settings({"view_mode": view})
         self._render()
 
+    def _on_data_mode_changed(self, mode: str):
+        self.settings_manager.update_settings({"data_mode": mode})
+        self._render()
+
     def _apply_extra_settings(self):
         self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
+        self.toolbar.set_active_data_mode(self.settings_manager.get_setting("data_mode"))
 
     def get_settings_options(self):
         return [

@@ -1,4 +1,4 @@
-"""Vehicle Sales Module — Multi-line: Total, Light Autos, Heavy Trucks."""
+"""Vehicle Sales Module — Dual-view: Raw multi-line or YoY% multi-line."""
 
 from app.ui.modules.fred_base_module import FredDataModule
 from app.ui.modules.retail.services import RetailFredService
@@ -7,10 +7,11 @@ from .widgets.vehicle_sales_chart import VehicleSalesChart
 
 
 class VehicleSalesModule(FredDataModule):
-    """Vehicle Sales module — multi-line chart with recession bands."""
+    """Vehicle Sales module — dual-view: Raw multi-line or YoY% multi-line."""
 
     SETTINGS_FILENAME = "vehicle_sales_settings.json"
     DEFAULT_SETTINGS = {
+        "view_mode": "Raw",
         "show_total": True,
         "show_light_autos": True,
         "show_heavy_trucks": True,
@@ -46,6 +47,16 @@ class VehicleSalesModule(FredDataModule):
         vehicles_df = self.slice_data(result.get("vehicles"))
         usrec_df = result.get("usrec")
         return (vehicles_df, usrec_df)
+
+    def _connect_extra_signals(self):
+        self.toolbar.view_changed.connect(self._on_view_changed)
+
+    def _on_view_changed(self, view: str):
+        self.settings_manager.update_settings({"view_mode": view})
+        self._render()
+
+    def _apply_extra_settings(self):
+        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

@@ -17,11 +17,8 @@ from app.utils.recession_bands import add_recession_bands
 if TYPE_CHECKING:
     import pandas as pd
 
-_REAL_COLOR = "#66BB6A"
-
-
 class RetailSalesChart(BaseChart):
-    """Retail sales chart — two-line (Raw) or YoY% line."""
+    """Retail sales chart — single-line (Raw) or YoY% line, with Nominal/Real toggle."""
 
     def __init__(self, parent=None):
         self._placeholder = None
@@ -39,6 +36,7 @@ class RetailSalesChart(BaseChart):
         self._show_legend = True
         self._show_hover_tooltip = True
         self._view_mode = "Raw"
+        self._data_mode = "Nominal"
 
         self._setup_plots()
         self._setup_crosshair()
@@ -122,6 +120,7 @@ class RetailSalesChart(BaseChart):
         self._show_legend = settings.get("show_legend", True)
         self._show_hover_tooltip = settings.get("show_hover_tooltip", True)
         self._view_mode = settings.get("view_mode", "Raw")
+        self._data_mode = settings.get("data_mode", "Nominal")
 
         if self._view_mode == "YoY %":
             self._render_yoy(retail_df, usrec_df, settings)
@@ -136,23 +135,20 @@ class RetailSalesChart(BaseChart):
             return
 
         show_recession = settings.get("show_recession_bands", True)
-
-        ref_col = "Retail Sales" if "Retail Sales" in retail_df.columns else None
-        if ref_col is None:
-            for col in retail_df.columns:
-                ref_col = col
-                break
-        if ref_col is None:
+        col = "Real Retail Sales" if self._data_mode == "Real" else "Retail Sales"
+        if col not in retail_df.columns:
+            col = "Retail Sales" if "Retail Sales" in retail_df.columns else None
+        if col is None or col not in retail_df.columns:
             self.show_placeholder("No retail sales data available.")
             return
 
-        ref_series = retail_df[ref_col].dropna()
-        if ref_series.empty:
+        series = retail_df[col].dropna()
+        if series.empty:
             self.show_placeholder("No retail sales data available.")
             return
 
         self._placeholder.setVisible(False)
-        self._dates = ref_series.index.values
+        self._dates = series.index.values
         self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
 
         self._clear_plot()
@@ -165,43 +161,35 @@ class RetailSalesChart(BaseChart):
             usrec_series = usrec_df["USREC"].reindex(dt_index, method="ffill").fillna(0)
             self._recession_bands = add_recession_bands(self.plot_item, usrec_series, dt_index)
 
-        series_config = [
-            ("Retail Sales", accent, 2.5, Qt.SolidLine),
-            ("Real Retail Sales", _REAL_COLOR, 2, Qt.SolidLine),
-        ]
-        all_vals = []
-        for name, color, width, style in series_config:
-            if name not in retail_df.columns:
-                continue
-            vals = retail_df[name].reindex(ref_series.index).values.astype(float)
-            self._series_values[name] = vals
-            pen = pg.mkPen(color=color, width=width, style=style)
-            line = self.plot_item.plot(x, vals, pen=pen, name=name)
-            line.setClipToView(True)
-            self._line_items[name] = line
-            valid = vals[~np.isnan(vals)]
-            if len(valid) > 0:
-                all_vals.extend(valid.tolist())
+        vals = series.values.astype(float)
+        self._series_values[col] = vals
+        line = self.plot_item.plot(
+            x, vals, pen=pg.mkPen(color=accent, width=2.5), name=col
+        )
+        line.setClipToView(True)
+        self._line_items[col] = line
 
-        if all_vals:
-            y_min, y_max = min(all_vals), max(all_vals)
+        valid = vals[~np.isnan(vals)]
+        if len(valid) > 0:
+            y_min, y_max = float(np.nanmin(valid)), float(np.nanmax(valid))
             pad = (y_max - y_min) * 0.08 if y_max != y_min else 1.0
             self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
 
         self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
         self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
-        self._legend.setVisible(self._show_legend)
+        self._legend.setVisible(False)
 
     def _render_yoy(self, retail_df, usrec_df, settings):
         import pandas as pd
 
-        if retail_df is None or retail_df.empty or "Retail Sales" not in retail_df.columns:
+        col = "Real Retail Sales" if self._data_mode == "Real" else "Retail Sales"
+        if retail_df is None or retail_df.empty or col not in retail_df.columns:
             self.show_placeholder("No retail sales data available.")
             return
 
         show_recession = settings.get("show_recession_bands", True)
 
-        yoy = retail_df["Retail Sales"].pct_change(periods=12) * 100
+        yoy = retail_df[col].pct_change(periods=12) * 100
         yoy = yoy.dropna()
         if yoy.empty:
             self.show_placeholder("Not enough data for YoY% calculation.")
@@ -292,10 +280,7 @@ class RetailSalesChart(BaseChart):
             v = vals[idx]
             if np.isnan(v):
                 continue
-            if name == "Retail Sales" or name == "YoY %":
-                color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
-            else:
-                color_str = _REAL_COLOR
+            color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
             if self._view_mode == "YoY %":
                 lines.append(f'<span style="color:{color_str};">\u25a0</span> YoY: {v:+.1f}%')
             else:
@@ -321,10 +306,7 @@ class RetailSalesChart(BaseChart):
         self._apply_tooltip_style()
         accent = self._get_theme_accent_color()
         for name, line in self._line_items.items():
-            if name in ("Retail Sales", "YoY %"):
-                line.setPen(pg.mkPen(color=accent, width=2.5))
-            else:
-                line.setPen(pg.mkPen(color=_REAL_COLOR, width=2))
+            line.setPen(pg.mkPen(color=accent, width=2.5))
         self._placeholder.setStyleSheet("font-size: 16px; color: #888888; background: transparent;")
         text_color = self._get_label_text_color()
         for axis_name in ("bottom", "right"):

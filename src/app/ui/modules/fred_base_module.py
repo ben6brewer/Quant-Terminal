@@ -23,6 +23,9 @@ LOOKBACK_WEEKS = {
 LOOKBACK_QUARTERS = {
     "5Y": 20, "10Y": 40, "20Y": 80, "Max": None,
 }
+LOOKBACK_DAYS = {
+    "1Y": 252, "2Y": 504, "5Y": 1260, "10Y": 2520, "20Y": 5040, "Max": None,
+}
 
 
 class FredDataModule(BaseModule):

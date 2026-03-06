@@ -17,11 +17,18 @@ QUARTERLY_SERIES: Dict[str, str] = {
     "Real GDP": "GDPC1",
     "Nominal GDP": "GDP",
     "GDP Growth": "A191RL1Q225SBEA",
+    # Real components
     "PCE": "PCECC96",
     "Investment": "GPDIC1",
     "Government": "GCEC1",
     "Exports": "EXPGSC1",
     "Imports": "IMPGSC1",
+    # Nominal components
+    "Nominal PCE": "PCEC",
+    "Nominal Investment": "GPDI",
+    "Nominal Government": "GCE",
+    "Nominal Exports": "EXPGS",
+    "Nominal Imports": "IMPGS",
     "USREC": "USREC",
 }
 
@@ -93,6 +100,23 @@ class GdpFredService(BaseFredService):
                 comp_df = comp_df / 1000.0  # billions -> trillions
                 comp_df = comp_df.dropna(how="all")
                 result["components"] = comp_df
+
+            nom_comp_cols = [c for c in ["Nominal PCE", "Nominal Investment", "Nominal Government",
+                                         "Nominal Exports", "Nominal Imports"]
+                             if c in quarterly_raw.columns]
+            if nom_comp_cols:
+                nom_df = quarterly_raw[nom_comp_cols].copy()
+                nom_df = nom_df / 1000.0  # billions -> trillions
+                # Rename to match real component names for chart compatibility
+                nom_df = nom_df.rename(columns={
+                    "Nominal PCE": "PCE",
+                    "Nominal Investment": "Investment",
+                    "Nominal Government": "Government",
+                    "Nominal Exports": "Exports",
+                    "Nominal Imports": "Imports",
+                })
+                nom_df = nom_df.dropna(how="all")
+                result["nominal_components"] = nom_df
 
             if "USREC" in quarterly_raw.columns:
                 result["usrec"] = quarterly_raw[["USREC"]].dropna(how="all")

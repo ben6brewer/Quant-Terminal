@@ -1,4 +1,4 @@
-"""JOLTS Chart - Job Openings, Hires, Quits, Layoffs."""
+"""JOLTS Chart - Dual-mode: Raw multi-line or YoY% lines."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ JOLTS_LABELS = list(JOLTS_COLORS.keys())
 
 
 class JoltsChart(BaseChart):
-    """4-line JOLTS chart (Job Openings, Hires, Quits, Layoffs) with recession shading."""
+    """JOLTS chart — multi-line (Raw) or YoY% lines with recession shading."""
 
     def __init__(self, parent=None):
         self._placeholder = None
@@ -39,6 +39,7 @@ class JoltsChart(BaseChart):
         self._date_labels: list = []
         self._line_items: Dict[str, pg.PlotDataItem] = {}
         self._recession_bands: list = []
+        self._ref_line = None
         self._legend = None
         self._show_gridlines = True
         self._show_crosshair = True
@@ -46,6 +47,7 @@ class JoltsChart(BaseChart):
         self._show_hover_tooltip = True
         self._show_recession_shading = True
         self._visible_series: List[str] = JOLTS_LABELS
+        self._view_mode = "Raw"
 
         self._setup_plots()
         self._setup_crosshair()
@@ -110,6 +112,7 @@ class JoltsChart(BaseChart):
         self._series_data = {}
         self._line_items = {}
         self._recession_bands = []
+        self._ref_line = None
         if self.plot_item:
             self.plot_item.clear()
             self._setup_crosshair()
@@ -120,6 +123,22 @@ class JoltsChart(BaseChart):
         usrec: "Optional[pd.Series]",
         settings: dict,
     ):
+        self._show_gridlines = settings.get("show_gridlines", True)
+        self._show_crosshair = settings.get("show_crosshair", True)
+        self._show_legend = settings.get("show_legend", True)
+        self._show_hover_tooltip = settings.get("show_hover_tooltip", True)
+        self._show_recession_shading = settings.get("show_recession_shading", True)
+        self._visible_series = settings.get("jolts_series", JOLTS_LABELS)
+        self._view_mode = settings.get("view_mode", "Raw")
+
+        if self._view_mode == "YoY %":
+            self._render_yoy(jolts_df, usrec, settings)
+        else:
+            self._render_raw(jolts_df, usrec, settings)
+
+    # ── Raw: multi-line ───────────────────────────────────────────────────
+
+    def _render_raw(self, jolts_df, usrec, settings):
         import pandas as pd
 
         if jolts_df is None or jolts_df.empty:
@@ -132,12 +151,6 @@ class JoltsChart(BaseChart):
             return
 
         self._placeholder.setVisible(False)
-        self._show_gridlines = settings.get("show_gridlines", True)
-        self._show_crosshair = settings.get("show_crosshair", True)
-        self._show_legend = settings.get("show_legend", True)
-        self._show_hover_tooltip = settings.get("show_hover_tooltip", True)
-        self._show_recession_shading = settings.get("show_recession_shading", True)
-        self._visible_series = settings.get("jolts_series", JOLTS_LABELS)
 
         subset = jolts_df[available].dropna(how="all")
         if subset.empty:
@@ -152,6 +165,7 @@ class JoltsChart(BaseChart):
         self.plot_item.clear()
         self._line_items = {}
         self._recession_bands = []
+        self._ref_line = None
         self._legend.clear()
         self._setup_crosshair()
 
@@ -188,6 +202,87 @@ class JoltsChart(BaseChart):
             x=self._show_gridlines, y=self._show_gridlines, alpha=0.3
         )
         self._legend.setVisible(self._show_legend)
+
+    # ── YoY %: multi-line pct_change ──────────────────────────────────────
+
+    def _render_yoy(self, jolts_df, usrec, settings):
+        import pandas as pd
+
+        if jolts_df is None or jolts_df.empty:
+            self.show_placeholder("No JOLTS data available.")
+            return
+
+        available = [c for c in JOLTS_LABELS if c in jolts_df.columns]
+        visible = [c for c in available if c in self._visible_series]
+        if not visible:
+            self.show_placeholder("No series selected.")
+            return
+
+        # Compute YoY% for all visible series (monthly → periods=12)
+        yoy_data = {}
+        for col in visible:
+            yoy = jolts_df[col].pct_change(periods=12) * 100
+            yoy_data[col] = yoy
+
+        yoy_df = pd.DataFrame(yoy_data).dropna(how="all")
+        if yoy_df.empty:
+            self.show_placeholder("Not enough data for YoY% calculation.")
+            return
+
+        self._placeholder.setVisible(False)
+        self._dates = yoy_df.index.values
+        dt_index = pd.DatetimeIndex(self._dates)
+        self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
+        self._series_data = {col: yoy_df[col].values.astype(float) for col in visible if col in yoy_df.columns}
+
+        self.plot_item.clear()
+        self._line_items = {}
+        self._recession_bands = []
+        self._ref_line = None
+        self._legend.clear()
+        self._setup_crosshair()
+
+        self._bottom_axis.set_index(dt_index)
+
+        if self._show_recession_shading and usrec is not None:
+            self._recession_bands = add_recession_bands(
+                self.plot_item, usrec, dt_index
+            )
+
+        # 0% reference line
+        self._ref_line = pg.InfiniteLine(
+            pos=0, angle=0,
+            pen=pg.mkPen(color="#888888", width=1, style=Qt.DashLine)
+        )
+        self.plot_item.addItem(self._ref_line)
+
+        x = np.arange(len(self._dates))
+        for name in visible:
+            if name not in self._series_data:
+                continue
+            vals = self._series_data[name]
+            color = JOLTS_COLORS.get(name, "#888888")
+            pen = pg.mkPen(color=color, width=2)
+            item = self.plot_item.plot(x, vals, pen=pen, name=name)
+            item.setClipToView(True)
+            self._line_items[name] = item
+
+        all_vals = []
+        for vals in self._series_data.values():
+            all_vals.extend(v for v in vals if not np.isnan(v))
+        if all_vals:
+            y_min, y_max = min(all_vals), max(all_vals)
+            y_range = y_max - y_min if y_max != y_min else 2.0
+            pad = y_range * 0.1
+            self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
+        self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
+
+        self.plot_item.showGrid(
+            x=self._show_gridlines, y=self._show_gridlines, alpha=0.3
+        )
+        self._legend.setVisible(self._show_legend)
+
+    # ── Mouse interaction ─────────────────────────────────────────────────
 
     def _on_mouse_move(self, ev):
         if not self._series_data or self._dates is None:
@@ -235,16 +330,27 @@ class JoltsChart(BaseChart):
         date_str = self._date_labels[idx] if idx < len(self._date_labels) else "?"
         lines = [f"<b>{date_str}</b>"]
 
-        for name in self._visible_series:
-            if name in self._series_data:
-                val = self._series_data[name][idx]
-                if not np.isnan(val):
-                    color = JOLTS_COLORS.get(name, "#888888")
-                    val_str = f"{val/1000:.2f}M" if val >= 1000 else f"{val:,.0f}K"
-                    lines.append(
-                        f'<span style="color:{color};">\u25a0</span> '
-                        f'{name:<16s} {val_str}'
-                    )
+        if self._view_mode == "YoY %":
+            for name in self._visible_series:
+                if name in self._series_data:
+                    val = self._series_data[name][idx]
+                    if not np.isnan(val):
+                        color = JOLTS_COLORS.get(name, "#888888")
+                        lines.append(
+                            f'<span style="color:{color};">\u25a0</span> '
+                            f'{name}: {val:+.1f}%'
+                        )
+        else:
+            for name in self._visible_series:
+                if name in self._series_data:
+                    val = self._series_data[name][idx]
+                    if not np.isnan(val):
+                        color = JOLTS_COLORS.get(name, "#888888")
+                        val_str = f"{val/1000:.2f}M" if val >= 1000 else f"{val:,.0f}K"
+                        lines.append(
+                            f'<span style="color:{color};">\u25a0</span> '
+                            f'{name:<16s} {val_str}'
+                        )
 
         self._tooltip.setText("<br>".join(lines))
         self._tooltip.adjustSize()

@@ -1,4 +1,4 @@
-"""Consumer Sentiment Chart — UMCSENT single line with recession shading."""
+"""Consumer Sentiment Chart — Dual-mode: Raw UMCSENT line or YoY% line."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class ConsumerSentimentChart(BaseChart):
-    """University of Michigan Consumer Sentiment index with recession shading."""
+    """Consumer Sentiment — Raw index or YoY% with recession shading."""
 
     def __init__(self, parent=None):
         self._placeholder = None
@@ -29,10 +29,12 @@ class ConsumerSentimentChart(BaseChart):
         self._sent_values: Optional[np.ndarray] = None
         self._date_labels: list = []
         self._sent_line = None
+        self._ref_line = None
         self._recession_bands: list = []
         self._show_gridlines = True
         self._show_crosshair = True
         self._show_hover_tooltip = True
+        self._view_mode = "Raw"
 
         self._setup_plots()
         self._setup_crosshair()
@@ -92,6 +94,7 @@ class ConsumerSentimentChart(BaseChart):
         if self.plot_item:
             self.plot_item.clear()
             self._sent_line = None
+            self._ref_line = None
             self._recession_bands = []
             self._setup_crosshair()
 
@@ -101,15 +104,25 @@ class ConsumerSentimentChart(BaseChart):
         usrec_df: "Optional[pd.DataFrame]",
         settings: dict,
     ):
+        self._show_gridlines = settings.get("show_gridlines", True)
+        self._show_crosshair = settings.get("show_crosshair", True)
+        self._show_hover_tooltip = settings.get("show_hover_tooltip", True)
+        self._view_mode = settings.get("view_mode", "Raw")
+
+        if self._view_mode == "YoY %":
+            self._render_yoy(sent_df, usrec_df, settings)
+        else:
+            self._render_raw(sent_df, usrec_df, settings)
+
+    # ── Raw: single UMCSENT line ──────────────────────────────────────────
+
+    def _render_raw(self, sent_df, usrec_df, settings):
         import pandas as pd
 
         if sent_df is None or sent_df.empty:
             self.show_placeholder("No consumer sentiment data available.")
             return
 
-        self._show_gridlines = settings.get("show_gridlines", True)
-        self._show_crosshair = settings.get("show_crosshair", True)
-        self._show_hover_tooltip = settings.get("show_hover_tooltip", True)
         show_recession = settings.get("show_recession_bands", True)
 
         col = "Sentiment" if "Sentiment" in sent_df.columns else sent_df.columns[0]
@@ -125,6 +138,7 @@ class ConsumerSentimentChart(BaseChart):
 
         self.plot_item.clear()
         self._sent_line = None
+        self._ref_line = None
         self._recession_bands = []
         self._setup_crosshair()
 
@@ -133,7 +147,6 @@ class ConsumerSentimentChart(BaseChart):
         x = np.arange(len(self._dates))
         accent = self._get_theme_accent_color()
 
-        # Recession bands
         if show_recession and usrec_df is not None and not usrec_df.empty:
             usrec_series = usrec_df["USREC"].reindex(dt_index, method="ffill").fillna(0)
             self._recession_bands = add_recession_bands(self.plot_item, usrec_series, dt_index)
@@ -154,6 +167,70 @@ class ConsumerSentimentChart(BaseChart):
 
         self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
         self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
+
+    # ── YoY %: single sentiment YoY% line ─────────────────────────────────
+
+    def _render_yoy(self, sent_df, usrec_df, settings):
+        import pandas as pd
+
+        if sent_df is None or sent_df.empty:
+            self.show_placeholder("No consumer sentiment data available.")
+            return
+
+        show_recession = settings.get("show_recession_bands", True)
+
+        col = "Sentiment" if "Sentiment" in sent_df.columns else sent_df.columns[0]
+        yoy = sent_df[col].pct_change(periods=12) * 100
+        yoy = yoy.dropna()
+        if yoy.empty:
+            self.show_placeholder("Not enough data for YoY% calculation.")
+            return
+
+        self._placeholder.setVisible(False)
+        self._dates = yoy.index.values
+        self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
+        self._sent_values = yoy.values.astype(float)
+
+        self.plot_item.clear()
+        self._sent_line = None
+        self._ref_line = None
+        self._recession_bands = []
+        self._setup_crosshair()
+
+        dt_index = pd.DatetimeIndex(self._dates)
+        self._bottom_axis.set_index(dt_index)
+        x = np.arange(len(self._dates))
+        accent = self._get_theme_accent_color()
+
+        if show_recession and usrec_df is not None and not usrec_df.empty:
+            usrec_series = usrec_df["USREC"].reindex(dt_index, method="ffill").fillna(0)
+            self._recession_bands = add_recession_bands(self.plot_item, usrec_series, dt_index)
+
+        # 0% reference line
+        self._ref_line = pg.InfiniteLine(
+            pos=0, angle=0,
+            pen=pg.mkPen(color="#888888", width=1, style=Qt.DashLine)
+        )
+        self.plot_item.addItem(self._ref_line)
+
+        self._sent_line = self.plot_item.plot(
+            x, self._sent_values,
+            pen=pg.mkPen(color=accent, width=2.5)
+        )
+        self._sent_line.setClipToView(True)
+
+        valid = self._sent_values[~np.isnan(self._sent_values)]
+        if len(valid) > 0:
+            y_min = float(np.nanmin(valid))
+            y_max = float(np.nanmax(valid))
+            y_range = y_max - y_min if y_max != y_min else 2.0
+            pad = y_range * 0.1
+            self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
+
+        self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
+        self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
+
+    # ── Mouse interaction ─────────────────────────────────────────────────
 
     def _on_mouse_move(self, ev):
         if self._dates is None or len(self._dates) == 0:
@@ -200,10 +277,16 @@ class ConsumerSentimentChart(BaseChart):
         if self._sent_values is not None and idx < len(self._sent_values):
             val = self._sent_values[idx]
             if not np.isnan(val):
-                lines.append(
-                    f'<span style="color:rgb({accent[0]},{accent[1]},{accent[2]});">\u25a0</span>'
-                    f" UMCSENT: {val:.1f}"
-                )
+                if self._view_mode == "YoY %":
+                    lines.append(
+                        f'<span style="color:rgb({accent[0]},{accent[1]},{accent[2]});">\u25a0</span>'
+                        f" Sentiment YoY: {val:+.1f}%"
+                    )
+                else:
+                    lines.append(
+                        f'<span style="color:rgb({accent[0]},{accent[1]},{accent[2]});">\u25a0</span>'
+                        f" UMCSENT: {val:.1f}"
+                    )
 
         self._tooltip.setText("<br>".join(lines))
         self._tooltip.adjustSize()

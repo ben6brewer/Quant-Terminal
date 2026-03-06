@@ -1,38 +1,34 @@
-"""Credit Conditions Toolbar — Home, lookback, view toggle, stats."""
+"""Crude Oil Toolbar — Home, lookback, view toggle, stats."""
 
 from PySide6.QtCore import Signal
 
 from app.ui.modules.fred_toolbar import FredToolbar
 
-VIEW_OPTIONS = ["Delinquency", "Credit Levels"]
+VIEW_OPTIONS = ["Raw", "YoY %"]
 
 
-class CreditConditionsToolbar(FredToolbar):
-    """Credit Conditions toolbar — view toggle + stats."""
+class CrudeOilToolbar(FredToolbar):
+    """Crude Oil toolbar — view toggle (Raw / YoY %) + latest prices."""
 
     view_changed = Signal(str)
 
-    def get_lookback_options(self):
-        return ["5Y", "10Y", "20Y", "Max"]
-
-    def get_default_lookback_index(self) -> int:
-        return 1  # 10Y
-
     def setup_info_section(self, layout):
         layout.addWidget(self._control_label("View:"))
+
         self.view_combo = self._combo(items=VIEW_OPTIONS)
         self.view_combo.setCurrentIndex(0)
         self.view_combo.currentIndexChanged.connect(
             lambda _: self.view_changed.emit(self.view_combo.currentText())
         )
         layout.addWidget(self.view_combo)
+
         layout.addWidget(self._sep())
 
-        self.delinq_label = self._info_label("CC Delinq: --")
-        layout.addWidget(self.delinq_label)
+        self.wti_label = self._info_label("WTI: --")
+        layout.addWidget(self.wti_label)
         layout.addWidget(self._sep())
-        self.credit_label = self._info_label("Credit: --")
-        layout.addWidget(self.credit_label)
+        self.brent_label = self._info_label("Brent: --")
+        layout.addWidget(self.brent_label)
         layout.addWidget(self._sep())
         self.updated_label = self._info_label("", "info_label_muted")
         layout.addWidget(self.updated_label)
@@ -45,9 +41,9 @@ class CreditConditionsToolbar(FredToolbar):
                 self.view_combo.blockSignals(False)
                 return
 
-    def update_info(self, cc_delinquency=None, total_credit=None, **kwargs):
-        if cc_delinquency is not None:
-            self.delinq_label.setText(f"CC Delinq: {cc_delinquency:.1f}%")
-        if total_credit is not None:
-            self.credit_label.setText(f"Credit: ${total_credit:.2f}T")
+    def update_info(self, wti=None, brent=None, **kwargs):
+        if wti is not None:
+            self.wti_label.setText(f"WTI: ${wti:.2f}")
+        if brent is not None:
+            self.brent_label.setText(f"Brent: ${brent:.2f}")
         self._update_timestamp()

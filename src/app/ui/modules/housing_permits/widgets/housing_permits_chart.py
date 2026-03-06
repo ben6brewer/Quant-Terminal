@@ -45,6 +45,7 @@ class HousingPermitsChart(BaseChart):
         # Tooltip data
         self._sf_values: Optional[np.ndarray] = None
         self._multi_values: Optional[np.ndarray] = None
+        self._total_values: Optional[np.ndarray] = None
         self._yoy_values: Optional[np.ndarray] = None
 
         self._setup_plots()
@@ -180,6 +181,10 @@ class HousingPermitsChart(BaseChart):
         self._multi_values = (
             permits_df["Multi-Family Permits"].reindex(ref_series.index).values.astype(float)
             if "Multi-Family Permits" in permits_df.columns else None
+        )
+        self._total_values = (
+            permits_df["Total Permits"].reindex(ref_series.index).values.astype(float)
+            if "Total Permits" in permits_df.columns else None
         )
 
         self._clear_plot()
@@ -344,6 +349,10 @@ class HousingPermitsChart(BaseChart):
                             f'<span style="color:{color};">\u25a0</span>'
                             f" {label}: {val:.0f}K"
                         )
+            if self._total_values is not None and idx < len(self._total_values):
+                total = self._total_values[idx]
+                if not np.isnan(total):
+                    lines.append(f"<b>Total: {total:.0f}K</b>")
 
         self._tooltip.setText("<br>".join(lines))
         self._tooltip.adjustSize()

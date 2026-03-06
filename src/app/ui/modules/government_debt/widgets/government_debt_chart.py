@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QLabel
 from app.ui.widgets.charting.base_chart import BaseChart
 from app.ui.widgets.charting.axes.date_index_axis import DraggableIndexDateAxisItem
 from app.ui.widgets.charting.axes.draggable_axis import DraggableAxisItem
+from app.ui.widgets.charting.axes.percentage_axis import DraggablePercentageAxisItem
 from app.utils.recession_bands import add_recession_bands
 
 if TYPE_CHECKING:
@@ -35,6 +36,7 @@ class GovernmentDebtChart(BaseChart):
         self._show_crosshair = True
         self._show_hover_tooltip = True
         self._view_mode = "Raw"
+        self._ref_line = None
 
         self._setup_plots()
         self._setup_crosshair()
@@ -45,6 +47,8 @@ class GovernmentDebtChart(BaseChart):
         self._bottom_axis = DraggableIndexDateAxisItem(orientation="bottom")
         self._right_axis = DraggableAxisItem(orientation="right")
         self._right_axis.setWidth(60)
+        self._pct_axis = DraggablePercentageAxisItem(orientation="right")
+        self._pct_axis.setWidth(60)
         self.plot_item = self.addPlot(
             axisItems={"bottom": self._bottom_axis, "right": self._right_axis}
         )
@@ -99,6 +103,7 @@ class GovernmentDebtChart(BaseChart):
     def _clear_plot(self):
         if self.plot_item:
             self._recession_bands = []
+            self._ref_line = None
             self._line_items = {}
             self._series_values = {}
             if self._legend:
@@ -115,8 +120,14 @@ class GovernmentDebtChart(BaseChart):
         self._view_mode = settings.get("view_mode", "Raw")
 
         if self._view_mode == "% GDP":
+            self.plot_item.setAxisItems({"right": self._pct_axis})
             self._render_single(debt_gdp_df, usrec_df, settings, "Debt to GDP", "%")
+        elif self._view_mode == "YoY":
+            self._render_yoy(debt_df, usrec_df, settings, "Total Public Debt", "Debt YoY")
+        elif self._view_mode == "Debt/GDP YoY":
+            self._render_yoy(debt_gdp_df, usrec_df, settings, "Debt to GDP", "Debt/GDP YoY")
         else:
+            self.plot_item.setAxisItems({"right": self._right_axis})
             self._render_single(debt_df, usrec_df, settings, "Total Public Debt", "T")
 
     def _render_single(self, df, usrec_df, settings, col_name, unit):
@@ -156,6 +167,58 @@ class GovernmentDebtChart(BaseChart):
         if len(valid) > 0:
             y_min, y_max = float(np.nanmin(valid)), float(np.nanmax(valid))
             pad = (y_max - y_min) * 0.08 if y_max != y_min else 1.0
+            self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
+
+        self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
+        self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
+        self._legend.setVisible(False)
+
+    def _render_yoy(self, df, usrec_df, settings, col_name, label):
+        import pandas as pd
+
+        self.plot_item.setAxisItems({"right": self._pct_axis})
+
+        if df is None or df.empty or col_name not in df.columns:
+            self.show_placeholder("No government debt data available.")
+            return
+
+        show_recession = settings.get("show_recession_bands", True)
+
+        yoy = df[col_name].pct_change(periods=4) * 100
+        yoy = yoy.dropna()
+        if yoy.empty:
+            self.show_placeholder("Not enough data for YoY% calculation.")
+            return
+
+        self._placeholder.setVisible(False)
+        self._dates = yoy.index.values
+        self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
+        yoy_vals = yoy.values.astype(float)
+        self._series_values = {label: yoy_vals}
+
+        self._clear_plot()
+        dt_index = pd.DatetimeIndex(self._dates)
+        self._bottom_axis.set_index(dt_index)
+        x = np.arange(len(self._dates))
+        accent = self._get_theme_accent_color()
+
+        if show_recession and usrec_df is not None and not usrec_df.empty:
+            usrec_series = usrec_df["USREC"].reindex(dt_index, method="ffill").fillna(0)
+            self._recession_bands = add_recession_bands(self.plot_item, usrec_series, dt_index)
+
+        self._ref_line = pg.InfiniteLine(
+            pos=0, angle=0, pen=pg.mkPen(color="#888888", width=1, style=Qt.DashLine)
+        )
+        self.plot_item.addItem(self._ref_line)
+
+        line = self.plot_item.plot(x, yoy_vals, pen=pg.mkPen(color=accent, width=2.5))
+        line.setClipToView(True)
+        self._line_items[label] = line
+
+        valid = yoy_vals[~np.isnan(yoy_vals)]
+        if len(valid) > 0:
+            y_min, y_max = float(np.nanmin(valid)), float(np.nanmax(valid))
+            pad = (y_max - y_min) * 0.10 if y_max != y_min else 1.0
             self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
 
         self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
@@ -211,7 +274,9 @@ class GovernmentDebtChart(BaseChart):
             if np.isnan(v):
                 continue
             color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
-            if name == "Total Public Debt":
+            if self._view_mode in ("YoY", "Debt/GDP YoY"):
+                lines.append(f'<span style="color:{color_str};">\u25a0</span> {name}: {v:+.1f}%')
+            elif name == "Total Public Debt":
                 lines.append(f'<span style="color:{color_str};">\u25a0</span> Debt: ${v:.1f}T')
             else:
                 lines.append(f'<span style="color:{color_str};">\u25a0</span> Debt/GDP: {v:.1f}%')

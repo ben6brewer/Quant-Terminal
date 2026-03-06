@@ -45,6 +45,7 @@ class HousingStartsChart(BaseChart):
         # Tooltip data
         self._sf_values: Optional[np.ndarray] = None
         self._multi_values: Optional[np.ndarray] = None
+        self._total_values: Optional[np.ndarray] = None
         self._yoy_values: Optional[np.ndarray] = None
 
         self._setup_plots()
@@ -180,6 +181,10 @@ class HousingStartsChart(BaseChart):
         self._multi_values = (
             starts_df["5+ Units"].reindex(ref_series.index).values.astype(float)
             if "5+ Units" in starts_df.columns else None
+        )
+        self._total_values = (
+            starts_df["Total Starts"].reindex(ref_series.index).values.astype(float)
+            if "Total Starts" in starts_df.columns else None
         )
 
         self._clear_plot()
@@ -344,6 +349,10 @@ class HousingStartsChart(BaseChart):
                             f'<span style="color:{color};">\u25a0</span>'
                             f" {label}: {val:.0f}K"
                         )
+            if self._total_values is not None and idx < len(self._total_values):
+                total = self._total_values[idx]
+                if not np.isnan(total):
+                    lines.append(f"<b>Total: {total:.0f}K</b>")
 
         self._tooltip.setText("<br>".join(lines))
         self._tooltip.adjustSize()

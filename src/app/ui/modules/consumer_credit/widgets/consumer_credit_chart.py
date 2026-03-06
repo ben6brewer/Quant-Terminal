@@ -1,4 +1,4 @@
-"""Credit Conditions Chart — Dual-mode: Delinquency rates or Credit levels."""
+"""Consumer Credit Chart — Dual-mode: Raw $T levels or YoY% growth."""
 
 from __future__ import annotations
 
@@ -17,23 +17,16 @@ from app.utils.recession_bands import add_recession_bands
 if TYPE_CHECKING:
     import pandas as pd
 
-DELINQ_COLORS: Dict[str, str] = {
-    "All Loans Delinquency": "#66BB6A",
-    "Consumer Loans Delinquency": "#FF7043",
-}
-
-DELINQ_ORDER: List[str] = ["Credit Card Delinquency", "All Loans Delinquency", "Consumer Loans Delinquency"]
-
-CREDIT_COLORS: Dict[str, str] = {
+SERIES_COLORS: Dict[str, str] = {
     "Revolving Credit": "#66BB6A",
     "Nonrevolving Credit": "#FF7043",
 }
 
-CREDIT_ORDER: List[str] = ["Total Consumer Credit", "Revolving Credit", "Nonrevolving Credit"]
+SERIES_ORDER: List[str] = ["Total Consumer Credit", "Revolving Credit", "Nonrevolving Credit"]
 
 
-class CreditConditionsChart(BaseChart):
-    """Dual-mode credit conditions chart."""
+class ConsumerCreditChart(BaseChart):
+    """Consumer credit chart — Raw $T or YoY% multi-line."""
 
     def __init__(self, parent=None):
         self._placeholder = None
@@ -43,13 +36,14 @@ class CreditConditionsChart(BaseChart):
         self._series_values: Dict[str, np.ndarray] = {}
         self._date_labels: list = []
         self._line_items: Dict[str, object] = {}
+        self._ref_line = None
         self._legend = None
         self._recession_bands: list = []
         self._show_gridlines = True
         self._show_crosshair = True
         self._show_legend = True
         self._show_hover_tooltip = True
-        self._view_mode = "Delinquency"
+        self._view_mode = "Raw"
 
         self._setup_plots()
         self._setup_crosshair()
@@ -94,7 +88,7 @@ class CreditConditionsChart(BaseChart):
         )
 
     def _setup_placeholder(self):
-        self._placeholder = QLabel("Loading credit data...", self)
+        self._placeholder = QLabel("Loading consumer credit data...", self)
         self._placeholder.setAlignment(Qt.AlignCenter)
         self._placeholder.setStyleSheet("font-size: 16px; color: #888888; background: transparent;")
         self._placeholder.setVisible(True)
@@ -113,6 +107,7 @@ class CreditConditionsChart(BaseChart):
 
     def _clear_plot(self):
         if self.plot_item:
+            self._ref_line = None
             self._recession_bands = []
             self._line_items = {}
             self._series_values = {}
@@ -121,38 +116,37 @@ class CreditConditionsChart(BaseChart):
             self.plot_item.clear()
             self._setup_crosshair()
 
-    def update_data(self, delinq_df: "Optional[pd.DataFrame]",
-                    credit_df: "Optional[pd.DataFrame]",
+    def update_data(self, credit_df: "Optional[pd.DataFrame]",
                     usrec_df: "Optional[pd.DataFrame]", settings: dict):
         self._show_gridlines = settings.get("show_gridlines", True)
         self._show_crosshair = settings.get("show_crosshair", True)
         self._show_legend = settings.get("show_legend", True)
         self._show_hover_tooltip = settings.get("show_hover_tooltip", True)
-        self._view_mode = settings.get("view_mode", "Delinquency")
+        self._view_mode = settings.get("view_mode", "Raw")
 
-        if self._view_mode == "Credit Levels":
-            self._render_credit(credit_df, usrec_df, settings)
+        if self._view_mode == "YoY %":
+            self._render_yoy(credit_df, usrec_df, settings)
         else:
-            self._render_delinquency(delinq_df, usrec_df, settings)
+            self._render_raw(credit_df, usrec_df, settings)
 
-    def _render_multiline(self, df, usrec_df, settings, series_order, color_map, unit_fmt):
+    def _render_raw(self, credit_df, usrec_df, settings):
         import pandas as pd
 
-        if df is None or df.empty:
-            self.show_placeholder("No data available.")
+        if credit_df is None or credit_df.empty:
+            self.show_placeholder("No consumer credit data available.")
             return
 
         show_recession = settings.get("show_recession_bands", True)
 
         ref_series = None
-        for name in series_order:
-            if name in df.columns:
-                s = df[name].dropna()
+        for name in SERIES_ORDER:
+            if name in credit_df.columns:
+                s = credit_df[name].dropna()
                 if not s.empty:
                     ref_series = s
                     break
         if ref_series is None:
-            self.show_placeholder("No data available.")
+            self.show_placeholder("No consumer credit data available.")
             return
 
         self._placeholder.setVisible(False)
@@ -170,12 +164,12 @@ class CreditConditionsChart(BaseChart):
             self._recession_bands = add_recession_bands(self.plot_item, usrec_series, dt_index)
 
         all_vals = []
-        for name in series_order:
-            if name not in df.columns:
+        for name in SERIES_ORDER:
+            if name not in credit_df.columns:
                 continue
-            vals = df[name].reindex(ref_series.index).values.astype(float)
+            vals = credit_df[name].reindex(ref_series.index).values.astype(float)
             self._series_values[name] = vals
-            color = accent if name == series_order[0] else color_map.get(name, "#888888")
+            color = accent if name == SERIES_ORDER[0] else SERIES_COLORS.get(name, "#888888")
             line = self.plot_item.plot(x, vals, pen=pg.mkPen(color=color, width=2), name=name)
             line.setClipToView(True)
             self._line_items[name] = line
@@ -192,11 +186,80 @@ class CreditConditionsChart(BaseChart):
         self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
         self._legend.setVisible(self._show_legend)
 
-    def _render_delinquency(self, delinq_df, usrec_df, settings):
-        self._render_multiline(delinq_df, usrec_df, settings, DELINQ_ORDER, DELINQ_COLORS, "%")
+    def _render_yoy(self, credit_df, usrec_df, settings):
+        import pandas as pd
 
-    def _render_credit(self, credit_df, usrec_df, settings):
-        self._render_multiline(credit_df, usrec_df, settings, CREDIT_ORDER, CREDIT_COLORS, "T")
+        if credit_df is None or credit_df.empty:
+            self.show_placeholder("No consumer credit data available.")
+            return
+
+        show_recession = settings.get("show_recession_bands", True)
+
+        ref_series = None
+        for name in SERIES_ORDER:
+            if name in credit_df.columns:
+                s = credit_df[name].dropna()
+                if not s.empty:
+                    ref_series = s
+                    break
+        if ref_series is None:
+            self.show_placeholder("No consumer credit data available.")
+            return
+
+        # Compute YoY% for each series (monthly data → periods=12)
+        yoy_df = credit_df[credit_df.columns.intersection(SERIES_ORDER)].pct_change(periods=12) * 100
+        yoy_df = yoy_df.dropna(how="all")
+        if yoy_df.empty:
+            self.show_placeholder("Not enough data for YoY% calculation.")
+            return
+
+        ref_yoy = yoy_df[SERIES_ORDER[0]].dropna() if SERIES_ORDER[0] in yoy_df.columns else None
+        if ref_yoy is None or ref_yoy.empty:
+            self.show_placeholder("Not enough data for YoY% calculation.")
+            return
+
+        self._placeholder.setVisible(False)
+        self._dates = ref_yoy.index.values
+        self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
+
+        self._clear_plot()
+        dt_index = pd.DatetimeIndex(self._dates)
+        self._bottom_axis.set_index(dt_index)
+        x = np.arange(len(self._dates))
+        accent = self._get_theme_accent_color()
+
+        if show_recession and usrec_df is not None and not usrec_df.empty:
+            usrec_series = usrec_df["USREC"].reindex(dt_index, method="ffill").fillna(0)
+            self._recession_bands = add_recession_bands(self.plot_item, usrec_series, dt_index)
+
+        self._ref_line = pg.InfiniteLine(
+            pos=0, angle=0, pen=pg.mkPen(color="#888888", width=1, style=Qt.DashLine)
+        )
+        self.plot_item.addItem(self._ref_line)
+
+        all_vals = []
+        for name in SERIES_ORDER:
+            if name not in yoy_df.columns:
+                continue
+            vals = yoy_df[name].reindex(ref_yoy.index).values.astype(float)
+            self._series_values[name] = vals
+            color = accent if name == SERIES_ORDER[0] else SERIES_COLORS.get(name, "#888888")
+            line = self.plot_item.plot(x, vals, pen=pg.mkPen(color=color, width=2), name=name)
+            line.setClipToView(True)
+            self._line_items[name] = line
+            valid = vals[~np.isnan(vals)]
+            if len(valid) > 0:
+                all_vals.extend(valid.tolist())
+
+        if all_vals:
+            y_min, y_max = min(all_vals), max(all_vals)
+            y_range = y_max - y_min if y_max != y_min else 2.0
+            pad = y_range * 0.1
+            self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
+
+        self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
+        self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
+        self._legend.setVisible(self._show_legend)
 
     def _on_mouse_move(self, ev):
         if self._dates is None or len(self._dates) == 0:
@@ -239,10 +302,8 @@ class CreditConditionsChart(BaseChart):
         date_str = self._date_labels[idx] if idx < len(self._date_labels) else "?"
         lines = [f"<b>{date_str}</b>"]
         accent = self._get_theme_accent_color()
-        all_colors = {**DELINQ_COLORS, **CREDIT_COLORS}
-        series_order = DELINQ_ORDER if self._view_mode == "Delinquency" else CREDIT_ORDER
 
-        for name in series_order:
+        for name in SERIES_ORDER:
             if name not in self._line_items:
                 continue
             vals = self._series_values.get(name)
@@ -251,12 +312,12 @@ class CreditConditionsChart(BaseChart):
             v = vals[idx]
             if np.isnan(v):
                 continue
-            if name == series_order[0]:
+            if name == SERIES_ORDER[0]:
                 color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
             else:
-                color_str = all_colors.get(name, "#888888")
-            if self._view_mode == "Delinquency":
-                lines.append(f'<span style="color:{color_str};">\u25a0</span> {name}: {v:.1f}%')
+                color_str = SERIES_COLORS.get(name, "#888888")
+            if self._view_mode == "YoY %":
+                lines.append(f'<span style="color:{color_str};">\u25a0</span> {name}: {v:+.1f}%')
             else:
                 lines.append(f'<span style="color:{color_str};">\u25a0</span> {name}: ${v:.2f}T')
 
@@ -279,13 +340,11 @@ class CreditConditionsChart(BaseChart):
         super().set_theme(theme)
         self._apply_tooltip_style()
         accent = self._get_theme_accent_color()
-        all_colors = {**DELINQ_COLORS, **CREDIT_COLORS}
-        series_order = DELINQ_ORDER if self._view_mode == "Delinquency" else CREDIT_ORDER
         for name, line in self._line_items.items():
-            if name == series_order[0]:
+            if name == SERIES_ORDER[0]:
                 line.setPen(pg.mkPen(color=accent, width=2))
             else:
-                line.setPen(pg.mkPen(color=all_colors.get(name, "#888888"), width=2))
+                line.setPen(pg.mkPen(color=SERIES_COLORS.get(name, "#888888"), width=2))
         self._placeholder.setStyleSheet("font-size: 16px; color: #888888; background: transparent;")
         text_color = self._get_label_text_color()
         for axis_name in ("bottom", "right"):

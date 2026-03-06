@@ -4,7 +4,7 @@ from PySide6.QtCore import Signal
 
 from app.ui.modules.fred_toolbar import FredToolbar
 
-VIEW_OPTIONS = ["Raw", "% GDP"]
+VIEW_OPTIONS = ["Raw", "% GDP", "YoY", "Debt/GDP YoY"]
 
 
 class GovernmentDebtToolbar(FredToolbar):

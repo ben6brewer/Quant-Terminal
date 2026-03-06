@@ -1,4 +1,4 @@
-"""Industrial Production Chart — Multi-line: IP Index, Manufacturing, Capacity Utilization."""
+"""Industrial Production Chart — Dual-mode: Raw multi-line or YoY% lines."""
 
 from __future__ import annotations
 
@@ -26,6 +26,9 @@ IP_SERIES_ORDER: List[str] = [
     "Industrial Production", "Manufacturing", "Capacity Utilization"
 ]
 
+# Only IP and Manufacturing get YoY% (Capacity Utilization is already a %)
+YOY_SERIES: List[str] = ["Industrial Production", "Manufacturing"]
+
 SERIES_VISIBILITY_KEYS = {
     "Industrial Production": "show_industrial_production",
     "Manufacturing": "show_manufacturing",
@@ -34,7 +37,7 @@ SERIES_VISIBILITY_KEYS = {
 
 
 class IndustrialProductionChart(BaseChart):
-    """Multi-line industrial production chart with 3 series."""
+    """Multi-line industrial production chart — Raw or YoY%."""
 
     def __init__(self, parent=None):
         self._placeholder = None
@@ -45,10 +48,12 @@ class IndustrialProductionChart(BaseChart):
         self._date_labels: list = []
         self._line_items: Dict[str, object] = {}
         self._legend = None
+        self._ref_line = None
         self._show_gridlines = True
         self._show_crosshair = True
         self._show_legend = True
         self._show_hover_tooltip = True
+        self._view_mode = "Raw"
 
         self._setup_plots()
         self._setup_crosshair()
@@ -109,6 +114,7 @@ class IndustrialProductionChart(BaseChart):
         if self.plot_item:
             self.plot_item.clear()
             self._line_items = {}
+            self._ref_line = None
             self._legend.clear()
             self._setup_crosshair()
 
@@ -118,14 +124,22 @@ class IndustrialProductionChart(BaseChart):
         cap_df: "Optional[pd.DataFrame]",
         settings: dict,
     ):
-        import pandas as pd
-
         self._show_gridlines = settings.get("show_gridlines", True)
         self._show_crosshair = settings.get("show_crosshair", True)
         self._show_legend = settings.get("show_legend", True)
         self._show_hover_tooltip = settings.get("show_hover_tooltip", True)
+        self._view_mode = settings.get("view_mode", "Raw")
 
-        # Determine visible series
+        if self._view_mode == "YoY %":
+            self._render_yoy(prod_df, settings)
+        else:
+            self._render_raw(prod_df, cap_df, settings)
+
+    # ── Raw: multi-line ───────────────────────────────────────────────────
+
+    def _render_raw(self, prod_df, cap_df, settings):
+        import pandas as pd
+
         visible_series = [
             name for name in IP_SERIES_ORDER
             if settings.get(SERIES_VISIBILITY_KEYS.get(name, ""), True)
@@ -135,7 +149,6 @@ class IndustrialProductionChart(BaseChart):
             self.show_placeholder("No series selected.")
             return
 
-        # Merge production and capacity into one df for alignment
         frames = []
         if prod_df is not None and not prod_df.empty:
             frames.append(prod_df)
@@ -148,7 +161,6 @@ class IndustrialProductionChart(BaseChart):
 
         merged = pd.concat(frames, axis=1) if len(frames) > 1 else frames[0]
 
-        # Find reference index
         ref_series = None
         for name in visible_series:
             if name in merged.columns:
@@ -167,6 +179,7 @@ class IndustrialProductionChart(BaseChart):
 
         self.plot_item.clear()
         self._line_items = {}
+        self._ref_line = None
         self._legend.clear()
         self._setup_crosshair()
 
@@ -212,6 +225,97 @@ class IndustrialProductionChart(BaseChart):
         self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
         self._legend.setVisible(self._show_legend)
 
+    # ── YoY %: IP and Manufacturing only ──────────────────────────────────
+
+    def _render_yoy(self, prod_df, settings):
+        import pandas as pd
+
+        if prod_df is None or prod_df.empty:
+            self.show_placeholder("No industrial production data available.")
+            return
+
+        visible_series = [
+            name for name in YOY_SERIES
+            if settings.get(SERIES_VISIBILITY_KEYS.get(name, ""), True)
+        ]
+
+        if not visible_series:
+            self.show_placeholder("No series selected.")
+            return
+
+        # Monthly data → periods=12
+        yoy_data = {}
+        for col in visible_series:
+            if col in prod_df.columns:
+                yoy = prod_df[col].pct_change(periods=12) * 100
+                yoy_data[col] = yoy
+
+        if not yoy_data:
+            self.show_placeholder("No industrial production data available.")
+            return
+
+        yoy_df = pd.DataFrame(yoy_data).dropna(how="all")
+        if yoy_df.empty:
+            self.show_placeholder("Not enough data for YoY% calculation.")
+            return
+
+        self._placeholder.setVisible(False)
+        self._dates = yoy_df.index.values
+        self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
+
+        self.plot_item.clear()
+        self._line_items = {}
+        self._ref_line = None
+        self._legend.clear()
+        self._setup_crosshair()
+
+        dt_index = pd.DatetimeIndex(self._dates)
+        self._bottom_axis.set_index(dt_index)
+        x = np.arange(len(self._dates))
+        accent = self._get_theme_accent_color()
+
+        # 0% reference line
+        self._ref_line = pg.InfiniteLine(
+            pos=0, angle=0,
+            pen=pg.mkPen(color="#888888", width=1, style=Qt.DashLine)
+        )
+        self.plot_item.addItem(self._ref_line)
+
+        self._series_values = {}
+        all_vals = []
+
+        for name in YOY_SERIES:
+            if name not in visible_series or name not in yoy_df.columns:
+                continue
+            vals = yoy_df[name].values.astype(float)
+            self._series_values[name] = vals
+
+            color = accent if name == "Industrial Production" else IP_COLORS.get(name, "#888888")
+            line = self.plot_item.plot(
+                x, vals,
+                pen=pg.mkPen(color=color, width=2),
+                name=name
+            )
+            line.setClipToView(True)
+            self._line_items[name] = line
+
+            valid = vals[~np.isnan(vals)]
+            if len(valid) > 0:
+                all_vals.extend(valid.tolist())
+
+        if all_vals:
+            y_min = min(all_vals)
+            y_max = max(all_vals)
+            y_range = y_max - y_min if y_max != y_min else 2.0
+            pad = y_range * 0.1
+            self.plot_item.setYRange(y_min - pad, y_max + pad, padding=0)
+
+        self.plot_item.setXRange(0, len(self._dates) - 1, padding=0.02)
+        self.plot_item.showGrid(x=self._show_gridlines, y=self._show_gridlines, alpha=0.3)
+        self._legend.setVisible(self._show_legend)
+
+    # ── Mouse interaction ─────────────────────────────────────────────────
+
     def _on_mouse_move(self, ev):
         if self._dates is None or len(self._dates) == 0:
             return
@@ -254,23 +358,42 @@ class IndustrialProductionChart(BaseChart):
         lines = [f"<b>{date_str}</b>"]
 
         accent = self._get_theme_accent_color()
-        for name in IP_SERIES_ORDER:
-            if name not in self._line_items:
-                continue
-            vals = self._series_values.get(name)
-            if vals is None or idx >= len(vals):
-                continue
-            v = vals[idx]
-            if np.isnan(v):
-                continue
-            if name == "Industrial Production":
-                color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
-            else:
-                color_str = IP_COLORS.get(name, "#888888")
-            suffix = "%" if name == "Capacity Utilization" else ""
-            lines.append(
-                f'<span style="color:{color_str};">\u25a0</span> {name}: {v:.1f}{suffix}'
-            )
+
+        if self._view_mode == "YoY %":
+            for name in YOY_SERIES:
+                if name not in self._line_items:
+                    continue
+                vals = self._series_values.get(name)
+                if vals is None or idx >= len(vals):
+                    continue
+                v = vals[idx]
+                if np.isnan(v):
+                    continue
+                if name == "Industrial Production":
+                    color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
+                else:
+                    color_str = IP_COLORS.get(name, "#888888")
+                lines.append(
+                    f'<span style="color:{color_str};">\u25a0</span> {name}: {v:+.1f}%'
+                )
+        else:
+            for name in IP_SERIES_ORDER:
+                if name not in self._line_items:
+                    continue
+                vals = self._series_values.get(name)
+                if vals is None or idx >= len(vals):
+                    continue
+                v = vals[idx]
+                if np.isnan(v):
+                    continue
+                if name == "Industrial Production":
+                    color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
+                else:
+                    color_str = IP_COLORS.get(name, "#888888")
+                suffix = "%" if name == "Capacity Utilization" else ""
+                lines.append(
+                    f'<span style="color:{color_str};">\u25a0</span> {name}: {v:.1f}{suffix}'
+                )
 
         self._tooltip.setText("<br>".join(lines))
         self._tooltip.adjustSize()

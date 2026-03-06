@@ -11,6 +11,7 @@ class JoltsModule(FredDataModule):
 
     SETTINGS_FILENAME = "jolts_settings.json"
     DEFAULT_SETTINGS = {
+        "view_mode": "Raw",
         "show_gridlines": True,
         "show_crosshair": True,
         "show_legend": True,
@@ -44,6 +45,16 @@ class JoltsModule(FredDataModule):
         jolts = self.slice_data(result.get("jolts"))
         usrec = result.get("usrec")
         return (jolts, usrec)
+
+    def _connect_extra_signals(self):
+        self.toolbar.view_changed.connect(self._on_view_changed)
+
+    def _on_view_changed(self, view: str):
+        self.settings_manager.update_settings({"view_mode": view})
+        self._render()
+
+    def _apply_extra_settings(self):
+        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def create_settings_dialog(self, current_settings):
         from .widgets.jolts_settings_dialog import JoltsSettingsDialog
