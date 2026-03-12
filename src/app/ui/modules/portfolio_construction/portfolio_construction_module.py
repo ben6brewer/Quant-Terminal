@@ -5,7 +5,7 @@ import weakref
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget, QApplication
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
 from PySide6.QtCore import Qt, QTimer, QThread, Signal
 
 from app.core.theme_manager import ThemeManager
@@ -83,6 +83,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
         # Live price polling timer
         self._live_poll_timer: Optional[QTimer] = None
+        self._live_fetch_in_progress = False
 
         self._setup_ui()
 
@@ -541,16 +542,25 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self._cleanup_load_worker()
 
     def _cleanup_load_worker(self):
-        """Clean up load worker and thread after completion."""
+        """Non-blocking cleanup: signal thread to quit, let it finish async."""
         if self._load_thread is not None:
-            self._load_thread.quit()
-            if not self._load_thread.wait(5000):
-                self._load_thread.terminate()
-                self._load_thread.wait(1000)
-        if self._load_worker is not None:
-            self._load_worker.deleteLater()
-        if self._load_thread is not None:
-            self._load_thread.deleteLater()
+            thread = self._load_thread
+            worker = self._load_worker
+            thread.quit()
+
+            from app.ui.modules.base_module import _global_orphaned_threads
+            _global_orphaned_threads.append(thread)
+
+            def _on_done(t=thread, w=worker):
+                try:
+                    _global_orphaned_threads.remove(t)
+                except ValueError:
+                    pass
+                if w is not None:
+                    w.deleteLater()
+                t.deleteLater()
+
+            thread.finished.connect(_on_done, Qt.QueuedConnection)
         self._load_worker = None
         self._load_thread = None
 
@@ -573,8 +583,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self._loading_overlay.setGeometry(content_rect)
         self._loading_overlay.show()
         self._loading_overlay.raise_()
-        # Force UI update to render overlay before heavy work
-        QApplication.processEvents()
+        self._loading_overlay.repaint()
 
     def _hide_loading_overlay(self):
         """Hide and cleanup loading overlay."""
@@ -934,12 +943,16 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
     def _on_live_poll_tick(self) -> None:
         """Handle live poll timer tick - fetch and update prices in background thread."""
+        if self._live_fetch_in_progress:
+            return
+
         tickers = self._get_eligible_tickers_for_update()
         if not tickers:
             return
 
         print(f"[Live Updates] Fetching prices for: {tickers}")
 
+        self._live_fetch_in_progress = True
         # Prevent segfault: capture weakref so thread won't emit to destroyed widget
         weak_self = weakref.ref(self)
 
@@ -961,6 +974,10 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
                     print("[Live Updates] No prices returned")
             except Exception as e:
                 print(f"[Live Updates] Failed: {e}")
+            finally:
+                obj = weak_self()
+                if obj is not None:
+                    obj._live_fetch_in_progress = False
 
         thread = threading.Thread(target=fetch_and_update, daemon=True)
         thread.start()

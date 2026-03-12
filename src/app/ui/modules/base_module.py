@@ -9,6 +9,9 @@ from PySide6.QtCore import Signal, QThread, Qt
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
 
+# Module-level list to prevent GC of still-running threads without capturing `self`
+_global_orphaned_threads: list = []
+
 
 class BaseModule(LazyThemeMixin, QWidget):
     """
@@ -33,7 +36,6 @@ class BaseModule(LazyThemeMixin, QWidget):
         self._thread: Optional[QThread] = None
         self._worker_complete_cb = None
         self._worker_error_cb = None
-        self._orphaned_threads: list[QThread] = []  # prevent GC of still-running threads
         self.settings_manager = self._create_settings_manager()
 
     # ── Settings ─────────────────────────────────────────────────────
@@ -205,19 +207,22 @@ class BaseModule(LazyThemeMixin, QWidget):
         GIL/Qt-signal-mutex deadlock: DirectConnection lambdas run on the
         background thread and need the GIL, while the main thread may hold
         the GIL and block on QThread::~QThread()->wait() if references drop.
+
+        The closure captures only local refs (thread/worker), never `self`,
+        so destroyed modules don't stay alive via the orphan list.
         """
         if self._thread is not None:
             thread = self._thread
             worker = self._worker
             thread.quit()
             # Keep a reference so Python doesn't GC the thread while running
-            self._orphaned_threads.append(thread)
+            _global_orphaned_threads.append(thread)
 
             # QueuedConnection ensures this runs on the main thread's event
             # loop, avoiding the GIL deadlock that DirectConnection causes.
             def _on_thread_done(t=thread, w=worker):
                 try:
-                    self._orphaned_threads.remove(t)
+                    _global_orphaned_threads.remove(t)
                 except ValueError:
                     pass
                 if w is not None:

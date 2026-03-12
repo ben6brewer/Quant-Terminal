@@ -6,7 +6,7 @@ from datetime import date, datetime
 from typing import TYPE_CHECKING, List, Optional, Tuple
 
 from PySide6.QtWidgets import QVBoxLayout, QStackedWidget
-from PySide6.QtCore import QThread
+from PySide6.QtCore import Qt, QThread
 
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.fred_base_module import FredDataModule
@@ -223,14 +223,23 @@ class RateProbabilityModule(FredDataModule):
 
     def _cleanup_evolution_worker(self):
         if self._evolution_thread is not None:
-            self._evolution_thread.quit()
-            if not self._evolution_thread.wait(5000):
-                self._evolution_thread.terminate()
-                self._evolution_thread.wait(1000)
-        if self._evolution_worker is not None:
-            self._evolution_worker.deleteLater()
-        if self._evolution_thread is not None:
-            self._evolution_thread.deleteLater()
+            thread = self._evolution_thread
+            worker = self._evolution_worker
+            thread.quit()
+
+            from app.ui.modules.base_module import _global_orphaned_threads
+            _global_orphaned_threads.append(thread)
+
+            def _on_done(t=thread, w=worker):
+                try:
+                    _global_orphaned_threads.remove(t)
+                except ValueError:
+                    pass
+                if w is not None:
+                    w.deleteLater()
+                t.deleteLater()
+
+            thread.finished.connect(_on_done, Qt.QueuedConnection)
         self._evolution_worker = None
         self._evolution_thread = None
 

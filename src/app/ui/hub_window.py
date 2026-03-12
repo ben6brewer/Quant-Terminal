@@ -505,9 +505,23 @@ class HubWindow(QMainWindow):
         # Remove from stack first
         self.main_stack.removeWidget(container)
 
+        # Immediately orphan from the widget tree to prevent further signal delivery
+        container.hide()
+        container.setParent(None)
+
         # Remove from tracking dicts
         self.modules.pop(module_id, None)
         self.module_containers.pop(module_id, None)
+
+        # Prune stale overlay home buttons
+        valid_buttons = []
+        for btn in self._overlay_home_buttons:
+            try:
+                _ = btn.objectName()
+                valid_buttons.append(btn)
+            except RuntimeError:
+                pass
+        self._overlay_home_buttons = valid_buttons
 
         # Schedule container (and its children including the module) for deletion
         container.deleteLater()

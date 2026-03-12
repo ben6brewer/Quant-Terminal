@@ -217,16 +217,26 @@ class AssetClassReturnsModule(BaseModule):
         self._cleanup_custom_worker()
 
     def _cleanup_custom_worker(self):
-        """Safely stop custom thread and release references."""
+        """Non-blocking cleanup: signal thread to quit, let it finish async."""
         if self._custom_thread is not None:
-            self._custom_thread.quit()
-            if not self._custom_thread.wait(5000):
-                self._custom_thread.terminate()
-                self._custom_thread.wait(1000)
-        if self._custom_worker is not None:
-            self._custom_worker.deleteLater()
-        if self._custom_thread is not None:
-            self._custom_thread.deleteLater()
+            thread = self._custom_thread
+            worker = self._custom_worker
+            thread.quit()
+
+            from app.ui.modules.base_module import _global_orphaned_threads
+            from PySide6.QtCore import Qt
+            _global_orphaned_threads.append(thread)
+
+            def _on_done(t=thread, w=worker):
+                try:
+                    _global_orphaned_threads.remove(t)
+                except ValueError:
+                    pass
+                if w is not None:
+                    w.deleteLater()
+                t.deleteLater()
+
+            thread.finished.connect(_on_done, Qt.QueuedConnection)
         self._custom_worker = None
         self._custom_thread = None
 

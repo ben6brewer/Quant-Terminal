@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Dict, Any, Optional, Tuple
 
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QApplication
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
@@ -390,7 +390,6 @@ class PerformanceMetricsModule(BaseModule):
         self._loading_overlay.show()
         self._loading_overlay.raise_()
         self._loading_overlay.repaint()
-        QApplication.processEvents()
 
     def _hide_loading_overlay(self):
         """Hide and cleanup loading overlay."""

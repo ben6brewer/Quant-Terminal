@@ -1,6 +1,6 @@
 """Return Distribution Module - Histogram visualization of portfolio returns."""
 
-from PySide6.QtWidgets import QVBoxLayout, QApplication
+from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtCore import Signal
 
 from app.core.theme_manager import ThemeManager
@@ -501,7 +501,6 @@ class ReturnDistributionModule(BaseModule):
         self._loading_overlay.raise_()
         # Force immediate repaint to ensure overlay is visible before heavy work
         self._loading_overlay.repaint()
-        QApplication.processEvents()
 
     def _hide_loading_overlay(self):
         """Hide and cleanup loading overlay."""

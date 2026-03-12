@@ -197,5 +197,9 @@ class LoadingOverlay(QWidget):
 
     def deleteLater(self) -> None:
         """Cleanup before deletion."""
+        try:
+            self._theme_manager.theme_changed.disconnect(self._on_theme_changed)
+        except (RuntimeError, TypeError):
+            pass
         self.stop()
         super().deleteLater()

@@ -40,6 +40,7 @@ class LiveUpdateManager(QObject):
 
         self._live_aggregator = LiveBarAggregator()
         self._enabled = True
+        self._fetch_in_progress = False
 
         self._stock_poll_timer: QTimer | None = None
         self._crypto_poll_timer: QTimer | None = None
@@ -150,6 +151,10 @@ class LiveUpdateManager(QObject):
 
     def _fetch_today_bar(self, ticker: str) -> None:
         """Fetch today's OHLCV bar in a background thread and emit signal."""
+        if self._fetch_in_progress:
+            return
+
+        self._fetch_in_progress = True
         weak_self = weakref.ref(self)
 
         def _fetch():
@@ -164,6 +169,10 @@ class LiveUpdateManager(QObject):
                             pass
             except Exception:
                 pass
+            finally:
+                obj = weak_self()
+                if obj is not None:
+                    obj._fetch_in_progress = False
 
         thread = threading.Thread(target=_fetch, daemon=True)
         thread.start()

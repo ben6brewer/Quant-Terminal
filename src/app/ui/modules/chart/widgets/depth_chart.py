@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import threading
+import weakref
 from typing import List, Tuple, Optional
 import numpy as np
 import pyqtgraph as pg
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QStackedWidget
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QFont
 
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
@@ -173,16 +175,22 @@ class OrderBookPanel(LazyThemeMixin, QWidget):
     Panel showing order book in ladder format (default) with optional depth chart.
     """
 
+    _depth_data_ready = Signal(object)
+
     def __init__(self, theme_manager, parent=None):
         super().__init__(parent)
         self.theme_manager = theme_manager
         self._theme_dirty = False  # For lazy theme application
         self.binance_api = BinanceOrderBook()
         self.current_ticker = None
+        self._depth_fetch_in_progress = False
 
         # Update timer
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self._refresh_data)
+
+        # Connect signal for thread-safe UI updates
+        self._depth_data_ready.connect(self._apply_depth_data)
 
         self._setup_ui()
         self._apply_theme()
@@ -427,20 +435,46 @@ class OrderBookPanel(LazyThemeMixin, QWidget):
         self.start_updates()
     
     def _refresh_data(self):
-        """Refresh order book data."""
+        """Refresh order book data in a background thread."""
         if not self.current_ticker:
             return
-        
+
         if not BinanceOrderBook.is_binance_ticker(self.current_ticker):
             return
-        
-        # Fetch order book with more levels for ladder view
-        summary = self.binance_api.get_depth_summary(self.current_ticker, levels=500)
-        
+
+        if self._depth_fetch_in_progress:
+            return
+
+        self._depth_fetch_in_progress = True
+        ticker = self.current_ticker
+        api = self.binance_api
+        weak_self = weakref.ref(self)
+
+        def _fetch():
+            try:
+                summary = api.get_depth_summary(ticker, levels=500)
+                obj = weak_self()
+                if obj is not None:
+                    try:
+                        obj._depth_data_ready.emit(summary)
+                    except RuntimeError:
+                        pass
+            except Exception:
+                pass
+            finally:
+                obj = weak_self()
+                if obj is not None:
+                    obj._depth_fetch_in_progress = False
+
+        thread = threading.Thread(target=_fetch, daemon=True)
+        thread.start()
+
+    def _apply_depth_data(self, summary):
+        """Apply depth data to UI widgets (runs on main thread via signal)."""
         if not summary:
             self.status_label.setText("Failed to fetch depth data")
             return
-        
+
         # Update ladder widget
         self.ladder_widget.update_order_book(
             summary["bids"],
@@ -448,10 +482,10 @@ class OrderBookPanel(LazyThemeMixin, QWidget):
             summary["spread"],
             summary["spread_pct"],
         )
-        
+
         # Update depth chart
         self.depth_chart.plot_depth(summary["bids"], summary["asks"])
-        
+
         # Update status
         timestamp = summary["timestamp"].strftime("%H:%M:%S")
         source = "Binance.US" if "binance.us" in summary.get("source", "") else "Binance"

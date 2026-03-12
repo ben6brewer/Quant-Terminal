@@ -479,17 +479,27 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         self._pending_ticker = None
 
     def _cleanup_validate_worker(self):
-        """Quit/wait/terminate the validation thread safely."""
+        """Non-blocking cleanup: signal thread to quit, let it finish async."""
         if self._validate_thread is not None:
-            self._validate_thread.quit()
-            if not self._validate_thread.wait(5000):
-                self._validate_thread.terminate()
-                self._validate_thread.wait(1000)
-            self._validate_thread.deleteLater()
-            self._validate_thread = None
-        if self._validate_worker is not None:
-            self._validate_worker.deleteLater()
-            self._validate_worker = None
+            thread = self._validate_thread
+            worker = self._validate_worker
+            thread.quit()
+
+            from app.ui.modules.base_module import _global_orphaned_threads
+            _global_orphaned_threads.append(thread)
+
+            def _on_done(t=thread, w=worker):
+                try:
+                    _global_orphaned_threads.remove(t)
+                except ValueError:
+                    pass
+                if w is not None:
+                    w.deleteLater()
+                t.deleteLater()
+
+            thread.finished.connect(_on_done, Qt.QueuedConnection)
+        self._validate_thread = None
+        self._validate_worker = None
 
     def _remove_ticker(self, ticker: str):
         """Remove a specific ticker."""

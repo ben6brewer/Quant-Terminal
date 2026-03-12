@@ -145,7 +145,7 @@ class MonteCarloModule(BaseModule):
         self._current_benchmark = benchmark
 
     def _cancel_running_simulation(self):
-        """Cancel any in-progress simulation with proper Qt cleanup."""
+        """Cancel any in-progress simulation with non-blocking cleanup."""
         if self._simulation_worker is not None:
             try:
                 self._simulation_worker.simulation_complete.disconnect()
@@ -153,10 +153,21 @@ class MonteCarloModule(BaseModule):
             except (RuntimeError, TypeError):
                 pass
             self._simulation_worker.request_cancellation()
-            if not self._simulation_worker.wait(5000):
-                self._simulation_worker.terminate()
-                self._simulation_worker.wait(1000)
-            self._simulation_worker.deleteLater()
+
+            from PySide6.QtCore import Qt
+            from app.ui.modules.base_module import _global_orphaned_threads
+
+            worker = self._simulation_worker
+            _global_orphaned_threads.append(worker)
+
+            def _on_done(w=worker):
+                try:
+                    _global_orphaned_threads.remove(w)
+                except ValueError:
+                    pass
+                w.deleteLater()
+
+            worker.finished.connect(_on_done, Qt.QueuedConnection)
             self._simulation_worker = None
 
     def _run_simulation(self):
