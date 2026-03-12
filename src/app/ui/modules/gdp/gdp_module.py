@@ -1,8 +1,8 @@
 """GDP Module — Stacked components (Raw) or QoQ growth line (YoY %) with view toggle."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_MONTHS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.gdp.services import GdpFredService
-from .widgets.gdp_toolbar import GdpToolbar
 from .widgets.gdp_chart import GdpChart
 
 
@@ -25,9 +25,22 @@ class GdpModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "10Y",
     }
+    VIEW_MODE = "view_mode"
+    DATA_MODE = "data_mode"
 
     def create_toolbar(self):
-        return GdpToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            data_mode_options=["Real", "Nominal"],
+            stat_labels=[
+                ("gdp_label", "Real GDP: --"),
+                ("growth_label", "Growth: --"),
+                ("quarter_label", "--"),
+            ],
+            lookback_options=["5Y", "10Y", "20Y", "Max"],
+            default_lookback_index=1,
+        )
 
     def create_chart(self):
         return GdpChart()
@@ -47,11 +60,20 @@ class GdpModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = GdpFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                real_gdp=stats.get("real_gdp"),
-                gdp_growth=stats.get("gdp_growth"),
-                quarter=stats.get("quarter"),
-            )
+            real_gdp = stats.get("real_gdp")
+            gdp_growth = stats.get("gdp_growth")
+            quarter = stats.get("quarter")
+            if real_gdp is not None:
+                self.toolbar.gdp_label.setText(f"Real GDP: ${real_gdp:.2f}T")
+            if gdp_growth is not None:
+                color = "#4CAF50" if gdp_growth >= 0 else "#EF5350"
+                self.toolbar.growth_label.setText(f"Growth: {gdp_growth:+.1f}%")
+                self.toolbar.growth_label.setStyleSheet(
+                    self.toolbar.growth_label.styleSheet() + f"color: {color};"
+                )
+            if quarter is not None:
+                self.toolbar.quarter_label.setText(quarter)
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         comp_df = self.slice_data(result.get("components"))
@@ -60,22 +82,6 @@ class GdpModule(FredDataModule):
         gdp_df = self.slice_data(result.get("gdp"))
         usrec_df = result.get("usrec")
         return (comp_df, nom_comp_df, growth_df, gdp_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-        self.toolbar.data_mode_changed.connect(self._on_data_mode_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _on_data_mode_changed(self, mode: str):
-        self.settings_manager.update_settings({"data_mode": mode})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
-        self.toolbar.set_active_data_mode(self.settings_manager.get_setting("data_mode"))
 
     def get_settings_options(self):
         return [

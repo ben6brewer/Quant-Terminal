@@ -9,10 +9,8 @@ class TestMortgageFredService:
         from app.ui.modules.mortgage.services.mortgage_fred_service import MortgageFredService
         return MortgageFredService
 
-    def test_series_maps_defined(self):
-        from app.ui.modules.mortgage.services import mortgage_fred_service as mod
-        assert hasattr(mod, "MORTGAGE_SERIES")
-        assert len(mod.MORTGAGE_SERIES) > 0
+    def test_groups_defined(self, service):
+        assert len(service.GROUPS) > 0
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

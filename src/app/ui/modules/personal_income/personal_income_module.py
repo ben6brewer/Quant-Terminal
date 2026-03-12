@@ -1,8 +1,8 @@
 """Personal Income Module — Income levels with Nominal/Real toggle."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.income.services import IncomeFredService
-from .widgets.personal_income_toolbar import PersonalIncomeToolbar
 from .widgets.personal_income_chart import PersonalIncomeChart
 
 
@@ -20,9 +20,18 @@ class PersonalIncomeModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
+    DATA_MODE = "data_mode"
 
     def create_toolbar(self):
-        return PersonalIncomeToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            data_mode_options=["Nominal", "Real"],
+            stat_labels=[
+                ("income_label", "PI: --"),
+            ],
+        )
 
     def create_chart(self):
         return PersonalIncomeChart()
@@ -39,31 +48,16 @@ class PersonalIncomeModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = IncomeFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                personal_income=stats.get("personal_income"),
-            )
+            personal_income = stats.get("personal_income")
+            if personal_income is not None:
+                self.toolbar.income_label.setText(f"PI: ${personal_income:.2f}T")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         income_df = self.slice_data(result.get("income"))
         real_income_df = self.slice_data(result.get("real_income"))
         usrec_df = result.get("usrec")
         return (income_df, real_income_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-        self.toolbar.data_mode_changed.connect(self._on_data_mode_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _on_data_mode_changed(self, mode: str):
-        self.settings_manager.update_settings({"data_mode": mode})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
-        self.toolbar.set_active_data_mode(self.settings_manager.get_setting("data_mode"))
 
     def get_settings_options(self):
         return [

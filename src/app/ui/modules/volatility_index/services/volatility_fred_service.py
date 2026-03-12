@@ -6,14 +6,16 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Optional
 
-from app.services.base_fred_service import BaseFredService
+from app.services.base_fred_service import BaseFredService, CACHE_DIR
 
 if TYPE_CHECKING:
     import pandas as pd
 
 log = logging.getLogger(__name__)
 
-VOL_SERIES: Dict[str, str] = {
+# Custom fetch_all_data required: MOVE index comes from Yahoo, not FRED.
+
+_VOL_SERIES: Dict[str, str] = {
     "VIX": "VIXCLS",
     "3M Vol": "VXVCLS",
     "Oil Vol": "OVXCLS",
@@ -25,9 +27,6 @@ VOL_SERIES: Dict[str, str] = {
 }
 
 _VOL_COLS = ["VIX", "3M Vol", "Oil Vol", "NASDAQ Vol", "Russell Vol", "DJIA Vol", "EM Vol", "MOVE"]
-
-_CACHE_DIR = Path.home() / ".quant_terminal" / "cache" / "fred"
-_VOL_CACHE = _CACHE_DIR / "volatility_daily.parquet"
 
 
 class VolatilityFredService(BaseFredService):
@@ -56,7 +55,8 @@ class VolatilityFredService(BaseFredService):
         import pandas as pd
 
         raw = cls._get_group(
-            VOL_SERIES, _VOL_CACHE, "_last_vol_fetch", max_age_days=3
+            _VOL_SERIES, CACHE_DIR / "volatility_daily.parquet",
+            "_last_vol_fetch", max_age_days=3,
         )
         if raw is None or raw.empty:
             return None
@@ -86,11 +86,8 @@ class VolatilityFredService(BaseFredService):
         if not data:
             return None
         result = {}
-        vol_df = data.get("volatility")
-        if vol_df is not None:
-            for col, key in [("VIX", "vix"), ("MOVE", "move")]:
-                if col in vol_df.columns:
-                    s = vol_df[col].dropna()
-                    if not s.empty:
-                        result[key] = float(s.iloc[-1])
+        for col, key in [("VIX", "vix"), ("MOVE", "move")]:
+            val = cls._latest_value(data, "volatility", col)
+            if val is not None:
+                result[key] = val
         return result if result else None

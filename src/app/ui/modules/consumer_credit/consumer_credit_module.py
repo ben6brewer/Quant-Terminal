@@ -1,8 +1,8 @@
 """Consumer Credit Module — Dual-view: Raw $T levels or YoY% growth."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.credit.services import CreditFredService
-from .widgets.consumer_credit_toolbar import ConsumerCreditToolbar
 from .widgets.consumer_credit_chart import ConsumerCreditChart
 
 
@@ -19,9 +19,14 @@ class ConsumerCreditModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "10Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return ConsumerCreditToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("credit_label", "Credit: --")],
+        )
 
     def create_chart(self):
         return ConsumerCreditChart()
@@ -38,22 +43,15 @@ class ConsumerCreditModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = CreditFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(total_credit=stats.get("total_credit"))
+            total_credit = stats.get("total_credit")
+            if total_credit is not None:
+                self.toolbar.credit_label.setText(f"Credit: ${total_credit:.2f}T")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         credit_df = self.slice_data(result.get("credit"))
         usrec_df = result.get("usrec")
         return (credit_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

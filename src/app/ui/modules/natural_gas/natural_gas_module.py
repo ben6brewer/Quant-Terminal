@@ -1,8 +1,8 @@
 """Natural Gas Module — Single-line: Henry Hub Natural Gas."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_DAYS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.commodities.services import CommodityFredService
-from .widgets.natural_gas_toolbar import NaturalGasToolbar
 from .widgets.natural_gas_chart import NaturalGasChart
 
 
@@ -19,9 +19,14 @@ class NaturalGasModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return NaturalGasToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("natgas_label", "NatGas: --")],
+        )
 
     def create_chart(self):
         return NaturalGasChart()
@@ -41,9 +46,10 @@ class NaturalGasModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = CommodityFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                natgas=stats.get("natgas"),
-            )
+            natgas = stats.get("natgas")
+            if natgas is not None:
+                self.toolbar.natgas_label.setText(f"NatGas: ${natgas:.2f}")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         energy_df = self.slice_data(result.get("energy"))
@@ -52,16 +58,6 @@ class NaturalGasModule(FredDataModule):
             energy_df = energy_df[cols] if cols else energy_df
         usrec_df = result.get("usrec")
         return (energy_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

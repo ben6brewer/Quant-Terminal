@@ -1,8 +1,8 @@
 """PCE Module - Personal Consumption Expenditures inflation."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.inflation.services import InflationFredService
-from .widgets.pce_toolbar import PceToolbar
 from .widgets.pce_chart import PceChart
 
 
@@ -23,7 +23,8 @@ class PceModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return PceToolbar(self.theme_manager)
+        return FredToolbar(self.theme_manager,
+                           stat_labels=[("pce_label", "PCE: --")])
 
     def create_chart(self):
         return PceChart()
@@ -40,7 +41,10 @@ class PceModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = InflationFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(pce=stats.get("pce"))
+            pce = stats.get("pce")
+            if pce is not None:
+                self.toolbar.pce_label.setText(f"PCE: {pce:.2f}%")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         return (self.slice_data(result.get("pce")),)

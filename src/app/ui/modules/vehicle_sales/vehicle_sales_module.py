@@ -1,8 +1,8 @@
 """Vehicle Sales Module — Dual-view: Raw multi-line or YoY% multi-line."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.retail.services import RetailFredService
-from .widgets.vehicle_sales_toolbar import VehicleSalesToolbar
 from .widgets.vehicle_sales_chart import VehicleSalesChart
 
 
@@ -22,9 +22,14 @@ class VehicleSalesModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return VehicleSalesToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("total_label", "Total: --")],
+        )
 
     def create_chart(self):
         return VehicleSalesChart()
@@ -41,22 +46,15 @@ class VehicleSalesModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = RetailFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(vehicle_total=stats.get("vehicle_total"))
+            vehicle_total = stats.get("vehicle_total")
+            if vehicle_total is not None:
+                self.toolbar.total_label.setText(f"Total: {vehicle_total:.1f}M SAAR")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         vehicles_df = self.slice_data(result.get("vehicles"))
         usrec_df = result.get("usrec")
         return (vehicles_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

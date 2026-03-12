@@ -1,8 +1,8 @@
 """Sahm Rule Module — Single-line SAHMCURRENT chart with 0.50 threshold."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_MONTHS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.recession.services import RecessionFredService
-from .widgets.sahm_rule_toolbar import SahmRuleToolbar
 from .widgets.sahm_rule_chart import SahmRuleChart
 
 
@@ -21,7 +21,11 @@ class SahmRuleModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return SahmRuleToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("sahm_label", "Sahm: --")],
+            default_lookback_index=5,
+        )
 
     def create_chart(self):
         return SahmRuleChart()
@@ -41,7 +45,10 @@ class SahmRuleModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = RecessionFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(sahm=stats.get("sahm"))
+            sahm = stats.get("sahm")
+            if sahm is not None:
+                self.toolbar.sahm_label.setText(f"Sahm: {sahm:.2f}")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         recession_df = result.get("recession")

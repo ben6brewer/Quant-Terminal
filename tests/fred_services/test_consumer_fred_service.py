@@ -11,15 +11,14 @@ class TestConsumerFredService:
         from app.ui.modules.consumer.services.consumer_fred_service import ConsumerFredService
         return ConsumerFredService
 
-    def test_series_map_defined(self):
-        from app.ui.modules.consumer.services import consumer_fred_service as mod
-        assert hasattr(mod, "CONSUMER_SERIES")
-        assert len(mod.CONSUMER_SERIES) > 0
+    def test_groups_defined(self, service):
+        assert len(service.GROUPS) > 0
+        assert service.GROUPS[0].series
 
-    def test_consumer_series_contains_expected(self):
-        from app.ui.modules.consumer.services.consumer_fred_service import CONSUMER_SERIES
-        assert "Sentiment" in CONSUMER_SERIES
-        assert "USREC" in CONSUMER_SERIES
+    def test_series_contains_expected(self, service):
+        series = service.GROUPS[0].series
+        assert "Sentiment" in series
+        assert "USREC" in series
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

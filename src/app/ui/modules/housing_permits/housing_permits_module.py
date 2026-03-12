@@ -1,8 +1,8 @@
 """Housing Permits Module — Stacked area (Raw) or YoY% line with view toggle."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.housing.services import HousingFredService
-from .widgets.housing_permits_toolbar import HousingPermitsToolbar
 from .widgets.housing_permits_chart import HousingPermitsChart
 
 
@@ -21,9 +21,14 @@ class HousingPermitsModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return HousingPermitsToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("permits_label", "Permits: --")],
+        )
 
     def create_chart(self):
         return HousingPermitsChart()
@@ -40,24 +45,15 @@ class HousingPermitsModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = HousingFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                total_permits=stats.get("total_permits"),
-            )
+            total_permits = stats.get("total_permits")
+            if total_permits is not None:
+                self.toolbar.permits_label.setText(f"Permits: {total_permits:.0f}K")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         permits_df = self.slice_data(result.get("permits"))
         usrec_df = result.get("usrec")
         return (permits_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

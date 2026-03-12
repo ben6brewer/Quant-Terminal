@@ -9,10 +9,9 @@ class TestTradeFredService:
         from app.ui.modules.trade.services.trade_fred_service import TradeFredService
         return TradeFredService
 
-    def test_series_maps_defined(self):
-        from app.ui.modules.trade.services import trade_fred_service as mod
-        assert hasattr(mod, "TRADE_SERIES")
-        assert len(mod.TRADE_SERIES) > 0
+    def test_groups_defined(self, service):
+        assert len(service.GROUPS) > 0
+        assert service.GROUPS[0].series
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

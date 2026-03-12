@@ -54,10 +54,14 @@ class BaseFredService:
     - ThreadPoolExecutor(10) parallel FRED API calls
     - 1-hour cooldown on failed fetches
     - YoY% computation helper
+    - Declarative GROUPS config for auto-generated fetch_all_data()
 
-    Subclasses define series maps, cache files, and fetch_all_data() orchestration.
+    Subclasses either:
+    1. Define GROUPS list for auto-generated fetch_all_data(), or
+    2. Override fetch_all_data() for custom orchestration.
     """
 
+    GROUPS = []  # List[FredGroup] — subclasses declare for auto-generated fetch_all_data
     _FETCH_COOLDOWN = 3600  # 1-hour cooldown on failed fetches
 
     # ── Cache helpers ─────────────────────────────────────────────────────
@@ -240,6 +244,48 @@ class BaseFredService:
         except Exception:
             logging.exception("FRED incremental fetch failed for %s", cache_file.name)
             return cached
+
+    # ── Declarative GROUPS → auto-generated fetch_all_data ───────────────
+
+    @classmethod
+    def fetch_all_data(cls) -> "Optional[Dict[str, pd.DataFrame]]":
+        """Auto-generated from GROUPS. Override for custom logic."""
+        if not cls.GROUPS:
+            raise NotImplementedError(
+                f"{cls.__name__} must define GROUPS or override fetch_all_data()"
+            )
+        result = {}
+        for i, group in enumerate(cls.GROUPS):
+            cache_path = CACHE_DIR / group.cache_file
+            fetch_attr = f"_last_group_{i}_fetch"
+            raw = cls._get_group(
+                group.series, cache_path, fetch_attr, group.max_age_days
+            )
+            if raw is None or raw.empty:
+                continue
+            for output in group.outputs:
+                cols = [c for c in output.columns if c in raw.columns]
+                if not cols:
+                    continue
+                df = raw[cols].dropna(how="all").copy()
+                if output.unit_scale is not None:
+                    df = df * output.unit_scale
+                result[output.key] = df
+        if not result:
+            return None
+        cls._data = result
+        return result
+
+    # ── Stats helper ──────────────────────────────────────────────────────
+
+    @staticmethod
+    def _latest_value(data, data_key, col, decimals=2):
+        """Extract latest non-NaN value from data[data_key][col]."""
+        df = data.get(data_key)
+        if df is None or col not in df.columns:
+            return None
+        s = df[col].dropna()
+        return round(float(s.iloc[-1]), decimals) if not s.empty else None
 
     # ── Transform helpers ─────────────────────────────────────────────────
 

@@ -1,8 +1,8 @@
 """Delinquency Rates Module — Multi-line delinquency rates from FRED."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_QUARTERS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.credit.services import CreditFredService
-from .widgets.delinquency_rates_toolbar import DelinquencyRatesToolbar
 from .widgets.delinquency_rates_chart import DelinquencyRatesChart
 
 
@@ -20,7 +20,12 @@ class DelinquencyRatesModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return DelinquencyRatesToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("delinq_label", "CC Delinq: --")],
+            lookback_options=["5Y", "10Y", "20Y", "Max"],
+            default_lookback_index=1,
+        )
 
     def create_chart(self):
         return DelinquencyRatesChart()
@@ -43,7 +48,10 @@ class DelinquencyRatesModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = CreditFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(cc_delinquency=stats.get("cc_delinquency"))
+            cc_delinquency = stats.get("cc_delinquency")
+            if cc_delinquency is not None:
+                self.toolbar.delinq_label.setText(f"CC Delinq: {cc_delinquency:.1f}%")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         delinq_df = self.slice_data(result.get("delinquency"))

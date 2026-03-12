@@ -1,8 +1,8 @@
 """Mortgage Rates Module — Multi-line: 30Y and 15Y fixed rates."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_WEEKS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.mortgage.services import MortgageFredService
-from .widgets.mortgage_rates_toolbar import MortgageRatesToolbar
 from .widgets.mortgage_rates_chart import MortgageRatesChart
 
 
@@ -20,7 +20,10 @@ class MortgageRatesModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return MortgageRatesToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("rate30_label", "30Y: --"), ("rate15_label", "15Y: --")],
+        )
 
     def create_chart(self):
         return MortgageRatesChart()
@@ -40,10 +43,13 @@ class MortgageRatesModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = MortgageFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                rate_30y=stats.get("rate_30y"),
-                rate_15y=stats.get("rate_15y"),
-            )
+            rate_30y = stats.get("rate_30y")
+            rate_15y = stats.get("rate_15y")
+            if rate_30y is not None:
+                self.toolbar.rate30_label.setText(f"30Y: {rate_30y:.2f}%")
+            if rate_15y is not None:
+                self.toolbar.rate15_label.setText(f"15Y: {rate_15y:.2f}%")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         rates_df = self.slice_data(result.get("rates"))

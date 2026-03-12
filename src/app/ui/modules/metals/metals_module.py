@@ -2,8 +2,8 @@
 
 from app.ui.modules.yfinance_base_module import YFinanceDataModule
 from app.ui.modules.fred_base_module import LOOKBACK_DAYS
+from app.ui.modules.fred_toolbar import FredToolbar
 from .services.metals_yfinance_service import MetalsYFinanceService
-from .widgets.metals_toolbar import MetalsToolbar
 from .widgets.metals_chart import MetalsChart
 
 
@@ -24,9 +24,20 @@ class MetalsModule(YFinanceDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return MetalsToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Normalized", "Raw"],
+            stat_labels=[
+                ("gold_label", "Au: --"),
+                ("silver_label", "Ag: --"),
+                ("copper_label", "Cu: --"),
+                ("platinum_label", "Pt: --"),
+                ("palladium_label", "Pd: --"),
+            ],
+        )
 
     def create_chart(self):
         return MetalsChart()
@@ -46,27 +57,26 @@ class MetalsModule(YFinanceDataModule):
     def update_toolbar_info(self, result):
         stats = MetalsYFinanceService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                gold=stats.get("gold"),
-                silver=stats.get("silver"),
-                copper=stats.get("copper"),
-                platinum=stats.get("platinum"),
-                palladium=stats.get("palladium"),
-            )
+            gold = stats.get("gold")
+            silver = stats.get("silver")
+            copper = stats.get("copper")
+            platinum = stats.get("platinum")
+            palladium = stats.get("palladium")
+            if gold is not None:
+                self.toolbar.gold_label.setText(f"Au: ${gold:,.0f}")
+            if silver is not None:
+                self.toolbar.silver_label.setText(f"Ag: ${silver:.2f}")
+            if copper is not None:
+                self.toolbar.copper_label.setText(f"Cu: ${copper:.2f}")
+            if platinum is not None:
+                self.toolbar.platinum_label.setText(f"Pt: ${platinum:,.0f}")
+            if palladium is not None:
+                self.toolbar.palladium_label.setText(f"Pd: ${palladium:,.0f}")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         metals_df = self.slice_data(result.get("metals"))
         return (metals_df,)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

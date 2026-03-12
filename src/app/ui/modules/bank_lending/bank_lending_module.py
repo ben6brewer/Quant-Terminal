@@ -1,8 +1,8 @@
 """Bank Lending Module — Dual-view: Raw stacked area ($B) or YoY% multi-line."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_WEEKS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.banking.services import BankingFredService
-from .widgets.bank_lending_toolbar import BankLendingToolbar
 from .widgets.bank_lending_chart import BankLendingChart
 
 
@@ -22,9 +22,15 @@ class BankLendingModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "10Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return BankLendingToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("total_label", "Total: --")],
+            default_lookback_index=3,
+        )
 
     def create_chart(self):
         return BankLendingChart()
@@ -44,24 +50,15 @@ class BankLendingModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = BankingFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                total_loans=stats.get("total_loans"),
-            )
+            total_loans = stats.get("total_loans")
+            if total_loans is not None:
+                self.toolbar.total_label.setText(f"Total: ${total_loans:,.0f}B")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         loans_df = self.slice_data(result.get("loans"))
         usrec_df = result.get("usrec")
         return (loans_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

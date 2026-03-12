@@ -1,8 +1,8 @@
 """Crude Oil Module — Multi-line: WTI + Brent."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_DAYS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.commodities.services import CommodityFredService
-from .widgets.crude_oil_toolbar import CrudeOilToolbar
 from .widgets.crude_oil_chart import CrudeOilChart
 
 
@@ -21,9 +21,14 @@ class CrudeOilModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return CrudeOilToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("wti_label", "WTI: --"), ("brent_label", "Brent: --")],
+        )
 
     def create_chart(self):
         return CrudeOilChart()
@@ -43,10 +48,13 @@ class CrudeOilModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = CommodityFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                wti=stats.get("wti"),
-                brent=stats.get("brent"),
-            )
+            wti = stats.get("wti")
+            brent = stats.get("brent")
+            if wti is not None:
+                self.toolbar.wti_label.setText(f"WTI: ${wti:.2f}")
+            if brent is not None:
+                self.toolbar.brent_label.setText(f"Brent: ${brent:.2f}")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         energy_df = self.slice_data(result.get("energy"))
@@ -55,16 +63,6 @@ class CrudeOilModule(FredDataModule):
             energy_df = energy_df[cols] if cols else energy_df
         usrec_df = result.get("usrec")
         return (energy_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

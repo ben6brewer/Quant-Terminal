@@ -1,8 +1,8 @@
 """Productivity Module — Multi-line YoY%: Productivity, ULC, Real Compensation."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_QUARTERS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.productivity_service.services import ProductivityFredService
-from .widgets.productivity_toolbar import ProductivityToolbar
 from .widgets.productivity_chart import ProductivityChart
 
 
@@ -23,7 +23,12 @@ class ProductivityModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return ProductivityToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("prod_label", "Productivity: --"), ("ulc_label", "ULC: --")],
+            lookback_options=["5Y", "10Y", "20Y", "Max"],
+            default_lookback_index=1,
+        )
 
     def create_chart(self):
         return ProductivityChart()
@@ -43,10 +48,13 @@ class ProductivityModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = ProductivityFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                productivity=stats.get("productivity"),
-                ulc=stats.get("ulc"),
-            )
+            productivity = stats.get("productivity")
+            ulc = stats.get("ulc")
+            if productivity is not None:
+                self.toolbar.prod_label.setText(f"Productivity: {productivity:+.1f}%")
+            if ulc is not None:
+                self.toolbar.ulc_label.setText(f"ULC: {ulc:+.1f}%")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         prod_df = self.slice_data(result.get("productivity"))

@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_MONTHS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.monetary_policy.services import MonetaryFredService
-from .widgets.fed_funds_rate_toolbar import FedFundsRateToolbar
 from .widgets.fed_funds_rate_chart import FedFundsRateChart
 
 if TYPE_CHECKING:
@@ -27,7 +27,9 @@ class FedFundsRateModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return FedFundsRateToolbar(self.theme_manager)
+        return FredToolbar(self.theme_manager,
+                           stat_labels=[("effr_label", "EFFR: --")],
+                           default_lookback_index=5)
 
     def create_chart(self):
         return FedFundsRateChart()
@@ -46,7 +48,9 @@ class FedFundsRateModule(FredDataModule):
         if effr_df is not None and not effr_df.empty and "Fed Funds Rate" in effr_df.columns:
             latest = effr_df["Fed Funds Rate"].dropna()
             if not latest.empty:
-                self.toolbar.update_info(effr=float(latest.iloc[-1]))
+                effr = float(latest.iloc[-1])
+                self.toolbar.effr_label.setText(f"EFFR: {effr:.2f}%")
+        self.toolbar._update_timestamp()
 
     def slice_data(self, df: "Optional[pd.DataFrame]") -> "Optional[pd.DataFrame]":
         """DateOffset-based slicing for mixed-frequency EFFR data."""

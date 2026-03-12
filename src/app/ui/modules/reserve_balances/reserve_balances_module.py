@@ -1,8 +1,8 @@
 """Reserve Balances Module — Bank reserves at the Fed with optional Total Assets overlay."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_WEEKS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.monetary_policy.services import MonetaryFredService
-from .widgets.reserve_balances_toolbar import ReserveBalancesToolbar
 from .widgets.reserve_balances_chart import ReserveBalancesChart
 
 
@@ -21,7 +21,9 @@ class ReserveBalancesModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return ReserveBalancesToolbar(self.theme_manager)
+        return FredToolbar(self.theme_manager,
+                           stat_labels=[("reserves_label", "Reserves: --")],
+                           default_lookback_index=5)
 
     def create_chart(self):
         return ReserveBalancesChart()
@@ -43,7 +45,9 @@ class ReserveBalancesModule(FredDataModule):
         if res_df is not None and not res_df.empty and "Reserve Balances" in res_df.columns:
             latest = res_df["Reserve Balances"].dropna()
             if not latest.empty:
-                self.toolbar.update_info(reserves=float(latest.iloc[-1]))
+                reserves = float(latest.iloc[-1])
+                self.toolbar.reserves_label.setText(f"Reserves: ${reserves:.2f}T")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         res_df = self.slice_data(result.get("reserves"))

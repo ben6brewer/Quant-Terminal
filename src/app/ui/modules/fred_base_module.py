@@ -30,7 +30,7 @@ LOOKBACK_DAYS = {
 
 class FredDataModule(BaseModule):
     """
-    Base class for all FRED data modules.
+    Base class for all FRED/yfinance data modules.
 
     Handles the full module lifecycle: init, UI setup, signal wiring,
     lazy data loading on showEvent, API key check, background fetch,
@@ -39,7 +39,7 @@ class FredDataModule(BaseModule):
     Subclasses MUST implement:
         create_toolbar()         — return toolbar widget instance
         create_chart()           — return chart widget instance
-        get_fred_service()       — return the callable (e.g. Service.fetch_all_data)
+        get_data_service()       — return the callable (e.g. Service.fetch_all_data)
         get_loading_message()    — e.g. "Fetching PCE data from FRED..."
         extract_chart_data(result) — extract + slice data, return args tuple for chart.update_data()
 
@@ -57,7 +57,14 @@ class FredDataModule(BaseModule):
         get_fail_message()            — placeholder on fetch failure
         _connect_extra_signals()      — for view_changed etc.
         _apply_extra_settings()       — for view_mode etc.
+
+    Auto-wiring: Set VIEW_MODE and/or DATA_MODE class attributes to auto-connect
+    toolbar signals and apply settings without overriding the 3 boilerplate methods.
     """
+
+    VIEW_MODE = None   # e.g. "view_mode" — auto-wires toolbar.view_changed
+    DATA_MODE = None   # e.g. "data_mode" — auto-wires toolbar.data_mode_changed
+    REQUIRES_API_KEY = True  # False for yfinance-powered modules
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
         super().__init__(theme_manager, parent)
@@ -79,8 +86,12 @@ class FredDataModule(BaseModule):
     def create_chart(self):
         raise NotImplementedError
 
-    def get_fred_service(self):
+    def get_data_service(self):
         """Return the callable to invoke in background thread."""
+        return self.get_fred_service()
+
+    def get_fred_service(self):
+        """Legacy hook — override get_data_service() instead for new modules."""
         raise NotImplementedError
 
     def get_loading_message(self) -> str:
@@ -106,12 +117,30 @@ class FredDataModule(BaseModule):
         return "Failed to fetch data."
 
     def _connect_extra_signals(self):
-        """Connect additional signals (e.g. view_changed). Override in subclass."""
-        pass
+        """Connect additional signals. Auto-wires VIEW_MODE/DATA_MODE if set."""
+        if self.VIEW_MODE and hasattr(self.toolbar, "view_changed"):
+            self.toolbar.view_changed.connect(self._on_view_changed)
+        if self.DATA_MODE and hasattr(self.toolbar, "data_mode_changed"):
+            self.toolbar.data_mode_changed.connect(self._on_data_mode_changed)
+
+    def _on_view_changed(self, view: str):
+        self.settings_manager.update_settings({self.VIEW_MODE: view})
+        self._render()
+
+    def _on_data_mode_changed(self, mode: str):
+        self.settings_manager.update_settings({self.DATA_MODE: mode})
+        self._render()
 
     def _apply_extra_settings(self):
-        """Apply additional settings (e.g. view_mode). Override in subclass."""
-        pass
+        """Apply additional settings. Auto-wires VIEW_MODE/DATA_MODE if set."""
+        if self.VIEW_MODE and hasattr(self.toolbar, "set_active_view"):
+            self.toolbar.set_active_view(
+                self.settings_manager.get_setting(self.VIEW_MODE)
+            )
+        if self.DATA_MODE and hasattr(self.toolbar, "set_active_data_mode"):
+            self.toolbar.set_active_data_mode(
+                self.settings_manager.get_setting(self.DATA_MODE)
+            )
 
     # ── UI Setup ──────────────────────────────────────────────────────────
 
@@ -148,11 +177,12 @@ class FredDataModule(BaseModule):
     # ── Data Loading ──────────────────────────────────────────────────────
 
     def _initialize_data(self):
-        from app.services.fred_api_key_service import FredApiKeyService
-        if not FredApiKeyService.has_api_key():
-            self._show_api_key_dialog()
-        else:
-            self._fetch_data()
+        if self.REQUIRES_API_KEY:
+            from app.services.fred_api_key_service import FredApiKeyService
+            if not FredApiKeyService.has_api_key():
+                self._show_api_key_dialog()
+                return
+        self._fetch_data()
 
     def _show_api_key_dialog(self):
         from app.ui.widgets.common.api_key_dialog import APIKeyDialog
@@ -170,7 +200,7 @@ class FredDataModule(BaseModule):
 
     def _fetch_data(self):
         self._run_worker(
-            self.get_fred_service(),
+            self.get_data_service(),
             loading_message=self.get_loading_message(),
             on_complete=self._on_data_fetched,
             on_error=self._on_fetch_error,

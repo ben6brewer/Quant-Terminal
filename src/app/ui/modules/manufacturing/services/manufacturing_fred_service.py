@@ -2,61 +2,35 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import Dict, Optional
 
 from app.services.base_fred_service import BaseFredService
-
-if TYPE_CHECKING:
-    import pandas as pd
-
-MANUFACTURING_SERIES: Dict[str, str] = {
-    "Durable Goods": "DGORDER",
-    "Core Capital Goods": "NEWORDER",
-    "Unfilled Orders": "AMDMUO",
-    "USREC": "USREC",
-}
-
-_CACHE_DIR = Path.home() / ".quant_terminal" / "cache" / "fred"
-_MANUFACTURING_CACHE = _CACHE_DIR / "manufacturing_monthly.parquet"
+from app.services.fred_group import FredGroup, FredOutput
 
 
 class ManufacturingFredService(BaseFredService):
     """Fetches durable goods order data from FRED. Monthly, 7-day cache."""
 
-    _data: Optional[Dict[str, "pd.DataFrame"]] = None
-    _last_manufacturing_fetch: Optional[float] = None
-
-    @classmethod
-    def fetch_all_data(cls) -> Optional[Dict[str, "pd.DataFrame"]]:
-        import pandas as pd
-
-        raw = cls._get_group(
-            MANUFACTURING_SERIES, _MANUFACTURING_CACHE,
-            "_last_manufacturing_fetch", max_age_days=7
-        )
-        if raw is None or raw.empty:
-            return None
-
-        result: Dict[str, pd.DataFrame] = {}
-
-        order_cols = [c for c in ["Durable Goods", "Core Capital Goods", "Unfilled Orders"]
-                      if c in raw.columns]
-        if order_cols:
-            df = raw[order_cols].dropna(how="all").copy()
-            # Convert millions to billions
-            for col in df.columns:
-                df[col] = df[col] / 1000.0
-            result["orders"] = df
-
-        if "USREC" in raw.columns:
-            result["usrec"] = raw[["USREC"]].dropna(how="all")
-
-        if not result:
-            return None
-
-        cls._data = result
-        return result
+    GROUPS = [
+        FredGroup(
+            series={
+                "Durable Goods": "DGORDER",
+                "Core Capital Goods": "NEWORDER",
+                "Unfilled Orders": "AMDMUO",
+                "USREC": "USREC",
+            },
+            cache_file="manufacturing_monthly.parquet",
+            max_age_days=7,
+            outputs=[
+                FredOutput(
+                    key="orders",
+                    columns=["Durable Goods", "Core Capital Goods", "Unfilled Orders"],
+                    unit_scale=1 / 1000.0,  # millions → billions
+                ),
+                FredOutput(key="usrec", columns=["USREC"]),
+            ],
+        ),
+    ]
 
     @classmethod
     def get_latest_stats(cls, data: Dict) -> Optional[Dict]:

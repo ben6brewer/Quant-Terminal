@@ -1,8 +1,8 @@
 """Savings Rate Module — Personal Savings Rate (%) from FRED."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.income.services import IncomeFredService
-from .widgets.savings_rate_toolbar import SavingsRateToolbar
 from .widgets.savings_rate_chart import SavingsRateChart
 
 
@@ -19,7 +19,8 @@ class SavingsRateModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return SavingsRateToolbar(self.theme_manager)
+        return FredToolbar(self.theme_manager,
+                           stat_labels=[("rate_label", "Savings Rate: --")])
 
     def create_chart(self):
         return SavingsRateChart()
@@ -36,9 +37,10 @@ class SavingsRateModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = IncomeFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                savings_rate=stats.get("savings_rate"),
-            )
+            savings_rate = stats.get("savings_rate")
+            if savings_rate is not None:
+                self.toolbar.rate_label.setText(f"Savings Rate: {savings_rate:.1f}%")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         savings_df = self.slice_data(result.get("savings"))

@@ -11,10 +11,8 @@ class TestVolatilityFredService:
         monkeypatch.setattr(mod.VolatilityFredService, "_fetch_move", classmethod(lambda cls: None))
         return mod.VolatilityFredService
 
-    def test_series_maps_defined(self):
-        from app.ui.modules.volatility_index.services import volatility_fred_service as mod
-        assert hasattr(mod, "VOL_SERIES")
-        assert len(mod.VOL_SERIES) > 0
+    def test_fetch_all_data_callable(self, service):
+        assert callable(getattr(service, "fetch_all_data", None))
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

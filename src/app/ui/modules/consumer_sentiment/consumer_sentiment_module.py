@@ -18,6 +18,7 @@ class ConsumerSentimentModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
         return ConsumerSentimentToolbar(self.theme_manager)
@@ -46,16 +47,6 @@ class ConsumerSentimentModule(FredDataModule):
         sent_df = self.slice_data(result.get("sentiment"))
         usrec_df = result.get("usrec")
         return (sent_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

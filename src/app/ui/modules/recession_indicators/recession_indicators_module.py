@@ -1,8 +1,8 @@
 """Recession Indicators Module — Multi-line: Recession Probability + Sahm Rule."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_MONTHS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.recession.services import RecessionFredService
-from .widgets.recession_indicators_toolbar import RecessionIndicatorsToolbar
 from .widgets.recession_indicators_chart import RecessionIndicatorsChart
 
 
@@ -22,7 +22,11 @@ class RecessionIndicatorsModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return RecessionIndicatorsToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("prob_label", "Prob: --"), ("sahm_label", "Sahm: --")],
+            default_lookback_index=5,
+        )
 
     def create_chart(self):
         return RecessionIndicatorsChart()
@@ -42,10 +46,13 @@ class RecessionIndicatorsModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = RecessionFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                recession_prob=stats.get("recession_prob"),
-                sahm=stats.get("sahm"),
-            )
+            recession_prob = stats.get("recession_prob")
+            sahm = stats.get("sahm")
+            if recession_prob is not None:
+                self.toolbar.prob_label.setText(f"Prob: {recession_prob:.2f}%")
+            if sahm is not None:
+                self.toolbar.sahm_label.setText(f"Sahm: {sahm:.2f}")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         recession_df = self.slice_data(result.get("recession"))

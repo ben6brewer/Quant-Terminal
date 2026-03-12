@@ -1,8 +1,8 @@
 """Financial Stress Module — Multi-line: STLFSI + KCFSI."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_WEEKS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.stress.services import StressFredService
-from .widgets.financial_stress_toolbar import FinancialStressToolbar
 from .widgets.financial_stress_chart import FinancialStressChart
 
 
@@ -22,7 +22,11 @@ class FinancialStressModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return FinancialStressToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("stlfsi_label", "STLFSI: --"), ("kcfsi_label", "KCFSI: --")],
+            default_lookback_index=3,
+        )
 
     def create_chart(self):
         return FinancialStressChart()
@@ -42,10 +46,13 @@ class FinancialStressModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = StressFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                stlfsi=stats.get("stlfsi"),
-                kcfsi=stats.get("kcfsi"),
-            )
+            stlfsi = stats.get("stlfsi")
+            kcfsi = stats.get("kcfsi")
+            if stlfsi is not None:
+                self.toolbar.stlfsi_label.setText(f"STLFSI: {stlfsi:+.2f}")
+            if kcfsi is not None:
+                self.toolbar.kcfsi_label.setText(f"KCFSI: {kcfsi:+.2f}")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         stress_df = self.slice_data(result.get("stress"))

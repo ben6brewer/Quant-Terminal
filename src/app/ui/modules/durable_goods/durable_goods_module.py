@@ -1,8 +1,8 @@
 """Durable Goods Module — Dual-view: Raw multi-line or YoY% growth."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.manufacturing.services import ManufacturingFredService
-from .widgets.durable_goods_toolbar import DurableGoodsToolbar
 from .widgets.durable_goods_chart import DurableGoodsChart
 
 
@@ -19,9 +19,14 @@ class DurableGoodsModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return DurableGoodsToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("mom_label", "MoM: --")],
+        )
 
     def create_chart(self):
         return DurableGoodsChart()
@@ -38,22 +43,15 @@ class DurableGoodsModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = ManufacturingFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(dg_mom=stats.get("dg_mom"))
+            dg_mom = stats.get("dg_mom")
+            if dg_mom is not None:
+                self.toolbar.mom_label.setText(f"MoM: {dg_mom:+.1f}%")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         orders_df = self.slice_data(result.get("orders"))
         usrec_df = result.get("usrec")
         return (orders_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

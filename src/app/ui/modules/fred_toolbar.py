@@ -15,47 +15,112 @@ class FredToolbar(ModuleToolbar):
 
     Adds: Lookback combo | [info section] between Home and Settings.
 
-    Subclasses MUST implement:
-        setup_info_section(layout) — add module-specific info labels after lookback
-        update_info(**kwargs) — update those labels with data
+    Can be used declaratively (no subclass needed) via keyword args:
+        FredToolbar(theme_mgr,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("wti_label", "WTI: --")],
+            lookback_options=["1Y", "5Y", "10Y", "Max"],
+            default_lookback_index=1,
+        )
 
-    Subclasses MAY override:
-        get_lookback_options() — default: ["1Y", "2Y", "5Y", "10Y", "20Y", "Max"]
-        get_default_lookback_index() — default: 2 (5Y)
-        supports_custom_date() — default: False; if True, adds "Custom" option
+    Or subclassed with:
+        setup_info_section(layout)
+        update_info(**kwargs)
+        get_lookback_options()
+        get_default_lookback_index()
+        supports_custom_date()
     """
 
     lookback_changed = Signal(str)
+    view_changed = Signal(str)
+    data_mode_changed = Signal(str)
 
-    def __init__(self, theme_manager: ThemeManager, parent=None):
+    def __init__(self, theme_manager: ThemeManager, parent=None, *,
+                 view_options=None,
+                 data_mode_options=None,
+                 stat_labels=None,
+                 lookback_options=None,
+                 default_lookback_index=None):
+        self._view_options = view_options
+        self._data_mode_options = data_mode_options
+        self._stat_labels = stat_labels
+        self._lookback_options_override = lookback_options
+        self._default_lookback_index_override = default_lookback_index
         self._previous_lookback_index = self.get_default_lookback_index()
         super().__init__(theme_manager, parent)
 
     # ── Configuration hooks (override in subclass) ────────────────────────
 
     def get_lookback_options(self) -> list:
-        """Return list of lookback option strings."""
+        if self._lookback_options_override is not None:
+            return self._lookback_options_override
         return ["1Y", "2Y", "5Y", "10Y", "20Y", "Max"]
 
     def get_default_lookback_index(self) -> int:
-        """Return default index into lookback options."""
+        if hasattr(self, "_default_lookback_index_override") and self._default_lookback_index_override is not None:
+            return self._default_lookback_index_override
         return 2  # 5Y
 
     def supports_custom_date(self) -> bool:
-        """If True, add a 'Custom' option that opens a date picker."""
         return False
 
     def setup_info_section(self, layout: QHBoxLayout):
-        """Add module-specific info labels to the toolbar layout.
+        """Add module-specific info labels. Auto-generates from constructor args if set."""
+        if not self._view_options and not self._data_mode_options and not self._stat_labels:
+            return
 
-        Called between the lookback combo and the stretch.
-        Use self._sep() to add separators.
-        """
-        pass
+        if self._view_options:
+            layout.addWidget(self._control_label("View:"))
+            self.view_combo = self._combo(items=self._view_options)
+            self.view_combo.currentIndexChanged.connect(
+                lambda _: self.view_changed.emit(self.view_combo.currentText())
+            )
+            layout.addWidget(self.view_combo)
+            layout.addWidget(self._sep())
+
+        if self._data_mode_options:
+            layout.addWidget(self._control_label("Data:"))
+            self.data_combo = self._combo(items=self._data_mode_options)
+            self.data_combo.currentIndexChanged.connect(
+                lambda _: self.data_mode_changed.emit(self.data_combo.currentText())
+            )
+            layout.addWidget(self.data_combo)
+            layout.addWidget(self._sep())
+
+        if self._stat_labels:
+            for attr_name, default_text in self._stat_labels:
+                label = self._info_label(default_text)
+                setattr(self, attr_name, label)
+                layout.addWidget(label)
+                layout.addWidget(self._sep())
+
+        self.updated_label = self._info_label("", "info_label_muted")
+        layout.addWidget(self.updated_label)
 
     def update_info(self, **kwargs):
-        """Update module-specific info labels with data."""
         pass
+
+    # ── View/Data mode helpers ─────────────────────────────────────────────
+
+    def set_active_view(self, view: str):
+        if not hasattr(self, "view_combo"):
+            return
+        for i in range(self.view_combo.count()):
+            if self.view_combo.itemText(i) == view:
+                self.view_combo.blockSignals(True)
+                self.view_combo.setCurrentIndex(i)
+                self.view_combo.blockSignals(False)
+                return
+
+    def set_active_data_mode(self, mode: str):
+        if not hasattr(self, "data_combo"):
+            return
+        for i in range(self.data_combo.count()):
+            if self.data_combo.itemText(i) == mode:
+                self.data_combo.blockSignals(True)
+                self.data_combo.setCurrentIndex(i)
+                self.data_combo.blockSignals(False)
+                return
 
     # ── Center content (called by ModuleToolbar._setup_ui) ────────────────
 

@@ -1,8 +1,8 @@
 """Industrial Production Module — IP Index, Manufacturing, Capacity Utilization."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.gdp.services import GdpFredService
-from .widgets.industrial_production_toolbar import IndustrialProductionToolbar
 from .widgets.industrial_production_chart import IndustrialProductionChart
 
 
@@ -21,9 +21,14 @@ class IndustrialProductionModule(FredDataModule):
         "show_manufacturing": True,
         "show_capacity_utilization": True,
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return IndustrialProductionToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("ip_label", "IP Index: --"), ("cap_label", "Cap. Util: --")],
+        )
 
     def create_chart(self):
         return IndustrialProductionChart()
@@ -40,25 +45,18 @@ class IndustrialProductionModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = GdpFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                ip_index=stats.get("ip_index"),
-                capacity_util=stats.get("capacity_util"),
-            )
+            ip_index = stats.get("ip_index")
+            capacity_util = stats.get("capacity_util")
+            if ip_index is not None:
+                self.toolbar.ip_label.setText(f"IP Index: {ip_index:.1f}")
+            if capacity_util is not None:
+                self.toolbar.cap_label.setText(f"Cap. Util: {capacity_util:.1f}%")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         prod_df = self.slice_data(result.get("production"))
         cap_df = self.slice_data(result.get("capacity"))
         return (prod_df, cap_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

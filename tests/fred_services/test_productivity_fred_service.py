@@ -9,10 +9,8 @@ class TestProductivityFredService:
         from app.ui.modules.productivity_service.services.productivity_fred_service import ProductivityFredService
         return ProductivityFredService
 
-    def test_series_maps_defined(self):
-        from app.ui.modules.productivity_service.services import productivity_fred_service as mod
-        assert hasattr(mod, "PROD_SERIES")
-        assert len(mod.PROD_SERIES) > 0
+    def test_groups_defined(self, service):
+        assert len(service.GROUPS) > 0
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

@@ -9,10 +9,8 @@ class TestCommodityFredService:
         from app.ui.modules.commodities.services.commodity_fred_service import CommodityFredService
         return CommodityFredService
 
-    def test_series_maps_defined(self):
-        from app.ui.modules.commodities.services import commodity_fred_service as mod
-        assert hasattr(mod, "ENERGY_SERIES")
-        assert len(mod.ENERGY_SERIES) > 0
+    def test_groups_defined(self, service):
+        assert len(service.GROUPS) > 0
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

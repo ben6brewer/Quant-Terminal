@@ -1,8 +1,8 @@
 """Labor Market Overview Module - Full UNRATE history with optional U-6 overlay."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.labor_market.services import LaborMarketFredService
-from .widgets.labor_market_overview_toolbar import LaborMarketOverviewToolbar
 from .widgets.labor_market_overview_chart import LaborMarketOverviewChart
 
 
@@ -21,7 +21,10 @@ class LaborMarketOverviewModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return LaborMarketOverviewToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("unrate_label", "UNRATE: --")],
+        )
 
     def create_chart(self):
         return LaborMarketOverviewChart()
@@ -38,7 +41,10 @@ class LaborMarketOverviewModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = LaborMarketFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(unrate=stats.get("unrate"))
+            unrate = stats.get("unrate")
+            if unrate is not None:
+                self.toolbar.unrate_label.setText(f"UNRATE: {unrate:.1f}%")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         rates = self.slice_data(result.get("rates"))

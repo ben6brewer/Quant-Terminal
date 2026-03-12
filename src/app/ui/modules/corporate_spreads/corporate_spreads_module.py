@@ -1,8 +1,8 @@
 """Corporate Spreads Module — Multi-line: Baa-10Y, Aaa-10Y, HY OAS."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_DAYS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.financial_conditions.services import FinancialConditionsFredService
-from .widgets.corporate_spreads_toolbar import CorporateSpreadsToolbar
 from .widgets.corporate_spreads_chart import CorporateSpreadsChart
 
 
@@ -23,7 +23,10 @@ class CorporateSpreadsModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return CorporateSpreadsToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("baa_label", "Baa: --"), ("hy_label", "HY OAS: --")],
+        )
 
     def create_chart(self):
         return CorporateSpreadsChart()
@@ -43,10 +46,13 @@ class CorporateSpreadsModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = FinancialConditionsFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                baa_spread=stats.get("baa_spread"),
-                hy_oas=stats.get("hy_oas"),
-            )
+            baa_spread = stats.get("baa_spread")
+            hy_oas = stats.get("hy_oas")
+            if baa_spread is not None:
+                self.toolbar.baa_label.setText(f"Baa: {baa_spread:.2f}%")
+            if hy_oas is not None:
+                self.toolbar.hy_label.setText(f"HY OAS: {hy_oas:.0f}bp")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         spreads_df = self.slice_data(result.get("spreads"))

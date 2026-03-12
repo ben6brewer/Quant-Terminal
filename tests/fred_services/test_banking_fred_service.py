@@ -9,10 +9,8 @@ class TestBankingFredService:
         from app.ui.modules.banking.services.banking_fred_service import BankingFredService
         return BankingFredService
 
-    def test_series_maps_defined(self):
-        from app.ui.modules.banking.services import banking_fred_service as mod
-        assert hasattr(mod, "BANKING_SERIES")
-        assert len(mod.BANKING_SERIES) > 0
+    def test_groups_defined(self, service):
+        assert len(service.GROUPS) > 0
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

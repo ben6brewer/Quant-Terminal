@@ -1,8 +1,8 @@
 """Retail Sales Module — Dual-view: Raw two-line or YoY% growth."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.retail.services import RetailFredService
-from .widgets.retail_sales_toolbar import RetailSalesToolbar
 from .widgets.retail_sales_chart import RetailSalesChart
 
 
@@ -20,9 +20,19 @@ class RetailSalesModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
+    DATA_MODE = "data_mode"
 
     def create_toolbar(self):
-        return RetailSalesToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            data_mode_options=["Nominal", "Real"],
+            stat_labels=[
+                ("total_label", "Total: --"),
+                ("mom_label", "MoM: --"),
+            ],
+        )
 
     def create_chart(self):
         return RetailSalesChart()
@@ -39,31 +49,18 @@ class RetailSalesModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = RetailFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                retail_total=stats.get("retail_total"),
-                retail_mom=stats.get("retail_mom"),
-            )
+            retail_total = stats.get("retail_total")
+            retail_mom = stats.get("retail_mom")
+            if retail_total is not None:
+                self.toolbar.total_label.setText(f"Total: ${retail_total:,.0f}M")
+            if retail_mom is not None:
+                self.toolbar.mom_label.setText(f"MoM: {retail_mom:+.1f}%")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         retail_df = self.slice_data(result.get("retail"))
         usrec_df = result.get("usrec")
         return (retail_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-        self.toolbar.data_mode_changed.connect(self._on_data_mode_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _on_data_mode_changed(self, mode: str):
-        self.settings_manager.update_settings({"data_mode": mode})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
-        self.toolbar.set_active_data_mode(self.settings_manager.get_setting("data_mode"))
 
     def get_settings_options(self):
         return [

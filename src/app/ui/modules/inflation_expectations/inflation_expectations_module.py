@@ -1,8 +1,8 @@
 """Inflation Expectations Module - Market breakevens and consumer surveys."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.inflation.services import InflationFredService
-from .widgets.inflation_expectations_toolbar import InflationExpectationsToolbar
 from .widgets.inflation_expectations_chart import InflationExpectationsChart
 
 
@@ -20,7 +20,11 @@ class InflationExpectationsModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return InflationExpectationsToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("breakeven_label", "5Y Breakeven: --")],
+            lookback_options=["1Y", "2Y", "5Y", "10Y", "Max"],
+        )
 
     def create_chart(self):
         return InflationExpectationsChart()
@@ -39,7 +43,8 @@ class InflationExpectationsModule(FredDataModule):
         if exp_df is not None and not exp_df.empty and "5Y Breakeven" in exp_df.columns:
             s = exp_df["5Y Breakeven"].dropna()
             if not s.empty:
-                self.toolbar.update_info(breakeven_5y=float(s.iloc[-1]))
+                self.toolbar.breakeven_label.setText(f"5Y Breakeven: {float(s.iloc[-1]):.2f}%")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         return (self.slice_data(result.get("expectations")),)

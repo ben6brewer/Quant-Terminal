@@ -1,8 +1,8 @@
 """Currency Module — Dollar Index multi-line with Raw / YoY% toggle."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_DAYS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.currency.services import CurrencyFredService
-from .widgets.currency_toolbar import CurrencyToolbar
 from .widgets.currency_chart import CurrencyChart
 
 
@@ -21,9 +21,14 @@ class CurrencyModule(FredDataModule):
         "show_hover_tooltip": True,
         "lookback": "5Y",
     }
+    VIEW_MODE = "view_mode"
 
     def create_toolbar(self):
-        return CurrencyToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            view_options=["Raw", "YoY %"],
+            stat_labels=[("dollar_label", "DXY: --"), ("eur_label", "EUR: --")],
+        )
 
     def create_chart(self):
         return CurrencyChart()
@@ -43,25 +48,18 @@ class CurrencyModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = CurrencyFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                dollar_index=stats.get("dollar_index"),
-                eur=stats.get("eur"),
-            )
+            dollar_index = stats.get("dollar_index")
+            eur = stats.get("eur")
+            if dollar_index is not None:
+                self.toolbar.dollar_label.setText(f"DXY: {dollar_index:.1f}")
+            if eur is not None:
+                self.toolbar.eur_label.setText(f"EUR: {eur:.4f}")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         dollar_df = self.slice_data(result.get("dollar_index"))
         usrec_df = result.get("usrec")
         return (dollar_df, usrec_df)
-
-    def _connect_extra_signals(self):
-        self.toolbar.view_changed.connect(self._on_view_changed)
-
-    def _on_view_changed(self, view: str):
-        self.settings_manager.update_settings({"view_mode": view})
-        self._render()
-
-    def _apply_extra_settings(self):
-        self.toolbar.set_active_view(self.settings_manager.get_setting("view_mode"))
 
     def get_settings_options(self):
         return [

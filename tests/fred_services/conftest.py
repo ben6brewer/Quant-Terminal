@@ -13,7 +13,8 @@ def isolate_fred_cache(tmp_path, monkeypatch):
     tmp_fred = tmp_path / "fred_cache"
     tmp_fred.mkdir()
 
-    # Patch module-level cache constants in every FRED service module
+    # Patch module-level cache constants in every FRED service module.
+    # Services migrated to GROUPS use base_fred_service.CACHE_DIR only.
     _modules_and_attrs = [
         ("app.services.base_fred_service", ["CACHE_DIR", "_FRED_VERSION_FILE"]),
         (
@@ -41,72 +42,16 @@ def isolate_fred_cache(tmp_path, monkeypatch):
             ["_CACHE_DIR", "_HOUSING_CACHE"],
         ),
         (
-            "app.ui.modules.consumer.services.consumer_fred_service",
-            ["_CACHE_DIR", "_CONSUMER_CACHE"],
-        ),
-        (
-            "app.ui.modules.banking.services.banking_fred_service",
-            ["_CACHE_DIR", "_BANKING_CACHE"],
-        ),
-        (
-            "app.ui.modules.volatility_index.services.volatility_fred_service",
-            ["_CACHE_DIR", "_VOL_CACHE"],
-        ),
-        (
-            "app.ui.modules.stress.services.stress_fred_service",
-            ["_CACHE_DIR", "_STRESS_CACHE"],
-        ),
-        (
             "app.ui.modules.recession.services.recession_fred_service",
             ["_CACHE_DIR", "_MONTHLY_CACHE"],
-        ),
-        (
-            "app.ui.modules.household.services.household_fred_service",
-            ["_CACHE_DIR", "_HOUSEHOLD_CACHE"],
-        ),
-        (
-            "app.ui.modules.productivity_service.services.productivity_fred_service",
-            ["_CACHE_DIR", "_PROD_CACHE"],
-        ),
-        (
-            "app.ui.modules.currency.services.currency_fred_service",
-            ["_CACHE_DIR", "_CURRENCY_CACHE"],
-        ),
-        (
-            "app.ui.modules.commodities.services.commodity_fred_service",
-            ["_CACHE_DIR", "_ENERGY_CACHE"],
-        ),
-        (
-            "app.ui.modules.retail.services.retail_fred_service",
-            ["_CACHE_DIR", "_RETAIL_CACHE"],
-        ),
-        (
-            "app.ui.modules.mortgage.services.mortgage_fred_service",
-            ["_CACHE_DIR", "_MORTGAGE_CACHE"],
         ),
         (
             "app.ui.modules.financial_conditions.services.financial_conditions_fred_service",
             ["_CACHE_DIR", "_FINCOND_CACHE"],
         ),
         (
-            "app.ui.modules.trade.services.trade_fred_service",
-            ["_CACHE_DIR", "_TRADE_CACHE"],
-        ),
-        (
-            "app.ui.modules.credit.services.credit_fred_service",
-            ["_CACHE_DIR", "_DELINQUENCY_CACHE", "_CONSUMER_CREDIT_CACHE"],
-        ),
-        (
-            "app.ui.modules.fiscal.services.fiscal_fred_service",
-            ["_CACHE_DIR", "_FISCAL_CACHE"],
-        ),
-        (
             "app.ui.modules.income.services.income_fred_service",
             ["_CACHE_DIR", "_INCOME_CACHE"],
-        ),
-        (
-            "app.ui.modules.manufacturing.services.manufacturing_fred_service",
-            ["_CACHE_DIR", "_MANUFACTURING_CACHE"],
         ),
     ]
 

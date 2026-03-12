@@ -1,8 +1,8 @@
 """Money Velocity Module — M2 velocity (quarterly) with recession shading."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_QUARTERS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.monetary_policy.services import MonetaryFredService
-from .widgets.money_velocity_toolbar import MoneyVelocityToolbar
 from .widgets.money_velocity_chart import MoneyVelocityChart
 
 
@@ -19,7 +19,10 @@ class MoneyVelocityModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return MoneyVelocityToolbar(self.theme_manager)
+        return FredToolbar(self.theme_manager,
+                           stat_labels=[("m2v_label", "M2V: --")],
+                           lookback_options=["5Y", "10Y", "20Y", "Max"],
+                           default_lookback_index=3)
 
     def create_chart(self):
         return MoneyVelocityChart()
@@ -41,7 +44,9 @@ class MoneyVelocityModule(FredDataModule):
         if vel_df is not None and not vel_df.empty and "M2 Velocity" in vel_df.columns:
             latest = vel_df["M2 Velocity"].dropna()
             if not latest.empty:
-                self.toolbar.update_info(m2v=float(latest.iloc[-1]))
+                m2v = float(latest.iloc[-1])
+                self.toolbar.m2v_label.setText(f"M2V: {m2v:.2f}")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         vel_df = self.slice_data(result.get("velocity"))

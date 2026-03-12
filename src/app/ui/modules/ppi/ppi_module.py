@@ -1,8 +1,8 @@
 """PPI Module - Producer Price Index visualization."""
 
 from app.ui.modules.fred_base_module import FredDataModule
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.inflation.services import InflationFredService
-from .widgets.ppi_toolbar import PpiToolbar
 from .widgets.ppi_chart import PpiChart
 
 
@@ -23,7 +23,10 @@ class PpiModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return PpiToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("ppi_label", "PPI: --")],
+        )
 
     def create_chart(self):
         return PpiChart()
@@ -42,7 +45,8 @@ class PpiModule(FredDataModule):
         if ppi_df is not None and not ppi_df.empty and "PPI Final Demand" in ppi_df.columns:
             s = ppi_df["PPI Final Demand"].dropna()
             if not s.empty:
-                self.toolbar.update_info(ppi_final=float(s.iloc[-1]))
+                self.toolbar.ppi_label.setText(f"PPI: {float(s.iloc[-1]):.2f}%")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         return (self.slice_data(result.get("ppi")),)

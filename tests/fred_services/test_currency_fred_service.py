@@ -9,10 +9,8 @@ class TestCurrencyFredService:
         from app.ui.modules.currency.services.currency_fred_service import CurrencyFredService
         return CurrencyFredService
 
-    def test_series_maps_defined(self):
-        from app.ui.modules.currency.services import currency_fred_service as mod
-        assert hasattr(mod, "CURRENCY_SERIES")
-        assert len(mod.CURRENCY_SERIES) > 0
+    def test_groups_defined(self, service):
+        assert len(service.GROUPS) > 0
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

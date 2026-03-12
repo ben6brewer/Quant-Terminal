@@ -1,8 +1,8 @@
 """Volatility Module — Multi-line: VIX, NASDAQ Vol, MOVE + 5 more vol indices."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_DAYS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.volatility_index.services import VolatilityFredService
-from .widgets.volatility_toolbar import VolatilityToolbar
 from .widgets.volatility_chart import VolatilityChart
 
 
@@ -31,7 +31,11 @@ class VolatilityModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return VolatilityToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("vix_label", "VIX: --"), ("move_label", "MOVE: --")],
+            default_lookback_index=2,
+        )
 
     def create_chart(self):
         return VolatilityChart()
@@ -51,10 +55,13 @@ class VolatilityModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = VolatilityFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(
-                vix=stats.get("vix"),
-                move=stats.get("move"),
-            )
+            vix = stats.get("vix")
+            move = stats.get("move")
+            if vix is not None:
+                self.toolbar.vix_label.setText(f"VIX: {vix:.1f}")
+            if move is not None:
+                self.toolbar.move_label.setText(f"MOVE: {move:.1f}")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         vol_df = self.slice_data(result.get("volatility"))

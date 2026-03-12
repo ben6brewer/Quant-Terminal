@@ -1,8 +1,8 @@
 """Fed Balance Sheet Module — Total assets line or breakdown stacked area."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_WEEKS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.monetary_policy.services import MonetaryFredService
-from .widgets.fed_balance_sheet_toolbar import FedBalanceSheetToolbar
 from .widgets.fed_balance_sheet_chart import FedBalanceSheetChart
 
 
@@ -26,7 +26,9 @@ class FedBalanceSheetModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return FedBalanceSheetToolbar(self.theme_manager)
+        return FredToolbar(self.theme_manager,
+                           stat_labels=[("assets_label", "Total Assets: --")],
+                           default_lookback_index=3)
 
     def create_chart(self):
         return FedBalanceSheetChart()
@@ -48,7 +50,9 @@ class FedBalanceSheetModule(FredDataModule):
         if bs_df is not None and not bs_df.empty and "Total Assets" in bs_df.columns:
             latest = bs_df["Total Assets"].dropna()
             if not latest.empty:
-                self.toolbar.update_info(total_assets=float(latest.iloc[-1]))
+                total_assets = float(latest.iloc[-1])
+                self.toolbar.assets_label.setText(f"Total Assets: ${total_assets:.2f}T")
+        self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         bs_df = self.slice_data(result.get("balance_sheet"))

@@ -1,8 +1,8 @@
 """Recession Probability Module — Single-line RECPROUSM156N chart."""
 
 from app.ui.modules.fred_base_module import FredDataModule, LOOKBACK_MONTHS
+from app.ui.modules.fred_toolbar import FredToolbar
 from app.ui.modules.recession.services import RecessionFredService
-from .widgets.recession_probability_toolbar import RecessionProbabilityToolbar
 from .widgets.recession_probability_chart import RecessionProbabilityChart
 
 
@@ -19,7 +19,11 @@ class RecessionProbabilityModule(FredDataModule):
     }
 
     def create_toolbar(self):
-        return RecessionProbabilityToolbar(self.theme_manager)
+        return FredToolbar(
+            self.theme_manager,
+            stat_labels=[("prob_label", "Prob: --")],
+            default_lookback_index=5,
+        )
 
     def create_chart(self):
         return RecessionProbabilityChart()
@@ -39,7 +43,10 @@ class RecessionProbabilityModule(FredDataModule):
     def update_toolbar_info(self, result):
         stats = RecessionFredService.get_latest_stats(result)
         if stats:
-            self.toolbar.update_info(recession_prob=stats.get("recession_prob"))
+            recession_prob = stats.get("recession_prob")
+            if recession_prob is not None:
+                self.toolbar.prob_label.setText(f"Prob: {recession_prob:.2f}%")
+            self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
         recession_df = result.get("recession")
