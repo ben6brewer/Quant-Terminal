@@ -4,7 +4,7 @@ from typing import Tuple
 import pyqtgraph as pg
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QColor, QMouseEvent, QPalette
-from PySide6.QtWidgets import QMenu, QFileDialog, QApplication
+from PySide6.QtWidgets import QLabel, QMenu, QFileDialog, QApplication
 
 from app.ui.widgets.charting.axes import _patch_axis_item  # noqa: F401 — activates monkeypatch
 
@@ -159,6 +159,14 @@ class BaseChart(pg.GraphicsLayoutWidget):
         """Get appropriate text color for labels based on theme."""
         from app.services.theme_stylesheet_service import ThemeStylesheetService
         return ThemeStylesheetService.get_text_rgb(self._theme)
+
+    def _create_tooltip_label(self) -> "QLabel":
+        label = QLabel(self)
+        label.setAttribute(Qt.WA_TransparentForMouseEvents)
+        label.setVisible(False)
+        label.setWordWrap(False)
+        label.setTextFormat(Qt.RichText)
+        return label
 
     # Event handlers (can be overridden by subclasses)
 

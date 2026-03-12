@@ -66,10 +66,7 @@ class TradeBalanceChart(BaseChart):
         self.setMouseTracking(True)
 
     def _setup_tooltip(self):
-        self._tooltip = QLabel(self)
-        self._tooltip.setVisible(False)
-        self._tooltip.setWordWrap(False)
-        self._tooltip.setTextFormat(Qt.RichText)
+        self._tooltip = self._create_tooltip_label()
         self._apply_tooltip_style()
 
     def _apply_tooltip_style(self):

@@ -106,10 +106,7 @@ class PayrollsChart(BaseChart):
         self.plot_item.showGrid(x=False, y=True, alpha=0.3)
 
     def _setup_tooltip(self):
-        self._tooltip = QLabel(self)
-        self._tooltip.setVisible(False)
-        self._tooltip.setWordWrap(False)
-        self._tooltip.setTextFormat(Qt.RichText)
+        self._tooltip = self._create_tooltip_label()
         self._apply_tooltip_style()
         self.setMouseTracking(True)
 
