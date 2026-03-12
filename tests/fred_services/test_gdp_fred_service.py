@@ -45,8 +45,8 @@ class TestGdpFredService:
         result = service.fetch_all_data()
         if result is not None:
             assert isinstance(result, dict)
-            possible_keys = {"gdp", "growth", "components", "production", "capacity", "usrec"}
-            assert set(result.keys()).issubset(possible_keys)
+            expected_keys = {"gdp", "growth", "components", "usrec"}
+            assert expected_keys.issubset(set(result.keys()))
 
     def test_get_latest_stats(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

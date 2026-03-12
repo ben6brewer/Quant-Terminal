@@ -123,6 +123,7 @@ class TestCacheIntegrity:
 
         monkeypatch.setattr(mod, "CACHE_DIR", tmp_path)
         monkeypatch.setattr(mod, "_FRED_VERSION_FILE", tmp_path / ".fred_cache_version")
+        monkeypatch.setattr(mod, "_version_checked", False)
 
         # Create a fake parquet file and old version
         fake_cache = tmp_path / "cpi_data.parquet"

@@ -50,12 +50,20 @@ RECESSION_SERIES: Dict[str, str] = {
     "USREC": "USREC",
 }
 
+# Labor force participation rates (monthly %)
+PARTICIPATION_SERIES: Dict[str, str] = {
+    "LFPR": "CIVPART",
+    "Prime Age LFPR": "LNS11300060",
+    "Emp-Pop Ratio": "EMRATIO",
+}
+
 # All monthly series combined
 ALL_MONTHLY_SERIES: Dict[str, str] = {
     **RATE_SERIES,
     **PAYROLL_SERIES,
     **JOLTS_SERIES,
     **RECESSION_SERIES,
+    **PARTICIPATION_SERIES,
 }
 
 # Weekly claims series
@@ -130,6 +138,9 @@ class LaborMarketFredService(BaseFredService):
                 result["payroll_levels"] = monthly_df[payroll_cols]
             if jolts_cols:
                 result["jolts"] = monthly_df[jolts_cols]
+            participation_cols = [c for c in PARTICIPATION_SERIES if c in monthly_df.columns]
+            if participation_cols:
+                result["participation"] = monthly_df[participation_cols]
             if "USREC" in monthly_df.columns:
                 result["usrec"] = monthly_df["USREC"]
 

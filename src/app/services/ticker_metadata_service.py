@@ -151,12 +151,11 @@ class TickerMetadataService:
             Dict with requested fields (values may be None if unavailable)
         """
         import yfinance as yf
-        from app.services.yahoo_finance_service import _get_session
 
         result: Dict[str, Any] = {}
 
         try:
-            stock = yf.Ticker(ticker, session=_get_session())
+            stock = yf.Ticker(ticker)
             info = stock.info
 
             # Extract requested fields

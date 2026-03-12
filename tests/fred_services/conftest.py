@@ -44,6 +44,70 @@ def isolate_fred_cache(tmp_path, monkeypatch):
             "app.ui.modules.consumer.services.consumer_fred_service",
             ["_CACHE_DIR", "_CONSUMER_CACHE"],
         ),
+        (
+            "app.ui.modules.banking.services.banking_fred_service",
+            ["_CACHE_DIR", "_BANKING_CACHE"],
+        ),
+        (
+            "app.ui.modules.volatility_index.services.volatility_fred_service",
+            ["_CACHE_DIR", "_VOL_CACHE"],
+        ),
+        (
+            "app.ui.modules.stress.services.stress_fred_service",
+            ["_CACHE_DIR", "_STRESS_CACHE"],
+        ),
+        (
+            "app.ui.modules.recession.services.recession_fred_service",
+            ["_CACHE_DIR", "_MONTHLY_CACHE"],
+        ),
+        (
+            "app.ui.modules.household.services.household_fred_service",
+            ["_CACHE_DIR", "_HOUSEHOLD_CACHE"],
+        ),
+        (
+            "app.ui.modules.productivity_service.services.productivity_fred_service",
+            ["_CACHE_DIR", "_PROD_CACHE"],
+        ),
+        (
+            "app.ui.modules.currency.services.currency_fred_service",
+            ["_CACHE_DIR", "_CURRENCY_CACHE"],
+        ),
+        (
+            "app.ui.modules.commodities.services.commodity_fred_service",
+            ["_CACHE_DIR", "_ENERGY_CACHE"],
+        ),
+        (
+            "app.ui.modules.retail.services.retail_fred_service",
+            ["_CACHE_DIR", "_RETAIL_CACHE"],
+        ),
+        (
+            "app.ui.modules.mortgage.services.mortgage_fred_service",
+            ["_CACHE_DIR", "_MORTGAGE_CACHE"],
+        ),
+        (
+            "app.ui.modules.financial_conditions.services.financial_conditions_fred_service",
+            ["_CACHE_DIR", "_FINCOND_CACHE"],
+        ),
+        (
+            "app.ui.modules.trade.services.trade_fred_service",
+            ["_CACHE_DIR", "_TRADE_CACHE"],
+        ),
+        (
+            "app.ui.modules.credit.services.credit_fred_service",
+            ["_CACHE_DIR", "_DELINQUENCY_CACHE", "_CONSUMER_CREDIT_CACHE"],
+        ),
+        (
+            "app.ui.modules.fiscal.services.fiscal_fred_service",
+            ["_CACHE_DIR", "_FISCAL_CACHE"],
+        ),
+        (
+            "app.ui.modules.income.services.income_fred_service",
+            ["_CACHE_DIR", "_INCOME_CACHE"],
+        ),
+        (
+            "app.ui.modules.manufacturing.services.manufacturing_fred_service",
+            ["_CACHE_DIR", "_MANUFACTURING_CACHE"],
+        ),
     ]
 
     for mod_path, attrs in _modules_and_attrs:
@@ -65,60 +129,45 @@ def isolate_fred_cache(tmp_path, monkeypatch):
     yield
 
 
+# Registry of all FRED service classes and their cache attributes to reset
+_FRED_SERVICE_CLASSES = [
+    ("app.ui.modules.inflation.services.inflation_fred_service", "InflationFredService"),
+    ("app.ui.modules.monetary_policy.services.monetary_fred_service", "MonetaryFredService"),
+    ("app.ui.modules.labor_market.services.labor_market_fred_service", "LaborMarketFredService"),
+    ("app.ui.modules.treasury.services.treasury_fred_service", "TreasuryFredService"),
+    ("app.ui.modules.gdp.services.gdp_fred_service", "GdpFredService"),
+    ("app.ui.modules.housing.services.housing_fred_service", "HousingFredService"),
+    ("app.ui.modules.consumer.services.consumer_fred_service", "ConsumerFredService"),
+    ("app.ui.modules.banking.services.banking_fred_service", "BankingFredService"),
+    ("app.ui.modules.volatility_index.services.volatility_fred_service", "VolatilityFredService"),
+    ("app.ui.modules.stress.services.stress_fred_service", "StressFredService"),
+    ("app.ui.modules.recession.services.recession_fred_service", "RecessionFredService"),
+    ("app.ui.modules.household.services.household_fred_service", "HouseholdFredService"),
+    ("app.ui.modules.productivity_service.services.productivity_fred_service", "ProductivityFredService"),
+    ("app.ui.modules.currency.services.currency_fred_service", "CurrencyFredService"),
+    ("app.ui.modules.commodities.services.commodity_fred_service", "CommodityFredService"),
+    ("app.ui.modules.retail.services.retail_fred_service", "RetailFredService"),
+    ("app.ui.modules.mortgage.services.mortgage_fred_service", "MortgageFredService"),
+    ("app.ui.modules.financial_conditions.services.financial_conditions_fred_service", "FinancialConditionsFredService"),
+    ("app.ui.modules.trade.services.trade_fred_service", "TradeFredService"),
+    ("app.ui.modules.credit.services.credit_fred_service", "CreditFredService"),
+    ("app.ui.modules.fiscal.services.fiscal_fred_service", "FiscalFredService"),
+    ("app.ui.modules.income.services.income_fred_service", "IncomeFredService"),
+    ("app.ui.modules.manufacturing.services.manufacturing_fred_service", "ManufacturingFredService"),
+]
+
+
 @pytest.fixture(autouse=True)
 def reset_fred_class_caches():
     """Reset class-level _data cache on all FRED services between tests."""
     yield
-    # Reset after each test
-    try:
-        from app.ui.modules.inflation.services.inflation_fred_service import (
-            InflationFredService,
-        )
-        InflationFredService._data = None
-    except Exception:
-        pass
-
-    try:
-        from app.ui.modules.monetary_policy.services.monetary_fred_service import (
-            MonetaryFredService,
-        )
-        MonetaryFredService._data = None
-    except Exception:
-        pass
-
-    try:
-        from app.ui.modules.labor_market.services.labor_market_fred_service import (
-            LaborMarketFredService,
-        )
-        LaborMarketFredService._data = None
-    except Exception:
-        pass
-
-    try:
-        from app.ui.modules.treasury.services.treasury_fred_service import (
-            TreasuryFredService,
-        )
-        TreasuryFredService._data = None
-    except Exception:
-        pass
-
-    try:
-        from app.ui.modules.gdp.services.gdp_fred_service import GdpFredService
-        GdpFredService._data = None
-    except Exception:
-        pass
-
-    try:
-        from app.ui.modules.housing.services.housing_fred_service import HousingFredService
-        HousingFredService._data = None
-    except Exception:
-        pass
-
-    try:
-        from app.ui.modules.consumer.services.consumer_fred_service import ConsumerFredService
-        ConsumerFredService._data = None
-    except Exception:
-        pass
+    for mod_path, cls_name in _FRED_SERVICE_CLASSES:
+        try:
+            mod = __import__(mod_path, fromlist=[cls_name])
+            cls = getattr(mod, cls_name)
+            cls._data = None
+        except Exception:
+            pass
 
 
 @pytest.fixture

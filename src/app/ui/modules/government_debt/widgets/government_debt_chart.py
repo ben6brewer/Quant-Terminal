@@ -147,9 +147,9 @@ class GovernmentDebtChart(BaseChart):
         self._dates = s.index.values
         self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
         vals = s.values.astype(float)
+        self._clear_plot()
         self._series_values = {col_name: vals}
 
-        self._clear_plot()
         dt_index = pd.DatetimeIndex(self._dates)
         self._bottom_axis.set_index(dt_index)
         x = np.arange(len(self._dates))
@@ -194,9 +194,8 @@ class GovernmentDebtChart(BaseChart):
         self._dates = yoy.index.values
         self._date_labels = [pd.Timestamp(d).strftime("%b %Y") for d in self._dates]
         yoy_vals = yoy.values.astype(float)
-        self._series_values = {label: yoy_vals}
-
         self._clear_plot()
+        self._series_values = {label: yoy_vals}
         dt_index = pd.DatetimeIndex(self._dates)
         self._bottom_axis.set_index(dt_index)
         x = np.arange(len(self._dates))

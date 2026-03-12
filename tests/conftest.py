@@ -3,6 +3,16 @@
 import pytest
 
 
+@pytest.fixture(autouse=True, scope="session")
+def protect_fred_api_key():
+    """Save/restore the real FRED API key around the entire test session."""
+    from app.services.fred_api_key_service import FredApiKeyService
+
+    original = FredApiKeyService._api_key
+    yield
+    FredApiKeyService._api_key = original
+
+
 def pytest_addoption(parser):
     parser.addoption(
         "--full",

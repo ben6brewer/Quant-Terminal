@@ -39,8 +39,16 @@ class TestFredApiKeyService:
         assert FredApiKeyService.get_api_key() == "cached_key"
 
     def test_set_api_key_writes_env(self, tmp_path, monkeypatch):
-        """set_api_key should write to .env file."""
-        env_path = tmp_path / "src" / "app" / "services" / ".." / ".." / ".." / ".." / ".env"
-        # Simplify: just test the cache update
-        FredApiKeyService.set_api_key.__func__(FredApiKeyService, "new_key")
+        """set_api_key should write to .env file (redirected to tmp_path)."""
+        import app.services.fred_api_key_service as mod
+
+        fake_file = tmp_path / "src" / "app" / "services" / "fred_api_key_service.py"
+        fake_file.parent.mkdir(parents=True, exist_ok=True)
+        fake_file.touch()
+        monkeypatch.setattr(mod, "__file__", str(fake_file))
+
+        FredApiKeyService.set_api_key("new_key")
         assert FredApiKeyService._api_key == "new_key"
+        env_path = tmp_path / ".env"
+        assert env_path.exists()
+        assert "FRED_API_KEY=new_key" in env_path.read_text()
