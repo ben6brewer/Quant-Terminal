@@ -20,17 +20,21 @@ class CreditFredService(BaseFredService):
                 "Credit Card Delinquency": "DRCCLACBS",
                 "All Loans Delinquency": "DRALACBS",
                 "Consumer Loans Delinquency": "DRCLACBS",
-                "USREC": "USREC",
             },
-            cache_file="credit_quarterly.parquet",
+            cache_file="credit_delinquency.parquet",
             max_age_days=45,
             outputs=[
                 FredOutput(
                     key="delinquency",
                     columns=["Credit Card Delinquency", "All Loans Delinquency", "Consumer Loans Delinquency"],
                 ),
-                FredOutput(key="usrec", columns=["USREC"]),
             ],
+        ),
+        FredGroup(
+            series={"USREC": "USREC"},
+            cache_file="credit_usrec.parquet",
+            max_age_days=30,
+            outputs=[FredOutput(key="usrec", columns=["USREC"])],
         ),
         FredGroup(
             series={

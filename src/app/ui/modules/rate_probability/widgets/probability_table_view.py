@@ -235,6 +235,9 @@ class ProbabilityTableView(LazyThemeMixin, QWidget):
             if path:
                 self.grab().save(path, "PNG")
 
+    def set_theme(self, theme: str):
+        self._apply_theme()
+
     def _apply_theme(self):
         """Apply theme styling."""
         c = ThemeStylesheetService.get_colors(self.theme_manager.current_theme)

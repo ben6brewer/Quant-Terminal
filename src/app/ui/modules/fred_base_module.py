@@ -259,11 +259,12 @@ class FredDataModule(BaseModule):
         self._render()
 
     def _apply_settings(self):
-        lookback = self.settings_manager.get_setting("lookback")
-        if lookback is None:
-            lookback = self.toolbar.lookback_combo.currentText()
-        self._current_lookback = lookback
-        self.toolbar.set_active_lookback(lookback)
+        if hasattr(self.toolbar, "lookback_combo"):
+            lookback = self.settings_manager.get_setting("lookback")
+            if lookback is None:
+                lookback = self.toolbar.lookback_combo.currentText()
+            self._current_lookback = lookback
+            self.toolbar.set_active_lookback(lookback)
         self._apply_extra_settings()
 
     # ── Theme ─────────────────────────────────────────────────────────────

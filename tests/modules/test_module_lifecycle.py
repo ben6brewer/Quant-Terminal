@@ -14,6 +14,15 @@ def _get_module_class(entry):
     return getattr(mod, class_name)
 
 
+def _is_fred_module(cls):
+    """Check if cls is a FredDataModule subclass."""
+    try:
+        from app.ui.modules.fred_base_module import FredDataModule
+        return issubclass(cls, FredDataModule)
+    except ImportError:
+        return False
+
+
 @pytest.mark.parametrize("entry", ALL_MODULES, ids=lambda m: m["id"])
 class TestModuleLifecycle:
     def test_has_module_id(self, entry):
@@ -48,3 +57,22 @@ class TestModuleLifecycle:
                 )
         except ImportError:
             pass  # FredDataModule may not exist - skip check
+
+    @pytest.mark.ui
+    def test_fred_module_instantiation(self, entry, qapp, theme_manager):
+        """FredDataModule subclasses should instantiate without errors.
+
+        This catches __init__ crashes like missing toolbar attributes
+        (e.g. lookback_combo) that only surface at construction time.
+        """
+        cls = _get_module_class(entry)
+        if not _is_fred_module(cls):
+            pytest.skip("Not a FredDataModule subclass")
+
+        # Instantiate — exercises _setup_ui, _connect_signals,
+        # _apply_settings, _apply_theme.  No show() so no data fetch.
+        widget = cls(theme_manager)
+        assert widget is not None
+        assert widget.toolbar is not None
+        assert widget.chart is not None
+        widget.deleteLater()

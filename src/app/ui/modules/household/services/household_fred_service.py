@@ -21,16 +21,20 @@ class HouseholdFredService(BaseFredService):
                 "Household Debt": "CMDEBT",
                 "Debt-to-GDP": "HDTGPDUSQ163N",
                 "Debt Service": "TDSP",
-                "USREC": "USREC",
             },
-            cache_file="household_quarterly.parquet",
+            cache_file="household_data.parquet",
             max_age_days=45,
             outputs=[
                 FredOutput(key="wealth", columns=["Net Worth"], unit_scale=1 / 1_000_000),
                 FredOutput(key="household_debt", columns=["Household Debt"], unit_scale=1 / 1_000_000),
                 FredOutput(key="debt", columns=["Debt-to-GDP", "Debt Service"]),
-                FredOutput(key="usrec", columns=["USREC"]),
             ],
+        ),
+        FredGroup(
+            series={"USREC": "USREC"},
+            cache_file="household_usrec.parquet",
+            max_age_days=30,
+            outputs=[FredOutput(key="usrec", columns=["USREC"])],
         ),
     ]
 

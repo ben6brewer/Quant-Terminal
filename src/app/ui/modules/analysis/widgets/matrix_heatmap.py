@@ -134,8 +134,8 @@ class MatrixHeatmap(BaseChart):
 
         # Scale font size based on matrix dimension
         # Larger cells (fewer tickers) get bigger text
-        cell_font_size = max(10, min(26, int(84 / n)))
-        axis_font_size = max(13, min(30, int(112 / n)))
+        cell_font_size = max(13, min(32, int(112 / n)))
+        axis_font_size = max(16, min(36, int(140 / n)))
 
         cell_font = QFont()
         cell_font.setPointSize(cell_font_size)

@@ -16,15 +16,19 @@ class FiscalFredService(BaseFredService):
             series={
                 "Total Public Debt": "GFDEBTN",
                 "Debt to GDP": "GFDEGDQ188S",
-                "USREC": "USREC",
             },
-            cache_file="fiscal_quarterly.parquet",
+            cache_file="fiscal_data.parquet",
             max_age_days=45,
             outputs=[
                 FredOutput(key="debt", columns=["Total Public Debt"], unit_scale=1 / 1_000_000),
                 FredOutput(key="debt_gdp", columns=["Debt to GDP"]),
-                FredOutput(key="usrec", columns=["USREC"]),
             ],
+        ),
+        FredGroup(
+            series={"USREC": "USREC"},
+            cache_file="fiscal_usrec.parquet",
+            max_age_days=30,
+            outputs=[FredOutput(key="usrec", columns=["USREC"])],
         ),
     ]
 

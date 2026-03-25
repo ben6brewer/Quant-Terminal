@@ -17,17 +17,21 @@ class ProductivityFredService(BaseFredService):
                 "Productivity": "OPHNFB",
                 "Unit Labor Costs": "ULCNFB",
                 "Real Compensation": "COMPRNFB",
-                "USREC": "USREC",
             },
-            cache_file="productivity_quarterly.parquet",
+            cache_file="productivity_data.parquet",
             max_age_days=45,
             outputs=[
                 FredOutput(
                     key="productivity",
                     columns=["Productivity", "Unit Labor Costs", "Real Compensation"],
                 ),
-                FredOutput(key="usrec", columns=["USREC"]),
             ],
+        ),
+        FredGroup(
+            series={"USREC": "USREC"},
+            cache_file="productivity_usrec.parquet",
+            max_age_days=30,
+            outputs=[FredOutput(key="usrec", columns=["USREC"])],
         ),
     ]
 

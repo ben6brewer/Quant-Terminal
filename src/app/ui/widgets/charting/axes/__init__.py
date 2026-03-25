@@ -19,8 +19,25 @@ def _safe_generateDrawSpecs(self, p):
 pg.AxisItem.generateDrawSpecs = _safe_generateDrawSpecs
 
 
+# Monkeypatch pg.WidgetGroup.autoAdd to guard against QWidgetItem objects that
+# lack a children() method in certain PySide6 versions (e.g. 6.10+).  Without
+# this, PlotItem.__init__ can crash with AttributeError during addPlot().
+from pyqtgraph.WidgetGroup import WidgetGroup as _WG
+
+_orig_autoAdd = _WG.autoAdd
+
+
+def _safe_autoAdd(self, obj):
+    if not hasattr(obj, 'children'):
+        return
+    _orig_autoAdd(self, obj)
+
+
+_WG.autoAdd = _safe_autoAdd
+
+
 def _patch_axis_item():
-    """No-op — patch is applied at import time above. Exists as an import target."""
+    """No-op — patches are applied at import time above. Exists as an import target."""
     pass
 
 
