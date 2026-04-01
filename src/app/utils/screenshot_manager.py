@@ -5,6 +5,8 @@ from typing import Optional
 from PySide6.QtGui import QPixmap, QPainter, QColor, QFont
 from PySide6.QtCore import Qt, QRect
 
+from app.core.paths import assets_dir
+
 
 class ScreenshotManager:
     """
@@ -12,14 +14,14 @@ class ScreenshotManager:
     Generates placeholder images if screenshots don't exist.
     """
 
-    # Project assets directory (not user directory)
-    _PROJECT_ROOT = Path(__file__).parent.parent
-    _SCREENSHOT_DIR = _PROJECT_ROOT / "assets" / "screenshots"
+    @staticmethod
+    def _screenshot_dir():
+        return assets_dir() / "screenshots"
 
     @staticmethod
     def get_screenshot_path(module_id: str) -> Path:
         """Get the path to a module's screenshot."""
-        return ScreenshotManager._SCREENSHOT_DIR / f"{module_id}.png"
+        return ScreenshotManager._screenshot_dir() / f"{module_id}.png"
 
     @staticmethod
     def has_screenshot(module_id: str) -> bool:
@@ -30,7 +32,7 @@ class ScreenshotManager:
     def get_default_screenshot() -> QPixmap:
         """Get a generic default screenshot placeholder."""
         # Try to load coming_soon.png from assets
-        coming_soon_path = ScreenshotManager._SCREENSHOT_DIR / "coming_soon.png"
+        coming_soon_path = ScreenshotManager._screenshot_dir() / "coming_soon.png"
         if coming_soon_path.exists():
             return QPixmap(str(coming_soon_path))
 
@@ -97,7 +99,7 @@ class ScreenshotManager:
             True if saved successfully, False otherwise
         """
         # Ensure directory exists
-        ScreenshotManager._SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
+        ScreenshotManager._screenshot_dir().mkdir(parents=True, exist_ok=True)
 
         # Save pixmap
         path = ScreenshotManager.get_screenshot_path(module_id)

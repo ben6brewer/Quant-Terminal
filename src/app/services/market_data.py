@@ -177,9 +177,9 @@ def _append_live_bar(df: "pd.DataFrame", ticker: str) -> "pd.DataFrame":
 def _load_btc_historical_csv() -> "pd.DataFrame":
     """Load historical BTC data from CSV for pre-Yahoo-Finance dates."""
     import pandas as pd
-    from pathlib import Path
+    from app.core.paths import services_dir
 
-    csv_path = Path(__file__).parent / "bitcoin_historical_prices.csv"
+    csv_path = services_dir() / "bitcoin_historical_prices.csv"
     if not csv_path.exists():
         return pd.DataFrame()
 

@@ -32,8 +32,15 @@ class IndicatorService:
     # Path to save/load custom indicators
     _SAVE_PATH = Path.home() / ".quant_terminal" / "custom_indicators.json"
     
-    # Path to custom indicator plugin files
-    _PLUGIN_PATH = Path(__file__).parent.parent / "custom_indicators"
+    # Path to custom indicator plugin files (resolved at use time for frozen support)
+    _PLUGIN_PATH = None
+
+    @classmethod
+    def _get_plugin_path(cls):
+        if cls._PLUGIN_PATH is None:
+            from app.core.paths import app_root
+            cls._PLUGIN_PATH = app_root() / "app" / "ui" / "modules" / "chart" / "custom_indicators"
+        return cls._PLUGIN_PATH
 
     # Path to save/load plugin indicator appearance overrides
     _PLUGIN_APPEARANCE_PATH = Path.home() / ".quant_terminal" / "plugin_indicator_appearance.json"
@@ -253,23 +260,23 @@ class IndicatorService:
         Each plugin should be a Python file containing a class that inherits
         from BaseIndicator.
         """
-        if not cls._PLUGIN_PATH.exists():
-            cls._PLUGIN_PATH.mkdir(parents=True, exist_ok=True)
-            print(f"Created custom indicators directory: {cls._PLUGIN_PATH}")
+        if not cls._get_plugin_path().exists():
+            cls._get_plugin_path().mkdir(parents=True, exist_ok=True)
+            print(f"Created custom indicators directory: {cls._get_plugin_path()}")
             return
         
         # Find all Python files in the plugin directory
-        plugin_files = list(cls._PLUGIN_PATH.glob("*.py"))
+        plugin_files = list(cls._get_plugin_path().glob("*.py"))
         
         if not plugin_files:
-            print(f"No custom indicator plugins found in {cls._PLUGIN_PATH}")
+            print(f"No custom indicator plugins found in {cls._get_plugin_path()}")
             return
         
-        print(f"Loading custom indicator plugins from {cls._PLUGIN_PATH}")
+        print(f"Loading custom indicator plugins from {cls._get_plugin_path()}")
         
         # CRITICAL FIX: Add the plugin directory to sys.path FIRST
         # This allows imports between plugin files to work (e.g., from base_indicator import BaseIndicator)
-        plugin_path_str = str(cls._PLUGIN_PATH)
+        plugin_path_str = str(cls._get_plugin_path())
         if plugin_path_str not in sys.path:
             sys.path.insert(0, plugin_path_str)
         

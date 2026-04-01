@@ -212,8 +212,9 @@ class FMPHoldingsService:
 
         from dotenv import load_dotenv
 
-        # Load from project root .env
-        env_path = Path(__file__).parent.parent.parent.parent / ".env"
+        # Load from .env file
+        from app.core.paths import env_file_path
+        env_path = env_file_path()
         load_dotenv(env_path)
 
         cls._api_key = os.getenv("FMP_API_KEY")

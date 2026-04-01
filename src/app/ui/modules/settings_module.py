@@ -268,9 +268,9 @@ class SettingsModule(QWidget):
 
     @staticmethod
     def _get_env_path():
-        """Return path to project root .env file."""
-        from pathlib import Path
-        return Path(__file__).parents[4] / ".env"
+        """Return path to .env file."""
+        from app.core.paths import env_file_path
+        return env_file_path()
 
     def _on_api_key_toggle(self, env_var: str) -> None:
         """Toggle show/hide of an API key."""

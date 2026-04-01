@@ -1,8 +1,9 @@
 """FRED API Key Service - Shared FRED API key management for all modules."""
 
 import os
-from pathlib import Path
 from typing import Optional
+
+from app.core.paths import env_file_path
 
 
 class FredApiKeyService:
@@ -23,7 +24,8 @@ class FredApiKeyService:
     @classmethod
     def set_api_key(cls, key: str) -> None:
         """Save FRED API key to .env file and update class cache."""
-        env_path = Path(__file__).parent.parent.parent.parent / ".env"
+        env_path = env_file_path()
+        env_path.parent.mkdir(parents=True, exist_ok=True)
 
         lines = []
         found = False
@@ -52,7 +54,7 @@ class FredApiKeyService:
 
         from dotenv import load_dotenv
 
-        env_path = Path(__file__).parent.parent.parent.parent / ".env"
+        env_path = env_file_path()
         load_dotenv(env_path)
 
         cls._api_key = os.getenv("FRED_API_KEY") or None

@@ -16,6 +16,8 @@ import textwrap
 from datetime import datetime
 from typing import TYPE_CHECKING, Callable, Optional
 
+from app.core.paths import is_frozen
+
 if TYPE_CHECKING:
     import pandas as pd
 
@@ -63,7 +65,16 @@ class YahooFinanceService:
 
     @classmethod
     def safe_download(cls, *args, **kwargs):
-        """Run yf.download() in a subprocess — no daemon threads in parent."""
+        """Run yf.download() — subprocess when running from source, direct when frozen.
+
+        Subprocess isolation avoids curl_cffi heap corruption in the dev Qt process.
+        When frozen (PyInstaller), sys.executable is the app itself so we call
+        yfinance directly instead (each frozen run is already an isolated process).
+        """
+        if is_frozen():
+            import yfinance as yf
+            return yf.download(*args, **kwargs)
+
         payload = pickle.dumps((args, kwargs))
         proc = subprocess.run(
             [sys.executable, "-c", _DOWNLOAD_SCRIPT],
@@ -80,7 +91,11 @@ class YahooFinanceService:
 
     @classmethod
     def safe_ticker_info(cls, ticker: str):
-        """Run yf.Ticker().info in a subprocess — no daemon threads in parent."""
+        """Run yf.Ticker().info — subprocess when running from source, direct when frozen."""
+        if is_frozen():
+            import yfinance as yf
+            return yf.Ticker(ticker).info
+
         payload = pickle.dumps(ticker)
         proc = subprocess.run(
             [sys.executable, "-c", _TICKER_INFO_SCRIPT],

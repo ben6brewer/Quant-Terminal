@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import multiprocessing
 import signal
 import sys
 from PySide6.QtCore import QTimer
@@ -21,6 +22,7 @@ def _dynamic_import(class_path: str):
 
 
 def main() -> int:
+    multiprocessing.freeze_support()
     app = QApplication(sys.argv)
 
     # Initialize services

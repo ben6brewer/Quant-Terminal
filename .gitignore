@@ -3,6 +3,7 @@
 venv/
 env/
 ENV/
+build_venv/
 
 # Python cache / bytecode
 __pycache__/
