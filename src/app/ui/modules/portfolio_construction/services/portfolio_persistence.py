@@ -53,16 +53,18 @@ class PortfolioPersistence:
                 portfolio = json.load(f)
 
             # Migrate: Add sequence numbers if missing (for same-day ordering)
-            transactions = portfolio.get("transactions", [])
-            needs_save = False
-            for i, tx in enumerate(transactions):
-                if "sequence" not in tx:
-                    tx["sequence"] = i  # Assign based on array position
-                    needs_save = True
+            # Only applies to transaction-based portfolios
+            if "transactions" in portfolio:
+                transactions = portfolio["transactions"]
+                needs_save = False
+                for i, tx in enumerate(transactions):
+                    if "sequence" not in tx:
+                        tx["sequence"] = i  # Assign based on array position
+                        needs_save = True
 
-            # Auto-save migrated portfolio
-            if needs_save:
-                cls.save_portfolio(portfolio)
+                # Auto-save migrated portfolio
+                if needs_save:
+                    cls.save_portfolio(portfolio)
 
             return portfolio
         except (json.JSONDecodeError, IOError) as e:
@@ -136,20 +138,30 @@ class PortfolioPersistence:
             cls._RECENT_FILE.unlink()
 
     @classmethod
-    def create_new_portfolio(cls, name: str) -> Dict[str, Any]:
+    def create_new_portfolio(cls, name: str, portfolio_type: str = "transaction") -> Dict[str, Any]:
         """
         Create a new empty portfolio.
 
         Args:
             name: Portfolio name
+            portfolio_type: "transaction" or "weights"
 
         Returns:
             New portfolio dict
         """
+        now = datetime.now().isoformat()
+        if portfolio_type == "weights":
+            return {
+                "name": name,
+                "type": "weights",
+                "created_date": now,
+                "last_modified": now,
+                "weights": {}
+            }
         return {
             "name": name,
-            "created_date": datetime.now().isoformat(),
-            "last_modified": datetime.now().isoformat(),
+            "created_date": now,
+            "last_modified": now,
             "transactions": []
         }
 

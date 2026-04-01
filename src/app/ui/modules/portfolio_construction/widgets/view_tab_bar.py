@@ -65,14 +65,33 @@ class ViewTabBar(LazyThemeMixin, QWidget):
         layout.addWidget(self.holdings_tab)
         self.button_group.addButton(self.holdings_tab)
 
+        # Portfolio Weights tab
+        self.weights_tab = QPushButton("Portfolio Weights")
+        self.weights_tab.setObjectName("viewTab")
+        self.weights_tab.setCheckable(True)
+        self.weights_tab.setCursor(Qt.PointingHandCursor)
+        self.weights_tab.setMinimumWidth(170)
+        self.weights_tab.setFixedHeight(40)
+        self.weights_tab.clicked.connect(lambda: self.view_changed.emit(2))
+        layout.addWidget(self.weights_tab)
+        self.button_group.addButton(self.weights_tab)
+
         layout.addStretch()
 
     def set_active_view(self, index: int):
         """Set active view programmatically."""
         if index == 0:
             self.transactions_tab.setChecked(True)
-        else:
+        elif index == 1:
             self.holdings_tab.setChecked(True)
+        else:
+            self.weights_tab.setChecked(True)
+
+    def set_tab_enabled(self, index: int, enabled: bool):
+        """Enable or disable a specific tab."""
+        tabs = [self.transactions_tab, self.holdings_tab, self.weights_tab]
+        if 0 <= index < len(tabs):
+            tabs[index].setEnabled(enabled)
 
     def _apply_theme(self):
         """Apply theme-specific styling."""

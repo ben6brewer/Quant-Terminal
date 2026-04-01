@@ -180,6 +180,27 @@ class PortfolioDataService:
         if raw is None:
             return []
 
+        # Weights portfolios: return synthetic holdings from weight allocations
+        if raw.get("type") == "weights":
+            weights = raw.get("weights", {})
+            holdings = []
+            prices = current_prices or {}
+            for ticker, weight in weights.items():
+                price = prices.get(ticker)
+                holdings.append(
+                    Holding(
+                        ticker=ticker,
+                        quantity=0,
+                        avg_cost_basis=0,
+                        total_cost=0,
+                        current_price=price,
+                        market_value=None,
+                        pnl=None,
+                        weight=weight,
+                    )
+                )
+            return holdings
+
         transactions = raw.get("transactions", [])
         if not transactions:
             return []
@@ -214,6 +235,38 @@ class PortfolioDataService:
         return holdings
 
     @classmethod
+    def is_weights_portfolio(cls, name: str) -> bool:
+        """
+        Check if a portfolio is a weights-based portfolio.
+
+        Args:
+            name: Portfolio name
+
+        Returns:
+            True if portfolio type is "weights"
+        """
+        raw = PortfolioPersistence.load_portfolio(name)
+        if raw is None:
+            return False
+        return raw.get("type") == "weights"
+
+    @classmethod
+    def get_weights(cls, name: str) -> Optional[Dict[str, float]]:
+        """
+        Get weights dict for a weights-based portfolio.
+
+        Args:
+            name: Portfolio name
+
+        Returns:
+            Dict of {ticker: decimal_weight} (0-1), or None if not a weights portfolio
+        """
+        raw = PortfolioPersistence.load_portfolio(name)
+        if raw is None or raw.get("type") != "weights":
+            return None
+        return raw.get("weights", {})
+
+    @classmethod
     def get_tickers(cls, name: str) -> List[str]:
         """
         Get unique tickers in a portfolio (excluding FREE CASH).
@@ -224,6 +277,11 @@ class PortfolioDataService:
         Returns:
             List of unique ticker symbols
         """
+        # Weights portfolios store tickers as keys in the weights dict
+        weights = cls.get_weights(name)
+        if weights is not None:
+            return list(weights.keys())
+
         portfolio = cls.get_portfolio(name)
         return portfolio.tickers if portfolio else []
 

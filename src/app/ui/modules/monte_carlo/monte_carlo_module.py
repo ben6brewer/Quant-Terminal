@@ -54,6 +54,10 @@ class MonteCarloModule(BaseModule):
         # Load saved settings
         self._load_settings()
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        self._refresh_portfolio_list()
+
     def _setup_ui(self):
         """Setup the module UI."""
         layout = QVBoxLayout(self)
@@ -105,8 +109,14 @@ class MonteCarloModule(BaseModule):
     def _refresh_portfolio_list(self):
         """Refresh the portfolio dropdown."""
         self._portfolio_list = PortfolioDataService.list_portfolios_by_recent()
+        current_port = self.controls.portfolio_combo.get_value()
+        current_bench = self.controls.benchmark_combo.get_value()
         self.controls.set_portfolio_list(self._portfolio_list)
         self.controls.set_benchmark_list(self._portfolio_list)
+        if current_port:
+            self.controls.portfolio_combo.set_value(current_port)
+        if current_bench:
+            self.controls.benchmark_combo.set_value(current_bench)
 
     def _on_portfolio_changed(self, name: str):
         """Handle portfolio/ticker selection change."""

@@ -59,6 +59,10 @@ class ReturnDistributionModule(BaseModule):
         # Load portfolio list
         self._refresh_portfolio_list()
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        self._refresh_portfolio_list()
+
     def _setup_ui(self):
         """Setup the module UI."""
         layout = QVBoxLayout(self)

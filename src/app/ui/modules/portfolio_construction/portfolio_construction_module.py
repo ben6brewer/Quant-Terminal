@@ -4,7 +4,7 @@
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QStackedWidget, QLabel
 from PySide6.QtCore import Qt, QTimer, QThread, Signal
 
 from app.core.theme_manager import ThemeManager
@@ -17,6 +17,7 @@ from .widgets import (
     PortfolioToolbar,
     TransactionLogTable,
     AggregatePortfolioTable,
+    PortfolioWeightsTable,
     NewPortfolioDialog,
     LoadPortfolioDialog,
     RenamePortfolioDialog,
@@ -139,6 +140,16 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self.aggregate_table = AggregatePortfolioTable(self.theme_manager)
         self.table_stack.addWidget(self.aggregate_table)
 
+        # Index 2: Portfolio Weights (table + total label)
+        self.weights_table = PortfolioWeightsTable(self.theme_manager)
+        weights_container = QWidget()
+        weights_layout = QVBoxLayout(weights_container)
+        weights_layout.setContentsMargins(0, 0, 0, 0)
+        weights_layout.setSpacing(0)
+        weights_layout.addWidget(self.weights_table)
+        weights_layout.addWidget(self.weights_table.get_total_label())
+        self.table_stack.addWidget(weights_container)
+
         # Default to Transaction Log
         self.table_stack.setCurrentIndex(0)
 
@@ -163,6 +174,9 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self.transaction_table.transaction_modified.connect(self._on_transaction_changed)
         self.transaction_table.transaction_deleted.connect(self._on_transaction_changed)
 
+        # Weights table
+        self.weights_table.weights_changed.connect(self._on_weights_changed)
+
         # View tab bar
         self.view_tab_bar.view_changed.connect(self._on_view_changed)
 
@@ -171,8 +185,9 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
     def _on_view_changed(self, index: int):
         """Handle view tab change."""
         self.table_stack.setCurrentIndex(index)
-        # Show editing buttons only on Transaction Log view (index 0)
-        self.controls.set_view_mode(is_transaction_view=(index == 0))
+        is_tx = (index == 0)
+        is_weights = (index == 2)
+        self.controls.set_view_mode(is_transaction_view=is_tx, is_weights_view=is_weights)
 
     def _initialize_portfolio_list(self):
         """Initialize portfolio dropdown without loading any portfolio."""
@@ -216,15 +231,46 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self.unsaved_changes = True
         self._update_aggregate_table()
 
+    def _on_weights_changed(self):
+        """Handle weights table edit."""
+        self.unsaved_changes = True
+        # Enable save even without a loaded portfolio (we'll prompt for name on save)
+        self.controls.save_btn.setEnabled(True)
+
+    def _set_tabs_for_type(self, portfolio_type: Optional[str]):
+        """Enable/disable tabs based on portfolio type."""
+        if portfolio_type == "weights":
+            # Weights portfolio: only weights tab active
+            self.view_tab_bar.set_tab_enabled(0, False)
+            self.view_tab_bar.set_tab_enabled(1, False)
+            self.view_tab_bar.set_tab_enabled(2, True)
+            self.view_tab_bar.set_active_view(2)
+            self.table_stack.setCurrentIndex(2)
+        elif portfolio_type == "transaction":
+            # Transaction portfolio: transaction + holdings active
+            self.view_tab_bar.set_tab_enabled(0, True)
+            self.view_tab_bar.set_tab_enabled(1, True)
+            self.view_tab_bar.set_tab_enabled(2, False)
+            self.view_tab_bar.set_active_view(0)
+            self.table_stack.setCurrentIndex(0)
+        else:
+            # No portfolio loaded: all tabs enabled
+            self.view_tab_bar.set_tab_enabled(0, True)
+            self.view_tab_bar.set_tab_enabled(1, True)
+            self.view_tab_bar.set_tab_enabled(2, True)
+
     def _show_empty_state(self):
         """Display empty state when no portfolio loaded."""
         self.current_portfolio = None
         self.transaction_table.clear_all_transactions()
         self.aggregate_table.setRowCount(0)
+        self.weights_table.clear_all()
         self.unsaved_changes = False
         # Clear price cache
         self._cached_prices.clear()
         self._cached_tickers.clear()
+        # Re-enable all tabs
+        self._set_tabs_for_type(None)
         # Update button states (disable Save/Rename/Delete)
         self.controls._update_button_states(False)
 
@@ -365,22 +411,74 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
     def _save_portfolio(self):
         """Save current portfolio to disk."""
+        # If no portfolio exists but we're on the weights tab with data, create one
+        is_on_weights_tab = self.table_stack.currentIndex() == 2
+        if not self.current_portfolio and is_on_weights_tab:
+            weights = self.weights_table.get_all_weights()
+            if not weights:
+                CustomMessageBox.warning(
+                    self.theme_manager, self,
+                    "Nothing to Save",
+                    "Add at least one ticker with a weight first."
+                )
+                return
+            # Prompt for name
+            existing = PortfolioPersistence.list_portfolios()
+            from .widgets import NewPortfolioDialog
+            dialog = NewPortfolioDialog(self.theme_manager, existing, self)
+            # Force weights type (hide the radio buttons since we know the type)
+            dialog._weights_radio.setChecked(True)
+            dialog._transaction_radio.setVisible(False)
+            dialog._weights_radio.setVisible(False)
+            # Also hide the type label
+            for child in dialog.findChildren(QLabel):
+                if child.text() == "Portfolio Type:":
+                    child.setVisible(False)
+                    break
+            if not dialog.exec():
+                return
+            name = dialog.get_name()
+            self.current_portfolio = PortfolioPersistence.create_new_portfolio(name, "weights")
+            self._set_tabs_for_type("weights")
+
         if not self.current_portfolio:
             return
 
-        # Update transactions in portfolio
-        self.current_portfolio["transactions"] = self.transaction_table.get_all_transactions()
+        is_weights = self.current_portfolio.get("type") == "weights"
+
+        if is_weights:
+            # Validate weights before saving
+            valid, error = self.weights_table.validate_weights()
+            if not valid:
+                CustomMessageBox.warning(
+                    self.theme_manager,
+                    self,
+                    "Validation Error",
+                    error
+                )
+                return
+            # Update weights in portfolio
+            self.current_portfolio["weights"] = self.weights_table.get_all_weights()
+        else:
+            # Update transactions in portfolio
+            self.current_portfolio["transactions"] = self.transaction_table.get_all_transactions()
 
         # Save
         success = PortfolioPersistence.save_portfolio(self.current_portfolio)
 
         if success:
             self.unsaved_changes = False
+            # Refresh dropdown to include this portfolio
+            name = self.current_portfolio["name"]
+            PortfolioPersistence.record_visit(name)
+            portfolios = PortfolioPersistence.list_portfolios_by_recent()
+            self.controls.update_portfolio_list(portfolios, name)
+            self.controls._update_button_states(True)
             CustomMessageBox.information(
                 self.theme_manager,
                 self,
                 "Saved",
-                f"Portfolio '{self.current_portfolio['name']}' saved successfully."
+                f"Portfolio '{name}' saved successfully."
             )
         else:
             CustomMessageBox.critical(
@@ -438,6 +536,25 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
                 f"Failed to load portfolio '{name}'."
             )
             return
+
+        # Weights-based portfolio: simpler load path (no price fetching needed)
+        if portfolio.get("type") == "weights":
+            self.current_portfolio = portfolio
+            self._set_tabs_for_type("weights")
+            self.weights_table.set_weights(portfolio.get("weights", {}))
+            self.transaction_table.clear_all_transactions()
+            self.aggregate_table.setRowCount(0)
+            self.unsaved_changes = False
+
+            # Record visit and update controls
+            PortfolioPersistence.record_visit(name)
+            portfolios = PortfolioPersistence.list_portfolios_by_recent()
+            self.controls.update_portfolio_list(portfolios, name)
+            self.controls._update_button_states(True)
+            return
+
+        # Transaction-based portfolio: existing load path
+        self._set_tabs_for_type("transaction")
 
         # Cancel any in-progress load
         self._cancel_load_worker()
@@ -637,19 +754,32 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
         if dialog.exec():
             name = dialog.get_name()
+            portfolio_type = dialog.get_type()
+
             # Create new portfolio
-            self.current_portfolio = PortfolioPersistence.create_new_portfolio(name)
+            self.current_portfolio = PortfolioPersistence.create_new_portfolio(name, portfolio_type)
             PortfolioPersistence.save_portfolio(self.current_portfolio)
 
             # Clear tables and caches
             self.transaction_table.clear_all_transactions()
             self.aggregate_table.setRowCount(0)
+            self.weights_table.clear_all()
             self._cached_prices.clear()
             self._cached_names.clear()
             self._cached_tickers.clear()
 
-            # Ensure blank row exists for immediate editing
-            self.transaction_table._ensure_blank_row()
+            # Set tab visibility and switch to appropriate tab
+            self._set_tabs_for_type(portfolio_type)
+
+            if portfolio_type == "weights":
+                # Switch to weights tab
+                self.view_tab_bar.set_active_view(2)
+                self._on_view_changed(2)
+            else:
+                # Ensure blank row exists for immediate editing
+                self.transaction_table._ensure_blank_row()
+                self.view_tab_bar.set_active_view(0)
+                self._on_view_changed(0)
 
             # Record visit for recent ordering
             PortfolioPersistence.record_visit(name)

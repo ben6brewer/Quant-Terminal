@@ -2,6 +2,7 @@
 
 from .transaction_log_table import TransactionLogTable
 from .aggregate_portfolio_table import AggregatePortfolioTable
+from .portfolio_weights_table import PortfolioWeightsTable
 from .portfolio_toolbar import PortfolioToolbar
 from .portfolio_dialogs import (
     NewPortfolioDialog,
@@ -17,6 +18,7 @@ from .mixins import FieldRevertMixin, SortingMixin
 __all__ = [
     "TransactionLogTable",
     "AggregatePortfolioTable",
+    "PortfolioWeightsTable",
     "PortfolioToolbar",
     "NewPortfolioDialog",
     "LoadPortfolioDialog",

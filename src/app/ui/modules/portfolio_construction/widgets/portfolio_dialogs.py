@@ -18,6 +18,7 @@ class NewPortfolioDialog(ThemedDialog):
     def __init__(self, theme_manager: ThemeManager, existing_names: List[str], parent=None):
         self.existing_names = existing_names
         self.name_edit: QLineEdit = None
+        self._type_group: QButtonGroup = None
         super().__init__(theme_manager, "New Portfolio", parent)
 
     def _setup_content(self, layout: QVBoxLayout):
@@ -27,6 +28,25 @@ class NewPortfolioDialog(ThemedDialog):
         self.name_edit.setPlaceholderText("Enter portfolio name...")
         self.name_edit.returnPressed.connect(self._validate_and_accept)
         layout.addWidget(self.name_edit)
+
+        layout.addSpacing(8)
+
+        # Portfolio type selector
+        layout.addWidget(QLabel("Portfolio Type:"))
+        self._type_group = QButtonGroup(self)
+        self._transaction_radio = QRadioButton("Transaction-Based")
+        self._transaction_radio.setChecked(True)
+        self._weights_radio = QRadioButton("Weights-Based")
+        self._type_group.addButton(self._transaction_radio)
+        self._type_group.addButton(self._weights_radio)
+
+        type_layout = QHBoxLayout()
+        type_layout.addWidget(self._transaction_radio)
+        type_layout.addWidget(self._weights_radio)
+        type_layout.addStretch()
+        layout.addLayout(type_layout)
+
+        layout.addSpacing(8)
 
         # Buttons
         button_layout = QHBoxLayout()
@@ -70,6 +90,12 @@ class NewPortfolioDialog(ThemedDialog):
     def get_name(self) -> str:
         """Get entered portfolio name."""
         return self.name_edit.text().strip()
+
+    def get_type(self) -> str:
+        """Get selected portfolio type: 'transaction' or 'weights'."""
+        if self._weights_radio.isChecked():
+            return "weights"
+        return "transaction"
 
 
 class RenamePortfolioDialog(ThemedDialog):

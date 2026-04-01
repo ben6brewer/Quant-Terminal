@@ -61,7 +61,7 @@ MODULE_SECTIONS = {
     "Portfolio": [
         {"id": "portfolio_construction", "label": "Portfolio Construction", "class": "app.ui.modules.portfolio_construction:PortfolioConstructionModule"},
         {"id": "performance_metrics", "label": "Performance Metrics", "class": "app.ui.modules.performance_metrics:PerformanceMetricsModule"},
-        {"id": "risk_analytics", "label": "Risk Analytics", "class": "app.ui.modules.risk_analytics:RiskAnalyticsModule"},
+        # {"id": "risk_analytics", "label": "Risk Analytics", "class": "app.ui.modules.risk_analytics:RiskAnalyticsModule"},
         {"id": "distribution_metrics", "label": "Distribution Metrics", "class": "app.ui.modules.return_distribution:ReturnDistributionModule"},
         {"id": "monte_carlo", "label": "Monte Carlo", "class": "app.ui.modules.monte_carlo:MonteCarloModule"},
     ],

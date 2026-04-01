@@ -23,6 +23,10 @@ class FactorModelsModule(BaseModule):
         self._apply_theme()
         self._load_settings()
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        self._refresh_portfolios()
+
     # ── UI Setup ────────────────────────────────────────────────────────────
 
     def _setup_ui(self):
@@ -58,7 +62,10 @@ class FactorModelsModule(BaseModule):
 
             svc = PortfolioDataService()
             names = svc.list_portfolios_by_recent()
+            current_value = self.controls.get_input_value()
             self.controls.set_portfolios(names)
+            if current_value:
+                self.controls.set_input_value(current_value)
         except Exception:
             pass
 
@@ -119,8 +126,10 @@ class FactorModelsModule(BaseModule):
     # ── Run ─────────────────────────────────────────────────────────────────
 
     def _on_input_changed(self, _value: str):
-        """Input changed via combo — refresh portfolios."""
+        """Input changed via combo — refresh portfolios and clear stale results."""
         self._refresh_portfolios()
+        self._last_result = None
+        self.stats_panel.show_placeholder("")
 
     def _on_export(self):
         """Export regression results to Excel."""
@@ -156,9 +165,14 @@ class FactorModelsModule(BaseModule):
         )
 
     def _run(self):
-        # Parse input from toolbar combo
-        raw_value = self.controls.get_input_value()
+        # Read live text from the combo line edit to avoid stale _last_value
+        raw_value = self.controls.input_combo.currentText().strip()
+        if not raw_value:
+            raw_value = self.controls.get_input_value()
         identifier, is_portfolio = parse_portfolio_value(raw_value)
+        # If it's not a portfolio, ensure ticker is uppercased
+        if not is_portfolio:
+            identifier = identifier.upper()
 
         if not identifier:
             self.stats_panel.show_placeholder(

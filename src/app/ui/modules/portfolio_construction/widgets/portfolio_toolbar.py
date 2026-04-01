@@ -118,11 +118,12 @@ class PortfolioToolbar(ModuleToolbar):
                 self.portfolio_combo.lineEdit().setText(name[7:])
             self.portfolio_changed.emit(name)
 
-    def set_view_mode(self, is_transaction_view: bool):
-        self.save_btn.setVisible(is_transaction_view)
+    def set_view_mode(self, is_transaction_view: bool, is_weights_view: bool = False):
+        self.save_btn.setVisible(is_transaction_view or is_weights_view)
         self.import_btn.setVisible(is_transaction_view)
-        self.rename_btn.setVisible(is_transaction_view)
-        self.delete_btn.setVisible(is_transaction_view)
+        self.export_btn.setVisible(is_transaction_view)
+        self.rename_btn.setVisible(is_transaction_view or is_weights_view)
+        self.delete_btn.setVisible(is_transaction_view or is_weights_view)
 
     def update_portfolio_list(self, portfolios: List[str], current: str = None):
         self.portfolio_combo.blockSignals(True)

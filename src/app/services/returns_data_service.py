@@ -430,6 +430,8 @@ class ReturnsDataService:
         This is the main method for calculating accurate portfolio returns that
         account for changing position sizes due to buys and sells.
 
+        For weights-based portfolios, uses constant (daily-rebalanced) weights.
+
         Args:
             portfolio_name: Name of the portfolio
             start_date: Optional start date filter (YYYY-MM-DD)
@@ -441,6 +443,18 @@ class ReturnsDataService:
             Series of portfolio returns at the specified interval
         """
         import pandas as pd
+
+        # Weights-based portfolios use constant weights (daily rebalanced)
+        if PortfolioDataService.is_weights_portfolio(portfolio_name):
+            weights = PortfolioDataService.get_weights(portfolio_name)
+            if not weights:
+                return pd.Series(dtype=float)
+            returns = cls.get_portfolio_returns(
+                portfolio_name, start_date=start_date, end_date=end_date, weights=weights
+            )
+            if interval.lower() != "daily":
+                returns = cls._resample_returns(returns, interval)
+            return returns
 
         # Get time-varying weights
         weights = cls.get_daily_weights(
@@ -555,6 +569,15 @@ class ReturnsDataService:
             - cash_drag_bps: Estimated return reduction in basis points
             - period_days: Number of days analyzed
         """
+        # Weights portfolios have no cash concept
+        if PortfolioDataService.is_weights_portfolio(portfolio_name):
+            return {
+                "avg_cash_weight": 0.0,
+                "cash_drag_bps": 0.0,
+                "cash_drag_annualized": 0.0,
+                "period_days": 0,
+            }
+
         # Get weights including cash
         weights = cls.get_daily_weights(
             portfolio_name, start_date, end_date, include_cash=True

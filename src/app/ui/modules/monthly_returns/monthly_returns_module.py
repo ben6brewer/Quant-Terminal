@@ -45,6 +45,10 @@ class MonthlyReturnsModule(BaseModule):
         self.controls.set_ticker_text(DEFAULT_TICKER)
         self._update_heatmap()
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        self._refresh_portfolio_list()
+
     def _setup_ui(self):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)

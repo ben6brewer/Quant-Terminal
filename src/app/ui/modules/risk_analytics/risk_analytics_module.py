@@ -118,6 +118,10 @@ class RiskAnalyticsModule(BaseModule):
             self.controls.set_etf_benchmark(default_benchmark)
             self._current_benchmark = default_benchmark
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        self._refresh_portfolio_list()
+
     def _setup_ui(self):
         """Setup the module UI."""
         layout = QVBoxLayout(self)
