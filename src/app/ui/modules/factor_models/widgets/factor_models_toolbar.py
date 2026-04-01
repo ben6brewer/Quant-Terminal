@@ -1,4 +1,4 @@
-"""Factor Models Toolbar — input, model, frequency, lookback, view, and run controls."""
+"""Factor Models Toolbar — input, model, frequency, lookback, and run controls."""
 
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy
 from PySide6.QtCore import Signal, Qt
@@ -28,12 +28,6 @@ LOOKBACK_OPTIONS = [
     ("Custom", -1),
 ]
 
-# View mode options
-VIEW_OPTIONS = [
-    ("Cumulative", "cumulative"),
-    ("Periodic", "periodic"),
-]
-
 _CREATE_SENTINEL = "__create__"
 
 
@@ -45,7 +39,6 @@ class FactorModelsToolbar(ModuleToolbar):
     input_changed = Signal(str)  # raw combo value
     model_changed = Signal(str)  # model key
     frequency_changed = Signal(str)
-    view_mode_changed = Signal(str)
     lookback_changed = Signal()
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
@@ -55,16 +48,18 @@ class FactorModelsToolbar(ModuleToolbar):
         self._custom_specs: dict[str, FactorModelSpec] = {}  # key -> spec
         super().__init__(theme_manager, parent)
 
-        # Insert Export button just before the Settings button
+        # Insert Export button at the end of the toolbar
         layout = self.layout()
-        settings_idx = layout.indexOf(self.settings_btn)
         self.export_btn = QPushButton("Export")
         self.export_btn.setMinimumWidth(70)
         self.export_btn.setMaximumWidth(100)
         self.export_btn.setFixedHeight(40)
         self.export_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.export_btn.clicked.connect(self.export_clicked.emit)
-        layout.insertWidget(settings_idx, self.export_btn)
+        layout.addWidget(self.export_btn)
+
+    def has_settings_button(self) -> bool:
+        return True
 
     def setup_center(self, layout: QHBoxLayout):
         layout.addStretch(1)
@@ -143,25 +138,6 @@ class FactorModelsToolbar(ModuleToolbar):
         self.lookback_combo.setCurrentIndex(2)  # Default: 5Y
         self.lookback_combo.currentIndexChanged.connect(self._on_lookback_changed)
         layout.addWidget(self.lookback_combo)
-
-        layout.addSpacing(8)
-
-        # ── View mode dropdown ───────────────────────────────────────────
-        view_label = QLabel("View:")
-        view_label.setObjectName("control_label")
-        layout.addWidget(view_label)
-        self.view_combo = NoScrollComboBox()
-        self.view_combo.setMinimumWidth(100)
-        self.view_combo.setMaximumWidth(140)
-        self.view_combo.setFixedHeight(40)
-        self.view_combo.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        for label, key in VIEW_OPTIONS:
-            self.view_combo.addItem(label, key)
-        self.view_combo.setCurrentIndex(0)  # Default: Cumulative
-        self.view_combo.currentIndexChanged.connect(
-            lambda _: self.view_mode_changed.emit(self.get_view_mode())
-        )
-        layout.addWidget(self.view_combo)
 
         layout.addSpacing(8)
 
@@ -354,9 +330,6 @@ class FactorModelsToolbar(ModuleToolbar):
     def get_lookback_days(self):
         return self.lookback_combo.currentData()
 
-    def get_view_mode(self) -> str:
-        return self.view_combo.currentData()
-
     @property
     def custom_date_range(self):
         """Return (start_iso, end_iso) tuple or None."""
@@ -400,8 +373,3 @@ class FactorModelsToolbar(ModuleToolbar):
                 break
         self.lookback_combo.blockSignals(False)
 
-    def set_view_mode(self, mode: str):
-        for i in range(self.view_combo.count()):
-            if self.view_combo.itemData(i) == mode:
-                self.view_combo.setCurrentIndex(i)
-                return

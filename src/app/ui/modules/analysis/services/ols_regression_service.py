@@ -76,7 +76,7 @@ class OLSRegressionService:
     """
 
     @staticmethod
-    def _run_ols(X: "np.ndarray", y: "np.ndarray") -> dict:
+    def _run_ols(X: "np.ndarray", y: "np.ndarray", confidence_level: float = 0.95) -> dict:
         """Core OLS math on numpy arrays.
 
         Args:
@@ -141,8 +141,8 @@ class OLSRegressionService:
             f_stat = 0.0
             f_p_value = 1.0
 
-        # Confidence intervals (95%)
-        t_crit = sp_stats.t.ppf(0.975, df=df)
+        # Confidence intervals
+        t_crit = sp_stats.t.ppf(1.0 - (1.0 - confidence_level) / 2.0, df=df)
         ci_lower = betas - t_crit * se_betas
         ci_upper = betas + t_crit * se_betas
 

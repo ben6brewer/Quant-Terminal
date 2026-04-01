@@ -1,13 +1,12 @@
 """Factor Models Module — return decomposition across academic factor models."""
 
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import QVBoxLayout
 
 from app.core.theme_manager import ThemeManager
 from app.ui.modules.base_module import BaseModule
 from app.ui.widgets.common.portfolio_ticker_combo import parse_portfolio_value
 
 from .widgets.factor_models_toolbar import FactorModelsToolbar
-from .widgets.factor_attribution_chart import FactorAttributionChart
 from .widgets.factor_stats_panel import FactorStatsPanel
 
 
@@ -31,33 +30,23 @@ class FactorModelsModule(BaseModule):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
-        # Toolbar (now contains input combo)
+        # Toolbar
         self.controls = FactorModelsToolbar(self.theme_manager)
         layout.addWidget(self.controls)
 
         # Populate portfolio list in toolbar
         self._refresh_portfolios()
 
-        # Content area: chart (stretch) + stats panel
-        content_layout = QHBoxLayout()
-        content_layout.setContentsMargins(0, 0, 0, 0)
-        content_layout.setSpacing(0)
-
-        self.chart = FactorAttributionChart()
-        content_layout.addWidget(self.chart, stretch=1)
-
+        # Stats panel as main content
         self.stats_panel = FactorStatsPanel(self.theme_manager)
-        content_layout.addWidget(self.stats_panel)
-
-        layout.addLayout(content_layout, stretch=1)
+        layout.addWidget(self.stats_panel, stretch=1)
 
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.run_clicked.connect(self._run)
         self.controls.export_clicked.connect(self._on_export)
-        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.controls.info_clicked.connect(self._on_info_clicked)
-        self.controls.view_mode_changed.connect(self._on_view_mode_changed)
+        self.controls.settings_clicked.connect(self._on_settings_clicked)
         self.controls.model_changed.connect(self._on_model_changed)
         self.controls.input_changed.connect(self._on_input_changed)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -98,36 +87,39 @@ class FactorModelsModule(BaseModule):
         lookback = s.get("lookback_days", 1825)
         self.controls.set_lookback(lookback)
 
-        view_mode = s.get("view_mode", "cumulative")
-        self.controls.set_view_mode(view_mode)
-
-        settings = self.settings_manager.get_all_settings()
-        self.chart.apply_settings(settings)
-        self.stats_panel.setVisible(settings.get("show_stats_panel", True))
-
     def create_settings_manager(self):
         from .services.factor_settings_manager import FactorSettingsManager
         return FactorSettingsManager()
 
     def get_settings_options(self):
-        return [
-            ("show_gridlines", "Show Gridlines"),
-            ("show_stats_panel", "Show Stats Panel"),
-        ]
+        return []
+
+    def create_settings_dialog(self, current_settings):
+        from .widgets.factor_settings_dialog import FactorSettingsDialog
+        return FactorSettingsDialog(
+            self.theme_manager, current_settings=current_settings, parent=self,
+        )
 
     def _on_settings_changed(self, new_settings):
-        settings = self.settings_manager.get_all_settings()
-        self.chart.apply_settings(settings)
-        self.stats_panel.setVisible(settings.get("show_stats_panel", True))
+        all_settings = self.settings_manager.get_all_settings()
+        new_confidence = all_settings.get("confidence_level", 0.95)
+
+        # If confidence level changed, re-run regression
+        needs_rerun = False
         if self._last_result is not None:
-            view_mode = self.controls.get_view_mode()
-            self.chart.update_data(self._last_result, view_mode)
-            self.chart.set_theme(self.theme_manager.current_theme)
+            old_confidence = getattr(self._last_result, "confidence_level", 0.95)
+            if abs(old_confidence - new_confidence) > 1e-9:
+                needs_rerun = True
+
+        if needs_rerun:
+            self._run()
+        elif self._last_result is not None:
+            self.stats_panel.apply_display_settings(all_settings)
 
     # ── Run ─────────────────────────────────────────────────────────────────
 
     def _on_input_changed(self, _value: str):
-        """Input changed via combo — refresh portfolios and auto-run."""
+        """Input changed via combo — refresh portfolios."""
         self._refresh_portfolios()
 
     def _on_export(self):
@@ -169,7 +161,7 @@ class FactorModelsModule(BaseModule):
         identifier, is_portfolio = parse_portfolio_value(raw_value)
 
         if not identifier:
-            self.chart.show_placeholder(
+            self.stats_panel.show_placeholder(
                 "Enter a ticker or select a portfolio to run factor analysis"
             )
             return
@@ -186,7 +178,6 @@ class FactorModelsModule(BaseModule):
             "model_key": model_key,
             "frequency": frequency,
             "lookback_days": lookback,
-            "view_mode": self.controls.get_view_mode(),
         }
 
         # Custom date range
@@ -197,6 +188,8 @@ class FactorModelsModule(BaseModule):
 
         self.settings_manager.update_settings(save_dict)
 
+        confidence_level = self.settings_manager.get_setting("confidence_level") or 0.95
+
         self._run_worker(
             self._compute,
             not is_portfolio,
@@ -205,13 +198,14 @@ class FactorModelsModule(BaseModule):
             frequency,
             lookback,
             custom_range,
+            confidence_level,
             loading_message="Running factor regression...",
             on_complete=self._on_complete,
             on_error=self._on_error,
         )
 
     @staticmethod
-    def _compute(is_ticker, identifier, model_key, frequency, lookback_days, custom_range):
+    def _compute(is_ticker, identifier, model_key, frequency, lookback_days, custom_range, confidence_level=0.95):
         """Background computation — fetch data + run regression."""
         import pandas as pd
         from datetime import datetime, timedelta
@@ -288,29 +282,19 @@ class FactorModelsModule(BaseModule):
         # Run regression
         result = FactorRegressionService.run_regression(
             asset_returns, factor_df, rf, model_spec, frequency,
+            confidence_level=confidence_level,
         )
         return result
 
     def _on_complete(self, result):
         self._last_result = result
-        view_mode = self.controls.get_view_mode()
-        settings = self.settings_manager.get_all_settings()
-        self.chart.apply_settings(settings)
-        self.chart.update_data(result, view_mode)
-        self.chart.set_theme(self.theme_manager.current_theme)
-        self.stats_panel.update_stats(result)
-        self.stats_panel.setVisible(settings.get("show_stats_panel", True))
+        all_settings = self.settings_manager.get_all_settings()
+        self.stats_panel.update_stats(result, all_settings)
 
     def _on_error(self, error_msg: str):
-        self.chart.show_placeholder(f"Error: {error_msg}")
-        self.stats_panel.show_placeholder(error_msg)
+        self.stats_panel.show_placeholder(f"Error: {error_msg}")
 
-    # ── View/Model change without re-run ────────────────────────────────────
-
-    def _on_view_mode_changed(self, view_mode: str):
-        """Re-render chart without re-running regression."""
-        if self._last_result is not None:
-            self.chart.set_view_mode(view_mode)
+    # ── Model change ───────────────────────────────────────────────────────
 
     def _on_model_changed(self, _model_key: str):
         """Model changed — clear cached result so next Run uses new model."""
@@ -320,4 +304,3 @@ class FactorModelsModule(BaseModule):
 
     def _apply_theme(self):
         self.setStyleSheet(f"background-color: {self._get_theme_bg()};")
-        self.chart.set_theme(self.theme_manager.current_theme)

@@ -41,6 +41,9 @@ class FactorRegressionResult:
     durbin_watson: float = 2.0
     residual_std_error: float = 0.0
 
+    # Confidence level used for CI computation
+    confidence_level: float = 0.95
+
     # Attribution arrays (for charts)
     dates: "np.ndarray" = field(default_factory=lambda: __import__("numpy").array([]))
     asset_excess_returns: "np.ndarray" = field(default_factory=lambda: __import__("numpy").array([]))
@@ -62,6 +65,7 @@ class FactorRegressionService:
         rf: "pd.Series",
         model_spec: FactorModelSpec,
         frequency: str,
+        confidence_level: float = 0.95,
     ) -> FactorRegressionResult:
         """Run a multi-factor regression and compute per-period attribution.
 
@@ -116,7 +120,7 @@ class FactorRegressionService:
         X = np.hstack([ones, F])
 
         # Run core OLS
-        ols = OLSRegressionService._run_ols(X, y)
+        ols = OLSRegressionService._run_ols(X, y, confidence_level=confidence_level)
 
         betas_vec = ols["betas"]
         se_vec = ols["se_betas"]
@@ -170,6 +174,7 @@ class FactorRegressionService:
             f_p_value=ols["f_p_value"],
             durbin_watson=ols["durbin_watson"],
             residual_std_error=ols["residual_std"],
+            confidence_level=confidence_level,
             dates=dates,
             asset_excess_returns=y,
             factor_contributions=factor_contribs,

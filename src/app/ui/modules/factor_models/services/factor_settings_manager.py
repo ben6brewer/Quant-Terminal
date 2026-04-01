@@ -19,9 +19,16 @@ class FactorSettingsManager(BaseSettingsManager):
             "lookback_days": 1825,
             "custom_start_date": None,
             "custom_end_date": None,
-            "view_mode": "cumulative",
-            "show_gridlines": True,
-            "show_stats_panel": True,
+            # Display settings
+            "show_goodness_of_fit": True,
+            "show_diagnostics": True,
+            "show_col_coefficient": True,
+            "show_col_std_error": True,
+            "show_col_t_stat": True,
+            "show_col_p_value": True,
+            "show_col_ci": True,
+            "show_only_significant": False,
+            "confidence_level": 0.95,
         }
 
     @property

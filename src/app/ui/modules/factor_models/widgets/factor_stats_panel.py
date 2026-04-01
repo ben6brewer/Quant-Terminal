@@ -1,4 +1,4 @@
-"""Factor Stats Panel — right sidebar showing multi-factor regression statistics."""
+"""Factor Stats Panel — full-width main view showing multi-factor regression statistics."""
 
 from __future__ import annotations
 
@@ -12,33 +12,55 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QScrollArea,
     QFrame,
-    QPushButton,
 )
 from PySide6.QtCore import Qt
 
-from app.ui.widgets.common import LazyThemeMixin, VerticalLabel
+from app.ui.widgets.common import LazyThemeMixin
 from app.services.theme_stylesheet_service import ThemeStylesheetService
 
 if TYPE_CHECKING:
     from ..services.factor_regression_service import FactorRegressionResult
 
+# Factor colors (shared with chart)
+FACTOR_COLORS: dict[str, str] = {
+    "Mkt-RF": "#4FC3F7", "SMB": "#66BB6A", "HML": "#EF5350",
+    "RMW": "#26C6DA", "CMA": "#FFA726", "UMD": "#AB47BC",
+    "R_MKT": "#4FC3F7", "R_ME": "#66BB6A", "R_IA": "#FFA726",
+    "R_ROE": "#26C6DA", "R_EG": "#EC407A",
+    "BAB": "#FF7043", "QMJ": "#7E57C2", "HML_DEVIL": "#D4E157",
+    "Alpha": "#FFD54F", "Residual": "#9E9E9E",
+}
+
+# Column definitions: (key, header_text)  — "ci" header is dynamic
+_COL_DEFS = [
+    ("coeff", "Coefficient"),
+    ("se", "Std Error"),
+    ("t", "T-Stat"),
+    ("p", "P-Value"),
+    ("ci", "{ci_pct}% CI"),
+]
+
+_COL_SETTING_MAP = {
+    "coeff": "show_col_coefficient",
+    "se": "show_col_std_error",
+    "t": "show_col_t_stat",
+    "p": "show_col_p_value",
+    "ci": "show_col_ci",
+}
+
 
 class FactorStatsPanel(LazyThemeMixin, QWidget):
-    """Collapsible panel showing multi-factor regression statistics."""
-
-    _EXPANDED_WIDTH = 320
-    _COLLAPSED_WIDTH = 36
+    """Full-width panel showing comprehensive factor regression statistics."""
 
     def __init__(self, theme_manager, parent=None):
         super().__init__(parent)
         self.theme_manager = theme_manager
         self._theme_dirty = False
-        self._expanded = True
 
-        # Dynamic coefficient rows
         self._coeff_labels: list[dict[str, QLabel]] = []
+        self._last_result: "FactorRegressionResult | None" = None
+        self._settings: dict = {}
 
-        self.setFixedWidth(self._EXPANDED_WIDTH)
         self._setup_ui()
         self._apply_theme()
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
@@ -47,143 +69,170 @@ class FactorStatsPanel(LazyThemeMixin, QWidget):
         super().showEvent(event)
         self._check_theme_dirty()
 
+    # ── UI Setup ───────────────────────────────────────────────────────────
+
     def _setup_ui(self):
         outer = QVBoxLayout(self)
         outer.setContentsMargins(0, 0, 0, 0)
         outer.setSpacing(0)
 
-        # Header row
-        header_row = QHBoxLayout()
-        header_row.setContentsMargins(4, 6, 4, 2)
-        header_row.setSpacing(4)
-
-        self._toggle_btn = QPushButton("\u25C0")
-        self._toggle_btn.setObjectName("collapse_btn")
-        self._toggle_btn.setFixedSize(24, 24)
-        self._toggle_btn.setCursor(Qt.PointingHandCursor)
-        self._toggle_btn.clicked.connect(self._toggle)
-        header_row.addWidget(self._toggle_btn)
-
-        self._header = QLabel("Factor Model Statistics")
-        self._header.setObjectName("panel_header")
-        self._header.setAlignment(Qt.AlignCenter)
-        header_row.addWidget(self._header, 1)
-
-        outer.addLayout(header_row)
-
-        # Scroll area
-        self._scroll = QScrollArea()
-        self._scroll.setWidgetResizable(True)
-        self._scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self._scroll.setFrameShape(QFrame.NoFrame)
-        outer.addWidget(self._scroll)
+        # Scroll area wrapping all content
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll.setFrameShape(QFrame.NoFrame)
+        outer.addWidget(scroll)
 
         self._content = QWidget()
-        self._scroll.setWidget(self._content)
+        scroll.setWidget(self._content)
 
         self._layout = QVBoxLayout(self._content)
-        self._layout.setContentsMargins(12, 8, 12, 12)
-        self._layout.setSpacing(8)
+        self._layout.setContentsMargins(24, 20, 24, 24)
+        self._layout.setSpacing(0)
 
-        # Coefficient section (built dynamically)
-        coeff_label = QLabel("Coefficients")
-        coeff_label.setObjectName("section_header")
-        self._layout.addWidget(coeff_label)
+        # ── Model Info Header ──────────────────────────────────────────
+        self._model_header = QLabel("")
+        self._model_header.setObjectName("modelHeader")
+        self._model_header.setWordWrap(True)
+        self._layout.addWidget(self._model_header)
+
+        self._model_desc = QLabel("")
+        self._model_desc.setObjectName("modelDesc")
+        self._model_desc.setWordWrap(True)
+        self._layout.addWidget(self._model_desc)
+        self._layout.addSpacing(20)
+
+        # ── Coefficients Section ───────────────────────────────────────
+        self._add_section_header("Coefficients")
+        self._layout.addSpacing(8)
 
         self._coeff_grid = QGridLayout()
-        self._coeff_grid.setSpacing(4)
+        self._coeff_grid.setSpacing(0)
+        self._coeff_grid.setContentsMargins(0, 0, 0, 0)
         self._layout.addLayout(self._coeff_grid)
+        self._layout.addSpacing(24)
 
-        self._layout.addSpacing(12)
+        # ── Two-column: Goodness of Fit | Diagnostics ──────────────────
+        self._cards_wrapper = QWidget()
+        cards_row = QHBoxLayout(self._cards_wrapper)
+        cards_row.setContentsMargins(0, 0, 0, 0)
+        cards_row.setSpacing(20)
 
-        # Goodness of Fit
-        gof_label = QLabel("Goodness of Fit")
-        gof_label.setObjectName("section_header")
-        self._layout.addWidget(gof_label)
+        # Goodness of Fit card
+        self._gof_card = self._make_card()
+        gof_layout = self._gof_card.layout()
+        self._add_card_header(gof_layout, "Goodness of Fit")
 
         self._gof_grid = QGridLayout()
-        self._gof_grid.setSpacing(4)
+        self._gof_grid.setSpacing(6)
+        self._gof_grid.setColumnStretch(0, 1)
+        self._gof_grid.setColumnStretch(1, 0)
 
         gof_items = [
             ("R\u00b2", "_r2_value"),
-            ("Adj R\u00b2", "_adj_r2_value"),
+            ("Adjusted R\u00b2", "_adj_r2_value"),
             ("F-statistic", "_f_stat_value"),
-            ("Prob(F-stat)", "_f_p_value"),
+            ("Prob (F-stat)", "_f_p_value"),
         ]
-
         for row, (name, attr) in enumerate(gof_items):
             name_lbl = QLabel(name)
-            name_lbl.setObjectName("stat_name")
+            name_lbl.setObjectName("cardStatName")
             self._gof_grid.addWidget(name_lbl, row, 0)
-
             val_lbl = QLabel("--")
             val_lbl.setAlignment(Qt.AlignRight)
-            val_lbl.setObjectName("stat_value")
+            val_lbl.setObjectName("cardStatValue")
             self._gof_grid.addWidget(val_lbl, row, 1)
             setattr(self, attr, val_lbl)
 
-        self._layout.addLayout(self._gof_grid)
-        self._layout.addSpacing(12)
+        gof_layout.addLayout(self._gof_grid)
+        gof_layout.addStretch(1)
+        cards_row.addWidget(self._gof_card, 1)
 
-        # Diagnostics
-        diag_label = QLabel("Diagnostics")
-        diag_label.setObjectName("section_header")
-        self._layout.addWidget(diag_label)
+        # Diagnostics card
+        self._diag_card = self._make_card()
+        diag_layout = self._diag_card.layout()
+        self._add_card_header(diag_layout, "Diagnostics")
 
         self._diag_grid = QGridLayout()
-        self._diag_grid.setSpacing(4)
+        self._diag_grid.setSpacing(6)
+        self._diag_grid.setColumnStretch(0, 1)
+        self._diag_grid.setColumnStretch(1, 0)
 
         diag_items = [
             ("Durbin-Watson", "_dw_value"),
-            ("Residual Std", "_resid_std_value"),
-            ("N observations", "_n_obs_value"),
+            ("Residual Std Error", "_resid_std_value"),
+            ("N Observations", "_n_obs_value"),
             ("Frequency", "_freq_value"),
         ]
-
         for row, (name, attr) in enumerate(diag_items):
             name_lbl = QLabel(name)
-            name_lbl.setObjectName("stat_name")
+            name_lbl.setObjectName("cardStatName")
             self._diag_grid.addWidget(name_lbl, row, 0)
-
             val_lbl = QLabel("--")
             val_lbl.setAlignment(Qt.AlignRight)
-            val_lbl.setObjectName("stat_value")
+            val_lbl.setObjectName("cardStatValue")
             self._diag_grid.addWidget(val_lbl, row, 1)
             setattr(self, attr, val_lbl)
 
-        self._layout.addLayout(self._diag_grid)
+        diag_layout.addLayout(self._diag_grid)
+        diag_layout.addStretch(1)
+        cards_row.addWidget(self._diag_card, 1)
+
+        self._layout.addWidget(self._cards_wrapper)
+
         self._layout.addStretch(1)
 
-        # Placeholder
-        self._placeholder = QLabel("")
+        # ── Placeholder (shown before first run) ──────────────────────
+        self._placeholder = QLabel("Select a ticker or portfolio and click Run to analyze factor exposures")
         self._placeholder.setAlignment(Qt.AlignCenter)
         self._placeholder.setObjectName("placeholder")
         self._placeholder.setWordWrap(True)
-        self._placeholder.hide()
-        self._layout.addWidget(self._placeholder)
+        outer.addWidget(self._placeholder)
+        self._placeholder.show()
+        self._content.hide()
 
-        # Collapsed label
-        self._collapsed_label = VerticalLabel("Statistics")
-        self._collapsed_label.setObjectName("collapsed_label")
-        self._collapsed_label.setAlignment(Qt.AlignCenter)
-        self._collapsed_label.hide()
-        outer.addWidget(self._collapsed_label, 1)
+    def _add_section_header(self, text: str):
+        lbl = QLabel(text)
+        lbl.setObjectName("sectionHeader")
+        self._layout.addWidget(lbl)
 
-    def _toggle(self):
-        self._expanded = not self._expanded
-        self._scroll.setVisible(self._expanded)
-        self._header.setVisible(self._expanded)
-        self._collapsed_label.setVisible(not self._expanded)
-        self._toggle_btn.setText("\u25C0" if self._expanded else "\u25B6")
-        self.setFixedWidth(
-            self._EXPANDED_WIDTH if self._expanded else self._COLLAPSED_WIDTH
-        )
+    def _add_card_header(self, layout: QVBoxLayout, text: str):
+        lbl = QLabel(text)
+        lbl.setObjectName("cardHeader")
+        layout.addWidget(lbl)
+        layout.addSpacing(8)
 
-    # ── Build dynamic coefficient grid ──────────────────────────────────────
+    def _make_card(self) -> QFrame:
+        card = QFrame()
+        card.setObjectName("statsCard")
+        card.setFrameShape(QFrame.NoFrame)
+        layout = QVBoxLayout(card)
+        layout.setContentsMargins(16, 14, 16, 14)
+        layout.setSpacing(4)
+        return card
 
-    def _rebuild_coeff_grid(self, factor_names: list[str]):
-        """Rebuild the coefficient grid for the given factor names."""
-        # Clear existing
+    # ── Determine visible columns ──────────────────────────────────────
+
+    def _visible_columns(self, settings: dict) -> list[tuple[str, str]]:
+        """Return list of (key, header_text) for columns that should be shown."""
+        ci_pct = int(round(settings.get("confidence_level", 0.95) * 100))
+        cols = [("name", "")]  # always shown
+        for key, header in _COL_DEFS:
+            setting_key = _COL_SETTING_MAP[key]
+            if settings.get(setting_key, True):
+                header_text = header.format(ci_pct=ci_pct) if "{ci_pct}" in header else header
+                cols.append((key, header_text))
+        return cols
+
+    # ── Build dynamic coefficient grid ─────────────────────────────────
+
+    def _rebuild_coeff_grid(
+        self,
+        result: "FactorRegressionResult",
+        visible_cols: list[tuple[str, str]],
+        visible_factors: list[str],
+    ):
+        """Rebuild the coefficient grid with only visible columns and rows."""
         while self._coeff_grid.count():
             item = self._coeff_grid.takeAt(0)
             w = item.widget()
@@ -191,57 +240,128 @@ class FactorStatsPanel(LazyThemeMixin, QWidget):
                 w.deleteLater()
         self._coeff_labels.clear()
 
+        num_cols = len(visible_cols)
+
         # Column headers
-        for col, text in enumerate(["", "Coeff", "Std Err", "T-stat", "P-value"]):
+        for col, (key, text) in enumerate(visible_cols):
             lbl = QLabel(text)
-            lbl.setObjectName("col_header")
+            lbl.setObjectName("coeffHeader")
             lbl.setAlignment(Qt.AlignRight if col > 0 else Qt.AlignLeft)
             self._coeff_grid.addWidget(lbl, 0, col)
 
-        # Rows: Alpha (annualized), then each factor
-        row_names = ["Alpha (ann.)"] + factor_names
-        for row_idx, name in enumerate(row_names, start=1):
-            row_labels = {}
+        # Separator line
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setObjectName("coeffSep")
+        sep.setFixedHeight(1)
+        self._coeff_grid.addWidget(sep, 1, 0, 1, num_cols)
 
-            name_lbl = QLabel(name)
-            name_lbl.setObjectName("row_label")
-            self._coeff_grid.addWidget(name_lbl, row_idx, 0)
-            row_labels["name"] = name_lbl
+        # Rows: Alpha (annualized), then visible factors
+        row_names = ["Alpha (annualized)"] + visible_factors
+        for row_idx, name in enumerate(row_names, start=2):
+            row_labels: dict[str, QLabel] = {}
 
-            for col, attr_key in enumerate(["coeff", "se", "t", "p"], start=1):
-                lbl = QLabel("--")
-                lbl.setAlignment(Qt.AlignRight)
-                if attr_key == "p":
-                    lbl.setObjectName("p_value")
-                self._coeff_grid.addWidget(lbl, row_idx, col)
-                row_labels[attr_key] = lbl
+            for col, (key, _header) in enumerate(visible_cols):
+                if key == "name":
+                    color_key = "Alpha" if row_idx == 2 else name
+                    color_hex = FACTOR_COLORS.get(color_key, "#888888")
+                    name_lbl = QLabel(f'<span style="color:{color_hex};">\u25cf</span> &nbsp;{name}')
+                    name_lbl.setObjectName("coeffRowName")
+                    name_lbl.setTextFormat(Qt.RichText)
+                    self._coeff_grid.addWidget(name_lbl, row_idx, col)
+                    row_labels["name"] = name_lbl
+                else:
+                    lbl = QLabel("--")
+                    lbl.setAlignment(Qt.AlignRight)
+                    lbl.setObjectName("coeffValue" if key != "p" else "pValue")
+                    self._coeff_grid.addWidget(lbl, row_idx, col)
+                    row_labels[key] = lbl
 
             self._coeff_labels.append(row_labels)
 
-    # ── Public Methods ──────────────────────────────────────────────────────
+        # Set column stretches
+        self._coeff_grid.setColumnStretch(0, 3)
+        for c in range(1, num_cols):
+            self._coeff_grid.setColumnStretch(c, 2)
 
-    def update_stats(self, result: "FactorRegressionResult") -> None:
-        """Populate all statistics from a factor regression result."""
+    # ── Public Methods ─────────────────────────────────────────────────
+
+    def update_stats(self, result: "FactorRegressionResult", settings: dict | None = None) -> None:
         self._placeholder.hide()
         self._content.show()
+        self._last_result = result
+        if settings is not None:
+            self._settings = settings
 
-        # Rebuild grid for this model's factors
-        self._rebuild_coeff_grid(result.factor_names)
+        s = self._settings
 
-        # Alpha row (index 0)
+        # Model header
+        self._model_header.setText(result.model_name)
+        freq_display = result.frequency.capitalize()
+        self._model_desc.setText(
+            f"{freq_display} frequency  \u00b7  {result.n_observations} observations  "
+            f"\u00b7  Annualization \u00d7{result.annualization_factor}"
+        )
+
+        # Determine visible columns and rows
+        visible_cols = self._visible_columns(s)
+
+        # Significance filtering
+        show_only_sig = s.get("show_only_significant", False)
+        sig_alpha = 1.0 - s.get("confidence_level", 0.95)
+        visible_factors = []
+        for f in result.factor_names:
+            if show_only_sig:
+                p = result.p_values.get(f, 1.0)
+                if p >= sig_alpha:
+                    continue
+            visible_factors.append(f)
+
+        # Rebuild coefficient grid
+        self._rebuild_coeff_grid(result, visible_cols, visible_factors)
+
+        # Map of column keys present
+        col_keys = {k for k, _ in visible_cols}
+
+        # Alpha row
         alpha_row = self._coeff_labels[0]
-        alpha_row["coeff"].setText(f"{result.alpha_annualized:.6f}")
-        alpha_row["se"].setText(f"{result.std_errors.get('Alpha', 0) * result.annualization_factor:.4f}")
-        alpha_row["t"].setText(f"{result.t_stats.get('Alpha', 0):.2f}")
-        self._set_p_value(alpha_row["p"], result.p_values.get("Alpha", 1.0))
+        if "coeff" in col_keys:
+            alpha_row["coeff"].setText(f"{result.alpha_annualized:.6f}")
+        if "se" in col_keys:
+            alpha_se_ann = result.std_errors.get("Alpha", 0) * result.annualization_factor
+            alpha_row["se"].setText(f"{alpha_se_ann:.6f}")
+        if "t" in col_keys:
+            alpha_row["t"].setText(f"{result.t_stats.get('Alpha', 0):.3f}")
+        if "p" in col_keys:
+            self._set_p_value(alpha_row["p"], result.p_values.get("Alpha", 1.0))
+        if "ci" in col_keys:
+            ci_lo = result.ci_lower.get("Alpha", 0) * result.annualization_factor
+            ci_hi = result.ci_upper.get("Alpha", 0) * result.annualization_factor
+            alpha_row["ci"].setText(f"[{ci_lo:.6f}, {ci_hi:.6f}]")
 
         # Factor rows
-        for i, f in enumerate(result.factor_names):
+        for i, f in enumerate(visible_factors):
             row = self._coeff_labels[i + 1]
-            row["coeff"].setText(f"{result.betas.get(f, 0):.4f}")
-            row["se"].setText(f"{result.std_errors.get(f, 0):.4f}")
-            row["t"].setText(f"{result.t_stats.get(f, 0):.2f}")
-            self._set_p_value(row["p"], result.p_values.get(f, 1.0))
+            if "coeff" in col_keys:
+                row["coeff"].setText(f"{result.betas.get(f, 0):.4f}")
+            if "se" in col_keys:
+                row["se"].setText(f"{result.std_errors.get(f, 0):.4f}")
+            if "t" in col_keys:
+                row["t"].setText(f"{result.t_stats.get(f, 0):.3f}")
+            if "p" in col_keys:
+                self._set_p_value(row["p"], result.p_values.get(f, 1.0))
+            if "ci" in col_keys:
+                lo = result.ci_lower.get(f, 0)
+                hi = result.ci_upper.get(f, 0)
+                row["ci"].setText(f"[{lo:.4f}, {hi:.4f}]")
+
+        # Card visibility
+        self._gof_card.setVisible(s.get("show_goodness_of_fit", True))
+        self._diag_card.setVisible(s.get("show_diagnostics", True))
+        # Hide the whole wrapper if both cards are hidden
+        self._cards_wrapper.setVisible(
+            s.get("show_goodness_of_fit", True) or s.get("show_diagnostics", True)
+        )
 
         # Goodness of fit
         self._r2_value.setText(f"{result.r_squared:.4f}")
@@ -250,18 +370,29 @@ class FactorStatsPanel(LazyThemeMixin, QWidget):
         self._set_p_value(self._f_p_value, result.f_p_value)
 
         # Diagnostics
-        self._dw_value.setText(f"{result.durbin_watson:.3f}")
+        self._dw_value.setText(f"{result.durbin_watson:.4f}")
         self._resid_std_value.setText(f"{result.residual_std_error:.6f}")
         self._n_obs_value.setText(str(result.n_observations))
-        freq_display = result.frequency.capitalize()
-        self._freq_value.setText(f"{freq_display} (x{result.annualization_factor})")
+        self._freq_value.setText(f"{freq_display} (\u00d7{result.annualization_factor})")
+
+    def apply_display_settings(self, settings: dict):
+        """Re-apply display settings to the currently cached result."""
+        self._settings = settings
+        # Toggle card visibility even if no result yet
+        self._gof_card.setVisible(settings.get("show_goodness_of_fit", True))
+        self._diag_card.setVisible(settings.get("show_diagnostics", True))
+        self._cards_wrapper.setVisible(
+            settings.get("show_goodness_of_fit", True) or settings.get("show_diagnostics", True)
+        )
+        if self._last_result is not None:
+            self.update_stats(self._last_result, settings)
 
     def clear_stats(self):
-        """Reset all labels to placeholder dashes."""
         for row in self._coeff_labels:
-            for key in ("coeff", "se", "t", "p"):
-                row[key].setText("--")
-                row[key].setStyleSheet("")
+            for key in ("coeff", "se", "t", "p", "ci"):
+                if key in row:
+                    row[key].setText("--")
+                    row[key].setStyleSheet("")
 
         for lbl in [
             self._r2_value, self._adj_r2_value, self._f_stat_value, self._f_p_value,
@@ -271,13 +402,12 @@ class FactorStatsPanel(LazyThemeMixin, QWidget):
             lbl.setStyleSheet("")
 
     def show_placeholder(self, msg: str):
-        self.clear_stats()
+        self._content.hide()
         self._placeholder.setText(msg)
         self._placeholder.show()
 
     def _set_p_value(self, label: QLabel, p: float):
         label.setText(f"{p:.4f}")
-
         if p < 0.01:
             label.setStyleSheet("color: #00cc66; background: transparent;")
         elif p < 0.05:
@@ -286,8 +416,12 @@ class FactorStatsPanel(LazyThemeMixin, QWidget):
             c = ThemeStylesheetService.get_colors(self.theme_manager.current_theme)
             label.setStyleSheet(f"color: {c['text_muted']}; background: transparent;")
 
+    # ── Theme ──────────────────────────────────────────────────────────
+
     def _apply_theme(self):
         c = ThemeStylesheetService.get_colors(self.theme_manager.current_theme)
+        border_subtle = c.get("border", "#333333")
+        card_bg = c.get("bg_header", "#1a1a2e")
 
         self.setStyleSheet(f"""
             QWidget {{
@@ -298,67 +432,100 @@ class FactorStatsPanel(LazyThemeMixin, QWidget):
                 background-color: {c['bg']};
                 border: none;
             }}
-            QLabel#panel_header {{
+
+            /* Model header */
+            QLabel#modelHeader {{
+                font-size: 22px;
+                font-weight: bold;
+                color: {c['text']};
+                background: transparent;
+                padding: 0px;
+            }}
+            QLabel#modelDesc {{
+                font-size: 13px;
+                color: {c['text_muted']};
+                background: transparent;
+                padding: 2px 0px 0px 0px;
+            }}
+
+            /* Section headers */
+            QLabel#sectionHeader {{
                 font-size: 15px;
                 font-weight: bold;
                 color: {c['accent']};
                 background: transparent;
-                padding: 4px;
+                padding: 4px 0px;
+                border-bottom: 2px solid {c['accent']};
             }}
-            QLabel#section_header {{
-                font-size: 13px;
-                font-weight: bold;
-                color: {c['accent']};
-                background: transparent;
-                padding: 2px 0px;
-                border-bottom: 1px solid {c['border']};
-            }}
-            QLabel#col_header {{
-                font-size: 11px;
+
+            /* Coefficient table */
+            QLabel#coeffHeader {{
+                font-size: 12px;
                 font-weight: bold;
                 color: {c['text_muted']};
                 background: transparent;
+                padding: 6px 8px;
             }}
-            QLabel#row_label {{
-                font-size: 12px;
+            QFrame#coeffSep {{
+                background-color: {border_subtle};
+            }}
+            QLabel#coeffRowName {{
+                font-size: 13px;
                 font-weight: 600;
                 color: {c['text']};
                 background: transparent;
+                padding: 5px 8px;
             }}
-            QLabel#stat_name {{
-                font-size: 12px;
-                color: {c['text_muted']};
-                background: transparent;
-            }}
-            QLabel#stat_value {{
-                font-size: 12px;
-                font-weight: 500;
+            QLabel#coeffValue {{
+                font-size: 13px;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
                 color: {c['text']};
                 background: transparent;
+                padding: 5px 8px;
             }}
-            QLabel#placeholder {{
+            QLabel#pValue {{
+                font-size: 13px;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
+                background: transparent;
+                padding: 5px 8px;
+            }}
+
+            /* Cards */
+            QFrame#statsCard {{
+                background-color: {card_bg};
+                border: 1px solid {border_subtle};
+                border-radius: 8px;
+            }}
+            QLabel#cardHeader {{
+                font-size: 14px;
+                font-weight: bold;
+                color: {c['accent']};
+                background: transparent;
+            }}
+            QLabel#cardStatName {{
                 font-size: 13px;
                 color: {c['text_muted']};
                 background: transparent;
-                padding: 20px;
+                padding: 2px 0px;
             }}
+            QLabel#cardStatValue {{
+                font-size: 13px;
+                font-family: "Menlo", "Consolas", "Courier New", monospace;
+                font-weight: 500;
+                color: {c['text']};
+                background: transparent;
+                padding: 2px 0px;
+            }}
+
+            /* Placeholder */
+            QLabel#placeholder {{
+                font-size: 16px;
+                color: {c['text_muted']};
+                background: transparent;
+                padding: 40px;
+            }}
+
             QLabel {{
-                background: transparent;
-            }}
-            QPushButton#collapse_btn {{
-                background: transparent;
-                color: {c['text_muted']};
-                border: none;
-                font-size: 12px;
-                padding: 0px;
-            }}
-            QPushButton#collapse_btn:hover {{
-                color: {c['accent']};
-            }}
-            QLabel#collapsed_label {{
-                font-size: 12px;
-                font-weight: bold;
-                color: {c['text_muted']};
                 background: transparent;
             }}
         """)
