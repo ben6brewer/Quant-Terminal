@@ -87,13 +87,20 @@ class SimulationWorker(QThread):
         self._benchmark_returns = benchmark_returns
         self._params = params
         self._cancelled = False
+        self.result = None       # SimulationResultBundle on success
+        self.error_msg = None    # Error string on failure
 
     def request_cancellation(self):
         """Request graceful cancellation of the simulation."""
         self._cancelled = True
 
     def run(self):
-        """Execute simulations in background thread."""
+        """Execute simulations in background thread.
+
+        Stores result/error on self instead of emitting signals from
+        the background thread. The caller should connect to
+        QThread.finished to read self.result / self.error_msg.
+        """
         try:
             results = {}
 
@@ -129,7 +136,7 @@ class SimulationWorker(QThread):
                     try:
                         results[name] = future.result()
                     except Exception as e:
-                        self.simulation_error.emit(f"Error in {name} simulation: {e}")
+                        self.error_msg = f"Error in {name} simulation: {e}"
                         return
 
             # Check cancellation
@@ -137,14 +144,12 @@ class SimulationWorker(QThread):
                 return
 
             # Build result bundle with pre-computed statistics
-            bundle = self._build_result_bundle(
+            self.result = self._build_result_bundle(
                 results["portfolio"], results.get("benchmark")
             )
 
-            self.simulation_complete.emit(bundle)
-
         except Exception as e:
-            self.simulation_error.emit(str(e))
+            self.error_msg = str(e)
 
     def _run_single_simulation(
         self, returns: "pd.Series", name: str

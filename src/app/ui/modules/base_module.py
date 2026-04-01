@@ -129,16 +129,9 @@ class BaseModule(LazyThemeMixin, QWidget):
                     on_complete=None, on_error=None, **kwargs):
         """Run *fn* in a background QThread via CalculationWorker.
 
-        Cancels any existing worker, shows loading overlay, and wires
-        finished/error signals to *on_complete*/*on_error* (falling back
-        to ``_on_worker_complete`` / ``_on_worker_error``).
-
-        Callbacks are auto-wrapped to call ``_hide_loading()`` and
-        ``_cleanup_worker()`` before invoking the callback, so callers
-        do NOT need to call those themselves.
-
-        Signals connect to bound methods on *self* (a QObject) so Qt's
-        AutoConnection correctly queues delivery to the main thread.
+        Cancels any existing worker, shows loading overlay, and dispatches
+        the result/error to *on_complete*/*on_error* (falling back to
+        ``_on_worker_complete`` / ``_on_worker_error``).
         """
         from app.services.calculation_worker import CalculationWorker
 
@@ -153,40 +146,38 @@ class BaseModule(LazyThemeMixin, QWidget):
         self._worker.moveToThread(self._thread)
 
         self._thread.started.connect(self._worker.run)
-        self._worker.finished.connect(self._on_worker_finished)
-        self._worker.error.connect(self._on_worker_errored)
+        self._thread.finished.connect(self._on_worker_thread_done, Qt.QueuedConnection)
 
         self._thread.start()
 
-        # Verify thread started (QThread.start() can fail silently)
-        if not self._thread.isRunning():
-            self._hide_loading()
-            self._cleanup_worker()
+    def _on_worker_thread_done(self):
+        """Dispatches worker result/error on the main thread.
+
+        Called when QThread.finished fires. Reads the stored result/error
+        from the worker and invokes the appropriate callback.
+        """
+        worker = self._worker
+        if worker is None:
+            return  # Already cleaned up (e.g. via _cancel_worker)
+
+        self._hide_loading()
+
+        if worker.error_msg is not None:
             cb = self._worker_error_cb
             self._worker_complete_cb = None
             self._worker_error_cb = None
+            error_msg = worker.error_msg
+            self._cleanup_worker()
             if cb:
-                cb("Failed to start background thread")
-
-    def _on_worker_finished(self, result):
-        """Internal slot for worker finished — always runs in main thread."""
-        self._hide_loading()
-        self._cleanup_worker()
-        cb = self._worker_complete_cb
-        self._worker_complete_cb = None
-        self._worker_error_cb = None
-        if cb:
-            cb(result)
-
-    def _on_worker_errored(self, error_msg):
-        """Internal slot for worker error — always runs in main thread."""
-        self._hide_loading()
-        self._cleanup_worker()
-        cb = self._worker_error_cb
-        self._worker_complete_cb = None
-        self._worker_error_cb = None
-        if cb:
-            cb(error_msg)
+                cb(error_msg)
+        else:
+            cb = self._worker_complete_cb
+            self._worker_complete_cb = None
+            self._worker_error_cb = None
+            result = worker.result
+            self._cleanup_worker()
+            if cb:
+                cb(result)
 
     def _on_worker_complete(self, result):
         """Default completion handler — subclasses should override."""
@@ -197,48 +188,59 @@ class BaseModule(LazyThemeMixin, QWidget):
         pass
 
     def _cleanup_worker(self):
-        """Non-blocking cleanup: signal thread to quit, let it finish async.
+        """Clean up the QThread and CalculationWorker after completion.
 
-        If the thread is stuck (e.g. yfinance timeout), it will be orphaned
-        but won't block the UI. With network timeouts, orphaned threads will
-        eventually terminate on their own.
+        If the thread has already finished (normal case — called from
+        _on_worker_thread_done), just drop Python references and let
+        shiboken's tp_dealloc delete the C++ objects via refcounting.
 
-        Uses QueuedConnection for thread.finished cleanup to avoid a
-        GIL/Qt-signal-mutex deadlock: DirectConnection lambdas run on the
-        background thread and need the GIL, while the main thread may hold
-        the GIL and block on QThread::~QThread()->wait() if references drop.
+        DO NOT use deleteLater() here — it causes a double-free:
+        shiboken deletes the C++ object when the Python wrapper's refcount
+        hits 0, then Qt's event loop tries to delete it again via
+        deleteLater → heap corruption.
 
-        The closure captures only local refs (thread/worker), never `self`,
-        so destroyed modules don't stay alive via the orphan list.
+        If the thread is still running (stuck/timeout), orphan it in a
+        global list and let it clean up when it eventually finishes.
         """
         if self._thread is not None:
             thread = self._thread
             worker = self._worker
-            thread.quit()
-            # Keep a reference so Python doesn't GC the thread while running
-            _global_orphaned_threads.append(thread)
 
-            # QueuedConnection ensures this runs on the main thread's event
-            # loop, avoiding the GIL deadlock that DirectConnection causes.
-            def _on_thread_done(t=thread, w=worker):
-                try:
-                    _global_orphaned_threads.remove(t)
-                except ValueError:
-                    pass
-                if w is not None:
-                    w.deleteLater()
-                t.deleteLater()
+            if not thread.isRunning():
+                # Thread already finished — dropping Python refs below
+                # will let shiboken clean up the C++ objects safely.
+                pass
+            else:
+                # Thread still running (stuck/timeout) — orphan it.
+                # Keep refs alive in the global list until finished.
+                thread.quit()
+                _global_orphaned_threads.append(thread)
+                if worker is not None:
+                    _global_orphaned_threads.append(worker)
 
-            thread.finished.connect(_on_thread_done, Qt.QueuedConnection)
+                def _on_thread_done(t=thread, w=worker):
+                    try:
+                        _global_orphaned_threads.remove(t)
+                    except ValueError:
+                        pass
+                    if w is not None:
+                        try:
+                            _global_orphaned_threads.remove(w)
+                        except ValueError:
+                            pass
+                    # Refs t and w drop when this closure is freed
+                    # → shiboken deletes C++ objects via refcounting
+
+                thread.finished.connect(_on_thread_done, Qt.QueuedConnection)
         self._worker = None
         self._thread = None
 
     def _cancel_worker(self):
         """Cancel any running worker with proper Qt cleanup."""
-        if self._worker is not None:
+        # Disconnect thread.finished so orphaned thread doesn't trigger callback
+        if self._thread is not None:
             try:
-                self._worker.finished.disconnect()
-                self._worker.error.disconnect()
+                self._thread.finished.disconnect(self._on_worker_thread_done)
             except (RuntimeError, TypeError):
                 pass
         self._worker_complete_cb = None

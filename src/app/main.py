@@ -64,6 +64,10 @@ def main() -> int:
     _signal_timer.start(200)
     _signal_timer.timeout.connect(lambda: None)
 
+    # Crash debugging — writes to ~/.quant_terminal/crash_debug.log
+    from app.debug_crash import install_crash_debugging
+    install_crash_debugging()
+
     return app.exec()
 
 

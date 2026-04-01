@@ -7,4 +7,3 @@ pip install -e .
 
 # Run the application
 python -m app.main
-

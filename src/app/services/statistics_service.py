@@ -818,10 +818,10 @@ class StatisticsService:
             Annualized risk-free rate as decimal (e.g., 0.0525 for 5.25%)
         """
         # Fetch ^IRX directly from Yahoo Finance
-        import yfinance as yf
+        from app.services.yahoo_finance_service import YahooFinanceService
 
         try:
-            df = yf.download("^IRX", period="5d", interval="1d", progress=False)
+            df = YahooFinanceService.safe_download(tickers="^IRX", period="5d", interval="1d", progress=False, threads=False)
             if df is not None and not df.empty:
                 # Handle MultiIndex columns if present
                 if hasattr(df.columns, 'levels'):

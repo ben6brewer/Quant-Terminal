@@ -25,7 +25,7 @@ CANDLE_BAR_WIDTH = 0.6
 
 # Data fetching
 DEFAULT_PERIOD = "max"
-DATA_FETCH_THREADS = True
+DATA_FETCH_THREADS = False  # Disabled: curl_cffi heap corruption with multitasking threads
 SHOW_DOWNLOAD_PROGRESS = False
 
 # Yahoo Finance Configuration (primary data source)

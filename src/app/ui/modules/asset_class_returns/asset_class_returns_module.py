@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Optional
 
 from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QStackedWidget
-from PySide6.QtCore import QThread, QTimer
+from PySide6.QtCore import Qt, QThread, QTimer
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common import CustomMessageBox
@@ -187,10 +187,19 @@ class AssetClassReturnsModule(BaseModule):
         self._custom_worker.moveToThread(self._custom_thread)
 
         self._custom_thread.started.connect(self._custom_worker.run)
-        self._custom_worker.finished.connect(self._on_custom_complete)
-        self._custom_worker.error.connect(self._on_custom_error)
+        self._custom_thread.finished.connect(self._on_custom_thread_done, Qt.QueuedConnection)
 
         self._custom_thread.start()
+
+    def _on_custom_thread_done(self):
+        """Dispatch custom worker result on main thread."""
+        worker = self._custom_worker
+        if worker is None:
+            return
+        if worker.error_msg is not None:
+            self._on_custom_error(worker.error_msg)
+        else:
+            self._on_custom_complete(worker.result)
 
     def _on_custom_complete(self, result):
         self._cleanup_custom_worker()
@@ -208,10 +217,9 @@ class AssetClassReturnsModule(BaseModule):
 
     def _cancel_custom_worker(self):
         """Cancel any running custom worker with proper Qt cleanup."""
-        if self._custom_worker is not None:
+        if self._custom_thread is not None:
             try:
-                self._custom_worker.finished.disconnect()
-                self._custom_worker.error.disconnect()
+                self._custom_thread.finished.disconnect(self._on_custom_thread_done)
             except (RuntimeError, TypeError):
                 pass
         self._cleanup_custom_worker()
@@ -224,8 +232,10 @@ class AssetClassReturnsModule(BaseModule):
             thread.quit()
 
             from app.ui.modules.base_module import _global_orphaned_threads
-            from PySide6.QtCore import Qt
             _global_orphaned_threads.append(thread)
+
+            if worker is not None:
+                _global_orphaned_threads.append(worker)
 
             def _on_done(t=thread, w=worker):
                 try:
@@ -233,8 +243,10 @@ class AssetClassReturnsModule(BaseModule):
                 except ValueError:
                     pass
                 if w is not None:
-                    w.deleteLater()
-                t.deleteLater()
+                    try:
+                        _global_orphaned_threads.remove(w)
+                    except ValueError:
+                        pass
 
             thread.finished.connect(_on_done, Qt.QueuedConnection)
         self._custom_worker = None

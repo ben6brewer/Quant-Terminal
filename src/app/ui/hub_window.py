@@ -426,18 +426,19 @@ class HubWindow(QMainWindow):
         """)
 
     def open_module(self, module_id: str) -> None:
-        """Open a module in full screen."""
+        """Open a module — cached on first creation, reused on subsequent opens."""
         current = self.main_stack.currentWidget()
 
         # Check if already viewing this module
         if module_id in self.module_containers and current == self.module_containers[module_id]:
             return  # Already viewing this module
 
-        # Destroy any currently open module (if not home screen)
-        if current != self.home_screen:
-            self._destroy_current_module()
+        # NOTE: No module destruction here. Modules are cached and reused
+        # to avoid shiboken6 heap corruption from repeated destroy/create cycles.
+        # QStackedWidget fires hideEvent on the old widget and showEvent on the
+        # new one, so workers are cancelled and themes refreshed automatically.
 
-        # Check if module needs to be instantiated
+        # Check if module needs to be instantiated (first open only)
         if module_id not in self.modules:
             if module_id in self._module_factories:
                 factory = self._module_factories[module_id]
@@ -527,17 +528,8 @@ class HubWindow(QMainWindow):
         container.deleteLater()
 
     def show_home(self) -> None:
-        """Return to home screen, destroying the current module."""
-        # Get the module to destroy BEFORE switching (while it's still current)
-        current_container = self.main_stack.currentWidget()
-
-        # Switch to home screen first
+        """Return to home screen (modules stay cached for reuse)."""
         self.main_stack.setCurrentWidget(self.home_screen)
-        self.home_screen.refresh()  # Reload favorites
-
-        # Now destroy the previous module (after we've switched away from it)
-        if current_container != self.home_screen:
-            self._destroy_module_container(current_container)
 
     def show_initial_screen(self) -> None:
         """Show home screen on startup."""

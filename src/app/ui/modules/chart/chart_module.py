@@ -3,7 +3,7 @@ from __future__ import annotations
 import threading
 
 from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import Qt, QTimer
 
 from app.ui.modules.chart.widgets import (
     PriceChart,
@@ -63,7 +63,7 @@ class ChartModule(BaseModule):
             is_equation=self.equation_parser.is_equation,
             parent=self,
         )
-        self._live_update_manager.bar_received.connect(self._update_crypto_bar)
+        self._live_update_manager.bar_received.connect(self._update_crypto_bar, Qt.QueuedConnection)
 
         self._setup_ui()
         self._setup_state()

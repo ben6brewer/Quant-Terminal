@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import threading
-import weakref
 from typing import List, Tuple, Optional
 import numpy as np
 import pyqtgraph as pg
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QStackedWidget
-from PySide6.QtCore import Qt, QTimer, Signal
+from PySide6.QtCore import Qt, QThread, QTimer, Signal
 from PySide6.QtGui import QFont
 
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
@@ -188,9 +186,6 @@ class OrderBookPanel(LazyThemeMixin, QWidget):
         # Update timer
         self.update_timer = QTimer(self)
         self.update_timer.timeout.connect(self._refresh_data)
-
-        # Connect signal for thread-safe UI updates
-        self._depth_data_ready.connect(self._apply_depth_data)
 
         self._setup_ui()
         self._apply_theme()
@@ -435,7 +430,7 @@ class OrderBookPanel(LazyThemeMixin, QWidget):
         self.start_updates()
     
     def _refresh_data(self):
-        """Refresh order book data in a background thread."""
+        """Refresh order book data in a QThread (thread-safe)."""
         if not self.current_ticker:
             return
 
@@ -446,28 +441,54 @@ class OrderBookPanel(LazyThemeMixin, QWidget):
             return
 
         self._depth_fetch_in_progress = True
-        ticker = self.current_ticker
-        api = self.binance_api
-        weak_self = weakref.ref(self)
 
-        def _fetch():
-            try:
-                summary = api.get_depth_summary(ticker, levels=500)
-                obj = weak_self()
-                if obj is not None:
+        from app.services.calculation_worker import CalculationWorker
+
+        self._depth_thread = QThread()
+        self._depth_worker = CalculationWorker(
+            self.binance_api.get_depth_summary, self.current_ticker, levels=500
+        )
+        self._depth_worker.moveToThread(self._depth_thread)
+        self._depth_thread.started.connect(self._depth_worker.run)
+        self._depth_thread.finished.connect(self._on_depth_fetch_done, Qt.QueuedConnection)
+        self._depth_thread.start()
+
+    def _on_depth_fetch_done(self):
+        """Handle depth fetch completion on main thread."""
+        worker = self._depth_worker
+        self._cleanup_depth_fetch()
+        self._depth_fetch_in_progress = False
+
+        if worker is not None and worker.result is not None:
+            self._apply_depth_data(worker.result)
+
+    def _cleanup_depth_fetch(self):
+        """Clean up depth fetch thread/worker."""
+        if hasattr(self, '_depth_thread') and self._depth_thread is not None:
+            thread = self._depth_thread
+            worker = self._depth_worker
+            thread.quit()
+
+            from app.ui.modules.base_module import _global_orphaned_threads
+            _global_orphaned_threads.append(thread)
+
+            if worker is not None:
+                _global_orphaned_threads.append(worker)
+
+            def _on_done(t=thread, w=worker):
+                try:
+                    _global_orphaned_threads.remove(t)
+                except ValueError:
+                    pass
+                if w is not None:
                     try:
-                        obj._depth_data_ready.emit(summary)
-                    except RuntimeError:
+                        _global_orphaned_threads.remove(w)
+                    except ValueError:
                         pass
-            except Exception:
-                pass
-            finally:
-                obj = weak_self()
-                if obj is not None:
-                    obj._depth_fetch_in_progress = False
 
-        thread = threading.Thread(target=_fetch, daemon=True)
-        thread.start()
+            thread.finished.connect(_on_done, Qt.QueuedConnection)
+        self._depth_thread = None
+        self._depth_worker = None
 
     def _apply_depth_data(self, summary):
         """Apply depth data to UI widgets (runs on main thread via signal)."""

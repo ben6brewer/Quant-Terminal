@@ -3,7 +3,7 @@
 from typing import Optional
 
 from PySide6.QtWidgets import QVBoxLayout
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Qt, Signal
 
 from app.core.theme_manager import ThemeManager
 from app.services.portfolio_data_service import PortfolioDataService
@@ -148,13 +148,11 @@ class MonteCarloModule(BaseModule):
         """Cancel any in-progress simulation with non-blocking cleanup."""
         if self._simulation_worker is not None:
             try:
-                self._simulation_worker.simulation_complete.disconnect()
-                self._simulation_worker.simulation_error.disconnect()
+                self._simulation_worker.finished.disconnect(self._on_simulation_thread_done)
             except (RuntimeError, TypeError):
                 pass
             self._simulation_worker.request_cancellation()
 
-            from PySide6.QtCore import Qt
             from app.ui.modules.base_module import _global_orphaned_threads
 
             worker = self._simulation_worker
@@ -165,7 +163,6 @@ class MonteCarloModule(BaseModule):
                     _global_orphaned_threads.remove(w)
                 except ValueError:
                     pass
-                w.deleteLater()
 
             worker.finished.connect(_on_done, Qt.QueuedConnection)
             self._simulation_worker = None
@@ -235,17 +232,24 @@ class MonteCarloModule(BaseModule):
                 benchmark_returns=benchmark_returns,
                 parent=self,
             )
-            self._simulation_worker.simulation_complete.connect(
-                self._on_simulation_complete
-            )
-            self._simulation_worker.simulation_error.connect(
-                self._on_simulation_error
+            self._simulation_worker.finished.connect(
+                self._on_simulation_thread_done, Qt.QueuedConnection
             )
             self._simulation_worker.start()
 
         except Exception as e:
             self.chart.show_placeholder(f"Error: {str(e)}")
             self._hide_loading()
+
+    def _on_simulation_thread_done(self):
+        """Dispatch simulation result on main thread via QThread.finished."""
+        worker = self._simulation_worker
+        if worker is None:
+            return
+        if worker.error_msg is not None:
+            self._on_simulation_error(worker.error_msg)
+        else:
+            self._on_simulation_complete(worker.result)
 
     def _on_simulation_complete(self, bundle: SimulationResultBundle):
         """Handle simulation completion (runs on main thread via signal)."""
@@ -261,17 +265,13 @@ class MonteCarloModule(BaseModule):
         )
 
         self._hide_loading()
-        if self._simulation_worker is not None:
-            self._simulation_worker.deleteLater()
-            self._simulation_worker = None
+        self._simulation_worker = None
 
     def _on_simulation_error(self, error_msg: str):
         """Handle simulation error."""
         self.chart.show_placeholder(f"Error: {error_msg}")
         self._hide_loading()
-        if self._simulation_worker is not None:
-            self._simulation_worker.deleteLater()
-            self._simulation_worker = None
+        self._simulation_worker = None
 
     def create_settings_manager(self):
         from .services.monte_carlo_settings_manager import MonteCarloSettingsManager

@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-import threading
-import weakref
 from typing import Callable
 
-from PySide6.QtCore import QObject, QTimer, Signal
+from PySide6.QtCore import QObject, Qt, QThread, QTimer, Signal
 
+from app.services.calculation_worker import CalculationWorker
 from app.services.live_bar_aggregator import LiveBarAggregator
 from app.services.yahoo_finance_service import YahooFinanceService
 from app.utils.market_hours import is_crypto_ticker, is_market_open_extended
@@ -19,6 +18,8 @@ class LiveUpdateManager(QObject):
 
     Emits `bar_received` when new OHLCV data arrives from Yahoo Finance.
     The chart module connects this signal to update the chart UI.
+
+    All signal emissions happen on the main thread via QThread.finished.
     """
 
     # Emitted when a new bar is fetched (ticker, today_bar DataFrame)
@@ -41,6 +42,9 @@ class LiveUpdateManager(QObject):
         self._live_aggregator = LiveBarAggregator()
         self._enabled = True
         self._fetch_in_progress = False
+        self._fetch_thread: QThread | None = None
+        self._fetch_worker: CalculationWorker | None = None
+        self._fetch_ticker: str | None = None
 
         self._stock_poll_timer: QTimer | None = None
         self._crypto_poll_timer: QTimer | None = None
@@ -74,9 +78,10 @@ class LiveUpdateManager(QObject):
                 self._start_stock_polling(ticker)
 
     def stop(self) -> None:
-        """Stop all live updates (polling timers)."""
+        """Stop all live updates (polling timers and any in-flight fetch)."""
         self._stop_stock_polling()
         self._stop_crypto_polling()
+        self._cleanup_fetch()
         self._live_aggregator.reset()
 
     # ------------------------------------------------------------------
@@ -146,36 +151,66 @@ class LiveUpdateManager(QObject):
         self._fetch_today_bar(ticker)
 
     # ------------------------------------------------------------------
-    # Shared fetch
+    # Shared fetch — uses QThread for thread-safe signal delivery
     # ------------------------------------------------------------------
 
     def _fetch_today_bar(self, ticker: str) -> None:
-        """Fetch today's OHLCV bar in a background thread and emit signal."""
+        """Fetch today's OHLCV bar in a QThread (not a daemon thread)."""
         if self._fetch_in_progress:
             return
 
         self._fetch_in_progress = True
-        weak_self = weakref.ref(self)
+        self._fetch_ticker = ticker
 
-        def _fetch():
-            try:
-                today_bar = YahooFinanceService.fetch_today_ohlcv(ticker)
-                if today_bar is not None and not today_bar.empty:
-                    obj = weak_self()
-                    if obj is not None:
-                        try:
-                            obj.bar_received.emit(ticker, today_bar)
-                        except RuntimeError:
-                            pass
-            except Exception:
-                pass
-            finally:
-                obj = weak_self()
-                if obj is not None:
-                    obj._fetch_in_progress = False
+        self._fetch_thread = QThread()
+        self._fetch_worker = CalculationWorker(
+            YahooFinanceService.fetch_today_ohlcv, ticker
+        )
+        self._fetch_worker.moveToThread(self._fetch_thread)
 
-        thread = threading.Thread(target=_fetch, daemon=True)
-        thread.start()
+        self._fetch_thread.started.connect(self._fetch_worker.run)
+        self._fetch_thread.finished.connect(self._on_fetch_done, Qt.QueuedConnection)
+        self._fetch_thread.start()
+
+    def _on_fetch_done(self) -> None:
+        """Handle fetch completion on main thread via QThread.finished."""
+        worker = self._fetch_worker
+        ticker = self._fetch_ticker
+        self._cleanup_fetch()
+        self._fetch_in_progress = False
+
+        if worker is not None and worker.result is not None:
+            today_bar = worker.result
+            if not today_bar.empty and ticker:
+                self.bar_received.emit(ticker, today_bar)
+
+    def _cleanup_fetch(self) -> None:
+        """Clean up fetch thread/worker."""
+        if self._fetch_thread is not None:
+            thread = self._fetch_thread
+            worker = self._fetch_worker
+            thread.quit()
+
+            from app.ui.modules.base_module import _global_orphaned_threads
+            _global_orphaned_threads.append(thread)
+
+            if worker is not None:
+                _global_orphaned_threads.append(worker)
+
+            def _on_done(t=thread, w=worker):
+                try:
+                    _global_orphaned_threads.remove(t)
+                except ValueError:
+                    pass
+                if w is not None:
+                    try:
+                        _global_orphaned_threads.remove(w)
+                    except ValueError:
+                        pass
+
+            thread.finished.connect(_on_done, Qt.QueuedConnection)
+        self._fetch_thread = None
+        self._fetch_worker = None
 
     # ------------------------------------------------------------------
     # Legacy WebSocket handler (kept for future use)

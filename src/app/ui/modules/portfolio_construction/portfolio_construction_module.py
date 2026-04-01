@@ -1,7 +1,6 @@
 """Portfolio Construction Module - Main Orchestrator"""
 
-import threading
-import weakref
+
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
@@ -166,8 +165,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         # View tab bar
         self.view_tab_bar.view_changed.connect(self._on_view_changed)
 
-        # Live price updates from background thread
-        self._live_prices_received.connect(self._apply_live_prices)
+        # Live price updates dispatched via _on_live_fetch_done (QThread.finished)
 
     def _on_view_changed(self, index: int):
         """Handle view tab change."""
@@ -277,12 +275,21 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
             self._load_worker.moveToThread(self._load_thread)
 
             self._load_thread.started.connect(self._load_worker.run)
-            self._load_worker.finished.connect(self._on_aggregate_fetch_complete)
-            self._load_worker.error.connect(self._on_aggregate_fetch_error)
+            self._load_thread.finished.connect(self._on_aggregate_thread_done, Qt.QueuedConnection)
             self._load_thread.start()
         else:
             # No new tickers to fetch — apply directly with cached data
             self._apply_aggregate_update(tickers, transactions)
+
+    def _on_aggregate_thread_done(self):
+        """Dispatch aggregate fetch result on main thread."""
+        worker = self._load_worker
+        if worker is None:
+            return
+        if worker.error_msg is not None:
+            self._on_aggregate_fetch_error(worker.error_msg)
+        else:
+            self._on_aggregate_fetch_complete(worker.result)
 
     def _on_aggregate_fetch_complete(self, result):
         """Handle background price/name fetch for aggregate table."""
@@ -471,14 +478,19 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self._load_worker.moveToThread(self._load_thread)
 
         self._load_thread.started.connect(self._load_worker.run)
-        self._load_worker.finished.connect(self._on_prices_loaded)
-        self._load_worker.error.connect(self._on_portfolio_load_error)
+        self._load_thread.finished.connect(self._on_load_thread_done, Qt.QueuedConnection)
         self._load_thread.start()
 
-    def _on_prices_loaded(self, result):
-        """Unpack (prices, names) tuple from CalculationWorker."""
-        prices, names = result
-        self._on_portfolio_load_complete(prices, names)
+    def _on_load_thread_done(self):
+        """Dispatch portfolio load result on main thread."""
+        worker = self._load_worker
+        if worker is None:
+            return
+        if worker.error_msg is not None:
+            self._on_portfolio_load_error(worker.error_msg)
+        else:
+            prices, names = worker.result
+            self._on_portfolio_load_complete(prices, names)
 
     def _on_portfolio_load_complete(self, prices: dict, names: dict):
         """Handle successful price fetch - update UI on main thread."""
@@ -533,10 +545,13 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
     def _cancel_load_worker(self):
         """Cancel any in-progress load worker with proper Qt cleanup."""
-        if self._load_worker is not None:
+        if self._load_thread is not None:
             try:
-                self._load_worker.finished.disconnect()
-                self._load_worker.error.disconnect()
+                self._load_thread.finished.disconnect(self._on_aggregate_thread_done)
+            except (RuntimeError, TypeError):
+                pass
+            try:
+                self._load_thread.finished.disconnect(self._on_load_thread_done)
             except (RuntimeError, TypeError):
                 pass
         self._cleanup_load_worker()
@@ -551,14 +566,19 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
             from app.ui.modules.base_module import _global_orphaned_threads
             _global_orphaned_threads.append(thread)
 
+            if worker is not None:
+                _global_orphaned_threads.append(worker)
+
             def _on_done(t=thread, w=worker):
                 try:
                     _global_orphaned_threads.remove(t)
                 except ValueError:
                     pass
                 if w is not None:
-                    w.deleteLater()
-                t.deleteLater()
+                    try:
+                        _global_orphaned_threads.remove(w)
+                    except ValueError:
+                        pass
 
             thread.finished.connect(_on_done, Qt.QueuedConnection)
         self._load_worker = None
@@ -942,7 +962,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         return eligible
 
     def _on_live_poll_tick(self) -> None:
-        """Handle live poll timer tick - fetch and update prices in background thread."""
+        """Handle live poll timer tick - fetch and update prices via QThread."""
         if self._live_fetch_in_progress:
             return
 
@@ -950,37 +970,56 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         if not tickers:
             return
 
-        print(f"[Live Updates] Fetching prices for: {tickers}")
+        from app.services.yahoo_finance_service import YahooFinanceService
+        from app.services.calculation_worker import CalculationWorker
 
         self._live_fetch_in_progress = True
-        # Prevent segfault: capture weakref so thread won't emit to destroyed widget
-        weak_self = weakref.ref(self)
 
-        # Run in background thread to avoid blocking UI
-        def fetch_and_update():
-            try:
-                from app.services.yahoo_finance_service import YahooFinanceService
+        self._live_thread = QThread()
+        self._live_worker = CalculationWorker(
+            YahooFinanceService.fetch_batch_current_prices, tickers
+        )
+        self._live_worker.moveToThread(self._live_thread)
+        self._live_thread.started.connect(self._live_worker.run)
+        self._live_thread.finished.connect(self._on_live_fetch_done, Qt.QueuedConnection)
+        self._live_thread.start()
 
-                prices = YahooFinanceService.fetch_batch_current_prices(tickers)
-                if prices:
-                    print(f"[Live Updates] Received prices: {prices}")
-                    obj = weak_self()
-                    if obj is not None:
-                        try:
-                            obj._live_prices_received.emit(prices)
-                        except RuntimeError:
-                            pass
-                else:
-                    print("[Live Updates] No prices returned")
-            except Exception as e:
-                print(f"[Live Updates] Failed: {e}")
-            finally:
-                obj = weak_self()
-                if obj is not None:
-                    obj._live_fetch_in_progress = False
+    def _on_live_fetch_done(self) -> None:
+        """Handle live price fetch completion on main thread."""
+        worker = self._live_worker
+        self._cleanup_live_fetch()
+        self._live_fetch_in_progress = False
 
-        thread = threading.Thread(target=fetch_and_update, daemon=True)
-        thread.start()
+        if worker is not None and worker.result:
+            self._apply_live_prices(worker.result)
+
+    def _cleanup_live_fetch(self) -> None:
+        """Clean up live fetch thread/worker."""
+        if hasattr(self, '_live_thread') and self._live_thread is not None:
+            thread = self._live_thread
+            worker = self._live_worker
+            thread.quit()
+
+            from app.ui.modules.base_module import _global_orphaned_threads
+            _global_orphaned_threads.append(thread)
+
+            if worker is not None:
+                _global_orphaned_threads.append(worker)
+
+            def _on_done(t=thread, w=worker):
+                try:
+                    _global_orphaned_threads.remove(t)
+                except ValueError:
+                    pass
+                if w is not None:
+                    try:
+                        _global_orphaned_threads.remove(w)
+                    except ValueError:
+                        pass
+
+            thread.finished.connect(_on_done, Qt.QueuedConnection)
+        self._live_thread = None
+        self._live_worker = None
 
     def _apply_live_prices(self, prices: Dict[str, float]) -> None:
         """

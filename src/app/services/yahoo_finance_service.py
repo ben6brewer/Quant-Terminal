@@ -9,11 +9,33 @@ Provides:
 
 from __future__ import annotations
 
+import pickle
+import subprocess
+import sys
+import textwrap
 from datetime import datetime
 from typing import TYPE_CHECKING, Callable, Optional
 
 if TYPE_CHECKING:
     import pandas as pd
+
+# Scripts executed in child processes — curl_cffi heap is fully isolated
+# and NO daemon threads are created in the parent (unlike ProcessPoolExecutor).
+_DOWNLOAD_SCRIPT = textwrap.dedent("""\
+    import pickle, sys
+    args, kwargs = pickle.loads(sys.stdin.buffer.read())
+    import yfinance as yf
+    result = yf.download(*args, **kwargs)
+    sys.stdout.buffer.write(pickle.dumps(result))
+""")
+
+_TICKER_INFO_SCRIPT = textwrap.dedent("""\
+    import pickle, sys
+    ticker = pickle.loads(sys.stdin.buffer.read())
+    import yfinance as yf
+    result = yf.Ticker(ticker).info
+    sys.stdout.buffer.write(pickle.dumps(result))
+""")
 
 
 class YahooFinanceService:
@@ -26,8 +48,52 @@ class YahooFinanceService:
     - Today's OHLCV for live polling
     - Chunked parallel downloads for 1000+ ticker batches
 
-    All methods use lazy imports for startup performance.
+    All yfinance calls run in subprocess isolation via subprocess.run()
+    to keep curl_cffi (C extension) out of the Qt process AND avoid
+    daemon threads that trigger shiboken6 PYSIDE-803 crashes.
     """
+
+    @classmethod
+    def _clean_env(cls):
+        """Return env dict without DYLD_INSERT_LIBRARIES (Guard Malloc)."""
+        import os
+        env = os.environ.copy()
+        env.pop("DYLD_INSERT_LIBRARIES", None)
+        return env
+
+    @classmethod
+    def safe_download(cls, *args, **kwargs):
+        """Run yf.download() in a subprocess — no daemon threads in parent."""
+        payload = pickle.dumps((args, kwargs))
+        proc = subprocess.run(
+            [sys.executable, "-c", _DOWNLOAD_SCRIPT],
+            input=payload,
+            capture_output=True,
+            timeout=120,
+            env=cls._clean_env(),
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f"yf.download subprocess failed: {proc.stderr.decode(errors='replace')}"
+            )
+        return pickle.loads(proc.stdout)
+
+    @classmethod
+    def safe_ticker_info(cls, ticker: str):
+        """Run yf.Ticker().info in a subprocess — no daemon threads in parent."""
+        payload = pickle.dumps(ticker)
+        proc = subprocess.run(
+            [sys.executable, "-c", _TICKER_INFO_SCRIPT],
+            input=payload,
+            capture_output=True,
+            timeout=60,
+            env=cls._clean_env(),
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f"yf.Ticker().info subprocess failed: {proc.stderr.decode(errors='replace')}"
+            )
+        return pickle.loads(proc.stdout)
 
     @classmethod
     def fetch_historical(
@@ -53,13 +119,12 @@ class YahooFinanceService:
             requested range. It returns an empty DataFrame in that case.
         """
         import pandas as pd
-        import yfinance as yf
 
         ticker = ticker.strip().upper()
 
         try:
             # Fetch data from Yahoo Finance
-            df = yf.download(
+            df = cls.safe_download(
                 tickers=ticker,
                 start=start_date,
                 end=end_date,
@@ -106,14 +171,13 @@ class YahooFinanceService:
             DataFrame with single row for today, or None if unavailable
         """
         import pandas as pd
-        import yfinance as yf
 
         ticker = ticker.strip().upper()
 
         try:
             # Fetch last 5 days to ensure we get today's data
             # (sometimes Yahoo has a lag, so we fetch a few days)
-            df = yf.download(
+            df = cls.safe_download(
                 tickers=ticker,
                 period="5d",
                 interval="1d",
@@ -206,7 +270,6 @@ class YahooFinanceService:
             Returns empty DataFrame if no data available.
         """
         import pandas as pd
-        import yfinance as yf
 
         ticker = ticker.strip().upper()
 
@@ -214,7 +277,7 @@ class YahooFinanceService:
             print(f"Fetching full history for {ticker} from Yahoo Finance...")
 
             # Fetch maximum history
-            df = yf.download(
+            df = cls.safe_download(
                 tickers=ticker,
                 period="max",
                 interval="1d",
@@ -343,7 +406,7 @@ class YahooFinanceService:
             def fetch_chunk(chunk: list[str]) -> tuple[dict[str, pd.DataFrame], list[str]]:
                 return cls._fetch_batch_chunk(chunk)
 
-            with ThreadPoolExecutor(max_workers=5) as executor:
+            with ThreadPoolExecutor(max_workers=2) as executor:
                 futures = {executor.submit(fetch_chunk, chunk): chunk for chunk in chunks}
                 for future in as_completed(futures):
                     try:
@@ -393,7 +456,6 @@ class YahooFinanceService:
             Tuple of (results dict, failed list)
         """
         import pandas as pd
-        import yfinance as yf
 
         if not tickers:
             return {}, []
@@ -401,13 +463,13 @@ class YahooFinanceService:
         total = len(tickers)
 
         try:
-            df = yf.download(
+            df = cls.safe_download(
                 tickers=" ".join(tickers) if len(tickers) > 1 else tickers[0],
                 period="max",
                 interval="1d",
                 auto_adjust=False,
                 progress=False,
-                threads=True,
+                threads=False,
                 group_by="ticker" if len(tickers) > 1 else "column",
 
                 timeout=30,
@@ -489,7 +551,6 @@ class YahooFinanceService:
             Dict mapping ticker -> DataFrame with OHLCV data
         """
         import pandas as pd
-        import yfinance as yf
         from collections import defaultdict
 
         if not tickers or not date_ranges:
@@ -508,16 +569,16 @@ class YahooFinanceService:
 
         for (start_date, end_date), group_tickers in range_groups.items():
             try:
-                df = yf.download(
+                df = cls.safe_download(
                     tickers=" ".join(group_tickers) if len(group_tickers) > 1 else group_tickers[0],
                     start=start_date,
                     end=end_date,
                     interval="1d",
                     auto_adjust=False,
                     progress=False,
-                    threads=True,
+                    threads=False,
                     group_by="ticker" if len(group_tickers) > 1 else "column",
-    
+
                     timeout=30,
                 )
 
@@ -577,7 +638,6 @@ class YahooFinanceService:
             Dict mapping ticker -> latest close price
         """
         import pandas as pd
-        import yfinance as yf
 
         if not tickers:
             return {}
@@ -587,13 +647,13 @@ class YahooFinanceService:
 
         try:
             # Single batch download - fetch 5 days for redundancy
-            df = yf.download(
+            df = cls.safe_download(
                 tickers=" ".join(tickers) if len(tickers) > 1 else tickers[0],
                 period="5d",
                 interval="1d",
                 auto_adjust=False,
                 progress=False,
-                threads=True,
+                threads=False,
                 group_by="ticker" if len(tickers) > 1 else "column",
 
                 timeout=30,
@@ -651,7 +711,6 @@ class YahooFinanceService:
             Empty DataFrame if fetch fails.
         """
         import pandas as pd
-        import yfinance as yf
 
         if not tickers:
             return pd.DataFrame()
@@ -659,11 +718,11 @@ class YahooFinanceService:
         ticker_str = " ".join(tickers) if len(tickers) > 1 else tickers[0]
 
         try:
-            data = yf.download(
+            data = cls.safe_download(
                 ticker_str,
                 period=period,
                 progress=False,
-                threads=True,
+                threads=False,
 
                 timeout=30,
             )
@@ -694,12 +753,10 @@ class YahooFinanceService:
         Returns:
             True if valid, False otherwise
         """
-        import yfinance as yf
-
         ticker = ticker.strip().upper()
 
         try:
-            info = yf.Ticker(ticker).info
+            info = cls.safe_ticker_info(ticker)
             # Check if we got valid data
             return info is not None and info.get("regularMarketPrice") is not None
         except Exception:

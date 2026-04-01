@@ -429,13 +429,18 @@ class TickerListPanel(LazyThemeMixin, QWidget):
         self._validate_worker = CalculationWorker(YahooFinanceService.is_valid_ticker, text)
         self._validate_worker.moveToThread(self._validate_thread)
         self._validate_thread.started.connect(self._validate_worker.run)
-        self._validate_worker.finished.connect(self._on_validation_done)
-        self._validate_worker.error.connect(self._on_validation_error)
+        self._validate_thread.finished.connect(self._on_validate_thread_done, Qt.QueuedConnection)
         self._validate_thread.start()
 
-    def _on_validation_error(self, error):
-        """Handle validation error as invalid ticker."""
-        self._on_validation_done(False)
+    def _on_validate_thread_done(self):
+        """Handle validation thread completion — dispatch result on main thread."""
+        worker = self._validate_worker
+        if worker is None:
+            return
+        if worker.error_msg is not None:
+            self._on_validation_done(False)
+        else:
+            self._on_validation_done(worker.result)
 
     def _on_validation_done(self, valid: bool):
         """Handle the result of ticker validation."""
@@ -466,13 +471,9 @@ class TickerListPanel(LazyThemeMixin, QWidget):
 
     def _cancel_validate_worker(self):
         """Cancel any in-flight validation, disconnecting signals first."""
-        if self._validate_worker is not None:
+        if self._validate_thread is not None:
             try:
-                self._validate_worker.finished.disconnect(self._on_validation_done)
-            except RuntimeError:
-                pass
-            try:
-                self._validate_worker.error.disconnect(self._on_validation_error)
+                self._validate_thread.finished.disconnect(self._on_validate_thread_done)
             except RuntimeError:
                 pass
         self._cleanup_validate_worker()
@@ -488,14 +489,19 @@ class TickerListPanel(LazyThemeMixin, QWidget):
             from app.ui.modules.base_module import _global_orphaned_threads
             _global_orphaned_threads.append(thread)
 
+            if worker is not None:
+                _global_orphaned_threads.append(worker)
+
             def _on_done(t=thread, w=worker):
                 try:
                     _global_orphaned_threads.remove(t)
                 except ValueError:
                     pass
                 if w is not None:
-                    w.deleteLater()
-                t.deleteLater()
+                    try:
+                        _global_orphaned_threads.remove(w)
+                    except ValueError:
+                        pass
 
             thread.finished.connect(_on_done, Qt.QueuedConnection)
         self._validate_thread = None

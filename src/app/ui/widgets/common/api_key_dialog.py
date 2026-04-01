@@ -27,6 +27,8 @@ class _ValidateKeyThread(QThread):
     def __init__(self, api_key: str, parent=None):
         super().__init__(parent)
         self._api_key = api_key
+        self._succeeded = False
+        self._error_msg = None
 
     def run(self):
         try:
@@ -34,13 +36,13 @@ class _ValidateKeyThread(QThread):
 
             fred = Fred(api_key=self._api_key)
             fred.get_series_info("GNPCA")
-            self.success.emit()
+            self._succeeded = True
         except Exception as exc:
             msg = str(exc)
             if "Bad Request" in msg or "400" in msg:
-                self.failed.emit("Invalid API key. Please check and try again.")
+                self._error_msg = "Invalid API key. Please check and try again."
             else:
-                self.failed.emit(f"Validation failed: {msg}")
+                self._error_msg = f"Validation failed: {msg}"
 
 
 class APIKeyDialog(ThemedDialog):
@@ -138,10 +140,23 @@ class APIKeyDialog(ThemedDialog):
         self._error_label.hide()
         self.key_input.setEnabled(False)
 
+        self._pending_key = key
         self._validate_thread = _ValidateKeyThread(key, self)
-        self._validate_thread.success.connect(lambda: self._on_validation_done(key))
-        self._validate_thread.failed.connect(self._on_validation_failed)
+        self._validate_thread.finished.connect(self._on_validate_thread_done, Qt.QueuedConnection)
         self._validate_thread.start()
+
+    def _on_validate_thread_done(self):
+        """Dispatch validation result on main thread."""
+        thread = self._validate_thread
+        if thread is None:
+            return
+        key = self._pending_key
+        if thread._succeeded:
+            self._on_validation_done(key)
+        elif thread._error_msg:
+            self._on_validation_failed(thread._error_msg)
+        else:
+            self._on_validation_failed("Validation failed (unknown error)")
 
     def _on_validation_done(self, key: str):
         """Key validated successfully — accept dialog."""

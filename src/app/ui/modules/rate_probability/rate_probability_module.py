@@ -191,10 +191,19 @@ class RateProbabilityModule(FredDataModule):
         self._evolution_worker.moveToThread(self._evolution_thread)
 
         self._evolution_thread.started.connect(self._evolution_worker.run)
-        self._evolution_worker.finished.connect(self._on_evolution_fetched)
-        self._evolution_worker.error.connect(self._on_evolution_error)
+        self._evolution_thread.finished.connect(self._on_evolution_thread_done, Qt.QueuedConnection)
 
         self._evolution_thread.start()
+
+    def _on_evolution_thread_done(self):
+        """Dispatch evolution worker result on main thread."""
+        worker = self._evolution_worker
+        if worker is None:
+            return
+        if worker.error_msg is not None:
+            self._on_evolution_error(worker.error_msg)
+        else:
+            self._on_evolution_fetched(worker.result)
 
     def _on_evolution_fetched(self, evolution_df):
         self._hide_loading()
@@ -213,10 +222,9 @@ class RateProbabilityModule(FredDataModule):
         self.evolution_view.show_placeholder(f"Error: {error_msg}")
 
     def _cancel_evolution_fetch(self):
-        if self._evolution_worker is not None:
+        if self._evolution_thread is not None:
             try:
-                self._evolution_worker.finished.disconnect()
-                self._evolution_worker.error.disconnect()
+                self._evolution_thread.finished.disconnect(self._on_evolution_thread_done)
             except (RuntimeError, TypeError):
                 pass
         self._cleanup_evolution_worker()
@@ -230,14 +238,19 @@ class RateProbabilityModule(FredDataModule):
             from app.ui.modules.base_module import _global_orphaned_threads
             _global_orphaned_threads.append(thread)
 
+            if worker is not None:
+                _global_orphaned_threads.append(worker)
+
             def _on_done(t=thread, w=worker):
                 try:
                     _global_orphaned_threads.remove(t)
                 except ValueError:
                     pass
                 if w is not None:
-                    w.deleteLater()
-                t.deleteLater()
+                    try:
+                        _global_orphaned_threads.remove(w)
+                    except ValueError:
+                        pass
 
             thread.finished.connect(_on_done, Qt.QueuedConnection)
         self._evolution_worker = None

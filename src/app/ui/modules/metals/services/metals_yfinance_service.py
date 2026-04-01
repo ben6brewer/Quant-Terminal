@@ -106,10 +106,10 @@ class MetalsYFinanceService:
         import pandas as pd
 
         try:
-            import yfinance as yf
+            from app.services.yahoo_finance_service import YahooFinanceService
 
             tickers_list = list(TICKERS.keys())
-            raw = yf.download(tickers_list, period="max", progress=False)
+            raw = YahooFinanceService.safe_download(tickers_list, period="max", progress=False, threads=False)
 
             if raw is None or raw.empty:
                 return None

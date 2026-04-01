@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
     QTableWidgetItem, QHeaderView,
     QAbstractButton, QWidget, QHBoxLayout, QApplication, QLineEdit, QComboBox
 )
-from PySide6.QtCore import Qt, Signal, QDate, QTimer, QEvent
+from PySide6.QtCore import Qt, QThread, Signal, QDate, QTimer, QEvent
 from PySide6.QtGui import QBrush, QColor
 
 from app.core.theme_manager import ThemeManager
@@ -122,10 +122,7 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
         # Connect theme changes (lazy - only apply when visible)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
-        # Connect internal signals for thread-safe auto-fill
-        self._price_autofill_ready.connect(self._apply_autofill_price)
-        self._name_autofill_ready.connect(self._apply_autofill_name)
-        self._date_correction_needed.connect(self._handle_date_correction)
+        # Auto-fill dispatched via QThread.finished (see _on_price_fetch_done / _on_name_fetch_done)
 
     def showEvent(self, event):
         """Handle show event - apply pending theme if needed."""
@@ -2117,44 +2114,60 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
         # Determine if today or historical
         today_str = datetime.now().strftime("%Y-%m-%d")
 
-        import weakref
-        weak_self = weakref.ref(self)
+        def _do_price_fetch():
+            if tx_date == today_str:
+                prices = PortfolioService.fetch_current_prices([ticker])
+                price = prices.get(ticker)
+            else:
+                results = PortfolioService.fetch_historical_closes_batch([(ticker, tx_date)])
+                price = results.get(ticker, {}).get(tx_date)
+            return {"price": price, "row": row, "ticker": ticker, "tx_date": tx_date,
+                    "user_entered_price": user_entered_price}
 
-        def fetch_and_apply():
-            """Background thread: fetch price, then emit signal for main thread."""
-            try:
-                if tx_date == today_str:
-                    prices = PortfolioService.fetch_current_prices([ticker])
-                    price = prices.get(ticker)
-                else:
-                    results = PortfolioService.fetch_historical_closes_batch([(ticker, tx_date)])
-                    price = results.get(ticker, {}).get(tx_date)
+        from app.services.calculation_worker import CalculationWorker
 
-                obj = weak_self()
-                if obj is None:
-                    return
-
-                if price is not None:
-                    # Only auto-fill price if user didn't manually enter one
-                    if not user_entered_price:
-                        try:
-                            obj._price_autofill_ready.emit(row, price)
-                        except RuntimeError:
-                            pass
-                else:
-                    # Price is None - check if date is before ticker history
-                    first_date = PortfolioService.get_first_available_date(ticker)
-                    if first_date and tx_date < first_date:
-                        try:
-                            obj._date_correction_needed.emit(row, first_date, ticker)
-                        except RuntimeError:
-                            pass
-            except Exception:
-                pass  # Silently fail
-
-        # Start background thread for price fetch
-        thread = threading.Thread(target=fetch_and_apply, daemon=True)
+        thread = QThread()
+        worker = CalculationWorker(_do_price_fetch)
+        worker.moveToThread(thread)
+        thread.started.connect(worker.run)
+        thread.finished.connect(lambda t=thread, w=worker: self._on_price_fetch_done(t, w), Qt.QueuedConnection)
         thread.start()
+
+        # Track thread to prevent GC
+        if not hasattr(self, '_autofill_threads'):
+            self._autofill_threads = []
+        self._autofill_threads.append(thread)
+
+    def _on_price_fetch_done(self, thread, worker):
+        """Handle price fetch completion on main thread."""
+        # Clean up thread — don't use deleteLater (causes double-free
+        # when shiboken also frees C++ on Python refcount → 0)
+        if hasattr(self, '_autofill_threads'):
+            try:
+                self._autofill_threads.remove(thread)
+            except ValueError:
+                pass
+
+        if worker is None or worker.error_msg is not None:
+            return
+
+        result = worker.result
+        if result is None:
+            return
+
+        price = result["price"]
+        row = result["row"]
+        ticker = result["ticker"]
+        tx_date = result["tx_date"]
+        user_entered_price = result["user_entered_price"]
+
+        if price is not None:
+            if not user_entered_price:
+                self._apply_autofill_price(row, price)
+        else:
+            first_date = PortfolioService.get_first_available_date(ticker)
+            if first_date and tx_date < first_date:
+                self._handle_date_correction(row, first_date, ticker)
 
     def _apply_autofill_price(self, row: int, price: float) -> None:
         """
@@ -2282,29 +2295,44 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
             self._apply_autofill_name(row, self._cached_names[ticker_upper])
             return
 
-        # Fetch in background thread
-        import threading
-        import weakref
-        weak_self = weakref.ref(self)
+        # Fetch in QThread (thread-safe signal delivery)
+        from app.services.calculation_worker import CalculationWorker
 
-        def fetch_name():
-            """Background thread: fetch name, then emit signal for main thread."""
-            try:
-                names = PortfolioService.fetch_ticker_names([ticker_upper])
-                name = names.get(ticker_upper, "")
-                if name:
-                    obj = weak_self()
-                    if obj is not None:
-                        obj._cached_names[ticker_upper] = name
-                        try:
-                            obj._name_autofill_ready.emit(row, name)
-                        except RuntimeError:
-                            pass
-            except Exception as e:
-                print(f"Error fetching name for {ticker_upper}: {e}")
+        def _do_name_fetch():
+            names = PortfolioService.fetch_ticker_names([ticker_upper])
+            return {"name": names.get(ticker_upper, ""), "row": row, "ticker": ticker_upper}
 
-        thread = threading.Thread(target=fetch_name, daemon=True)
+        thread = QThread()
+        worker = CalculationWorker(_do_name_fetch)
+        worker.moveToThread(thread)
+        thread.started.connect(worker.run)
+        thread.finished.connect(lambda t=thread, w=worker: self._on_name_fetch_done(t, w), Qt.QueuedConnection)
         thread.start()
+
+        if not hasattr(self, '_autofill_threads'):
+            self._autofill_threads = []
+        self._autofill_threads.append(thread)
+
+    def _on_name_fetch_done(self, thread, worker):
+        """Handle name fetch completion on main thread."""
+        # Clean up thread — don't use deleteLater (causes double-free
+        # when shiboken also frees C++ on Python refcount → 0)
+        if hasattr(self, '_autofill_threads'):
+            try:
+                self._autofill_threads.remove(thread)
+            except ValueError:
+                pass
+
+        if worker is None or worker.error_msg is not None or worker.result is None:
+            return
+
+        name = worker.result["name"]
+        row = worker.result["row"]
+        ticker = worker.result["ticker"]
+
+        if name:
+            self._cached_names[ticker] = name
+            self._apply_autofill_name(row, name)
 
     def update_ticker_names(self, names: Dict[str, str]):
         """
