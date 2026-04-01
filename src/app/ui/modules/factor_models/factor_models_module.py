@@ -56,6 +56,7 @@ class FactorModelsModule(BaseModule):
         self.controls.run_clicked.connect(self._run)
         self.controls.export_clicked.connect(self._on_export)
         self.controls.settings_clicked.connect(self._on_settings_clicked)
+        self.controls.info_clicked.connect(self._on_info_clicked)
         self.controls.view_mode_changed.connect(self._on_view_mode_changed)
         self.controls.model_changed.connect(self._on_model_changed)
         self.controls.input_changed.connect(self._on_input_changed)

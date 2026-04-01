@@ -171,6 +171,7 @@ class RiskAnalyticsModule(BaseModule):
         self.controls.etf_benchmark_changed.connect(self._on_etf_benchmark_changed)
         self.controls.analyze_clicked.connect(self._update_risk_analysis)
         self.controls.settings_clicked.connect(self._on_settings_clicked)
+        self.controls.info_clicked.connect(self._on_info_clicked)
 
         # Theme changes
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)

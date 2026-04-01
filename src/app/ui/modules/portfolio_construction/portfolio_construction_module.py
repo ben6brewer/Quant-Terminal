@@ -156,6 +156,7 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
         self.controls.delete_portfolio_clicked.connect(self._delete_portfolio_dialog)
         self.controls.home_clicked.connect(self._on_home_clicked)
         self.controls.settings_clicked.connect(self._open_settings_dialog)
+        self.controls.info_clicked.connect(self._on_info_clicked)
 
         # Transaction table
         self.transaction_table.transaction_added.connect(self._on_transaction_changed)
@@ -1036,6 +1037,16 @@ class PortfolioConstructionModule(LazyThemeMixin, QWidget):
 
         # Update transaction table current prices
         self.transaction_table.update_current_prices(prices)
+
+    def _on_info_clicked(self):
+        """Open the module info dialog."""
+        from app.ui.modules.module_info import get_module_info
+        from app.ui.widgets.common.module_info_dialog import ModuleInfoDialog
+
+        info = get_module_info(type(self).__name__)
+        if info is None:
+            return
+        ModuleInfoDialog(self.theme_manager, info, parent=self).exec()
 
     def _open_settings_dialog(self):
         """Open settings dialog."""

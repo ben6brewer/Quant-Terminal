@@ -57,6 +57,7 @@ class CovarianceMatrixModule(BaseModule):
         self.controls.periodicity_changed.connect(self._on_periodicity_changed)
         self.controls.run_clicked.connect(self._run)
         self.controls.settings_clicked.connect(self._on_settings_clicked)
+        self.controls.info_clicked.connect(self._on_info_clicked)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 

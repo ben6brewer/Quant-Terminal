@@ -229,6 +229,24 @@ class ThemeStylesheetService:
                 font-size: 12px;
                 background-color: transparent;
             }}
+            QLabel#sectionHeader {{
+                color: {c['text']};
+                font-size: 14px;
+                font-weight: bold;
+                background-color: transparent;
+                margin-top: 5px;
+            }}
+            QLabel#infoBody {{
+                color: {c['text_muted']};
+                font-size: 13px;
+                background-color: transparent;
+                line-height: 1.4;
+            }}
+            QLabel#sourcesBody {{
+                color: {c['text_muted']};
+                font-size: 12px;
+                background-color: transparent;
+            }}
             QLineEdit {{
                 background-color: {c['bg_header']};
                 color: {c['text']};
@@ -847,6 +865,14 @@ class ThemeStylesheetService:
             QPushButton#delete_btn:pressed {{
                 background-color: #d32f2f;
                 color: #ffffff;
+            }}
+            QPushButton#infoButton {{
+                font-size: 16px;
+                font-weight: bold;
+                border-radius: 20px;
+                padding: 0px;
+                min-width: 40px;
+                max-width: 40px;
             }}
             QComboBox {{
                 background-color: {c['bg_header']};

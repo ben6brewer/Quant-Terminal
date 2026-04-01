@@ -95,6 +95,7 @@ class AssetClassReturnsModule(BaseModule):
     def _connect_signals(self):
         self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.settings_clicked.connect(self._on_settings_clicked)
+        self.controls.info_clicked.connect(self._on_info_clicked)
         self.tab_bar.view_changed.connect(self._on_tab_changed)
         self.ticker_panel.tickers_changed.connect(self._on_tickers_changed)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)

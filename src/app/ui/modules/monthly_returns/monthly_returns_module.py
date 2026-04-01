@@ -68,6 +68,7 @@ class MonthlyReturnsModule(BaseModule):
         self.controls.home_clicked.connect(self.home_clicked.emit)
         self.controls.portfolio_changed.connect(self._on_portfolio_changed)
         self.controls.settings_clicked.connect(self._on_settings_clicked)
+        self.controls.info_clicked.connect(self._on_info_clicked)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
 
     def _refresh_portfolio_list(self):

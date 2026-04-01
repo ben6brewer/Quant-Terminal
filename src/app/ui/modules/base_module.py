@@ -74,6 +74,16 @@ class BaseModule(LazyThemeMixin, QWidget):
         """
         return None
 
+    def _on_info_clicked(self):
+        """Open the module info dialog."""
+        from app.ui.modules.module_info import get_module_info
+        from app.ui.widgets.common.module_info_dialog import ModuleInfoDialog
+
+        info = get_module_info(type(self).__name__)
+        if info is None:
+            return
+        ModuleInfoDialog(self.theme_manager, info, parent=self).exec()
+
     def _on_settings_clicked(self):
         """Open the settings dialog (checkbox or custom)."""
         if self.settings_manager is None:

@@ -84,6 +84,7 @@ class ReturnDistributionModule(BaseModule):
         self.controls.date_range_changed.connect(self._on_date_range_changed)
         self.controls.custom_date_range_requested.connect(self._show_date_range_dialog)
         self.controls.settings_clicked.connect(self._on_settings_clicked)
+        self.controls.info_clicked.connect(self._on_info_clicked)
         self.controls.benchmark_changed.connect(self._on_benchmark_changed)
 
         # Theme changes (lazy - only apply when visible)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QSizePolicy
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 
 from app.core.theme_manager import ThemeManager
 from app.ui.widgets.common.lazy_theme_mixin import LazyThemeMixin
@@ -26,6 +26,7 @@ class ModuleToolbar(LazyThemeMixin, QWidget):
     """
 
     home_clicked = Signal()
+    info_clicked = Signal()
     settings_clicked = Signal()
 
     def __init__(self, theme_manager: ThemeManager, parent=None):
@@ -78,6 +79,14 @@ class ModuleToolbar(LazyThemeMixin, QWidget):
         self.setup_center(layout)
 
         layout.addStretch(1)
+
+        # Info button
+        self.info_btn = QPushButton("\u2139")
+        self.info_btn.setObjectName("infoButton")
+        self.info_btn.setFixedSize(40, 40)
+        self.info_btn.setCursor(Qt.PointingHandCursor)
+        self.info_btn.clicked.connect(self.info_clicked.emit)
+        layout.addWidget(self.info_btn)
 
         # Settings button
         if self.has_settings_button():

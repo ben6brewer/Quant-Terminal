@@ -166,6 +166,7 @@ class ChartModule(BaseModule):
         self.controls.chart_type_changed.connect(lambda _: self.render_from_cache())
         self.controls.scale_changed.connect(lambda _: self.render_from_cache())
         self.controls.settings_clicked.connect(self._open_chart_settings)
+        self.controls.info_clicked.connect(self._on_info_clicked)
         self.controls.indicators_toggled.connect(self._on_indicators_toggled)
         self.controls.depth_toggled.connect(self._on_depth_toggled)
 

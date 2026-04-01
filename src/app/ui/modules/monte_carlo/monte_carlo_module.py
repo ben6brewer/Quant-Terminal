@@ -79,6 +79,7 @@ class MonteCarloModule(BaseModule):
         self.controls.benchmark_changed.connect(self._on_benchmark_changed)
         self.controls.run_simulation.connect(self._run_simulation)
         self.controls.settings_clicked.connect(self._on_settings_clicked)
+        self.controls.info_clicked.connect(self._on_info_clicked)
 
         # Theme changes (lazy - only apply when visible)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)

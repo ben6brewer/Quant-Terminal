@@ -160,6 +160,7 @@ class FredDataModule(BaseModule):
         if hasattr(self.toolbar, "lookback_changed"):
             self.toolbar.lookback_changed.connect(self._on_lookback_changed)
         self.toolbar.settings_clicked.connect(self._on_settings_clicked)
+        self.toolbar.info_clicked.connect(self._on_info_clicked)
         self.theme_manager.theme_changed.connect(self._on_theme_changed_lazy)
         self._connect_extra_signals()
 
