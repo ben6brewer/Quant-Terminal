@@ -12,7 +12,10 @@ This service fetches daily factor returns from Kenneth French's data library:
 
 from __future__ import annotations
 
+import logging
 import threading
+
+logger = logging.getLogger(__name__)
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -85,7 +88,7 @@ class FamaFrenchDataService:
         import pandas as pd
         import pandas_datareader.data as pdr
 
-        print("[FamaFrench] Fetching Fama-French 5 factors from web...")
+        logger.info("Fetching Fama-French 5 factors from web...")
 
         # Fetch FF5 factors (daily)
         ff5 = pdr.DataReader(
@@ -94,7 +97,7 @@ class FamaFrenchDataService:
             start="1990-01-01"
         )[0]  # [0] gets the daily data table
 
-        print("[FamaFrench] Fetching Momentum factor from web...")
+        logger.info("Fetching Momentum factor from web...")
 
         # Fetch Momentum factor (daily)
         mom = pdr.DataReader(
@@ -131,15 +134,14 @@ class FamaFrenchDataService:
         expected_cols = ["Mkt-RF", "SMB", "HML", "RMW", "CMA", "RF", "UMD"]
         for col in expected_cols:
             if col not in factors.columns:
-                print(f"[FamaFrench] Warning: Missing column {col}, filling with 0")
+                logger.warning("Missing column %s, filling with 0", col)
                 factors[col] = 0.0
 
         # Ensure index is DatetimeIndex
         if not isinstance(factors.index, pd.DatetimeIndex):
             factors.index = pd.to_datetime(factors.index.astype(str))
 
-        print(f"[FamaFrench] Fetched {len(factors)} days of factor data")
-        print(f"[FamaFrench] Date range: {factors.index.min()} to {factors.index.max()}")
+        logger.info("Fetched %d days of factor data", len(factors))
 
         return factors[expected_cols]
 
@@ -158,10 +160,10 @@ class FamaFrenchDataService:
 
         try:
             df = pd.read_parquet(cls._CACHE_FILE)
-            print(f"[FamaFrench] Loaded {len(df)} days from cache")
+            logger.debug("Loaded %d days from cache", len(df))
             return df
         except Exception as e:
-            print(f"[FamaFrench] Error loading cache: {e}")
+            logger.error("Error loading cache: %s", e)
             return None
 
     @classmethod
@@ -171,9 +173,9 @@ class FamaFrenchDataService:
         try:
             df.to_parquet(cls._CACHE_FILE)
             cls._save_timestamp()
-            print(f"[FamaFrench] Saved {len(df)} days to cache")
+            logger.debug("Saved %d days to cache", len(df))
         except Exception as e:
-            print(f"[FamaFrench] Error saving cache: {e}")
+            logger.error("Error saving cache: %s", e)
 
     @classmethod
     def refresh_data(cls) -> "pd.DataFrame":
@@ -300,4 +302,4 @@ class FamaFrenchDataService:
                 cls._CACHE_FILE.unlink()
             if cls._TIMESTAMP_FILE.exists():
                 cls._TIMESTAMP_FILE.unlink()
-            print("[FamaFrench] Cache cleared")
+            logger.info("Cache cleared")

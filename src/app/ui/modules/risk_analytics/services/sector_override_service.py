@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import json
+import logging
 import threading
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from app.services.ticker_metadata_service import TickerMetadataService
+
+logger = logging.getLogger(__name__)
 
 
 class SectorOverrideService:
@@ -63,7 +66,7 @@ class SectorOverrideService:
                     with open(cls._OVERRIDE_FILE, "r", encoding="utf-8") as f:
                         cls._overrides = json.load(f)
                 except (json.JSONDecodeError, IOError) as e:
-                    print(f"Warning: Could not load sector overrides: {e}")
+                    logger.warning("Could not load sector overrides: %s", e)
                     cls._overrides = {}
             else:
                 cls._overrides = {}
@@ -82,7 +85,7 @@ class SectorOverrideService:
                 with open(cls._OVERRIDE_FILE, "w", encoding="utf-8") as f:
                     json.dump(cls._overrides, f, indent=2)
             except IOError as e:
-                print(f"Warning: Could not save sector overrides: {e}")
+                logger.warning("Could not save sector overrides: %s", e)
 
     @classmethod
     def get_override(cls, ticker: str) -> Optional[Dict[str, str]]:

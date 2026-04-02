@@ -4,6 +4,7 @@ venv/
 env/
 ENV/
 build_venv/
+.venv_x86_backup/
 
 # Python cache / bytecode
 __pycache__/

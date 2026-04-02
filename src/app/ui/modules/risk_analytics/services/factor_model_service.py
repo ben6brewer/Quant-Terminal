@@ -13,6 +13,10 @@ included as dummy variables in the regression to avoid multicollinearity.
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 import json
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -123,7 +127,7 @@ class FactorModelService:
                 data = json.load(f)
             return FactorRegressionResult.from_dict(data)
         except (json.JSONDecodeError, IOError) as e:
-            print(f"[FactorModel] Error loading cache for {ticker}: {e}")
+            logger.warning("Error loading cache for %s: %s", ticker, e)
             return None
 
     @classmethod
@@ -135,7 +139,7 @@ class FactorModelService:
             with open(cache_path, "w") as f:
                 json.dump(result.to_dict(), f, indent=2)
         except IOError as e:
-            print(f"[FactorModel] Error saving cache for {result.ticker}: {e}")
+            logger.warning("Error saving cache for %s: %s", result.ticker, e)
 
     @classmethod
     def run_factor_regression(
@@ -327,7 +331,7 @@ class FactorModelService:
         results: Dict[str, FactorRegressionResult] = {}
         tickers = list(ticker_excess_returns.columns)
 
-        print(f"[FactorModel] Running regressions for {len(tickers)} securities...")
+        logger.info("Running regressions for %d securities...", len(tickers))
 
         def run_single_regression(ticker: str) -> Tuple[str, Optional[FactorRegressionResult]]:
             """Run regression for a single ticker."""
@@ -370,9 +374,9 @@ class FactorModelService:
 
                 completed += 1
                 if completed % 500 == 0:
-                    print(f"[FactorModel] Progress: {completed}/{len(tickers)} ({successful} successful)")
+                    logger.info("Progress: %d/%d (%d successful)", completed, len(tickers), successful)
 
-        print(f"[FactorModel] Completed {successful}/{len(tickers)} successful regressions")
+        logger.info("Completed %d/%d successful regressions", successful, len(tickers))
 
         return results
 
@@ -389,10 +393,10 @@ class FactorModelService:
                 cache_path = cls._get_cache_path(ticker)
                 if cache_path.exists():
                     cache_path.unlink()
-                    print(f"[FactorModel] Cleared cache for {ticker}")
+                    logger.info("Cleared cache for %s", ticker)
             else:
                 # Clear all caches
                 if cls._CACHE_DIR.exists():
                     for cache_file in cls._CACHE_DIR.glob("*_regression.json"):
                         cache_file.unlink()
-                    print("[FactorModel] Cleared all regression caches")
+                    logger.info("Cleared all regression caches")

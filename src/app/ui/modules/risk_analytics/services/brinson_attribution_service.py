@@ -5,8 +5,11 @@ excess returns into allocation, selection, and interaction effects.
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -114,14 +117,14 @@ class BrinsonAttributionService:
             total_benchmark_return = cls._calculate_time_varying_portfolio_return(
                 daily_benchmark_weights, benchmark_returns, period_start, period_end
             )
-            print(f"[Attribution] Using time-varying benchmark weights, return: {total_benchmark_return * 100:.2f}%")
+            logger.info("Using time-varying benchmark weights, return: %.2f%%", total_benchmark_return * 100)
         else:
             # Fallback to static weights
             total_benchmark_return = sum(
                 benchmark_weights.get(ticker, 0) * bench_cum_returns.get(ticker, 0)
                 for ticker in benchmark_weights
             )
-            print(f"[Attribution] Using static benchmark weights, return: {total_benchmark_return * 100:.2f}%")
+            logger.info("Using static benchmark weights, return: %.2f%%", total_benchmark_return * 100)
 
         # Calculate sector-level benchmark returns
         sector_bench_returns = cls._calculate_sector_returns(
@@ -335,34 +338,6 @@ class BrinsonAttributionService:
         weights = weights.loc[common_dates]
         returns = returns.loc[common_dates]
 
-        # DEBUG: Print diagnostic information
-        print("\n" + "=" * 50)
-        print("=== RISK ANALYTICS ATTRIBUTION DEBUG ===")
-        print("=" * 50)
-        print(f"Period: {period_start} to {period_end}")
-        print(f"Daily weights shape: {weights.shape}")
-        print(f"Ticker returns shape: {returns.shape}")
-        print(f"Common dates: {len(common_dates)} days")
-        print(f"  First date: {common_dates[0] if len(common_dates) > 0 else 'N/A'}")
-        print(f"  Last date: {common_dates[-1] if len(common_dates) > 0 else 'N/A'}")
-        print(f"Tickers in weights: {list(weights.columns)}")
-        print(f"Tickers in returns: {list(returns.columns)}")
-
-        # Check weight sums
-        weight_sums = weights.sum(axis=1)
-        print(f"Weight sum (first 3 days): {weight_sums.head(3).tolist()}")
-        print(f"Weight sum (last 3 days): {weight_sums.tail(3).tolist()}")
-
-        # Sample weights for first ticker
-        if len(weights.columns) > 0:
-            first_ticker = weights.columns[0]
-            print(f"Sample weights for {first_ticker} (first 3): {weights[first_ticker].head(3).tolist()}")
-
-        # Sample returns for first ticker
-        if len(returns.columns) > 0:
-            first_ticker = returns.columns[0]
-            print(f"Sample returns for {first_ticker} (first 3): {returns[first_ticker].head(3).tolist()}")
-
         # Calculate daily weighted portfolio returns
         daily_portfolio_returns = pd.Series(0.0, index=common_dates)
         for ticker in weights.columns:
@@ -371,18 +346,8 @@ class BrinsonAttributionService:
                 ticker_weights = weights[ticker].fillna(0)
                 daily_portfolio_returns += ticker_weights * ticker_returns_series
 
-        # DEBUG: Print daily portfolio returns
-        print(f"Daily portfolio returns (first 5): {daily_portfolio_returns.head(5).tolist()}")
-        print(f"Daily portfolio returns (last 5): {daily_portfolio_returns.tail(5).tolist()}")
-        print(f"Daily portfolio returns mean: {daily_portfolio_returns.mean():.6f}")
-        print(f"Daily portfolio returns std: {daily_portfolio_returns.std():.6f}")
-
         # Compound to total return: (1 + r1) * (1 + r2) * ... - 1
         total_return = (1 + daily_portfolio_returns).prod() - 1
-
-        # DEBUG: Print final return
-        print(f"Final compounded return: {total_return * 100:.4f}%")
-        print("=" * 50 + "\n")
 
         return total_return
 

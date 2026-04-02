@@ -10,6 +10,7 @@ Uses OLS regression with Fama-French 5 factors + Momentum + constructed factors.
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 if TYPE_CHECKING:
@@ -17,6 +18,8 @@ if TYPE_CHECKING:
 
 from .sector_override_service import SectorOverrideService
 from app.services.ticker_metadata_service import TickerMetadataService
+
+logger = logging.getLogger(__name__)
 
 
 class RiskAnalyticsService:
@@ -221,16 +224,14 @@ class RiskAnalyticsService:
         start_date = ticker_returns.index.min().strftime("%Y-%m-%d")
         end_date = ticker_returns.index.max().strftime("%Y-%m-%d")
 
-        print(f"[RiskAnalytics] Running factor model analysis for {len(tickers)} tickers")
-        print(f"[RiskAnalytics] Date range: {start_date} to {end_date}")
+        logger.info("Running factor model analysis for %d tickers", len(tickers))
 
         # Step 1: Fetch Fama-French factors
         try:
             ff_factors = FamaFrenchDataService.get_factor_returns(start_date, end_date)
             rf_rate = FamaFrenchDataService.get_risk_free_rate(start_date, end_date)
-            print(f"[RiskAnalytics] Loaded {len(ff_factors)} days of Fama-French data")
         except Exception as e:
-            print(f"[RiskAnalytics] Error loading Fama-French data: {e}")
+            logger.error("Error loading Fama-French data: %s", e)
             # Fall back to simple analysis
             return RiskAnalyticsService._get_fallback_analysis(
                 portfolio_returns, benchmark_returns, ticker_returns,
@@ -250,10 +251,6 @@ class RiskAnalyticsService:
         rf_aligned = rf_rate.reindex(ticker_returns_clean.index).ffill().fillna(0)
         ticker_excess_returns = ticker_returns_clean.sub(rf_aligned, axis=0)
 
-        print(f"[RiskAnalytics] Ticker returns shape: {ticker_excess_returns.shape}")
-        print(f"[RiskAnalytics] FF factors shape: {ff_factors.shape}")
-        print(f"[RiskAnalytics] Date overlap: {len(ticker_excess_returns.index.intersection(ff_factors.index))} days")
-
         # Step 3: Get metadata for all tickers
         all_tickers = list(set(tickers) | set(benchmark_weights.keys()))
         metadata = TickerMetadataService.get_metadata_batch(all_tickers)
@@ -261,7 +258,6 @@ class RiskAnalyticsService:
         # Step 4: Run factor regressions (simplified model - FF5+Momentum only)
         # Note: use_cache=False because CTEV calculations need actual residuals
         # which aren't stored in the cache
-        print("[RiskAnalytics] Running factor regressions...")
         regression_results = FactorModelService.run_portfolio_regressions(
             ticker_excess_returns,
             ff_factors,
@@ -269,8 +265,6 @@ class RiskAnalyticsService:
             max_workers=10,
             use_cache=False,
         )
-        print(f"[RiskAnalytics] Completed {len(regression_results)} regressions")
-
         # Step 6: Calculate risk metrics
         if len(regression_results) > 0:
             # Calculate summary using factor model
@@ -330,7 +324,7 @@ class RiskAnalyticsService:
         )
         if warnings:
             for warning in warnings:
-                print(f"[RiskAnalytics] Validation warning: {warning}")
+                logger.warning("Risk validation: %s", warning)
 
         # Step 10: Calculate industry, currency, and country factor contributions
         industry_contributions = FactorRiskService.calculate_industry_contributions(
@@ -339,8 +333,6 @@ class RiskAnalyticsService:
             benchmark_weights,
             benchmark_holdings,
         )
-        print(f"[RiskAnalytics] Calculated industry contributions: {len(industry_contributions)} industries")
-
         # Step 10b: Calculate hierarchical sector → industry contributions (for "Industry" display)
         sector_industry_contributions = FactorRiskService.calculate_sector_industry_contributions(
             weights,
@@ -348,8 +340,6 @@ class RiskAnalyticsService:
             summary["total_active_risk"],
             regression_results,
         )
-        print(f"[RiskAnalytics] Calculated sector→industry hierarchy: {len(sector_industry_contributions)} sectors")
-
         # Step 10c: Calculate flat sector contributions (for "Sector" display)
         sector_contributions = FactorRiskService.calculate_sector_contributions(
             weights,
@@ -357,22 +347,16 @@ class RiskAnalyticsService:
             summary["total_active_risk"],
             regression_results,
         )
-        print(f"[RiskAnalytics] Calculated flat sector contributions: {len(sector_contributions)} sectors")
-
         currency_contributions = FactorRiskService.calculate_currency_contributions(
             weights,
             benchmark_weights,
             benchmark_holdings,
         )
-        print(f"[RiskAnalytics] Calculated currency contributions: USD vs Non-USD")
-
         country_contributions = FactorRiskService.calculate_country_contributions(
             weights,
             benchmark_weights,
             benchmark_holdings,
         )
-        print(f"[RiskAnalytics] Calculated country contributions: US vs Non-US")
-
         return {
             "summary": summary,
             "factor_exposures": {},  # Not needed with new model
@@ -434,7 +418,7 @@ class RiskAnalyticsService:
         import numpy as np
         import pandas as pd
 
-        print("[RiskAnalytics] Using fallback heuristic analysis")
+        logger.warning("Using fallback heuristic analysis")
 
         # Summary metrics
         summary = RiskAnalyticsService.get_summary_metrics(

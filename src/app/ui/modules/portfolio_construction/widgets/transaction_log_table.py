@@ -80,9 +80,6 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
         self._skip_focus_validation: bool = False  # Prevent double validation dialogs
         self._validating: bool = False  # Prevent _on_cell_changed from corrupting sequences during validation
 
-        # Debug flag for tracking _original_values changes (set to True to enable debugging)
-        self._debug_original_values = False
-
         # Highlight editable fields setting (default True)
         self._highlight_editable = True
 
@@ -149,15 +146,8 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
         self._batch_loading = False
         self._update_free_cash_summary_row()
 
-    def _debug_set_original_values(self, tx_id: str, values: dict, caller: str):
-        """Debug helper: log when _original_values is set."""
-        if self._debug_original_values:
-            ticker = values.get("ticker", "?")
-            date = values.get("date", "?")
-            old_values = self._original_values.get(tx_id, {})
-            old_date = old_values.get("date", "NOT_SET")
-            print(f"[ORIGINAL_VALUES] {caller}: tx_id={tx_id[:8]}... ticker={ticker} "
-                  f"date: {old_date} -> {date}")
+    def _set_original_values(self, tx_id: str, values: dict, caller: str):
+        """Set original values for tracking changes."""
         self._original_values[tx_id] = values
 
     def _get_editable_columns(self) -> List[int]:
@@ -822,7 +812,7 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
         # (sort_by_date_descending calls add_transaction_row but shouldn't overwrite
         # the _original_values that were just set after a successful edit)
         if tx_id not in self._original_values:
-            self._debug_set_original_values(tx_id, {
+            self._set_original_values(tx_id, {
                 "ticker": transaction.get("ticker", ""),
                 "date": transaction.get("date", ""),
                 "quantity": transaction.get("quantity", 0.0),
@@ -831,9 +821,6 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
                 "transaction_type": transaction.get("transaction_type", "Buy"),
                 "sequence": transaction.get("sequence", 0)
             }, "add_transaction_row")
-        elif self._debug_original_values:
-            print(f"[ORIGINAL_VALUES] add_transaction_row: SKIPPED tx_id={tx_id[:8]}... "
-                  f"(already tracked with date={self._original_values[tx_id].get('date')})")
 
         # Create widgets using shared helper
         self._create_transaction_row_widgets(row, transaction)
@@ -1011,7 +998,7 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
 
         # 5. Store original values for revert on invalid edit
         if tx_id not in self._original_values:
-            self._debug_set_original_values(tx_id, {
+            self._set_original_values(tx_id, {
                 "ticker": transaction.get("ticker", ""),
                 "date": transaction.get("date", ""),
                 "quantity": transaction.get("quantity", 0.0),
@@ -1752,7 +1739,7 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
 
                                     # Update original values
                                     if transaction_id:
-                                        self._debug_set_original_values(transaction_id, {
+                                        self._set_original_values(transaction_id, {
                                             "ticker": ticker_upper,
                                             "date": tx_date,
                                             "quantity": transaction.get("quantity", 0.0),
@@ -1815,9 +1802,6 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
 
         if not focused_widget:
             # Focus lost completely - trigger row focus lost
-            if self._debug_original_values:
-                print(f"[DEBUG] _check_row_focus_loss: calling _on_row_focus_lost({self._current_editing_row}) "
-                      f"- no focused widget, skip_flag={self._skip_focus_validation}")
             self._on_row_focus_lost(self._current_editing_row)
             self._current_editing_row = None
             return
@@ -1827,9 +1811,6 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
 
         if new_row != self._current_editing_row:
             # Focus moved to different row - trigger row focus lost
-            if self._debug_original_values:
-                print(f"[DEBUG] _check_row_focus_loss: calling _on_row_focus_lost({self._current_editing_row}) "
-                      f"- focus moved to row {new_row}, skip_flag={self._skip_focus_validation}")
             self._on_row_focus_lost(self._current_editing_row)
             self._current_editing_row = new_row
 
@@ -2044,7 +2025,7 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
                 # Only update if the widget date differs from current original
                 # This prevents overwriting correct values with stale stored data
                 if tx_date != current_original.get("date", ""):
-                    self._debug_set_original_values(transaction_id, {
+                    self._set_original_values(transaction_id, {
                         "ticker": ticker_upper,
                         "date": tx_date,
                         "quantity": transaction.get("quantity", 0.0),
@@ -2055,9 +2036,6 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
                     }, "_on_row_focus_lost")
                     # Increment focus generation to invalidate any pending callbacks
                     self._focus_generation += 1
-                elif self._debug_original_values:
-                    print(f"[DEBUG] _on_row_focus_lost: SKIPPED update for tx_id={transaction_id[:8]}... "
-                          f"(widget date {tx_date} matches current original)")
 
             # Update calculated cells (fetch prices)
             self._update_calculated_cells(row)
@@ -2617,11 +2595,6 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
         # deferred focus callbacks that were queued before this sort
         self._focus_generation += 1
 
-        if self._debug_original_values:
-            print(f"[DEBUG] sort_by_date_descending: START (gen={self._focus_generation})")
-            for tx_id, vals in self._original_values.items():
-                if tx_id != "BLANK_ROW" and not tx_id.startswith("FREE_CASH"):
-                    print(f"  _original_values[{tx_id[:8]}...] = date={vals.get('date')}")
         # Set _validating to prevent _on_cell_changed from running during sort
         # (widget signals fire when recreating widgets, could corrupt sequences)
         self._validating = True
@@ -2629,11 +2602,6 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
             self._sort_by_date_descending_impl()
         finally:
             self._validating = False
-        if self._debug_original_values:
-            print(f"[DEBUG] sort_by_date_descending: END")
-            for tx_id, vals in self._original_values.items():
-                if tx_id != "BLANK_ROW" and not tx_id.startswith("FREE_CASH"):
-                    print(f"  _original_values[{tx_id[:8]}...] = date={vals.get('date')}")
 
     def _sort_by_date_descending_impl(self):
         """Internal implementation of sort_by_date_descending."""

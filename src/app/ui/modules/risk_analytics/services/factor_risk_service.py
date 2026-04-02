@@ -28,9 +28,12 @@ CTEV by Factor Group:
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Set
 
 from app.services.ticker_metadata_service import TickerMetadataService
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -866,22 +869,6 @@ class FactorRiskService:
         # Get all tickers from both portfolio and benchmark
         all_tickers = set(portfolio_weights.keys()) | set(benchmark_weights.keys())
 
-        # DEBUG: Comprehensive logging
-        print(f"[SectorIndustry] === DEBUG START ===")
-        print(f"[SectorIndustry] portfolio_weights dict size: {len(portfolio_weights)}")
-        print(f"[SectorIndustry] benchmark_weights dict size: {len(benchmark_weights)}")
-        print(f"[SectorIndustry] all_tickers set size: {len(all_tickers)}")
-
-        # Count non-zero weights in each dict
-        port_nonzero = sum(1 for v in portfolio_weights.values() if v > 0)
-        bench_nonzero = sum(1 for v in benchmark_weights.values() if v > 0)
-        print(f"[SectorIndustry] Portfolio non-zero weights: {port_nonzero}")
-        print(f"[SectorIndustry] Benchmark non-zero weights: {bench_nonzero}")
-
-        # Sample some benchmark weights to check values
-        bench_samples = list(benchmark_weights.items())[:5]
-        print(f"[SectorIndustry] Sample benchmark weights: {bench_samples}")
-
         # Pre-fetch industry data from Yahoo Finance for tickers missing it
         # The iShares CSV only has sector, not industry - so we need Yahoo for detailed breakdown
         tickers_needing_industry = []
@@ -897,15 +884,10 @@ class FactorRiskService:
                 tickers_needing_industry.append(ticker_upper)
 
         if tickers_needing_industry:
-            print(f"[SectorIndustry] Fetching industry data from Yahoo Finance for {len(tickers_needing_industry)} tickers...")
-            print(f"[SectorIndustry] This may take several minutes (rate-limited to avoid Yahoo throttling)...")
+            logger.info("Fetching industry data from Yahoo Finance for %d tickers...", len(tickers_needing_industry))
             # Batch fetch from Yahoo with force_refresh since these are in cache but missing industry
             # Use only 5 workers to avoid Yahoo rate limiting
             TickerMetadataService.get_metadata_batch(tickers_needing_industry, force_refresh=True, max_workers=5)
-            # Verify fetch success
-            cache = TickerMetadataService._load_cache()
-            has_industry = sum(1 for t in tickers_needing_industry if cache.get(t, {}).get("industry"))
-            print(f"[SectorIndustry] Industry data fetch complete: {has_industry}/{len(tickers_needing_industry)} now have industry")
 
         for ticker in all_tickers:
             ticker_upper = ticker.upper()
@@ -962,26 +944,6 @@ class FactorRiskService:
                 "active_weight": active_weight,
                 "ctev": 0.0,  # Will be calculated later
             })
-
-        # DEBUG: Count how many securities were actually added (before top-10 limit)
-        total_securities_added = sum(
-            len(ind["securities"])
-            for s in sector_data.values()
-            for ind in s["industries"].values()
-        )
-        total_industries = sum(len(s["industries"]) for s in sector_data.values())
-        not_classified_sectors_count = 1 if "Not Classified" in sector_data else 0
-        not_classified_industries_count = sum(
-            1 for s in sector_data.values()
-            for ind in s["industries"].keys()
-            if ind == "Not Classified"
-        )
-        print(f"[SectorIndustry] Total securities ADDED (before top-10): {total_securities_added}")
-        print(f"[SectorIndustry] Total sectors: {len(sector_data)}")
-        print(f"[SectorIndustry] Total industries: {total_industries}")
-        print(f"[SectorIndustry] 'Not Classified' sectors: {not_classified_sectors_count}")
-        print(f"[SectorIndustry] 'Not Classified' industries: {not_classified_industries_count}")
-        print(f"[SectorIndustry] === DEBUG END ===")
 
         # Calculate CTEV for sectors and industries
         # Estimate factor risk as R² percentage of total active risk

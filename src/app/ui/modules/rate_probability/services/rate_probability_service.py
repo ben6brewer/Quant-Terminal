@@ -19,8 +19,6 @@ CODE_TO_MONTH = {v: k for k, v in MONTH_CODES.items()}
 
 RATE_STEP = 0.25  # 25bp buckets
 CACHE_DIR = Path.home() / ".quant_terminal" / "cache" / "fed_futures"
-_DEBUG = False  # Set True to enable calculation debug logging
-
 # Cache TTLs (seconds)
 _FUTURES_TTL = 300       # 5 minutes
 _TARGET_RATE_TTL = 3600  # 1 hour
@@ -284,9 +282,6 @@ class RateProbabilityService:
         state: Dict[float, float] = {current_midpoint: 100.0}
         e_pre = initial_effr
 
-        if _DEBUG:
-            print(f"  Initial EFFR: {e_pre:.4f}, state midpoint: {current_midpoint}")
-
         results = {}
 
         for meeting in meetings:
@@ -320,14 +315,6 @@ class RateProbabilityService:
             p_upper = max(0.0, min(1.0, p_upper))
             p_lower = 1.0 - p_upper
 
-            if _DEBUG:
-                print(f"  Meeting {meeting}: implied={implied_rate:.4f}, "
-                      f"e_pre={e_pre:.4f}, e_post={e_post:.4f}, "
-                      f"change={change*100:.1f}bp")
-                print(f"    Actions: {lower_action:+.4f} ({p_lower*100:.1f}%), "
-                      f"{upper_action:+.4f} ({p_upper*100:.1f}%)")
-                print(f"    State has {len(state)} possible pre-rates")
-
             # Apply discrete actions to every pre-state
             new_state: Dict[float, float] = {}
             for pre_mid, pre_prob in state.items():
@@ -353,10 +340,6 @@ class RateProbabilityService:
             if total > 0 and abs(total - 100.0) > 0.5:
                 factor = 100.0 / total
                 meeting_probs = {k: round(v * factor, 1) for k, v in meeting_probs.items()}
-
-            if _DEBUG:
-                non_zero = {k: v for k, v in meeting_probs.items() if v > 0}
-                print(f"    Result: {non_zero} (sum={sum(meeting_probs.values()):.1f})")
 
             results[meeting.strftime("%b %d, %Y")] = meeting_probs
 
