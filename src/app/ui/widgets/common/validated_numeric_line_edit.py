@@ -97,7 +97,9 @@ class ValidatedNumericLineEdit(QLineEdit):
                 text = text.replace(self.prefix, "").strip()
 
             try:
-                self.setValue(float(text))
+                val = float(text)
+                val = max(self.validator.bottom(), min(val, self.validator.top()))
+                self.setValue(val)
             except ValueError:
                 if self.show_dash_for_zero:
                     self.setText("--")
