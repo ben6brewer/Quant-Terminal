@@ -136,6 +136,7 @@ MODULE_SECTIONS = {
         {"id": "regional_pmi", "label": "Regional PMI", "class": "app.ui.modules.regional_pmi:RegionalPmiModule"},
         {"id": "energy_production", "label": "Energy Production", "class": "app.ui.modules.energy_production:EnergyProductionModule"},
         {"id": "real_rates", "label": "Real Rates / TIPS", "class": "app.ui.modules.real_rates:RealRatesModule"},
+        {"id": "stock_heatmap", "label": "Stock Heatmap", "class": "app.ui.modules.stock_heatmap:StockHeatmapModule"},
     ],
     "_Settings": [
         {"id": "settings", "label": "Settings", "class": "app.ui.modules.settings_module:SettingsModule", "has_own_home_button": False},

@@ -1459,6 +1459,31 @@ MODULE_INFO: dict[str, dict] = {
         ],
         "source": "Federal Reserve Economic Data (FRED)",
     },
+
+    # ── Stock Heatmap ────────────────────────────────────────────────────────
+
+    "StockHeatmapModule": {
+        "title": "Stock Heatmap",
+        "description": (
+            "Treemap visualization of major stock indices (S&P 500, Nasdaq 100, Dow 30). "
+            "Each tile is sized by market capitalization and colored by percentage price change "
+            "over the selected timeframe. Stocks are grouped by GICS sector."
+        ),
+        "calculation": (
+            "Percentage change is calculated as (last close / first close - 1) x 100 over the "
+            "selected lookback window. Tile area is proportional to market cap (or equal-weighted). "
+            "Color maps linearly from deep red at the negative bound to deep green at the positive "
+            "bound, with a configurable scale (default +/-3%)."
+        ),
+        "data_sources": [
+            {"id": "S&P 500", "name": "503 constituents via Wikipedia", "frequency": "Weekly (cached 7 days)"},
+            {"id": "Nasdaq 100", "name": "101 constituents via Wikipedia", "frequency": "Weekly (cached 7 days)"},
+            {"id": "Dow 30", "name": "30 constituents via Wikipedia", "frequency": "Weekly (cached 7 days)"},
+            {"id": "Price data", "name": "1 year of daily closes via yfinance", "frequency": "Daily (cached 1 day)"},
+            {"id": "Market caps", "name": "Via yfinance ticker info", "frequency": "Weekly (cached 7 days)"},
+        ],
+        "source": "Wikipedia, Yahoo Finance",
+    },
 }
 
 

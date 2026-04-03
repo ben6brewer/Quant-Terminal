@@ -22,6 +22,8 @@ dependencies = [
   "aiohttp>=3.9",
   "pandas-datareader>=0.10",
   "fredapi>=0.5",
+  "squarify>=0.4",
+  "lxml>=4.9",
 ]
 
 [project.optional-dependencies]
