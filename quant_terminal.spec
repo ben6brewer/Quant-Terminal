@@ -47,8 +47,8 @@ excludes = [
     "IPython",
     "jupyter",
     "notebook",
-    "test",
-    "unittest",
+    # NOTE: do NOT exclude "unittest" — pandas_datareader imports unittest.mock
+    # internally, which is required by the Factor Models module.
     "PySide6.QtWebEngine",
     "PySide6.QtWebEngineCore",
     "PySide6.QtWebEngineWidgets",
