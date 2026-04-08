@@ -165,10 +165,28 @@ class FactorModelsModule(BaseModule):
         )
 
     def _run(self):
-        # Read live text from the combo line edit to avoid stale _last_value
-        raw_value = self.controls.input_combo.currentText().strip()
-        if not raw_value:
-            raw_value = self.controls.get_input_value()
+        # The combo's line edit displays portfolios WITHOUT the "[Port] " prefix
+        # for cleaner UX, so currentText() alone can't distinguish a portfolio
+        # selection from a typed ticker. The combo's get_input_value() returns
+        # the full prefixed value when a portfolio was selected from the dropdown.
+        # Resolve: if the stored value is a portfolio whose stripped name still
+        # matches the live line edit text, the user picked it from the dropdown
+        # and hasn't typed anything new — use the prefixed form. Otherwise use
+        # the live text (typed ticker).
+        live_text = self.controls.input_combo.currentText().strip()
+        stored_value = self.controls.get_input_value()
+        prefix = "[Port] "
+        if (
+            live_text
+            and stored_value.startswith(prefix)
+            and stored_value[len(prefix):] == live_text
+        ):
+            raw_value = stored_value
+        elif live_text:
+            raw_value = live_text
+        else:
+            raw_value = stored_value
+
         identifier, is_portfolio = parse_portfolio_value(raw_value)
         # If it's not a portfolio, ensure ticker is uppercased
         if not is_portfolio:
@@ -177,6 +195,17 @@ class FactorModelsModule(BaseModule):
         if not identifier:
             self.stats_panel.show_placeholder(
                 "Enter a ticker or select a portfolio to run factor analysis"
+            )
+            return
+
+        # Reject ticker inputs with whitespace — yfinance interprets a space as
+        # a multi-ticker query and returns a DataFrame with duplicate columns,
+        # which then crashes the regression with a confusing pandas error.
+        if not is_portfolio and any(c.isspace() for c in identifier):
+            self.stats_panel.show_placeholder(
+                f'Invalid ticker: "{identifier}".\n'
+                "Tickers cannot contain spaces. "
+                "To analyze a portfolio, select it from the dropdown."
             )
             return
 
