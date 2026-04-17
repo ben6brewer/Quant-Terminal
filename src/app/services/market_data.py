@@ -292,13 +292,37 @@ def fetch_price_history_batch(
     if not tickers:
         return {}
 
-    # Ensure unique, uppercase tickers
-    tickers = list(dict.fromkeys(t.strip().upper() for t in tickers))
+    # Custom-ticker intercept: separate custom tickers and route them
+    # through custom_data_service. Custom results are keyed by the RAW input
+    # so callers using the same string they passed in can retrieve them.
+    # We serve at each ticker's native frequency (vs forcing daily) so that
+    # monthly/yearly imports do not fail — callers downstream can resample.
+    from app.services.custom_data_service import (
+        is_custom_ticker, parse_custom_ticker, get_custom_prices, get_metadata,
+    )
+    results: Dict[str, "pd.DataFrame"] = {}
+    custom_inputs = [t for t in tickers if is_custom_ticker(t)]
+    standard_inputs = [t for t in tickers if not is_custom_ticker(t)]
+    for raw in custom_inputs:
+        name = parse_custom_ticker(raw)
+        if name is None:
+            print(f"  Skipping unknown custom ticker: {raw!r}")
+            continue
+        meta = get_metadata(name)
+        native_interval = meta.frequency if meta is not None else "daily"
+        try:
+            results[raw] = get_custom_prices(name, native_interval)
+        except Exception as e:
+            print(f"  Failed to load custom ticker {raw!r}: {e}")
+
+    # Ensure unique, uppercase tickers (standard pipeline only)
+    tickers = list(dict.fromkeys(t.strip().upper() for t in standard_inputs))
+    if not tickers:
+        return results
     total = len(tickers)
 
     print(f"\n=== Batch fetching {total} tickers ===")
 
-    results: Dict[str, pd.DataFrame] = {}
 
     # Phase 1: Classification
     if progress_callback:
@@ -385,6 +409,17 @@ def fetch_price_history(
         ValueError: If ticker is empty or no data is available
     """
     import pandas as pd
+
+    # Custom-ticker intercept: must run BEFORE .strip().upper() so that
+    # the prefix's brackets/spaces are not mangled.
+    from app.services.custom_data_service import (
+        is_custom_ticker, parse_custom_ticker, get_custom_prices,
+    )
+    if is_custom_ticker(ticker):
+        name = parse_custom_ticker(ticker)
+        if name is None:
+            raise ValueError(f"Unknown custom ticker: {ticker!r}")
+        return get_custom_prices(name, (interval or "1d").strip().lower())
 
     # Check if data source has changed (auto-clears cache if switching providers)
     _check_data_source_version()
@@ -563,6 +598,17 @@ def fetch_price_history_yahoo(
     """
     import pandas as pd
     from datetime import datetime, timedelta
+
+    # Custom-ticker intercept: chart module uses this entrypoint, so we
+    # must intercept here as well as in fetch_price_history.
+    from app.services.custom_data_service import (
+        is_custom_ticker, parse_custom_ticker, get_custom_prices,
+    )
+    if is_custom_ticker(ticker):
+        name = parse_custom_ticker(ticker)
+        if name is None:
+            raise ValueError(f"Unknown custom ticker: {ticker!r}")
+        return get_custom_prices(name, (interval or "1d").strip().lower())
 
     ticker = ticker.strip().upper()
     if not ticker:

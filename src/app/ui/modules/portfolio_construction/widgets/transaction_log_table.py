@@ -1092,7 +1092,7 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
             extracted = {
                 "id": transaction_id,
                 "date": date_edit.date().toString("yyyy-MM-dd"),
-                "ticker": ticker_edit.text().strip().upper(),
+                "ticker": PortfolioService.normalize_ticker(ticker_edit.text()),
                 "transaction_type": type_combo.currentText(),
                 "quantity": qty_spin.value(),
                 "entry_price": price_spin.value(),
@@ -1537,8 +1537,23 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
                         if transaction and transaction.get("is_blank"):
                             if self._is_transaction_complete(transaction):
                                 # Validate ticker before transitioning
-                                ticker = transaction.get("ticker", "").strip().upper()
+                                ticker = PortfolioService.normalize_ticker(transaction.get("ticker", ""))
                                 tx_date = transaction.get("date", "")
+
+                                # Custom tickers are not allowed in transaction-based
+                                # portfolios (returns-only, no per-share prices).
+                                from app.services.custom_data_service import is_custom_ticker
+                                if is_custom_ticker(ticker):
+                                    self._skip_focus_validation = True
+                                    CustomMessageBox.warning(
+                                        self.theme_manager,
+                                        self,
+                                        "Custom tickers not supported here",
+                                        "Custom tickers are returns-only and cannot be added to "
+                                        "transaction-based portfolios. Switch to a Weights-Based "
+                                        "portfolio (use the Portfolio dropdown) to use them."
+                                    )
+                                    return True  # Consume event, don't transition
 
                                 # Validate ticker exists in Yahoo Finance
                                 is_valid_ticker, ticker_error = PortfolioService.is_valid_ticker(ticker)
@@ -1650,6 +1665,22 @@ class TransactionLogTable(LazyThemeMixin, FieldRevertMixin, SortingMixin, Editab
 
                                 # Check if ticker changed
                                 if ticker_upper != original_ticker.upper():
+                                    # Block edits that introduce a custom ticker into a
+                                    # transaction-based portfolio.
+                                    from app.services.custom_data_service import is_custom_ticker
+                                    if is_custom_ticker(ticker):
+                                        self._skip_focus_validation = True
+                                        CustomMessageBox.warning(
+                                            self.theme_manager,
+                                            self,
+                                            "Custom tickers not supported here",
+                                            "Custom tickers are returns-only and cannot be used in "
+                                            "transaction-based portfolios. Switch to a Weights-Based "
+                                            "portfolio to use them."
+                                        )
+                                        self._revert_ticker(row, original_ticker)
+                                        return True  # Consume event
+
                                     is_valid_ticker, ticker_error = PortfolioService.is_valid_ticker(ticker_upper)
                                     if not is_valid_ticker:
                                         self._skip_focus_validation = True  # Prevent double dialog

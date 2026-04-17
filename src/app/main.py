@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+# Install compatibility shims (distutils for Py3.12+, deprecate_kwarg for
+# pandas 3.x) BEFORE any module that may transitively import
+# pandas_datareader. Must come before all other imports.
+from app import _compat  # noqa: F401  (imported for side effects)
+
 import importlib
 import multiprocessing
 import signal

@@ -86,25 +86,21 @@ class FamaFrenchDataService:
             Index: DatetimeIndex (daily dates)
         """
         import pandas as pd
-        import pandas_datareader.data as pdr
+        from app.services.ken_french_loader import fetch_ff_dataset
 
-        logger.info("Fetching Fama-French 5 factors from web...")
+        logger.info("Fetching Fama-French 5 factors from Ken French...")
 
         # Fetch FF5 factors (daily)
-        ff5 = pdr.DataReader(
-            "F-F_Research_Data_5_Factors_2x3_daily",
-            "famafrench",
-            start="1990-01-01"
-        )[0]  # [0] gets the daily data table
+        ff5 = fetch_ff_dataset(
+            "F-F_Research_Data_5_Factors_2x3_daily", start="1990-01-01"
+        )
 
-        logger.info("Fetching Momentum factor from web...")
+        logger.info("Fetching Momentum factor from Ken French...")
 
         # Fetch Momentum factor (daily)
-        mom = pdr.DataReader(
-            "F-F_Momentum_Factor_daily",
-            "famafrench",
-            start="1990-01-01"
-        )[0]
+        mom = fetch_ff_dataset(
+            "F-F_Momentum_Factor_daily", start="1990-01-01"
+        )
 
         # Rename momentum column to UMD
         mom = mom.rename(columns={"Mom   ": "UMD", "Mom": "UMD"})

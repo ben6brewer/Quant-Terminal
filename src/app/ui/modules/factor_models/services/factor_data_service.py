@@ -190,18 +190,17 @@ class FactorDataService:
 
     @classmethod
     def _fetch_ff_daily(cls) -> "pd.DataFrame":
-        import pandas as pd
-        import pandas_datareader.data as pdr
+        from app.services.ken_french_loader import fetch_ff_dataset
 
-        logger.info("Fetching FF5 daily factors from web...")
-        ff5 = pdr.DataReader(
-            "F-F_Research_Data_5_Factors_2x3_daily", "famafrench", start="1963-01-01"
-        )[0]
+        logger.info("Fetching FF5 daily factors from Ken French...")
+        ff5 = fetch_ff_dataset(
+            "F-F_Research_Data_5_Factors_2x3_daily", start="1963-01-01"
+        )
 
-        logger.info("Fetching Momentum daily factor from web...")
-        mom = pdr.DataReader(
-            "F-F_Momentum_Factor_daily", "famafrench", start="1963-01-01"
-        )[0]
+        logger.info("Fetching Momentum daily factor from Ken French...")
+        mom = fetch_ff_dataset(
+            "F-F_Momentum_Factor_daily", start="1963-01-01"
+        )
         mom = cls._normalize_mom_col(mom)
 
         factors = ff5.join(mom, how="inner")
@@ -211,18 +210,17 @@ class FactorDataService:
 
     @classmethod
     def _fetch_ff_monthly(cls) -> "pd.DataFrame":
-        import pandas as pd
-        import pandas_datareader.data as pdr
+        from app.services.ken_french_loader import fetch_ff_dataset
 
-        logger.info("Fetching FF5 monthly factors from web...")
-        ff5 = pdr.DataReader(
-            "F-F_Research_Data_5_Factors_2x3", "famafrench", start="1963-01-01"
-        )[0]
+        logger.info("Fetching FF5 monthly factors from Ken French...")
+        ff5 = fetch_ff_dataset(
+            "F-F_Research_Data_5_Factors_2x3", start="1963-01-01"
+        )
 
-        logger.info("Fetching Momentum monthly factor from web...")
-        mom = pdr.DataReader(
-            "F-F_Momentum_Factor", "famafrench", start="1963-01-01"
-        )[0]
+        logger.info("Fetching Momentum monthly factor from Ken French...")
+        mom = fetch_ff_dataset(
+            "F-F_Momentum_Factor", start="1963-01-01"
+        )
         mom = cls._normalize_mom_col(mom)
 
         factors = ff5.join(mom, how="inner")

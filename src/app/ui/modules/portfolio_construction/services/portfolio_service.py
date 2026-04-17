@@ -18,6 +18,29 @@ class PortfolioService:
     FREE_CASH_TICKER = "FREE CASH"
 
     @staticmethod
+    def normalize_ticker(ticker: str) -> str:
+        """Canonical ticker form used everywhere a ticker crosses the
+        UI/persistence boundary.
+
+        - ``[Custom] X`` tickers preserve their case via the custom_data_service
+          lookup (resolves to e.g. ``"[Custom] PARS"``). If the name doesn't
+          resolve, returns the stripped raw input so the validator can produce
+          a friendly error.
+        - All other tickers are stripped + uppercased (existing behavior).
+        """
+        if not ticker:
+            return ""
+        from app.services.custom_data_service import (
+            is_custom_ticker, parse_custom_ticker, format_custom_ticker,
+        )
+        if is_custom_ticker(ticker):
+            name = parse_custom_ticker(ticker)
+            if name is not None:
+                return format_custom_ticker(name)
+            return ticker.strip()
+        return ticker.strip().upper()
+
+    @staticmethod
     def create_transaction(
         date: str,
         ticker: str,
@@ -44,10 +67,17 @@ class PortfolioService:
         Returns:
             Transaction dict
         """
+        from app.services.custom_data_service import is_custom_ticker
+        if is_custom_ticker(ticker):
+            raise ValueError(
+                "Custom tickers are returns-only and cannot be used in "
+                "transaction-based portfolios. Use a Weights-Based portfolio "
+                "instead."
+            )
         return {
             "id": str(uuid.uuid4()),
             "date": date,
-            "ticker": ticker.strip().upper(),
+            "ticker": PortfolioService.normalize_ticker(ticker),
             "transaction_type": transaction_type,
             "quantity": float(quantity),
             "entry_price": float(entry_price),
@@ -333,19 +363,24 @@ class PortfolioService:
             Dict mapping ticker -> short name (or None if fetch failed)
         """
         from app.services.ticker_metadata_service import TickerMetadataService
+        from app.services.custom_data_service import is_custom_ticker
 
         if not tickers:
             return {}
 
         result: Dict[str, Optional[str]] = {}
 
-        # Separate FREE CASH (special case) from real tickers
+        # Separate FREE CASH and custom tickers (both bypass Yahoo metadata)
         real_tickers = []
         for t in tickers:
             if not t:
                 continue
             if t.upper() == PortfolioService.FREE_CASH_TICKER:
                 result[t] = None
+            elif is_custom_ticker(t):
+                # Custom tickers have no Yahoo metadata; echo the literal
+                # ticker form (e.g. "[CUSTOM] PARS") as the display name.
+                result[t] = t
             else:
                 real_tickers.append(t)
 
@@ -379,6 +414,19 @@ class PortfolioService:
         """
         if not ticker or not ticker.strip():
             return False, "Ticker cannot be empty"
+
+        # Custom-ticker early accept: resolve via custom_data_service before
+        # the uppercase + space-rejection rules destroy the prefix.
+        from app.services.custom_data_service import (
+            is_custom_ticker, parse_custom_ticker,
+        )
+        if is_custom_ticker(ticker):
+            if parse_custom_ticker(ticker) is None:
+                return False, (
+                    f"Unknown custom ticker '{ticker.strip()}'. "
+                    f"Import it first via Data → Import Data."
+                )
+            return True, None
 
         ticker = ticker.strip().upper()
 
@@ -681,7 +729,7 @@ class PortfolioService:
             new_tx = {
                 "id": str(uuid.uuid4()),
                 "date": tx.get("date", ""),
-                "ticker": tx.get("ticker", "").strip().upper(),
+                "ticker": PortfolioService.normalize_ticker(tx.get("ticker", "")),
                 "transaction_type": tx.get("transaction_type", "Buy"),
                 "quantity": float(tx.get("quantity", 0)),
                 "entry_price": float(tx.get("entry_price", 0)),
@@ -712,7 +760,7 @@ class PortfolioService:
         # Group transactions by ticker
         by_ticker: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
         for tx in transactions:
-            ticker = tx.get("ticker", "").strip().upper()
+            ticker = PortfolioService.normalize_ticker(tx.get("ticker", ""))
             if ticker:
                 by_ticker[ticker].append(tx)
 

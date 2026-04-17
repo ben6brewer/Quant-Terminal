@@ -138,6 +138,9 @@ MODULE_SECTIONS = {
         {"id": "real_rates", "label": "Real Rates / TIPS", "class": "app.ui.modules.real_rates:RealRatesModule"},
         {"id": "stock_heatmap", "label": "Stock Heatmap", "class": "app.ui.modules.stock_heatmap:StockHeatmapModule"},
     ],
+    "Data": [
+        {"id": "import_data", "label": "Import Data", "class": "app.ui.modules.import_data:ImportDataModule"},
+    ],
     "_Settings": [
         {"id": "settings", "label": "Settings", "class": "app.ui.modules.settings_module:SettingsModule", "has_own_home_button": False},
     ],

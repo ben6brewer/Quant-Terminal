@@ -30,6 +30,28 @@ class TickerReturnsService:
             Series of returns (as decimals, e.g., 0.05 = 5%)
         """
         import pandas as pd
+
+        # Custom-ticker intercept: bypass the synthesize-then-pct_change
+        # round-trip and serve stored returns directly.
+        from app.services.custom_data_service import (
+            is_custom_ticker, parse_custom_ticker, get_custom_returns,
+        )
+        if is_custom_ticker(ticker):
+            name = parse_custom_ticker(ticker)
+            if name is None:
+                return pd.Series(dtype=float, name=ticker)
+            try:
+                returns = get_custom_returns(name, interval=interval)
+            except ValueError:
+                return pd.Series(dtype=float, name=ticker)
+            if start_date or end_date:
+                from app.services.returns_data_service import ReturnsDataService
+                df = returns.to_frame()
+                df = ReturnsDataService._filter_date_range(df, start_date, end_date)
+                returns = df.iloc[:, 0] if len(df.columns) else pd.Series(dtype=float)
+            returns.name = ticker
+            return returns
+
         from app.services.market_data import fetch_price_history
 
         # skip_live_bar=True - returns calculations use daily closes, not intraday

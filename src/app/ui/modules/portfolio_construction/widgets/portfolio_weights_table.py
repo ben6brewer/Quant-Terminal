@@ -195,7 +195,8 @@ class PortfolioWeightsTable(LazyThemeMixin, EditableTableBase):
 
         ticker = ""
         if isinstance(ticker_widget, AutoSelectLineEdit):
-            ticker = ticker_widget.text().strip().upper()
+            from ..services.portfolio_service import PortfolioService
+            ticker = PortfolioService.normalize_ticker(ticker_widget.text())
 
         weight_pct = 0.0
         if isinstance(weight_widget, ValidatedNumericLineEdit):
@@ -307,7 +308,8 @@ class PortfolioWeightsTable(LazyThemeMixin, EditableTableBase):
         if not ticker_widget:
             return
 
-        ticker = ticker_widget.text().strip().upper()
+        from ..services.portfolio_service import PortfolioService
+        ticker = PortfolioService.normalize_ticker(ticker_widget.text())
         if not ticker:
             return
 
@@ -335,13 +337,19 @@ class PortfolioWeightsTable(LazyThemeMixin, EditableTableBase):
             self.weights_changed.emit()
 
     def _find_row_for_ticker(self, ticker: str, exclude_row: int = -1) -> Optional[int]:
-        """Find the row index containing a given ticker, or None."""
+        """Find the row index containing a given ticker, or None.
+
+        Comparison is done on the normalized form so [Custom] tickers are
+        matched case-insensitively against the stored canonical form.
+        """
+        from ..services.portfolio_service import PortfolioService
+        target = PortfolioService.normalize_ticker(ticker)
         for r in range(self.rowCount()):
             if r == exclude_row:
                 continue
             widget = self._get_inner_widget(r, 0)
             if widget and isinstance(widget, AutoSelectLineEdit):
-                if widget.text().strip().upper() == ticker:
+                if PortfolioService.normalize_ticker(widget.text()) == target:
                     return r
         return None
 
@@ -554,7 +562,8 @@ class PortfolioWeightsTable(LazyThemeMixin, EditableTableBase):
 
             ticker = ""
             if isinstance(ticker_widget, AutoSelectLineEdit):
-                ticker = ticker_widget.text().strip().upper()
+                from ..services.portfolio_service import PortfolioService
+                ticker = PortfolioService.normalize_ticker(ticker_widget.text())
 
             weight_pct = 0.0
             if isinstance(weight_widget, ValidatedNumericLineEdit):

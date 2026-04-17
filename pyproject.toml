@@ -24,6 +24,9 @@ dependencies = [
   "fredapi>=0.5",
   "squarify>=0.4",
   "lxml>=4.9",
+  # Provides setuptools._distutils for the Py3.12+ distutils shim in
+  # src/app/_compat.py (stdlib distutils was removed in Python 3.12).
+  "setuptools>=70",
 ]
 
 [project.optional-dependencies]
