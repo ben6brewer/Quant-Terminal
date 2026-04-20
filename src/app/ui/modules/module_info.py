@@ -460,6 +460,35 @@ MODULE_INFO: dict[str, dict] = {
         "source": "Federal Reserve Economic Data (FRED)",
     },
 
+    "UnemploymentAgeModule": {
+        "title": "Unemployment by Age",
+        "description": (
+            "US unemployment rates broken down by age group, from the Bureau of Labor "
+            "Statistics Current Population Survey. Not seasonally adjusted (NSA). "
+            "Reveals how labor market conditions differ across life stages."
+        ),
+        "calculation": (
+            "Each rate = (unemployed in age group / civilian labor force in age group) x 100. "
+            "Not seasonally adjusted, so rates exhibit seasonal patterns "
+            "(youth unemployment peaks in summer when students enter the labor force)."
+        ),
+        "data_sources": [
+            {"id": "UNRATENSA", "name": "16+ Overall (NSA)", "frequency": "Monthly"},
+            {"id": "LNU04000012", "name": "16-19 Years", "frequency": "Monthly"},
+            {"id": "LNU04000086", "name": "16-17 Years", "frequency": "Monthly"},
+            {"id": "LNU04000088", "name": "18-19 Years", "frequency": "Monthly"},
+            {"id": "LNU04000036", "name": "20-24 Years", "frequency": "Monthly"},
+            {"id": "LNU04000048", "name": "25+ Years", "frequency": "Monthly"},
+            {"id": "LNU04000089", "name": "25-34 Years", "frequency": "Monthly"},
+            {"id": "LNU04000091", "name": "35-44 Years", "frequency": "Monthly"},
+            {"id": "LNU04000093", "name": "45-54 Years", "frequency": "Monthly"},
+            {"id": "LNU04000095", "name": "55-64 Years", "frequency": "Monthly"},
+            {"id": "LNU04000097", "name": "65+ Years", "frequency": "Monthly"},
+            {"id": "USREC", "name": "NBER Recession Indicator", "frequency": "Monthly"},
+        ],
+        "source": "Federal Reserve Economic Data (FRED) / Bureau of Labor Statistics (BLS)",
+    },
+
     "PayrollsModule": {
         "title": "Nonfarm Payrolls",
         "description": (
@@ -1481,6 +1510,30 @@ MODULE_INFO: dict[str, dict] = {
             {"id": "Dow 30", "name": "30 constituents via Wikipedia", "frequency": "Weekly (cached 7 days)"},
             {"id": "Price data", "name": "1 year of daily closes via yfinance", "frequency": "Daily (cached 1 day)"},
             {"id": "Market caps", "name": "Via yfinance ticker info", "frequency": "Weekly (cached 7 days)"},
+        ],
+        "source": "Wikipedia, Yahoo Finance",
+    },
+
+    "MarketConcentrationModule": {
+        "title": "Market Concentration",
+        "description": (
+            "Tracks how concentrated the S&P 500 is in its largest constituents over time. "
+            "Choose between Top-N market cap share (with N controlled by the spinbox) and "
+            "the Herfindahl-Hirschman Index (HHI)."
+        ),
+        "calculation": (
+            "For each date D: weight_i(D) = price_i(D) x shares_i / sum(price_j(D) x shares_j). "
+            "Top N % = sum of the N largest weights, expressed as a 0-100 percentage. "
+            "HHI = sum(weights^2) x 10,000 (standard convention; ranges from ~0 for a perfectly "
+            "diversified index to 10,000 for a single-stock monopoly). "
+            "Approximations: (1) uses the CURRENT S&P 500 membership for the entire history "
+            "(~3-5% survivorship bias - the trend is preserved but levels are biased upward); "
+            "(2) treats shares outstanding as constant (small error from buybacks/issuance)."
+        ),
+        "data_sources": [
+            {"id": "S&P 500 constituents", "name": "Wikipedia (current members)", "frequency": "Weekly (cached 7 days)"},
+            {"id": "Historical prices", "name": "Yahoo Finance (period=max)", "frequency": "Daily (cached 1 day)"},
+            {"id": "Shares outstanding", "name": "Yahoo Finance .info (sharesOutstanding)", "frequency": "Weekly (cached 7 days)"},
         ],
         "source": "Wikipedia, Yahoo Finance",
     },

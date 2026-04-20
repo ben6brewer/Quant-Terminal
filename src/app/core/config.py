@@ -85,6 +85,7 @@ MODULE_SECTIONS = {
         {"id": "rate_probability", "label": "Rate Probabilities", "class": "app.ui.modules.rate_probability:RateProbabilityModule"},
         {"id": "labor_market_overview", "label": "Unemployment Rate", "class": "app.ui.modules.labor_market_overview:LaborMarketOverviewModule"},
         {"id": "demographics", "label": "Unemployment Demographics", "class": "app.ui.modules.demographics:DemographicsModule"},
+        {"id": "unemployment_age", "label": "Unemployment by Age", "class": "app.ui.modules.unemployment_age:UnemploymentAgeModule"},
         {"id": "payrolls", "label": "Payrolls", "class": "app.ui.modules.payrolls:PayrollsModule"},
         {"id": "labor_claims", "label": "Unemployment Claims", "class": "app.ui.modules.labor_claims:LaborClaimsModule"},
         {"id": "jolts", "label": "JOLTS", "class": "app.ui.modules.jolts:JoltsModule"},
@@ -137,6 +138,7 @@ MODULE_SECTIONS = {
         {"id": "energy_production", "label": "Energy Production", "class": "app.ui.modules.energy_production:EnergyProductionModule"},
         {"id": "real_rates", "label": "Real Rates / TIPS", "class": "app.ui.modules.real_rates:RealRatesModule"},
         {"id": "stock_heatmap", "label": "Stock Heatmap", "class": "app.ui.modules.stock_heatmap:StockHeatmapModule"},
+        {"id": "market_concentration", "label": "Market Concentration", "class": "app.ui.modules.market_concentration:MarketConcentrationModule"},
     ],
     "Data": [
         {"id": "import_data", "label": "Import Data", "class": "app.ui.modules.import_data:ImportDataModule"},
