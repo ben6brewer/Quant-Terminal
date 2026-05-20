@@ -110,6 +110,7 @@ class GovernmentDebtChart(BaseChart):
 
     def update_data(self, debt_df: "Optional[pd.DataFrame]",
                     debt_gdp_df: "Optional[pd.DataFrame]",
+                    interest_df: "Optional[pd.DataFrame]",
                     usrec_df: "Optional[pd.DataFrame]", settings: dict):
         self._show_gridlines = settings.get("show_gridlines", True)
         self._show_crosshair = settings.get("show_crosshair", True)
@@ -123,6 +124,9 @@ class GovernmentDebtChart(BaseChart):
             self._render_yoy(debt_df, usrec_df, settings, "Total Public Debt", "Debt YoY")
         elif self._view_mode == "Debt/GDP YoY":
             self._render_yoy(debt_gdp_df, usrec_df, settings, "Debt to GDP", "Debt/GDP YoY")
+        elif self._view_mode == "Interest/Debt":
+            self.plot_item.setAxisItems({"right": self._pct_axis})
+            self._render_single(interest_df, usrec_df, settings, "Interest/Debt", "%")
         else:
             self.plot_item.setAxisItems({"right": self._right_axis})
             self._render_single(debt_df, usrec_df, settings, "Total Public Debt", "T")
@@ -272,6 +276,8 @@ class GovernmentDebtChart(BaseChart):
             color_str = f"rgb({accent[0]},{accent[1]},{accent[2]})"
             if self._view_mode in ("YoY", "Debt/GDP YoY"):
                 lines.append(f'<span style="color:{color_str};">\u25a0</span> {name}: {v:+.1f}%')
+            elif self._view_mode == "Interest/Debt":
+                lines.append(f'<span style="color:{color_str};">\u25a0</span> Interest/Debt: {v:.2f}%')
             elif name == "Total Public Debt":
                 lines.append(f'<span style="color:{color_str};">\u25a0</span> Debt: ${v:.1f}T')
             else:

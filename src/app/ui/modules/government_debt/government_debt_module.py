@@ -24,7 +24,7 @@ class GovernmentDebtModule(FredDataModule):
     def create_toolbar(self):
         return FredToolbar(
             self.theme_manager,
-            view_options=["Raw", "% GDP", "YoY", "Debt/GDP YoY"],
+            view_options=["Raw", "% GDP", "YoY", "Debt/GDP YoY", "Interest/Debt"],
             stat_labels=[("debt_label", "Debt: --"), ("gdp_label", "Debt/GDP: --")],
             lookback_options=["5Y", "10Y", "20Y", "Max"],
             default_lookback_index=3,
@@ -57,10 +57,26 @@ class GovernmentDebtModule(FredDataModule):
             self.toolbar._update_timestamp()
 
     def extract_chart_data(self, result):
-        debt_df = self.slice_data(result.get("debt"))
+        import pandas as pd
+
+        debt_raw = result.get("debt")
+        interest_raw = result.get("interest")
+        interest_ratio = None
+        if (debt_raw is not None and not debt_raw.empty
+                and interest_raw is not None and not interest_raw.empty):
+            aligned = pd.concat(
+                [interest_raw["Federal Interest Payments"], debt_raw["Total Public Debt"]],
+                axis=1, join="inner",
+            ).dropna()
+            if not aligned.empty:
+                ratio = (aligned["Federal Interest Payments"] / aligned["Total Public Debt"]) * 100
+                interest_ratio = ratio.to_frame(name="Interest/Debt")
+
+        debt_df = self.slice_data(debt_raw)
         debt_gdp_df = self.slice_data(result.get("debt_gdp"))
+        interest_df = self.slice_data(interest_ratio)
         usrec_df = result.get("usrec")
-        return (debt_df, debt_gdp_df, usrec_df)
+        return (debt_df, debt_gdp_df, interest_df, usrec_df)
 
     def get_settings_options(self):
         return [

@@ -16,12 +16,14 @@ class FiscalFredService(BaseFredService):
             series={
                 "Total Public Debt": "GFDEBTN",
                 "Debt to GDP": "GFDEGDQ188S",
+                "Federal Interest Payments": "A091RC1Q027SBEA",
             },
             cache_file="fiscal_data.parquet",
             max_age_days=45,
             outputs=[
                 FredOutput(key="debt", columns=["Total Public Debt"], unit_scale=1 / 1_000_000),
                 FredOutput(key="debt_gdp", columns=["Debt to GDP"]),
+                FredOutput(key="interest", columns=["Federal Interest Payments"], unit_scale=1 / 1000),
             ],
         ),
         FredGroup(

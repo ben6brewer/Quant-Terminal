@@ -86,6 +86,8 @@ class BaseFredService:
             valid_cols = [c for c in df.columns if c in series_map]
             if not valid_cols:
                 return None
+            if set(series_map.keys()) - set(df.columns):
+                return None
             return df[valid_cols]
         except Exception:
             logging.warning("Failed to read FRED cache %s — deleting", cache_file.name)
