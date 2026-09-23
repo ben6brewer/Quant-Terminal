@@ -1,0 +1,45 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_capacity_utilization": true,
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_industrial_production": true,
+    "show_legend": true,
+    "show_manufacturing": true,
+    "view_mode": "Raw"
+  },
+  "dialog_title": "Industrial Production Settings",
+  "options": [
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ],
+    [
+      "show_industrial_production",
+      "Show Industrial Production"
+    ],
+    [
+      "show_manufacturing",
+      "Show Manufacturing"
+    ],
+    [
+      "show_capacity_utilization",
+      "Show Capacity Utilization"
+    ]
+  ],
+  "settings_file": "industrial_production_settings.json"
+}

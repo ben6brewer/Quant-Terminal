@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "benchmark_universe_sectors": null,
+    "collapsed_sectors": [],
+    "custom_end_date": null,
+    "custom_start_date": null,
+    "decimal_places": 2,
+    "default_benchmark": "SPY",
+    "lookback_days": 252,
+    "portfolio_universe_sectors": null,
+    "show_currency_factor": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "risk_analytics_settings.json"
+}

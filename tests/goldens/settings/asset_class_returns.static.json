@@ -1,0 +1,12 @@
+{
+  "defaults": {
+    "cagr_years": null,
+    "custom_tickers": [],
+    "decimals": 1,
+    "label_mode": "label",
+    "show_cagr": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "asset_class_returns_settings.json"
+}

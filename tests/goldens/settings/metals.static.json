@@ -1,0 +1,55 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_copper": true,
+    "show_crosshair": true,
+    "show_gold": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_palladium": true,
+    "show_platinum": true,
+    "show_silver": true,
+    "view_mode": "Normalized"
+  },
+  "dialog_title": "Metals Settings",
+  "options": [
+    [
+      "show_gold",
+      "Show Gold"
+    ],
+    [
+      "show_silver",
+      "Show Silver"
+    ],
+    [
+      "show_copper",
+      "Show Copper"
+    ],
+    [
+      "show_platinum",
+      "Show Platinum"
+    ],
+    [
+      "show_palladium",
+      "Show Palladium"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "metals_settings.json"
+}

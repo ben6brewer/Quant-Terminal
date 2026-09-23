@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "data_mode": "simple_returns",
+    "frequency": "daily",
+    "lookback_days": null,
+    "show_confidence_bands": true,
+    "show_equation": true,
+    "show_gridlines": true,
+    "show_stats_panel": true,
+    "ticker_x": "",
+    "ticker_y": ""
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "ols_regression_settings.json"
+}

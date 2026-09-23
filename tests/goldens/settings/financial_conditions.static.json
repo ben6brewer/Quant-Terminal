@@ -1,0 +1,59 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_adjusted": true,
+    "show_credit": true,
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_leverage": true,
+    "show_nfci": true,
+    "show_nonfin_leverage": true,
+    "show_recession_bands": true
+  },
+  "dialog_title": "Financial Conditions Settings",
+  "options": [
+    [
+      "show_nfci",
+      "Show NFCI"
+    ],
+    [
+      "show_adjusted",
+      "Show Adjusted NFCI"
+    ],
+    [
+      "show_credit",
+      "Show Credit Subindex"
+    ],
+    [
+      "show_leverage",
+      "Show Leverage Subindex"
+    ],
+    [
+      "show_nonfin_leverage",
+      "Show NonFin Leverage Subindex"
+    ],
+    [
+      "show_recession_bands",
+      "Show recession shading"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "financial_conditions_settings.json"
+}

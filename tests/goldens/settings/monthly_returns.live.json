@@ -1,0 +1,22 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "colorscale",
+      "decimals",
+      "show_ytd",
+      "use_gradient"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "colorscale": "Red-Green",
+      "decimals": 2,
+      "show_ytd": true,
+      "use_gradient": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

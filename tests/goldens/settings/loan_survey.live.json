@@ -1,0 +1,34 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "show_auto_loans",
+      "show_ci_large",
+      "show_ci_small",
+      "show_credit_cards",
+      "show_crosshair",
+      "show_gridlines",
+      "show_hover_tooltip",
+      "show_legend",
+      "show_mortgages",
+      "show_recession_bands"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "show_auto_loans": true,
+      "show_ci_large": true,
+      "show_ci_small": true,
+      "show_credit_cards": true,
+      "show_crosshair": true,
+      "show_gridlines": true,
+      "show_hover_tooltip": true,
+      "show_legend": true,
+      "show_mortgages": true,
+      "show_recession_bands": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

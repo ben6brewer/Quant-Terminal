@@ -1,0 +1,22 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "custom_end_date",
+      "custom_start_date",
+      "lookback_days",
+      "show_currency_factor"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "custom_end_date": null,
+      "custom_start_date": null,
+      "lookback_days": 252,
+      "show_currency_factor": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

@@ -1,0 +1,24 @@
+{
+  "defaults": {
+    "line_color": null,
+    "line_style": "PenStyle.SolidLine",
+    "line_width": 2,
+    "rate_series": [
+      "2Y",
+      "5Y",
+      "10Y",
+      "30Y"
+    ],
+    "show_crosshair": true,
+    "show_date_label": true,
+    "show_fed_funds": true,
+    "show_fed_funds_rate": false,
+    "show_gridlines": true,
+    "show_inversion_shading": true,
+    "show_value_label": true,
+    "show_zero_line": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "treasury_settings.json"
+}

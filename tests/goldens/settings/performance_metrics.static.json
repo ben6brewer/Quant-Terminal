@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "custom_period_enabled": false,
+    "custom_period_years": 5.0,
+    "decimal_places": 2,
+    "manual_risk_free_rate": 0.05,
+    "risk_free_source": "irx",
+    "show_12_months": true,
+    "show_3_months": true,
+    "show_6_months": true,
+    "show_ytd": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "performance_metrics_settings.json"
+}

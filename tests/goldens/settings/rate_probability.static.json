@@ -1,0 +1,10 @@
+{
+  "defaults": {
+    "show_futures_table": true,
+    "show_gridlines": true,
+    "show_probability_table": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "rate_probability_settings.json"
+}

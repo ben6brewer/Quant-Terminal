@@ -1,0 +1,39 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_recession_shading": true,
+    "show_u6": false
+  },
+  "dialog_title": "Labor Market Settings",
+  "options": [
+    [
+      "show_gridlines",
+      "Show Gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show Crosshair"
+    ],
+    [
+      "show_legend",
+      "Show Legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show Hover Tooltip"
+    ],
+    [
+      "show_recession_shading",
+      "Show NBER Recession Shading"
+    ],
+    [
+      "show_u6",
+      "Show U-6 rate"
+    ]
+  ],
+  "settings_file": "labor_market_overview_settings.json"
+}

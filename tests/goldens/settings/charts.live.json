@@ -1,0 +1,50 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "candle_down_color",
+      "candle_up_color",
+      "candle_width",
+      "chart_background",
+      "line_color",
+      "line_style",
+      "line_width",
+      "show_crosshair",
+      "show_date_label",
+      "show_gridlines",
+      "show_mouse_price_label",
+      "show_price_label"
+    ],
+    "keys_not_in_defaults": [
+      "show_crosshair",
+      "show_gridlines",
+      "show_mouse_price_label"
+    ],
+    "not_roundtripped": [],
+    "values": {
+      "candle_down_color": [
+        200,
+        50,
+        50
+      ],
+      "candle_up_color": [
+        76,
+        153,
+        0
+      ],
+      "candle_width": 0.6,
+      "chart_background": null,
+      "line_color": null,
+      "line_style": "PenStyle.SolidLine",
+      "line_width": 2,
+      "show_crosshair": true,
+      "show_date_label": true,
+      "show_gridlines": false,
+      "show_mouse_price_label": true,
+      "show_price_label": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

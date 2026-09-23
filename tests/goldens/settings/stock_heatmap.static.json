@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "click_to_chart": true,
+    "color_scale": 3.0,
+    "lookback": "1W",
+    "market": "S&P 500",
+    "show_hover_tooltip": true,
+    "show_logo": true,
+    "show_ticker": true,
+    "sizing_mode": "Market Cap",
+    "view_mode": "Sector Grouped"
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "stock_heatmap_settings.json"
+}

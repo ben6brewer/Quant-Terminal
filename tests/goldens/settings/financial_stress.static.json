@@ -1,0 +1,44 @@
+{
+  "defaults": {
+    "lookback": "10Y",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_kcfsi": true,
+    "show_legend": true,
+    "show_recession_bands": true,
+    "show_stlfsi": true
+  },
+  "dialog_title": "Financial Stress Settings",
+  "options": [
+    [
+      "show_stlfsi",
+      "Show STLFSI"
+    ],
+    [
+      "show_kcfsi",
+      "Show KCFSI"
+    ],
+    [
+      "show_recession_bands",
+      "Show recession shading"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "financial_stress_settings.json"
+}

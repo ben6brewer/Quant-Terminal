@@ -1,0 +1,35 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_recession_shading": true,
+    "view_mode": "Raw"
+  },
+  "dialog_title": "Labor Claims Settings",
+  "options": [
+    [
+      "show_gridlines",
+      "Show Gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show Crosshair"
+    ],
+    [
+      "show_legend",
+      "Show Legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show Hover Tooltip"
+    ],
+    [
+      "show_recession_shading",
+      "Show NBER Recession Shading"
+    ]
+  ],
+  "settings_file": "labor_claims_settings.json"
+}

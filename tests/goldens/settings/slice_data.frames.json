@@ -1,0 +1,91 @@
+{
+  "annual": {
+    "columns": [
+      "Median HH Income"
+    ],
+    "inferred_freq": "YS-JAN",
+    "span": "56 1971-01-01..2026-01-01"
+  },
+  "calendar_daily": {
+    "columns": [
+      "Upper Target"
+    ],
+    "inferred_freq": "D",
+    "span": "6406 2008-12-16..2026-06-30"
+  },
+  "daily": {
+    "columns": [
+      "DGS10"
+    ],
+    "inferred_freq": "B",
+    "span": "6128 2003-01-03..2026-06-30"
+  },
+  "monthly": {
+    "columns": [
+      "Unemployment Rate"
+    ],
+    "inferred_freq": "MS",
+    "span": "654 1972-01-01..2026-06-01"
+  },
+  "prices_daily": {
+    "columns": [
+      "AAPL",
+      "MSFT",
+      "SPY"
+    ],
+    "inferred_freq": null,
+    "span": "11785 1980-12-12..2026-06-30"
+  },
+  "quarterly": {
+    "columns": [
+      "GDP"
+    ],
+    "inferred_freq": "QS-OCT",
+    "span": "226 1970-01-01..2026-04-01"
+  },
+  "union_daily_monthly": {
+    "columns": [
+      "10Y",
+      "Unemployment"
+    ],
+    "inferred_freq": null,
+    "span": "6582 1972-01-01..2026-06-30"
+  },
+  "union_effr": {
+    "columns": [
+      "Fed Funds Rate",
+      "Lower Target",
+      "Upper Target"
+    ],
+    "inferred_freq": null,
+    "span": "6862 1971-01-01..2026-06-30"
+  },
+  "union_fci_nfci": {
+    "columns": [
+      "NFCI"
+    ],
+    "inferred_freq": null,
+    "span": "7425 1990-01-05..2026-06-30"
+  },
+  "union_velocity": {
+    "columns": [
+      "M2 Velocity"
+    ],
+    "inferred_freq": "MS",
+    "span": "642 1973-01-01..2026-06-01"
+  },
+  "weekly_fri": {
+    "columns": [
+      "NFCI"
+    ],
+    "inferred_freq": "W-FRI",
+    "span": "1904 1990-01-05..2026-06-26"
+  },
+  "weekly_sat": {
+    "columns": [
+      "Initial Claims"
+    ],
+    "inferred_freq": "W-SAT",
+    "span": "1643 1995-01-07..2026-06-27"
+  }
+}

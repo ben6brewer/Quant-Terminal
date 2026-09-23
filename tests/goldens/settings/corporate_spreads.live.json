@@ -1,0 +1,30 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "show_aaa",
+      "show_baa",
+      "show_crosshair",
+      "show_gridlines",
+      "show_hover_tooltip",
+      "show_hy",
+      "show_legend",
+      "show_recession_bands"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "show_aaa": true,
+      "show_baa": true,
+      "show_crosshair": true,
+      "show_gridlines": true,
+      "show_hover_tooltip": true,
+      "show_hy": true,
+      "show_legend": true,
+      "show_recession_bands": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

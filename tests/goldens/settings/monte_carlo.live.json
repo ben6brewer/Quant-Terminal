@@ -1,0 +1,98 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "band_50_color",
+      "band_90_color",
+      "benchmark",
+      "benchmark_is_portfolio",
+      "benchmark_median_color",
+      "benchmark_median_line_style",
+      "benchmark_median_line_width",
+      "block_size",
+      "chart_background",
+      "initial_value",
+      "mean_color",
+      "median_color",
+      "n_simulations",
+      "n_years",
+      "portfolio_median_color",
+      "portfolio_median_line_style",
+      "portfolio_median_line_width",
+      "show_band_50",
+      "show_band_90",
+      "show_benchmark_median",
+      "show_crosshair",
+      "show_gridlines",
+      "show_mean",
+      "show_median",
+      "show_median_label",
+      "show_portfolio_median",
+      "show_terminal_histogram",
+      "show_var_cvar",
+      "simulation_method",
+      "var_confidence_level"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "band_50_color": [
+        50,
+        50,
+        200
+      ],
+      "band_90_color": [
+        100,
+        100,
+        255
+      ],
+      "benchmark": "",
+      "benchmark_is_portfolio": false,
+      "benchmark_median_color": [
+        255,
+        165,
+        0
+      ],
+      "benchmark_median_line_style": "PenStyle.SolidLine",
+      "benchmark_median_line_width": 2,
+      "block_size": 21,
+      "chart_background": null,
+      "initial_value": 100.0,
+      "mean_color": [
+        255,
+        200,
+        0
+      ],
+      "median_color": [
+        255,
+        255,
+        255
+      ],
+      "n_simulations": 1000,
+      "n_years": 1,
+      "portfolio_median_color": [
+        255,
+        255,
+        255
+      ],
+      "portfolio_median_line_style": "PenStyle.SolidLine",
+      "portfolio_median_line_width": 2,
+      "show_band_50": true,
+      "show_band_90": true,
+      "show_benchmark_median": true,
+      "show_crosshair": true,
+      "show_gridlines": false,
+      "show_mean": false,
+      "show_median": true,
+      "show_median_label": true,
+      "show_portfolio_median": true,
+      "show_terminal_histogram": true,
+      "show_var_cvar": true,
+      "simulation_method": "bootstrap",
+      "var_confidence_level": 0.95
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

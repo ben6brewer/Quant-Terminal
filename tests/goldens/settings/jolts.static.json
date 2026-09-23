@@ -1,0 +1,20 @@
+{
+  "defaults": {
+    "jolts_series": [
+      "Job Openings",
+      "Hires",
+      "Quits",
+      "Layoffs"
+    ],
+    "lookback": "5Y",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_recession_shading": true,
+    "view_mode": "Raw"
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "jolts_settings.json"
+}

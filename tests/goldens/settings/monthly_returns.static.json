@@ -1,0 +1,11 @@
+{
+  "defaults": {
+    "colorscale": "Red-Green",
+    "decimals": 2,
+    "show_ytd": true,
+    "use_gradient": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "monthly_returns_settings.json"
+}

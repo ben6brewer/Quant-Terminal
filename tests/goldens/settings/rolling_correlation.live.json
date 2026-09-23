@@ -1,0 +1,30 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "line_color",
+      "line_style",
+      "line_width",
+      "show_crosshair",
+      "show_date_label",
+      "show_gridlines",
+      "show_reference_lines",
+      "show_value_label"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "line_color": null,
+      "line_style": "PenStyle.SolidLine",
+      "line_width": 2,
+      "show_crosshair": true,
+      "show_date_label": true,
+      "show_gridlines": true,
+      "show_reference_lines": true,
+      "show_value_label": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

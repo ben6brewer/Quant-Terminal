@@ -1,0 +1,20 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "show_futures_table",
+      "show_gridlines",
+      "show_probability_table"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "show_futures_table": true,
+      "show_gridlines": true,
+      "show_probability_table": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}
