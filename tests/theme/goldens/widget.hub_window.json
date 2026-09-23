@@ -1,0 +1,406 @@
+{
+  "producer": "app.ui.hub_window.HubWindow",
+  "themes": {
+    "bloomberg": {
+      "HubWindow": [
+        [
+          [
+            "QStackedWidget",
+            [
+              ["background-color", "#000814"]
+            ]
+          ],
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#000814"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["color", "#e8e8e8"],
+              ["background-color", "#0a1018"],
+              ["border", "1px solid #1a2332"],
+              ["font-family", "\"Segoe UI\", \"Arial\", sans-serif"]
+            ]
+          ],
+          [
+            "QLabel",
+            [
+              ["color", "#b0b0b0"]
+            ]
+          ],
+          [
+            "QRadioButton",
+            [
+              ["color", "#b0b0b0"]
+            ]
+          ],
+          [
+            "QWidget",
+            [
+              ["background-color", "#000814"],
+              ["color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "#titleBar",
+            [
+              ["background-color", "#0d1420"],
+              ["border-bottom", "1px solid #1a2838"]
+            ]
+          ],
+          [
+            "#titleLabel",
+            [
+              ["background-color", "transparent"],
+              ["color", "#e8e8e8"],
+              ["font-size", "13px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#titleBarButton",
+            [
+              ["background-color", "transparent"],
+              ["color", "#e8e8e8"],
+              ["border", "none"],
+              ["font-size", "16px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#titleBarButton:hover",
+            [
+              ["background-color", "#162030"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton",
+            [
+              ["background-color", "transparent"],
+              ["color", "#e8e8e8"],
+              ["border", "none"],
+              ["font-size", "14px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton:hover",
+            [
+              ["background-color", "#d32f2f"],
+              ["color", "#ffffff"]
+            ]
+          ]
+        ]
+      ],
+      "QPushButton#overlayHomeBtn": [
+        [
+          [
+            "#overlayHomeBtn",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2838"],
+              ["border-radius", "3px"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#overlayHomeBtn:hover",
+            [
+              ["background-color", "#1a2838"],
+              ["border-color", "#ff8000"]
+            ]
+          ],
+          [
+            "#overlayHomeBtn:pressed",
+            [
+              ["background-color", "#060a10"]
+            ]
+          ]
+        ]
+      ],
+      "TransparentOverlay": [
+        [
+          [
+            "TransparentOverlay",
+            [
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "HubWindow": [
+        [
+          [
+            "QStackedWidget",
+            [
+              ["background-color", "#1e1e1e"]
+            ]
+          ],
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#1e1e1e"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["color", "#ffffff"],
+              ["background-color", "#2d2d2d"]
+            ]
+          ],
+          [
+            "QLabel",
+            [
+              ["color", "#cccccc"]
+            ]
+          ],
+          [
+            "QRadioButton",
+            [
+              ["color", "#cccccc"]
+            ]
+          ],
+          [
+            "QWidget",
+            [
+              ["background-color", "#1e1e1e"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "#titleBar",
+            [
+              ["background-color", "#2d2d2d"],
+              ["border-bottom", "1px solid #3d3d3d"]
+            ]
+          ],
+          [
+            "#titleLabel",
+            [
+              ["background-color", "transparent"],
+              ["color", "#ffffff"],
+              ["font-size", "13px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#titleBarButton",
+            [
+              ["background-color", "transparent"],
+              ["color", "#ffffff"],
+              ["border", "none"],
+              ["font-size", "16px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#titleBarButton:hover",
+            [
+              ["background-color", "#3d3d3d"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton",
+            [
+              ["background-color", "transparent"],
+              ["color", "#ffffff"],
+              ["border", "none"],
+              ["font-size", "14px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton:hover",
+            [
+              ["background-color", "#d32f2f"]
+            ]
+          ]
+        ]
+      ],
+      "QPushButton#overlayHomeBtn": [
+        [
+          [
+            "#overlayHomeBtn",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "3px"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#overlayHomeBtn:hover",
+            [
+              ["background-color", "#3d3d3d"],
+              ["border-color", "#00d4ff"]
+            ]
+          ],
+          [
+            "#overlayHomeBtn:pressed",
+            [
+              ["background-color", "#1a1a1a"]
+            ]
+          ]
+        ]
+      ],
+      "TransparentOverlay": [
+        [
+          [
+            "TransparentOverlay",
+            [
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "HubWindow": [
+        [
+          [
+            "QStackedWidget",
+            [
+              ["background-color", "#ffffff"]
+            ]
+          ],
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#ffffff"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["color", "#000000"],
+              ["background-color", "#f5f5f5"],
+              ["border", "2px solid #d0d0d0"]
+            ]
+          ],
+          [
+            "QLabel",
+            [
+              ["color", "#333333"]
+            ]
+          ],
+          [
+            "QRadioButton",
+            [
+              ["color", "#333333"]
+            ]
+          ],
+          [
+            "QWidget",
+            [
+              ["background-color", "#ffffff"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "#titleBar",
+            [
+              ["background-color", "#f5f5f5"],
+              ["border-bottom", "1px solid #cccccc"]
+            ]
+          ],
+          [
+            "#titleLabel",
+            [
+              ["background-color", "transparent"],
+              ["color", "#000000"],
+              ["font-size", "13px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#titleBarButton",
+            [
+              ["background-color", "transparent"],
+              ["color", "#000000"],
+              ["border", "none"],
+              ["font-size", "16px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#titleBarButton:hover",
+            [
+              ["background-color", "#e0e0e0"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton",
+            [
+              ["background-color", "transparent"],
+              ["color", "#000000"],
+              ["border", "none"],
+              ["font-size", "14px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton:hover",
+            [
+              ["background-color", "#d32f2f"],
+              ["color", "#ffffff"]
+            ]
+          ]
+        ]
+      ],
+      "QPushButton#overlayHomeBtn": [
+        [
+          [
+            "#overlayHomeBtn",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "1px solid #cccccc"],
+              ["border-radius", "3px"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "#overlayHomeBtn:hover",
+            [
+              ["background-color", "#e8e8e8"],
+              ["border-color", "#0066cc"]
+            ]
+          ],
+          [
+            "#overlayHomeBtn:pressed",
+            [
+              ["background-color", "#d0d0d0"]
+            ]
+          ]
+        ]
+      ],
+      "TransparentOverlay": [
+        [
+          [
+            "TransparentOverlay",
+            [
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "producer": "app.ui.widgets.navigation.section_tab_bar.SectionTabBar",
+  "themes": {
+    "bloomberg": {
+      "SectionTabBar#sectionTabBar": [
+        [
+          [
+            "#sectionTabBar",
+            [
+              ["background-color", "#0d1420"],
+              ["border-bottom", "2px solid #ff8000"]
+            ]
+          ],
+          [
+            "#sectionTab",
+            [
+              ["background-color", "transparent"],
+              ["color", "#b0b0b0"],
+              ["border", "none"],
+              ["border-radius", "2px"],
+              ["padding", "10px 20px"],
+              ["font-size", "14px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#sectionTab:hover",
+            [
+              ["background-color", "#162030"],
+              ["color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "#sectionTab:checked",
+            [
+              ["background-color", "#ff8000"],
+              ["color", "#000000"],
+              ["font-weight", "bold"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "SectionTabBar#sectionTabBar": [
+        [
+          [
+            "#sectionTabBar",
+            [
+              ["background-color", "#2d2d2d"],
+              ["border-bottom", "2px solid #00d4ff"]
+            ]
+          ],
+          [
+            "#sectionTab",
+            [
+              ["background-color", "transparent"],
+              ["color", "#cccccc"],
+              ["border", "none"],
+              ["border-radius", "2px"],
+              ["padding", "10px 20px"],
+              ["font-size", "14px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#sectionTab:hover",
+            [
+              ["background-color", "#3d3d3d"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "#sectionTab:checked",
+            [
+              ["background-color", "#00d4ff"],
+              ["color", "#000000"],
+              ["font-weight", "bold"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "SectionTabBar#sectionTabBar": [
+        [
+          [
+            "#sectionTabBar",
+            [
+              ["background-color", "#f5f5f5"],
+              ["border-bottom", "2px solid #0066cc"]
+            ]
+          ],
+          [
+            "#sectionTab",
+            [
+              ["background-color", "transparent"],
+              ["color", "#333333"],
+              ["border", "none"],
+              ["border-radius", "2px"],
+              ["padding", "10px 20px"],
+              ["font-size", "14px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#sectionTab:hover",
+            [
+              ["background-color", "#e0e0e0"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "#sectionTab:checked",
+            [
+              ["background-color", "#0066cc"],
+              ["color", "#ffffff"],
+              ["font-weight", "bold"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

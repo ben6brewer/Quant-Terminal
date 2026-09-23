@@ -1,0 +1,671 @@
+{
+  "producer": "app.ui.modules.settings_module.SettingsModule",
+  "themes": {
+    "bloomberg": {
+      "SettingsModule": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#000814"],
+              ["color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#000814"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QLabel#headerLabel",
+            [
+              ["font-size", "24px"],
+              ["font-weight", "bold"],
+              ["color", "#e8e8e8"],
+              ["margin-bottom", "10px"]
+            ]
+          ],
+          [
+            "QLabel#themeLabel",
+            [
+              ["font-size", "14px"],
+              ["font-weight", "normal"],
+              ["color", "#a8a8a8"],
+              ["margin-left", "10px"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["font-size", "18px"],
+              ["font-weight", "bold"],
+              ["color", "#e8e8e8"],
+              ["border", "2px solid #1a2838"],
+              ["border-radius", "8px"],
+              ["margin-top", "10px"],
+              ["padding-top", "20px"]
+            ]
+          ],
+          [
+            "QGroupBox::title",
+            [
+              ["subcontrol-origin", "margin"],
+              ["left", "15px"],
+              ["padding", "0 5px"]
+            ]
+          ],
+          [
+            "QRadioButton",
+            [
+              ["color", "#e8e8e8"],
+              ["font-size", "13px"],
+              ["padding", "8px"],
+              ["margin-left", "20px"],
+              ["spacing", "8px"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator",
+            [
+              ["width", "16px"],
+              ["height", "16px"],
+              ["border-radius", "8px"],
+              ["border", "2px solid #1a2838"],
+              ["background-color", "#0d1420"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator:checked",
+            [
+              ["border-color", "#ff8000"],
+              ["background-color", "#ff8000"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator:hover",
+            [
+              ["border-color", "#ff8000"]
+            ]
+          ],
+          [
+            "QLabel#descLabel",
+            [
+              ["font-size", "13px"],
+              ["color", "#808080"],
+              ["margin-left", "10px"],
+              ["margin-right", "10px"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2838"],
+              ["border-radius", "6px"],
+              ["padding", "10px 16px"],
+              ["font-size", "12px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton:hover",
+            [
+              ["border-color", "#ff6b6b"],
+              ["background-color", "#1a2838"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton:pressed",
+            [
+              ["background-color", "#ff6b6b"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton",
+            [
+              ["background-color", "#2a1515"],
+              ["color", "#ff6b6b"],
+              ["border", "1px solid #ff6b6b"],
+              ["border-radius", "6px"],
+              ["padding", "12px 24px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["margin-top", "10px"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton:hover",
+            [
+              ["border-color", "#ff8888"],
+              ["background-color", "#3a2020"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton:pressed",
+            [
+              ["background-color", "#ff6b6b"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QLabel#apiKeyLabel",
+            [
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["color", "#a8a8a8"],
+              ["margin-left", "10px"]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2838"],
+              ["border-radius", "4px"],
+              ["padding", "6px 10px"],
+              ["font-size", "13px"],
+              ["font-family", "\"Menlo\", \"Consolas\", \"Courier New\""]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput:focus",
+            [
+              ["border-color", "#ff8000"]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput:read-only",
+            [
+              ["background-color", "#0a1018"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeyToggle, QPushButton#apiKeyEdit, QPushButton#apiKeyCancel",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2838"],
+              ["border-radius", "4px"],
+              ["padding", "6px 4px"],
+              ["font-size", "11px"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeyToggle:hover, QPushButton#apiKeyEdit:hover, QPushButton#apiKeyCancel:hover",
+            [
+              ["border-color", "#ff8000"],
+              ["background-color", "#1a2838"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeySave",
+            [
+              ["background-color", "#ff8000"],
+              ["color", "#000000"],
+              ["border", "1px solid #ff8000"],
+              ["border-radius", "4px"],
+              ["padding", "6px 4px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeySave:hover",
+            [
+              ["background-color", "#ff9933"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "SettingsModule": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#1e1e1e"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#1e1e1e"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QLabel#headerLabel",
+            [
+              ["font-size", "24px"],
+              ["font-weight", "bold"],
+              ["color", "#ffffff"],
+              ["margin-bottom", "10px"]
+            ]
+          ],
+          [
+            "QLabel#themeLabel",
+            [
+              ["font-size", "14px"],
+              ["font-weight", "normal"],
+              ["color", "#cccccc"],
+              ["margin-left", "10px"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["font-size", "18px"],
+              ["font-weight", "bold"],
+              ["color", "#ffffff"],
+              ["border", "2px solid #3d3d3d"],
+              ["border-radius", "8px"],
+              ["margin-top", "10px"],
+              ["padding-top", "20px"]
+            ]
+          ],
+          [
+            "QGroupBox::title",
+            [
+              ["subcontrol-origin", "margin"],
+              ["left", "15px"],
+              ["padding", "0 5px"]
+            ]
+          ],
+          [
+            "QRadioButton",
+            [
+              ["color", "#ffffff"],
+              ["font-size", "13px"],
+              ["padding", "8px"],
+              ["margin-left", "20px"],
+              ["spacing", "8px"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator",
+            [
+              ["width", "16px"],
+              ["height", "16px"],
+              ["border-radius", "8px"],
+              ["border", "2px solid #3d3d3d"],
+              ["background-color", "#2d2d2d"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator:checked",
+            [
+              ["border-color", "#00d4ff"],
+              ["background-color", "#00d4ff"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator:hover",
+            [
+              ["border-color", "#00d4ff"]
+            ]
+          ],
+          [
+            "QLabel#descLabel",
+            [
+              ["font-size", "13px"],
+              ["color", "#999999"],
+              ["margin-left", "10px"],
+              ["margin-right", "10px"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "6px"],
+              ["padding", "10px 16px"],
+              ["font-size", "12px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton:hover",
+            [
+              ["border-color", "#ff6b6b"],
+              ["background-color", "#3d3d3d"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton:pressed",
+            [
+              ["background-color", "#ff6b6b"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton",
+            [
+              ["background-color", "#3d2020"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #ff6b6b"],
+              ["border-radius", "6px"],
+              ["padding", "12px 24px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["margin-top", "10px"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton:hover",
+            [
+              ["border-color", "#ff8888"],
+              ["background-color", "#4d2525"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton:pressed",
+            [
+              ["background-color", "#ff6b6b"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QLabel#apiKeyLabel",
+            [
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["color", "#cccccc"],
+              ["margin-left", "10px"]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "4px"],
+              ["padding", "6px 10px"],
+              ["font-size", "13px"],
+              ["font-family", "\"Menlo\", \"Consolas\", \"Courier New\""]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput:focus",
+            [
+              ["border-color", "#00d4ff"]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput:read-only",
+            [
+              ["background-color", "#252525"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeyToggle, QPushButton#apiKeyEdit, QPushButton#apiKeyCancel",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "4px"],
+              ["padding", "6px 4px"],
+              ["font-size", "11px"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeyToggle:hover, QPushButton#apiKeyEdit:hover, QPushButton#apiKeyCancel:hover",
+            [
+              ["border-color", "#00d4ff"],
+              ["background-color", "#3d3d3d"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeySave",
+            [
+              ["background-color", "#00d4ff"],
+              ["color", "#000000"],
+              ["border", "1px solid #00d4ff"],
+              ["border-radius", "4px"],
+              ["padding", "6px 4px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeySave:hover",
+            [
+              ["background-color", "#33ddff"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "SettingsModule": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#ffffff"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#ffffff"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QLabel#headerLabel",
+            [
+              ["font-size", "24px"],
+              ["font-weight", "bold"],
+              ["color", "#000000"],
+              ["margin-bottom", "10px"]
+            ]
+          ],
+          [
+            "QLabel#themeLabel",
+            [
+              ["font-size", "14px"],
+              ["font-weight", "normal"],
+              ["color", "#333333"],
+              ["margin-left", "10px"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["font-size", "18px"],
+              ["font-weight", "bold"],
+              ["color", "#000000"],
+              ["border", "2px solid #cccccc"],
+              ["border-radius", "8px"],
+              ["margin-top", "10px"],
+              ["padding-top", "20px"]
+            ]
+          ],
+          [
+            "QGroupBox::title",
+            [
+              ["subcontrol-origin", "margin"],
+              ["left", "15px"],
+              ["padding", "0 5px"]
+            ]
+          ],
+          [
+            "QRadioButton",
+            [
+              ["color", "#000000"],
+              ["font-size", "13px"],
+              ["padding", "8px"],
+              ["margin-left", "20px"],
+              ["spacing", "8px"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator",
+            [
+              ["width", "16px"],
+              ["height", "16px"],
+              ["border-radius", "8px"],
+              ["border", "2px solid #cccccc"],
+              ["background-color", "#f5f5f5"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator:checked",
+            [
+              ["border-color", "#0066cc"],
+              ["background-color", "#0066cc"]
+            ]
+          ],
+          [
+            "QRadioButton::indicator:hover",
+            [
+              ["border-color", "#0066cc"]
+            ]
+          ],
+          [
+            "QLabel#descLabel",
+            [
+              ["font-size", "13px"],
+              ["color", "#666666"],
+              ["margin-left", "10px"],
+              ["margin-right", "10px"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "1px solid #cccccc"],
+              ["border-radius", "6px"],
+              ["padding", "10px 16px"],
+              ["font-size", "12px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton:hover",
+            [
+              ["border-color", "#e53935"],
+              ["background-color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "QPushButton#cacheButton:pressed",
+            [
+              ["background-color", "#e53935"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton",
+            [
+              ["background-color", "#ffebee"],
+              ["color", "#c62828"],
+              ["border", "1px solid #e53935"],
+              ["border-radius", "6px"],
+              ["padding", "12px 24px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["margin-top", "10px"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton:hover",
+            [
+              ["border-color", "#c62828"],
+              ["background-color", "#ffcdd2"]
+            ]
+          ],
+          [
+            "QPushButton#clearAllButton:pressed",
+            [
+              ["background-color", "#e53935"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QLabel#apiKeyLabel",
+            [
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["color", "#333333"],
+              ["margin-left", "10px"]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "1px solid #cccccc"],
+              ["border-radius", "4px"],
+              ["padding", "6px 10px"],
+              ["font-size", "13px"],
+              ["font-family", "\"Menlo\", \"Consolas\", \"Courier New\""]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput:focus",
+            [
+              ["border-color", "#0066cc"]
+            ]
+          ],
+          [
+            "QLineEdit#apiKeyInput:read-only",
+            [
+              ["background-color", "#eeeeee"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeyToggle, QPushButton#apiKeyEdit, QPushButton#apiKeyCancel",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "1px solid #cccccc"],
+              ["border-radius", "4px"],
+              ["padding", "6px 4px"],
+              ["font-size", "11px"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeyToggle:hover, QPushButton#apiKeyEdit:hover, QPushButton#apiKeyCancel:hover",
+            [
+              ["border-color", "#0066cc"],
+              ["background-color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeySave",
+            [
+              ["background-color", "#0066cc"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #0066cc"],
+              ["border-radius", "4px"],
+              ["padding", "6px 4px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton#apiKeySave:hover",
+            [
+              ["background-color", "#0077ee"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

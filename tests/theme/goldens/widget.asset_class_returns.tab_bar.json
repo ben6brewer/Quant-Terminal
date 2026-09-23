@@ -1,0 +1,125 @@
+{
+  "producer": "app.ui.modules.asset_class_returns.widgets.asset_class_returns_tab_bar.AssetClassReturnsTabBar",
+  "themes": {
+    "bloomberg": {
+      "AssetClassReturnsTabBar#viewTabBar": [
+        [
+          [
+            "#viewTabBar",
+            [
+              ["background-color", "#000814"],
+              ["border-bottom", "1px solid #1a2838"]
+            ]
+          ],
+          [
+            "#viewTab",
+            [
+              ["background-color", "transparent"],
+              ["color", "#a8a8a8"],
+              ["border", "none"],
+              ["border-radius", "2px"],
+              ["padding", "10px 20px"],
+              ["font-size", "14px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#viewTab:hover",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "#viewTab:checked",
+            [
+              ["background-color", "#ff8000"],
+              ["color", "#000000"],
+              ["font-weight", "bold"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "AssetClassReturnsTabBar#viewTabBar": [
+        [
+          [
+            "#viewTabBar",
+            [
+              ["background-color", "#1e1e1e"],
+              ["border-bottom", "1px solid #3d3d3d"]
+            ]
+          ],
+          [
+            "#viewTab",
+            [
+              ["background-color", "transparent"],
+              ["color", "#cccccc"],
+              ["border", "none"],
+              ["border-radius", "2px"],
+              ["padding", "10px 20px"],
+              ["font-size", "14px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#viewTab:hover",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "#viewTab:checked",
+            [
+              ["background-color", "#00d4ff"],
+              ["color", "#000000"],
+              ["font-weight", "bold"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "AssetClassReturnsTabBar#viewTabBar": [
+        [
+          [
+            "#viewTabBar",
+            [
+              ["background-color", "#ffffff"],
+              ["border-bottom", "1px solid #cccccc"]
+            ]
+          ],
+          [
+            "#viewTab",
+            [
+              ["background-color", "transparent"],
+              ["color", "#333333"],
+              ["border", "none"],
+              ["border-radius", "2px"],
+              ["padding", "10px 20px"],
+              ["font-size", "14px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#viewTab:hover",
+            [
+              ["background-color", "#f0f0f0"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "#viewTab:checked",
+            [
+              ["background-color", "#0066cc"],
+              ["color", "#ffffff"],
+              ["font-weight", "bold"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

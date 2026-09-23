@@ -1,0 +1,135 @@
+{
+  "kwargs": {},
+  "producer": "ThemeStylesheetService.get_button_stylesheet",
+  "themes": {
+    "bloomberg": [
+      [
+        "QPushButton",
+        [
+          ["background-color", "transparent"],
+          ["color", "#e8e8e8"],
+          ["border", "1px solid transparent"],
+          ["border-radius", "2px"],
+          ["padding", "8px 14px"],
+          ["font-weight", "600"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QPushButton:hover",
+        [
+          ["background-color", "rgba(255, 128, 0, 0.15)"],
+          ["border", "1px solid #ff8000"]
+        ]
+      ],
+      [
+        "QPushButton:pressed",
+        [
+          ["background-color", "#ff8000"],
+          ["color", "#000000"],
+          ["border", "1px solid #ff8000"]
+        ]
+      ],
+      [
+        "QPushButton:checked",
+        [
+          ["background-color", "#ff8000"],
+          ["color", "#000000"],
+          ["border", "1px solid #ff8000"]
+        ]
+      ],
+      [
+        "QPushButton:disabled",
+        [
+          ["opacity", "0.4"]
+        ]
+      ]
+    ],
+    "dark": [
+      [
+        "QPushButton",
+        [
+          ["background-color", "transparent"],
+          ["color", "#ffffff"],
+          ["border", "1px solid transparent"],
+          ["border-radius", "2px"],
+          ["padding", "8px 14px"],
+          ["font-weight", "600"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QPushButton:hover",
+        [
+          ["background-color", "rgba(0, 212, 255, 0.15)"],
+          ["border", "1px solid #00d4ff"]
+        ]
+      ],
+      [
+        "QPushButton:pressed",
+        [
+          ["background-color", "#00d4ff"],
+          ["color", "#000000"],
+          ["border", "1px solid #00d4ff"]
+        ]
+      ],
+      [
+        "QPushButton:checked",
+        [
+          ["background-color", "#00d4ff"],
+          ["color", "#000000"],
+          ["border", "1px solid #00d4ff"]
+        ]
+      ],
+      [
+        "QPushButton:disabled",
+        [
+          ["opacity", "0.4"]
+        ]
+      ]
+    ],
+    "light": [
+      [
+        "QPushButton",
+        [
+          ["background-color", "transparent"],
+          ["color", "#000000"],
+          ["border", "1px solid transparent"],
+          ["border-radius", "2px"],
+          ["padding", "8px 14px"],
+          ["font-weight", "600"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QPushButton:hover",
+        [
+          ["background-color", "rgba(0, 102, 204, 0.15)"],
+          ["border", "1px solid #0066cc"]
+        ]
+      ],
+      [
+        "QPushButton:pressed",
+        [
+          ["background-color", "#0066cc"],
+          ["color", "#ffffff"],
+          ["border", "1px solid #0066cc"]
+        ]
+      ],
+      [
+        "QPushButton:checked",
+        [
+          ["background-color", "#0066cc"],
+          ["color", "#ffffff"],
+          ["border", "1px solid #0066cc"]
+        ]
+      ],
+      [
+        "QPushButton:disabled",
+        [
+          ["opacity", "0.4"]
+        ]
+      ]
+    ]
+  }
+}

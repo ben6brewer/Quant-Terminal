@@ -1,0 +1,8 @@
+{
+  "producer": "ThemeStylesheetService.get_crosshair_rgb",
+  "themes": {
+    "bloomberg": [100, 120, 140],
+    "dark": [150, 150, 150],
+    "light": [100, 100, 100]
+  }
+}

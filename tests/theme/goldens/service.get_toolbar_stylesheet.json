@@ -1,0 +1,819 @@
+{
+  "kwargs": {},
+  "producer": "ThemeStylesheetService.get_toolbar_stylesheet",
+  "themes": {
+    "bloomberg": [
+      [
+        "#moduleToolbar, #treasuryToolbar, #rateProbToolbar",
+        [
+          ["background-color", "#000814"]
+        ]
+      ],
+      [
+        "QWidget#curve_zone, QWidget#lookback_zone",
+        [
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel",
+        [
+          ["color", "#a8a8a8"],
+          ["font-size", "13px"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#control_label",
+        [
+          ["color", "#e8e8e8"],
+          ["font-size", "13px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#portfolio_label",
+        [
+          ["color", "#e8e8e8"],
+          ["font-size", "15px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#info_label",
+        [
+          ["color", "#e8e8e8"],
+          ["font-size", "13px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#info_label_muted",
+        [
+          ["color", "#a8a8a8"],
+          ["font-size", "12px"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#separator",
+        [
+          ["color", "#1a2838"],
+          ["font-size", "18px"],
+          ["background", "transparent"],
+          ["padding", "0 2px"]
+        ]
+      ],
+      [
+        "QPushButton",
+        [
+          ["background-color", "#0d1420"],
+          ["color", "#e8e8e8"],
+          ["border", "1px solid #1a2838"],
+          ["border-radius", "3px"],
+          ["padding", "6px 12px"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QPushButton:hover",
+        [
+          ["background-color", "#1a2838"],
+          ["border-color", "#ff8000"]
+        ]
+      ],
+      [
+        "QPushButton:pressed",
+        [
+          ["background-color", "#000814"]
+        ]
+      ],
+      [
+        "QPushButton:checked",
+        [
+          ["background-color", "#ff8000"],
+          ["color", "#000000"],
+          ["border-color", "#ff8000"]
+        ]
+      ],
+      [
+        "QPushButton:disabled",
+        [
+          ["background-color", "#060a10"],
+          ["color", "#555555"],
+          ["border-color", "#1a2838"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn",
+        [
+          ["background-color", "#ff8000"],
+          ["color", "#000000"],
+          ["font-weight", "bold"],
+          ["border", "1px solid #ff8000"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn:hover",
+        [
+          ["background-color", "#e67300"],
+          ["border-color", "#e67300"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn:pressed",
+        [
+          ["background-color", "#cc6600"]
+        ]
+      ],
+      [
+        "#viewTab",
+        [
+          ["background-color", "transparent"],
+          ["color", "#a8a8a8"],
+          ["border", "none"],
+          ["border-radius", "2px"],
+          ["padding", "10px 20px"],
+          ["font-size", "14px"],
+          ["font-weight", "500"]
+        ]
+      ],
+      [
+        "#viewTab:hover",
+        [
+          ["background-color", "#1a2838"],
+          ["color", "#e8e8e8"]
+        ]
+      ],
+      [
+        "#viewTab:checked",
+        [
+          ["background-color", "#ff8000"],
+          ["color", "#000000"],
+          ["font-weight", "bold"]
+        ]
+      ],
+      [
+        "QPushButton#overlay_btn",
+        [
+          ["font-weight", "bold"]
+        ]
+      ],
+      [
+        "QPushButton#overlay_btn:checked",
+        [
+          ["background-color", "#ff8000"],
+          ["color", "#000000"],
+          ["border-color", "#ff8000"]
+        ]
+      ],
+      [
+        "QPushButton#delete_btn:hover",
+        [
+          ["background-color", "#3d1a1a"],
+          ["border-color", "#d32f2f"]
+        ]
+      ],
+      [
+        "QPushButton#delete_btn:pressed",
+        [
+          ["background-color", "#d32f2f"],
+          ["color", "#ffffff"]
+        ]
+      ],
+      [
+        "QPushButton#infoButton",
+        [
+          ["font-size", "16px"],
+          ["font-weight", "bold"],
+          ["border-radius", "20px"],
+          ["padding", "0px"],
+          ["min-width", "40px"],
+          ["max-width", "40px"]
+        ]
+      ],
+      [
+        "QComboBox",
+        [
+          ["background-color", "#0d1420"],
+          ["color", "#e8e8e8"],
+          ["border", "1px solid #1a2838"],
+          ["border-radius", "3px"],
+          ["padding", "8px 12px"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QComboBox:hover",
+        [
+          ["border-color", "#ff8000"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "24px"]
+        ]
+      ],
+      [
+        "QComboBox::down-arrow",
+        [
+          ["image", "none"],
+          ["border-left", "6px solid transparent"],
+          ["border-right", "6px solid transparent"],
+          ["border-top", "7px solid #e8e8e8"],
+          ["margin-right", "10px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#0d1420"],
+          ["color", "#e8e8e8"],
+          ["selection-background-color", "#ff8000"],
+          ["selection-color", "#000000"],
+          ["font-size", "13px"],
+          ["padding", "4px"],
+          ["outline", "none"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView::item",
+        [
+          ["padding", "8px 12px"],
+          ["min-height", "24px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView::item:selected",
+        [
+          ["background-color", "#ff8000"],
+          ["color", "#000000"]
+        ]
+      ],
+      [
+        "QLineEdit",
+        [
+          ["background-color", "#0d1420"],
+          ["color", "#e8e8e8"],
+          ["border", "1px solid #1a2838"],
+          ["border-radius", "3px"],
+          ["padding", "8px 12px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QLineEdit:focus",
+        [
+          ["border-color", "#ff8000"]
+        ]
+      ]
+    ],
+    "dark": [
+      [
+        "#moduleToolbar, #treasuryToolbar, #rateProbToolbar",
+        [
+          ["background-color", "#1e1e1e"]
+        ]
+      ],
+      [
+        "QWidget#curve_zone, QWidget#lookback_zone",
+        [
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel",
+        [
+          ["color", "#cccccc"],
+          ["font-size", "13px"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#control_label",
+        [
+          ["color", "#ffffff"],
+          ["font-size", "13px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#portfolio_label",
+        [
+          ["color", "#ffffff"],
+          ["font-size", "15px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#info_label",
+        [
+          ["color", "#ffffff"],
+          ["font-size", "13px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#info_label_muted",
+        [
+          ["color", "#cccccc"],
+          ["font-size", "12px"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#separator",
+        [
+          ["color", "#3d3d3d"],
+          ["font-size", "18px"],
+          ["background", "transparent"],
+          ["padding", "0 2px"]
+        ]
+      ],
+      [
+        "QPushButton",
+        [
+          ["background-color", "#2d2d2d"],
+          ["color", "#ffffff"],
+          ["border", "1px solid #3d3d3d"],
+          ["border-radius", "3px"],
+          ["padding", "6px 12px"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QPushButton:hover",
+        [
+          ["background-color", "#3d3d3d"],
+          ["border-color", "#00d4ff"]
+        ]
+      ],
+      [
+        "QPushButton:pressed",
+        [
+          ["background-color", "#1e1e1e"]
+        ]
+      ],
+      [
+        "QPushButton:checked",
+        [
+          ["background-color", "#00d4ff"],
+          ["color", "#000000"],
+          ["border-color", "#00d4ff"]
+        ]
+      ],
+      [
+        "QPushButton:disabled",
+        [
+          ["background-color", "#1a1a1a"],
+          ["color", "#666666"],
+          ["border-color", "#2d2d2d"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn",
+        [
+          ["background-color", "#00d4ff"],
+          ["color", "#000000"],
+          ["font-weight", "bold"],
+          ["border", "1px solid #00d4ff"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn:hover",
+        [
+          ["background-color", "#00bfe6"],
+          ["border-color", "#00bfe6"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn:pressed",
+        [
+          ["background-color", "#00a6c7"]
+        ]
+      ],
+      [
+        "#viewTab",
+        [
+          ["background-color", "transparent"],
+          ["color", "#cccccc"],
+          ["border", "none"],
+          ["border-radius", "2px"],
+          ["padding", "10px 20px"],
+          ["font-size", "14px"],
+          ["font-weight", "500"]
+        ]
+      ],
+      [
+        "#viewTab:hover",
+        [
+          ["background-color", "#3d3d3d"],
+          ["color", "#ffffff"]
+        ]
+      ],
+      [
+        "#viewTab:checked",
+        [
+          ["background-color", "#00d4ff"],
+          ["color", "#000000"],
+          ["font-weight", "bold"]
+        ]
+      ],
+      [
+        "QPushButton#overlay_btn",
+        [
+          ["font-weight", "bold"]
+        ]
+      ],
+      [
+        "QPushButton#overlay_btn:checked",
+        [
+          ["background-color", "#00d4ff"],
+          ["color", "#000000"],
+          ["border-color", "#00d4ff"]
+        ]
+      ],
+      [
+        "QPushButton#delete_btn:hover",
+        [
+          ["background-color", "#5c1a1a"],
+          ["border-color", "#d32f2f"]
+        ]
+      ],
+      [
+        "QPushButton#delete_btn:pressed",
+        [
+          ["background-color", "#d32f2f"],
+          ["color", "#ffffff"]
+        ]
+      ],
+      [
+        "QPushButton#infoButton",
+        [
+          ["font-size", "16px"],
+          ["font-weight", "bold"],
+          ["border-radius", "20px"],
+          ["padding", "0px"],
+          ["min-width", "40px"],
+          ["max-width", "40px"]
+        ]
+      ],
+      [
+        "QComboBox",
+        [
+          ["background-color", "#2d2d2d"],
+          ["color", "#ffffff"],
+          ["border", "1px solid #3d3d3d"],
+          ["border-radius", "3px"],
+          ["padding", "8px 12px"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QComboBox:hover",
+        [
+          ["border-color", "#00d4ff"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "24px"]
+        ]
+      ],
+      [
+        "QComboBox::down-arrow",
+        [
+          ["image", "none"],
+          ["border-left", "6px solid transparent"],
+          ["border-right", "6px solid transparent"],
+          ["border-top", "7px solid #ffffff"],
+          ["margin-right", "10px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#2d2d2d"],
+          ["color", "#ffffff"],
+          ["selection-background-color", "#00d4ff"],
+          ["selection-color", "#000000"],
+          ["font-size", "13px"],
+          ["padding", "4px"],
+          ["outline", "none"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView::item",
+        [
+          ["padding", "8px 12px"],
+          ["min-height", "24px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView::item:selected",
+        [
+          ["background-color", "#00d4ff"],
+          ["color", "#000000"]
+        ]
+      ],
+      [
+        "QLineEdit",
+        [
+          ["background-color", "#2d2d2d"],
+          ["color", "#ffffff"],
+          ["border", "1px solid #3d3d3d"],
+          ["border-radius", "3px"],
+          ["padding", "8px 12px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QLineEdit:focus",
+        [
+          ["border-color", "#00d4ff"]
+        ]
+      ]
+    ],
+    "light": [
+      [
+        "#moduleToolbar, #treasuryToolbar, #rateProbToolbar",
+        [
+          ["background-color", "#ffffff"]
+        ]
+      ],
+      [
+        "QWidget#curve_zone, QWidget#lookback_zone",
+        [
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel",
+        [
+          ["color", "#333333"],
+          ["font-size", "13px"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#control_label",
+        [
+          ["color", "#000000"],
+          ["font-size", "13px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#portfolio_label",
+        [
+          ["color", "#000000"],
+          ["font-size", "15px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#info_label",
+        [
+          ["color", "#000000"],
+          ["font-size", "13px"],
+          ["font-weight", "500"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#info_label_muted",
+        [
+          ["color", "#333333"],
+          ["font-size", "12px"],
+          ["background", "transparent"]
+        ]
+      ],
+      [
+        "QLabel#separator",
+        [
+          ["color", "#cccccc"],
+          ["font-size", "18px"],
+          ["background", "transparent"],
+          ["padding", "0 2px"]
+        ]
+      ],
+      [
+        "QPushButton",
+        [
+          ["background-color", "#f5f5f5"],
+          ["color", "#000000"],
+          ["border", "1px solid #cccccc"],
+          ["border-radius", "3px"],
+          ["padding", "6px 12px"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QPushButton:hover",
+        [
+          ["background-color", "#e8e8e8"],
+          ["border-color", "#0066cc"]
+        ]
+      ],
+      [
+        "QPushButton:pressed",
+        [
+          ["background-color", "#ffffff"]
+        ]
+      ],
+      [
+        "QPushButton:checked",
+        [
+          ["background-color", "#0066cc"],
+          ["color", "#ffffff"],
+          ["border-color", "#0066cc"]
+        ]
+      ],
+      [
+        "QPushButton:disabled",
+        [
+          ["background-color", "#e0e0e0"],
+          ["color", "#999999"],
+          ["border-color", "#cccccc"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn",
+        [
+          ["background-color", "#0066cc"],
+          ["color", "#ffffff"],
+          ["font-weight", "bold"],
+          ["border", "1px solid #0066cc"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn:hover",
+        [
+          ["background-color", "#0055aa"],
+          ["border-color", "#0055aa"]
+        ]
+      ],
+      [
+        "QPushButton#run_btn:pressed",
+        [
+          ["background-color", "#004488"]
+        ]
+      ],
+      [
+        "#viewTab",
+        [
+          ["background-color", "transparent"],
+          ["color", "#333333"],
+          ["border", "none"],
+          ["border-radius", "2px"],
+          ["padding", "10px 20px"],
+          ["font-size", "14px"],
+          ["font-weight", "500"]
+        ]
+      ],
+      [
+        "#viewTab:hover",
+        [
+          ["background-color", "#e8e8e8"],
+          ["color", "#000000"]
+        ]
+      ],
+      [
+        "#viewTab:checked",
+        [
+          ["background-color", "#0066cc"],
+          ["color", "#ffffff"],
+          ["font-weight", "bold"]
+        ]
+      ],
+      [
+        "QPushButton#overlay_btn",
+        [
+          ["font-weight", "bold"]
+        ]
+      ],
+      [
+        "QPushButton#overlay_btn:checked",
+        [
+          ["background-color", "#0066cc"],
+          ["color", "#ffffff"],
+          ["border-color", "#0066cc"]
+        ]
+      ],
+      [
+        "QPushButton#delete_btn:hover",
+        [
+          ["background-color", "#ffebee"],
+          ["border-color", "#d32f2f"]
+        ]
+      ],
+      [
+        "QPushButton#delete_btn:pressed",
+        [
+          ["background-color", "#d32f2f"],
+          ["color", "#ffffff"]
+        ]
+      ],
+      [
+        "QPushButton#infoButton",
+        [
+          ["font-size", "16px"],
+          ["font-weight", "bold"],
+          ["border-radius", "20px"],
+          ["padding", "0px"],
+          ["min-width", "40px"],
+          ["max-width", "40px"]
+        ]
+      ],
+      [
+        "QComboBox",
+        [
+          ["background-color", "#f5f5f5"],
+          ["color", "#000000"],
+          ["border", "1px solid #cccccc"],
+          ["border-radius", "3px"],
+          ["padding", "8px 12px"],
+          ["font-size", "13px"]
+        ]
+      ],
+      [
+        "QComboBox:hover",
+        [
+          ["border-color", "#0066cc"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "24px"]
+        ]
+      ],
+      [
+        "QComboBox::down-arrow",
+        [
+          ["image", "none"],
+          ["border-left", "6px solid transparent"],
+          ["border-right", "6px solid transparent"],
+          ["border-top", "7px solid #000000"],
+          ["margin-right", "10px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#f5f5f5"],
+          ["color", "#000000"],
+          ["selection-background-color", "#0066cc"],
+          ["selection-color", "#ffffff"],
+          ["font-size", "13px"],
+          ["padding", "4px"],
+          ["outline", "none"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView::item",
+        [
+          ["padding", "8px 12px"],
+          ["min-height", "24px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView::item:selected",
+        [
+          ["background-color", "#0066cc"],
+          ["color", "#ffffff"]
+        ]
+      ],
+      [
+        "QLineEdit",
+        [
+          ["background-color", "#f5f5f5"],
+          ["color", "#000000"],
+          ["border", "1px solid #cccccc"],
+          ["border-radius", "3px"],
+          ["padding", "8px 12px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QLineEdit:focus",
+        [
+          ["border-color", "#0066cc"]
+        ]
+      ]
+    ]
+  }
+}

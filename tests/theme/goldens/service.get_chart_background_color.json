@@ -1,0 +1,8 @@
+{
+  "producer": "ThemeStylesheetService.get_chart_background_color",
+  "themes": {
+    "bloomberg": "#000814",
+    "dark": "#1e1e1e",
+    "light": "w"
+  }
+}
