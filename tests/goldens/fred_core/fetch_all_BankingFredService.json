@@ -1,0 +1,118 @@
+{
+  "fred_ids": [
+    "BUSLOANS",
+    "CONSUMER",
+    "REALLN",
+    "TOTLL",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "total_loans": 12900.0
+  },
+  "outputs": {
+    "loans": {
+      "columns": [
+        "Total Loans",
+        "C&I Loans",
+        "Real Estate",
+        "Consumer"
+      ],
+      "data": {
+        "C&I Loans": {
+          "count": 2355,
+          "first": 250.756,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 2800.0,
+          "last_valid": "2026-06-24",
+          "max": 2817.53,
+          "min": 250.458,
+          "sum": 3612919.2
+        },
+        "Consumer": {
+          "count": 2331,
+          "first": 149.448,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 1950.0,
+          "last_valid": "2026-06-24",
+          "max": 1962.504,
+          "min": 149.448,
+          "sum": 2072557.2
+        },
+        "Real Estate": {
+          "count": 2367,
+          "first": 332.603,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 5600.0,
+          "last_valid": "2026-06-24",
+          "max": 5702.914,
+          "min": 332.419,
+          "sum": 6858174.5
+        },
+        "Total Loans": {
+          "count": 2090,
+          "first": 2824.574,
+          "first_valid": "1993-01-06",
+          "kind": "f",
+          "last": 12900.0,
+          "last_valid": "2026-06-24",
+          "max": 12900.0,
+          "min": 2823.472,
+          "sum": 13607277.0
+        }
+      },
+      "index": {
+        "end": "2026-06-24",
+        "freq": null,
+        "len": 2367,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        2367,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 2367,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-24",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 222.0
+        }
+      },
+      "index": {
+        "end": "2026-06-24",
+        "freq": null,
+        "len": 2367,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        2367,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "BankingFredService"
+}

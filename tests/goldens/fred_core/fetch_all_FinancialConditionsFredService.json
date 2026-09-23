@@ -1,0 +1,194 @@
+{
+  "fred_ids": [
+    "AAA10Y",
+    "ANFCI",
+    "BAA10Y",
+    "BAMLH0A0HYM2",
+    "NFCI",
+    "NFCICREDIT",
+    "NFCILEVERAGE",
+    "NFCINONFINLEVERAGE",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "baa_spread": 1.671,
+    "hy_oas": 2.588,
+    "nfci": -0.614,
+    "nfci_prev": -0.614
+  },
+  "outputs": {
+    "nfci": {
+      "columns": [
+        "NFCI",
+        "Adjusted NFCI",
+        "Credit Sub",
+        "Leverage Sub",
+        "NonFin Leverage Sub"
+      ],
+      "data": {
+        "Adjusted NFCI": {
+          "count": 7175,
+          "first": -0.534,
+          "first_valid": "1994-01-07",
+          "kind": "f",
+          "last": -0.892,
+          "last_valid": "2026-06-30",
+          "max": 0.232,
+          "min": -1.48,
+          "sum": -5298.587
+        },
+        "Credit Sub": {
+          "count": 7362,
+          "first": -0.29,
+          "first_valid": "1991-01-04",
+          "kind": "f",
+          "last": -0.065,
+          "last_valid": "2026-06-30",
+          "max": 0.756,
+          "min": -1.264,
+          "sum": -1472.72
+        },
+        "Leverage Sub": {
+          "count": 7175,
+          "first": 0.397,
+          "first_valid": "1994-01-07",
+          "kind": "f",
+          "last": -0.108,
+          "last_valid": "2026-06-30",
+          "max": 0.901,
+          "min": -0.702,
+          "sum": -538.204
+        },
+        "NFCI": {
+          "count": 7425,
+          "first": -0.344,
+          "first_valid": "1990-01-05",
+          "kind": "f",
+          "last": -0.614,
+          "last_valid": "2026-06-30",
+          "max": 0.424,
+          "min": -1.108,
+          "sum": -2348.886
+        },
+        "NonFin Leverage Sub": {
+          "count": 7175,
+          "first": -0.911,
+          "first_valid": "1994-01-07",
+          "kind": "f",
+          "last": -0.362,
+          "last_valid": "2026-06-30",
+          "max": 0.443,
+          "min": -1.17,
+          "sum": -3123.909
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 7425,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1990-01-05",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        7425,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "spreads": {
+      "columns": [
+        "Baa-10Y Spread",
+        "Aaa-10Y Spread",
+        "HY OAS"
+      ],
+      "data": {
+        "Aaa-10Y Spread": {
+          "count": 6209,
+          "first": 0.89,
+          "first_valid": "2003-01-03",
+          "kind": "f",
+          "last": 0.993,
+          "last_valid": "2026-06-30",
+          "max": 1.435,
+          "min": 0.2,
+          "sum": 4771.458
+        },
+        "Baa-10Y Spread": {
+          "count": 6738,
+          "first": 0.908,
+          "first_valid": "2001-01-03",
+          "kind": "f",
+          "last": 1.671,
+          "last_valid": "2026-06-30",
+          "max": 2.474,
+          "min": 0.8,
+          "sum": 10327.492
+        },
+        "HY OAS": {
+          "count": 5944,
+          "first": 4.175,
+          "first_valid": "2004-01-05",
+          "kind": "f",
+          "last": 2.588,
+          "last_valid": "2026-06-30",
+          "max": 9.388,
+          "min": 2.3,
+          "sum": 25023.513
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 6738,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2001-01-03",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        6738,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 7666,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-30",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 782.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 7666,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        7666,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "FinancialConditionsFredService"
+}

@@ -1,0 +1,316 @@
+{
+  "fred_ids": [
+    "DFEDTARL",
+    "DFEDTARU",
+    "FEDFUNDS",
+    "M1SL",
+    "M2SL",
+    "M2V",
+    "USREC",
+    "WALCL",
+    "WLCFLL",
+    "WRBWFRBL",
+    "WSHOFADSL",
+    "WSHOMCB",
+    "WSHOTSL"
+  ],
+  "has_get_latest_stats": false,
+  "latest_stats": null,
+  "outputs": {
+    "balance_sheet": {
+      "columns": [
+        "Total Assets",
+        "Treasuries",
+        "MBS",
+        "Agency Debt",
+        "Loans",
+        "Other"
+      ],
+      "data": {
+        "Agency Debt": {
+          "count": 1904,
+          "first": 0.000280592,
+          "first_valid": "1990-01-03",
+          "kind": "f",
+          "last": 0.0023,
+          "last_valid": "2026-06-24",
+          "max": 0.002302178,
+          "min": 0.000278205,
+          "sum": 1.8493909
+        },
+        "Loans": {
+          "count": 1643,
+          "first": 0.000813068,
+          "first_valid": "1995-01-04",
+          "kind": "f",
+          "last": 0.005,
+          "last_valid": "2026-06-24",
+          "max": 0.005057267,
+          "min": 0.000801429,
+          "sum": 3.6604381
+        },
+        "MBS": {
+          "count": 1904,
+          "first": 0.13661969,
+          "first_valid": "1990-01-03",
+          "kind": "f",
+          "last": 2.1,
+          "last_valid": "2026-06-24",
+          "max": 2.1113499,
+          "min": 0.13661969,
+          "sum": 1388.6758
+        },
+        "Other": {
+          "count": 1643,
+          "first": 0.31168031,
+          "first_valid": "1995-01-04",
+          "kind": "f",
+          "last": 0.2927,
+          "last_valid": "2026-06-24",
+          "max": 1.5095897,
+          "min": 0.0,
+          "sum": 1321.2024
+        },
+        "Total Assets": {
+          "count": 1643,
+          "first": 1.1928743,
+          "first_valid": "1995-01-04",
+          "kind": "f",
+          "last": 6.6,
+          "last_valid": "2026-06-24",
+          "max": 6.6859824,
+          "min": 1.1928743,
+          "sum": 5779.0813
+        },
+        "Treasuries": {
+          "count": 1852,
+          "first": 0.6035195,
+          "first_valid": "1991-01-02",
+          "kind": "f",
+          "last": 4.2,
+          "last_valid": "2026-06-24",
+          "max": 4.3310654,
+          "min": 0.58854574,
+          "sum": 3240.6833
+        }
+      },
+      "index": {
+        "end": "2026-06-24",
+        "freq": "W-WED",
+        "len": 1904,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1990-01-03",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        1904,
+        6
+      ],
+      "type": "DataFrame"
+    },
+    "effr": {
+      "columns": [
+        "Fed Funds Rate",
+        "Lower Target",
+        "Upper Target"
+      ],
+      "data": {
+        "Fed Funds Rate": {
+          "count": 6862,
+          "first": 1.487,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 1.248,
+          "last_valid": "2026-06-30",
+          "max": 8.014,
+          "min": 0.05,
+          "sum": 12683.147
+        },
+        "Lower Target": {
+          "count": 6406,
+          "first": 0.0,
+          "first_valid": "2008-12-16",
+          "kind": "f",
+          "last": 1.5,
+          "last_valid": "2026-06-30",
+          "max": 2.75,
+          "min": 0.0,
+          "sum": 8709.5
+        },
+        "Upper Target": {
+          "count": 6406,
+          "first": 0.25,
+          "first_valid": "2008-12-16",
+          "kind": "f",
+          "last": 1.75,
+          "last_valid": "2026-06-30",
+          "max": 3.0,
+          "min": 0.25,
+          "sum": 10311.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 6862,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1971-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        6862,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "money_supply": {
+      "columns": [
+        "M1",
+        "M2"
+      ],
+      "data": {
+        "M1": {
+          "count": 618,
+          "first": 1.086171,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 18.8,
+          "last_valid": "2026-06-01",
+          "max": 18.8,
+          "min": 1.086171,
+          "sum": 3532.2301
+        },
+        "M2": {
+          "count": 630,
+          "first": 0.852082,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 22.0,
+          "last_valid": "2026-06-01",
+          "max": 22.343638,
+          "min": 0.852082,
+          "sum": 3692.7464
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 630,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1974-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        630,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "reserves": {
+      "columns": [
+        "Reserve Balances"
+      ],
+      "data": {
+        "Reserve Balances": {
+          "count": 1852,
+          "first": 0.29382272,
+          "first_valid": "1991-01-02",
+          "kind": "f",
+          "last": 3.3,
+          "last_valid": "2026-06-24",
+          "max": 3.3092131,
+          "min": 0.29382272,
+          "sum": 2394.507
+        }
+      },
+      "index": {
+        "end": "2026-06-24",
+        "freq": "W-WED",
+        "len": 1852,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1991-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        1852,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "velocity": {
+      "columns": [
+        "M2 Velocity"
+      ],
+      "data": {
+        "M2 Velocity": {
+          "count": 642,
+          "first": 1.325,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 1.298,
+          "last_valid": "2026-06-01",
+          "max": 1.713,
+          "min": 1.1,
+          "sum": 896.214
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 642,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1973-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        642,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "MonetaryFredService"
+}

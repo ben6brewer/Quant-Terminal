@@ -1,0 +1,207 @@
+{
+  "fred_ids": [
+    "LNU04000012",
+    "LNU04000036",
+    "LNU04000048",
+    "LNU04000086",
+    "LNU04000088",
+    "LNU04000089",
+    "LNU04000091",
+    "LNU04000093",
+    "LNU04000095",
+    "LNU04000097",
+    "UNRATENSA",
+    "USREC"
+  ],
+  "has_get_latest_stats": false,
+  "latest_stats": null,
+  "outputs": {
+    "rates": {
+      "columns": [
+        "16+",
+        "16-19",
+        "16-17",
+        "18-19",
+        "20-24",
+        "25+",
+        "25-34",
+        "35-44",
+        "45-54",
+        "55-64",
+        "65+"
+      ],
+      "data": {
+        "16+": {
+          "count": 678,
+          "first": 2.992,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 6.059,
+          "last_valid": "2026-06-01",
+          "max": 8.399,
+          "min": 2.5,
+          "sum": 3579.297
+        },
+        "16-17": {
+          "count": 630,
+          "first": 4.955,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 5.593,
+          "last_valid": "2026-06-01",
+          "max": 8.967,
+          "min": 2.5,
+          "sum": 3761.774
+        },
+        "16-19": {
+          "count": 654,
+          "first": 11.098,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 17.144,
+          "last_valid": "2026-06-01",
+          "max": 20.033,
+          "min": 7.0,
+          "sum": 8254.919
+        },
+        "18-19": {
+          "count": 666,
+          "first": 4.39,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 6.226,
+          "last_valid": "2026-06-01",
+          "max": 8.255,
+          "min": 2.5,
+          "sum": 3271.932
+        },
+        "20-24": {
+          "count": 642,
+          "first": 5.678,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 6.137,
+          "last_valid": "2026-06-01",
+          "max": 9.125,
+          "min": 2.5,
+          "sum": 3724.597
+        },
+        "25+": {
+          "count": 618,
+          "first": 5.794,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 7.418,
+          "last_valid": "2026-06-01",
+          "max": 8.883,
+          "min": 2.5,
+          "sum": 2859.836
+        },
+        "25-34": {
+          "count": 642,
+          "first": 5.33,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 7.188,
+          "last_valid": "2026-06-01",
+          "max": 10.041,
+          "min": 2.897,
+          "sum": 3795.826
+        },
+        "35-44": {
+          "count": 678,
+          "first": 5.932,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 6.725,
+          "last_valid": "2026-06-01",
+          "max": 7.869,
+          "min": 2.5,
+          "sum": 3118.699
+        },
+        "45-54": {
+          "count": 654,
+          "first": 2.69,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 2.5,
+          "last_valid": "2026-06-01",
+          "max": 8.704,
+          "min": 2.5,
+          "sum": 2770.385
+        },
+        "55-64": {
+          "count": 642,
+          "first": 4.639,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 4.09,
+          "last_valid": "2026-06-01",
+          "max": 9.876,
+          "min": 2.552,
+          "sum": 3684.805
+        },
+        "65+": {
+          "count": 618,
+          "first": 5.263,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 4.682,
+          "last_valid": "2026-06-01",
+          "max": 8.72,
+          "min": 2.5,
+          "sum": 2980.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        11
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "UnemploymentAgeService"
+}

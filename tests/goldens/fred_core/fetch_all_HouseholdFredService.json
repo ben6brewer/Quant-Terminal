@@ -1,0 +1,162 @@
+{
+  "fred_ids": [
+    "BOGZ1FL192090005Q",
+    "CMDEBT",
+    "HDTGPDUSQ163N",
+    "TDSP",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "debt_to_gdp": 54.16,
+    "household_debt": 0.02,
+    "net_worth": 170.0
+  },
+  "outputs": {
+    "debt": {
+      "columns": [
+        "Debt-to-GDP",
+        "Debt Service"
+      ],
+      "data": {
+        "Debt Service": {
+          "count": 218,
+          "first": 12.627,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 11.531,
+          "last_valid": "2026-04-01",
+          "max": 13.238,
+          "min": 8.773,
+          "sum": 2359.096
+        },
+        "Debt-to-GDP": {
+          "count": 226,
+          "first": 71.524,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 54.161,
+          "last_valid": "2026-04-01",
+          "max": 96.539,
+          "min": 54.161,
+          "sum": 16843.103
+        }
+      },
+      "index": {
+        "end": "2026-04-01",
+        "freq": "QS-OCT",
+        "len": 226,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        226,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "household_debt": {
+      "columns": [
+        "Household Debt"
+      ],
+      "data": {
+        "Household Debt": {
+          "count": 226,
+          "first": 0.001345631,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0205,
+          "last_valid": "2026-04-01",
+          "max": 0.0205,
+          "min": 0.001345631,
+          "sum": 1.5677894
+        }
+      },
+      "index": {
+        "end": "2026-04-01",
+        "freq": "QS-OCT",
+        "len": 226,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        226,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "wealth": {
+      "columns": [
+        "Net Worth"
+      ],
+      "data": {
+        "Net Worth": {
+          "count": 210,
+          "first": 4.6089967,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 170.0,
+          "last_valid": "2026-04-01",
+          "max": 170.26272,
+          "min": 4.5453898,
+          "sum": 10680.453
+        }
+      },
+      "index": {
+        "end": "2026-04-01",
+        "freq": "QS-OCT",
+        "len": 210,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1974-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        210,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "HouseholdFredService"
+}

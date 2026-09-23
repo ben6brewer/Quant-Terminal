@@ -1,0 +1,114 @@
+{
+  "fred_ids": [
+    "GFDEBTN",
+    "GFDEGDQ188S",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "debt_gdp_pct": 92.03,
+    "debt_trillions": 37.0
+  },
+  "outputs": {
+    "debt": {
+      "columns": [
+        "Total Public Debt"
+      ],
+      "data": {
+        "Total Public Debt": {
+          "count": 214,
+          "first": 0.84062359,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 37.0,
+          "last_valid": "2026-04-01",
+          "max": 37.0,
+          "min": 0.84062359,
+          "sum": 2047.2216
+        }
+      },
+      "index": {
+        "end": "2026-04-01",
+        "freq": "QS-OCT",
+        "len": 214,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1973-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        214,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "debt_gdp": {
+      "columns": [
+        "Debt to GDP"
+      ],
+      "data": {
+        "Debt to GDP": {
+          "count": 210,
+          "first": 92.2,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 92.027,
+          "last_valid": "2026-04-01",
+          "max": 127.943,
+          "min": 51.975,
+          "sum": 18516.884
+        }
+      },
+      "index": {
+        "end": "2026-04-01",
+        "freq": "QS-OCT",
+        "len": 210,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1974-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        210,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "FiscalFredService"
+}

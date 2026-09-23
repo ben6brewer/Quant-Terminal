@@ -1,0 +1,295 @@
+{
+  "fred_ids": [
+    "CES0500000003",
+    "DSPI",
+    "DSPIC96",
+    "ECIWAG",
+    "PCE",
+    "PCEC96",
+    "PI",
+    "PSAVERT",
+    "RPI",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "ahe_raw": 37.5,
+    "ahe_yoy": 2.0158329,
+    "eci_yoy": 1.1342322,
+    "personal_income": 25.5,
+    "savings_rate": 5.5
+  },
+  "outputs": {
+    "income": {
+      "columns": [
+        "Personal Income",
+        "Disposable Income",
+        "PCE Level"
+      ],
+      "data": {
+        "Disposable Income": {
+          "count": 618,
+          "first": 1.485986,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 22.0,
+          "last_valid": "2026-06-01",
+          "max": 22.068036,
+          "min": 1.485986,
+          "sum": 4713.705
+        },
+        "PCE Level": {
+          "count": 618,
+          "first": 1.717314,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 20.8,
+          "last_valid": "2026-06-01",
+          "max": 20.890416,
+          "min": 1.717314,
+          "sum": 4754.4605
+        },
+        "Personal Income": {
+          "count": 618,
+          "first": 1.861539,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 25.5,
+          "last_valid": "2026-06-01",
+          "max": 25.5,
+          "min": 1.861539,
+          "sum": 5700.2659
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 618,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1975-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        618,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "real_income": {
+      "columns": [
+        "Real Personal Income",
+        "Real Disposable Income",
+        "Real PCE Level"
+      ],
+      "data": {
+        "Real Disposable Income": {
+          "count": 666,
+          "first": 1.123139,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 17.5,
+          "last_valid": "2026-06-01",
+          "max": 17.5,
+          "min": 1.123139,
+          "sum": 3946.9997
+        },
+        "Real PCE Level": {
+          "count": 678,
+          "first": 1.064589,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 16.6,
+          "last_valid": "2026-06-01",
+          "max": 16.6,
+          "min": 1.064589,
+          "sum": 3914.99
+        },
+        "Real Personal Income": {
+          "count": 630,
+          "first": 1.189393,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 16.8,
+          "last_valid": "2026-06-01",
+          "max": 16.8,
+          "min": 1.189393,
+          "sum": 3666.038
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "savings": {
+      "columns": [
+        "Savings Rate"
+      ],
+      "data": {
+        "Savings Rate": {
+          "count": 666,
+          "first": 9.083,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 5.5,
+          "last_valid": "2026-06-01",
+          "max": 11.913,
+          "min": 1.0,
+          "sum": 4818.961
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 666,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1971-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        666,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "wages": {
+      "columns": [
+        "AHE YoY%",
+        "ECI YoY%"
+      ],
+      "data": {
+        "AHE YoY%": {
+          "count": 630,
+          "first": 1.7541722,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 2.0158329,
+          "last_valid": "2026-06-01",
+          "max": 6.4675433,
+          "min": 0.34524426,
+          "sum": 1837.2943
+        },
+        "ECI YoY%": {
+          "count": 626,
+          "first": 1.0962433,
+          "first_valid": "1974-05-01",
+          "kind": "f",
+          "last": 1.1342322,
+          "last_valid": "2026-06-01",
+          "max": 3.4635781,
+          "min": -0.55985539,
+          "sum": 605.55644
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 630,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1974-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        630,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "wages_raw": {
+      "columns": [
+        "Avg Hourly Earnings",
+        "ECI Wages"
+      ],
+      "data": {
+        "Avg Hourly Earnings": {
+          "count": 642,
+          "first": 8.209,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 37.5,
+          "last_valid": "2026-06-01",
+          "max": 37.5,
+          "min": 8.203,
+          "sum": 12400.462
+        },
+        "ECI Wages": {
+          "count": 630,
+          "first": 38.039,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 172.0,
+          "last_valid": "2026-06-01",
+          "max": 172.0,
+          "min": 38.039,
+          "sum": 54834.306
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 642,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1973-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        642,
+        2
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "IncomeFredService"
+}

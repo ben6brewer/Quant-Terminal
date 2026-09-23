@@ -1,0 +1,154 @@
+{
+  "fred_ids": [
+    "HTRUCKSSA",
+    "LAUTOSA",
+    "RRSFS",
+    "RSAFS",
+    "TOTALSA",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "retail_mom": 0.31089627,
+    "retail_total": 740000.0,
+    "vehicle_total": 15.627
+  },
+  "outputs": {
+    "retail": {
+      "columns": [
+        "Retail Sales",
+        "Real Retail Sales"
+      ],
+      "data": {
+        "Real Retail Sales": {
+          "count": 666,
+          "first": 19981.62,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 230000.0,
+          "last_valid": "2026-06-01",
+          "max": 244711.07,
+          "min": 19429.229,
+          "sum": 61658930.0
+        },
+        "Retail Sales": {
+          "count": 678,
+          "first": 66885.699,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 740000.0,
+          "last_valid": "2026-06-01",
+          "max": 740000.0,
+          "min": 66160.486,
+          "sum": 193852600.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "vehicles": {
+      "columns": [
+        "Total Vehicle Sales",
+        "Light Autos",
+        "Heavy Trucks"
+      ],
+      "data": {
+        "Heavy Trucks": {
+          "count": 678,
+          "first": 0.45,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.425,
+          "last_valid": "2026-06-01",
+          "max": 0.545,
+          "min": 0.378,
+          "sum": 304.77
+        },
+        "Light Autos": {
+          "count": 630,
+          "first": 4.089,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 4.275,
+          "last_valid": "2026-06-01",
+          "max": 5.462,
+          "min": 1.5,
+          "sum": 2054.833
+        },
+        "Total Vehicle Sales": {
+          "count": 666,
+          "first": 17.325,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 15.627,
+          "last_valid": "2026-06-01",
+          "max": 20.378,
+          "min": 12.003,
+          "sum": 10980.607
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        3
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "RetailFredService"
+}

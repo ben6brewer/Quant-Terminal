@@ -1,0 +1,127 @@
+{
+  "fred_ids": [
+    "CNP16OV",
+    "LFWA64TTUSM647S",
+    "POPTHM",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "population": 342.0,
+    "working_age": 210.0
+  },
+  "outputs": {
+    "pop_persons": {
+      "columns": [
+        "Working Age (15-64)"
+      ],
+      "data": {
+        "Working Age (15-64)": {
+          "count": 654,
+          "first": 134.97331,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 210.0,
+          "last_valid": "2026-06-01",
+          "max": 210.0,
+          "min": 134.97331,
+          "sum": 110669.34
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 654,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1972-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        654,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "pop_thousands": {
+      "columns": [
+        "Total Population",
+        "Civilian Population"
+      ],
+      "data": {
+        "Civilian Population": {
+          "count": 630,
+          "first": 182.95074,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 275.0,
+          "last_valid": "2026-06-01",
+          "max": 275.0,
+          "min": 182.95074,
+          "sum": 142521.06
+        },
+        "Total Population": {
+          "count": 654,
+          "first": 220.27876,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 342.0,
+          "last_valid": "2026-06-01",
+          "max": 342.0,
+          "min": 220.27876,
+          "sum": 181501.94
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 654,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1972-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        654,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "PopulationFredService"
+}

@@ -1,0 +1,106 @@
+{
+  "fred_ids": [
+    "BACTSAMFRBDAL",
+    "GACDFSA066MSFRBPHI",
+    "GAFDISA066MSFRBNY",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "empire": -7.42,
+    "philly": -30.66
+  },
+  "outputs": {
+    "regional": {
+      "columns": [
+        "Empire State",
+        "Philly Fed",
+        "Dallas Fed"
+      ],
+      "data": {
+        "Dallas Fed": {
+          "count": 618,
+          "first": -19.012,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 7.049,
+          "last_valid": "2026-06-01",
+          "max": 28.679,
+          "min": -25.512,
+          "sum": -15.641
+        },
+        "Empire State": {
+          "count": 666,
+          "first": -4.55,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": -7.423,
+          "last_valid": "2026-06-01",
+          "max": 35.632,
+          "min": -33.174,
+          "sum": -1100.281
+        },
+        "Philly Fed": {
+          "count": 666,
+          "first": -13.569,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": -30.661,
+          "last_valid": "2026-06-01",
+          "max": 37.64,
+          "min": -48.18,
+          "sum": -2040.126
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 666,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1971-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        666,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "RegionalPmiFredService"
+}

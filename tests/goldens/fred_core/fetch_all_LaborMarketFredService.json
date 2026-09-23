@@ -1,0 +1,505 @@
+{
+  "fred_ids": [
+    "CCSA",
+    "CIVPART",
+    "EMRATIO",
+    "IC4WSA",
+    "ICSA",
+    "JTSHIL",
+    "JTSJOL",
+    "JTSLDR",
+    "JTSQUL",
+    "LNS11300060",
+    "LNS14000003",
+    "LNS14000006",
+    "LNS14000009",
+    "LNS14000024",
+    "LNS14000025",
+    "LNU04000012",
+    "MANEMP",
+    "PAYEMS",
+    "U6RATE",
+    "UNRATE",
+    "USCONS",
+    "USEHS",
+    "USFIRE",
+    "USGOVT",
+    "USINFO",
+    "USLAH",
+    "USPBS",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "claims": 220192,
+    "claims_4wma": 257905,
+    "date": "Jun 2026",
+    "openings": 9576,
+    "payrolls_mom": 231,
+    "unrate": 7.0
+  },
+  "outputs": {
+    "claims": {
+      "columns": [
+        "Continued Claims",
+        "IC 4-Week MA",
+        "Initial Claims"
+      ],
+      "data": {
+        "Continued Claims": {
+          "count": 1748,
+          "first": 1934720.7,
+          "first_valid": "1993-01-02",
+          "kind": "f",
+          "last": 2161658.4,
+          "last_valid": "2026-06-27",
+          "max": 2371828.1,
+          "min": 1275755.7,
+          "sum": 3081729300.0
+        },
+        "IC 4-Week MA": {
+          "count": 1696,
+          "first": 286712.56,
+          "first_valid": "1994-01-01",
+          "kind": "f",
+          "last": 257905.28,
+          "last_valid": "2026-06-27",
+          "max": 313793.05,
+          "min": 180000.0,
+          "sum": 413525580.0
+        },
+        "Initial Claims": {
+          "count": 1643,
+          "first": 254899.03,
+          "first_valid": "1995-01-07",
+          "kind": "f",
+          "last": 220191.64,
+          "last_valid": "2026-06-27",
+          "max": 316811.44,
+          "min": 180000.0,
+          "sum": 364154330.0
+        }
+      },
+      "index": {
+        "end": "2026-06-27",
+        "freq": "W-SAT",
+        "len": 1748,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1993-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        1748,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "jolts": {
+      "columns": [
+        "Job Openings",
+        "Hires",
+        "Quits",
+        "Layoffs"
+      ],
+      "data": {
+        "Hires": {
+          "count": 642,
+          "first": 6106.221,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 5403.801,
+          "last_valid": "2026-06-01",
+          "max": 7171.379,
+          "min": 4327.102,
+          "sum": 3656135.0
+        },
+        "Job Openings": {
+          "count": 618,
+          "first": 9379.766,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 9575.807,
+          "last_valid": "2026-06-01",
+          "max": 13293.964,
+          "min": 5963.351,
+          "sum": 5750672.8
+        },
+        "Layoffs": {
+          "count": 666,
+          "first": 1577.709,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 1716.28,
+          "last_valid": "2026-06-01",
+          "max": 2229.017,
+          "min": 1268.094,
+          "sum": 1119512.3
+        },
+        "Quits": {
+          "count": 666,
+          "first": 2817.94,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 4101.286,
+          "last_valid": "2026-06-01",
+          "max": 5261.661,
+          "min": 1800.0,
+          "sum": 2460559.6
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "participation": {
+      "columns": [
+        "LFPR",
+        "Prime Age LFPR",
+        "Emp-Pop Ratio"
+      ],
+      "data": {
+        "Emp-Pop Ratio": {
+          "count": 678,
+          "first": 59.192,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 61.866,
+          "last_valid": "2026-06-01",
+          "max": 65.093,
+          "min": 53.84,
+          "sum": 40409.542
+        },
+        "LFPR": {
+          "count": 618,
+          "first": 60.523,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 64.115,
+          "last_valid": "2026-06-01",
+          "max": 67.106,
+          "min": 59.295,
+          "sum": 38772.882
+        },
+        "Prime Age LFPR": {
+          "count": 630,
+          "first": 82.536,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 81.258,
+          "last_valid": "2026-06-01",
+          "max": 85.396,
+          "min": 80.815,
+          "sum": 52131.128
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "payroll_levels": {
+      "columns": [
+        "Total Nonfarm",
+        "Construction",
+        "Manufacturing",
+        "Financial Activities",
+        "Prof & Business Svcs",
+        "Education & Health",
+        "Leisure & Hospitality",
+        "Information",
+        "Government"
+      ],
+      "data": {
+        "Construction": {
+          "count": 642,
+          "first": 3910.168,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 8300.0,
+          "last_valid": "2026-06-01",
+          "max": 8300.0,
+          "min": 3893.777,
+          "sum": 3694338.4
+        },
+        "Education & Health": {
+          "count": 654,
+          "first": 13140.454,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 27000.0,
+          "last_valid": "2026-06-01",
+          "max": 27068.231,
+          "min": 13017.738,
+          "sum": 12498861.0
+        },
+        "Financial Activities": {
+          "count": 666,
+          "first": 4629.062,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 9200.0,
+          "last_valid": "2026-06-01",
+          "max": 9200.0,
+          "min": 4629.062,
+          "sum": 4384323.5
+        },
+        "Government": {
+          "count": 630,
+          "first": 11878.945,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 23500.0,
+          "last_valid": "2026-06-01",
+          "max": 23500.0,
+          "min": 11861.088,
+          "sum": 10973817.0
+        },
+        "Information": {
+          "count": 618,
+          "first": 1602.276,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 3000.0,
+          "last_valid": "2026-06-01",
+          "max": 3000.0,
+          "min": 1602.276,
+          "sum": 1390915.3
+        },
+        "Leisure & Hospitality": {
+          "count": 654,
+          "first": 9507.139,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 17000.0,
+          "last_valid": "2026-06-01",
+          "max": 17100.716,
+          "min": 9496.083,
+          "sum": 8475026.2
+        },
+        "Manufacturing": {
+          "count": 666,
+          "first": 6353.592,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 12700.0,
+          "last_valid": "2026-06-01",
+          "max": 12700.0,
+          "min": 6348.163,
+          "sum": 6202578.6
+        },
+        "Prof & Business Svcs": {
+          "count": 642,
+          "first": 12197.703,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 23000.0,
+          "last_valid": "2026-06-01",
+          "max": 23000.0,
+          "min": 12189.764,
+          "sum": 10699522.0
+        },
+        "Total Nonfarm": {
+          "count": 654,
+          "first": 87979.948,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 159500.0,
+          "last_valid": "2026-06-01",
+          "max": 159833.63,
+          "min": 87979.948,
+          "sum": 80697653.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        9
+      ],
+      "type": "DataFrame"
+    },
+    "rates": {
+      "columns": [
+        "U-3",
+        "U-6",
+        "White",
+        "Black",
+        "Hispanic",
+        "Men 20+",
+        "Women 20+",
+        "Youth (16-24)"
+      ],
+      "data": {
+        "Black": {
+          "count": 654,
+          "first": 12.953,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 5.705,
+          "last_valid": "2026-06-01",
+          "max": 15.839,
+          "min": 4.5,
+          "sum": 6070.293
+        },
+        "Hispanic": {
+          "count": 666,
+          "first": 4.493,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 7.635,
+          "last_valid": "2026-06-01",
+          "max": 8.534,
+          "min": 2.5,
+          "sum": 3022.321
+        },
+        "Men 20+": {
+          "count": 678,
+          "first": 5.585,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 5.691,
+          "last_valid": "2026-06-01",
+          "max": 9.974,
+          "min": 2.5,
+          "sum": 3537.225
+        },
+        "U-3": {
+          "count": 654,
+          "first": 7.286,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 7.025,
+          "last_valid": "2026-06-01",
+          "max": 9.671,
+          "min": 2.5,
+          "sum": 3562.092
+        },
+        "U-6": {
+          "count": 678,
+          "first": 9.822,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 6.0,
+          "last_valid": "2026-06-01",
+          "max": 15.98,
+          "min": 6.0,
+          "sum": 5724.697
+        },
+        "White": {
+          "count": 618,
+          "first": 6.79,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 5.142,
+          "last_valid": "2026-06-01",
+          "max": 8.022,
+          "min": 2.5,
+          "sum": 3033.677
+        },
+        "Women 20+": {
+          "count": 654,
+          "first": 6.397,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 6.557,
+          "last_valid": "2026-06-01",
+          "max": 9.171,
+          "min": 2.5,
+          "sum": 3251.602
+        },
+        "Youth (16-24)": {
+          "count": 654,
+          "first": 11.098,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 17.144,
+          "last_valid": "2026-06-01",
+          "max": 20.033,
+          "min": 7.0,
+          "sum": 8254.919
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        8
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678
+      ],
+      "type": "Series"
+    }
+  },
+  "service": "LaborMarketFredService"
+}
