@@ -10,9 +10,9 @@ class TestCreditFredService:
         return CreditFredService
 
     def test_groups_defined(self, service):
-        assert len(service.GROUPS) == 2
-        assert service.GROUPS[0].series
-        assert service.GROUPS[1].series
+        # delinquency, usrec and consumer-credit groups
+        assert len(service.GROUPS) == 3
+        assert all(group.series for group in service.GROUPS)
 
     def test_fetch_all_data_keys(self, service, mock_fred_api, mock_fred_api_key):
         result = service.fetch_all_data()

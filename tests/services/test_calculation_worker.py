@@ -1,70 +1,71 @@
-"""Tests for app.services.calculation_worker.CalculationWorker."""
+"""Tests for app.services.calculation_worker.CalculationWorker.
 
-import pytest
+The worker deliberately no longer emits its legacy ``finished``/``error``
+signals from ``run()`` (cross-thread emission raced with widget construction);
+callers read ``worker.result`` / ``worker.error_msg`` after ``QThread.finished``.
+
+``run()`` ends with ``self.thread().quit()``.  Calling it directly on a worker
+that still lives in the MAIN thread would quit the main thread's event loop
+and break later Qt tests (queued slots never run), so :func:`_make` parks each
+worker on an unstarted QThread first.
+"""
+
+from PySide6.QtCore import QThread
 
 from app.services.calculation_worker import CalculationWorker
+
+_parking = []  # keep the unstarted QThreads alive for the session
+
+
+def _make(fn, *args, **kwargs) -> CalculationWorker:
+    worker = CalculationWorker(fn, *args, **kwargs)
+    thread = QThread()
+    worker.moveToThread(thread)
+    _parking.append((thread, worker))
+    return worker
 
 
 class TestCalculationWorker:
     def test_success(self):
-        """Worker should emit finished signal with result."""
-        results = []
-        errors = []
-
-        def on_finish(result):
-            results.append(result)
-
-        def on_error(msg):
-            errors.append(msg)
-
-        worker = CalculationWorker(lambda: 42)
-        worker.finished.connect(on_finish)
-        worker.error.connect(on_error)
+        """run() stores the callable's return value."""
+        worker = _make(lambda: 42)
         worker.run()
 
-        assert results == [42]
-        assert errors == []
+        assert worker.result == 42
+        assert worker.error_msg is None
 
     def test_error(self):
-        """Worker should emit error signal on exception."""
-        results = []
-        errors = []
-
-        def on_finish(result):
-            results.append(result)
-
-        def on_error(msg):
-            errors.append(msg)
+        """run() stores the exception message instead of raising."""
 
         def failing_fn():
             raise ValueError("test error")
 
-        worker = CalculationWorker(failing_fn)
-        worker.finished.connect(on_finish)
-        worker.error.connect(on_error)
+        worker = _make(failing_fn)
         worker.run()
 
-        assert results == []
-        assert len(errors) == 1
-        assert "test error" in errors[0]
+        assert worker.result is None
+        assert "test error" in worker.error_msg
 
     def test_with_args(self):
-        results = []
-        worker = CalculationWorker(lambda a, b: a + b, 3, 4)
-        worker.finished.connect(results.append)
+        worker = _make(lambda a, b: a + b, 3, 4)
         worker.run()
-        assert results == [7]
+        assert worker.result == 7
 
     def test_with_kwargs(self):
-        results = []
-        worker = CalculationWorker(lambda x=0, y=0: x * y, x=5, y=6)
-        worker.finished.connect(results.append)
+        worker = _make(lambda x=0, y=0: x * y, x=5, y=6)
         worker.run()
-        assert results == [30]
+        assert worker.result == 30
 
     def test_returns_complex_result(self):
-        results = []
-        worker = CalculationWorker(lambda: {"data": [1, 2, 3], "status": "ok"})
-        worker.finished.connect(results.append)
+        worker = _make(lambda: {"data": [1, 2, 3], "status": "ok"})
         worker.run()
-        assert results[0]["status"] == "ok"
+        assert worker.result["status"] == "ok"
+
+    def test_run_does_not_emit_legacy_signals(self):
+        """Signals must not fire from run() (thread-safety contract)."""
+        emitted = []
+        worker = _make(lambda: 1)
+        worker.finished.connect(emitted.append)
+        worker.error.connect(emitted.append)
+        worker.run()
+        assert emitted == []
