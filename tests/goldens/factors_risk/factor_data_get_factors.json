@@ -1,0 +1,2922 @@
+{
+  "_qt_test_custom_daily.daily": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "R_ROE"
+      ],
+      "data": {
+        "Mkt-RF": {
+          "count": 147,
+          "first": -0.0099,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.0022,
+          "last_valid": "2025-12-31",
+          "max": 0.0225,
+          "min": -0.0246,
+          "sum": 0.0004
+        },
+        "R_ROE": {
+          "count": 147,
+          "first": -0.001679,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.002732,
+          "last_valid": "2025-12-31",
+          "max": 0.009249,
+          "min": -0.010536,
+          "sum": 0.095268
+        },
+        "SMB": {
+          "count": 147,
+          "first": 0.009,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.0009,
+          "last_valid": "2025-12-31",
+          "max": 0.0106,
+          "min": -0.0126,
+          "sum": -0.0996
+        }
+      },
+      "index": {
+        "end": "2025-12-31",
+        "freq": null,
+        "len": 147,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        147,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 372,
+          "first": 0.00017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.00015,
+          "last_valid": "2026-05-29",
+          "max": 0.00017,
+          "min": 0.00015,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372
+      ],
+      "type": "Series"
+    }
+  },
+  "_qt_test_custom_daily.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "R_ROE"
+      ],
+      "data": {
+        "Mkt-RF": {
+          "count": 54,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0638,
+          "last_valid": "2025-12-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.0996
+        },
+        "R_ROE": {
+          "count": 54,
+          "first": 0.018512,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.017805,
+          "last_valid": "2025-12-01",
+          "max": 0.062966,
+          "min": -0.053856,
+          "sum": 0.032672
+        },
+        "SMB": {
+          "count": 54,
+          "first": -0.0077,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0106,
+          "last_valid": "2025-12-01",
+          "max": 0.044,
+          "min": -0.0456,
+          "sum": -0.2486
+        }
+      },
+      "index": {
+        "end": "2025-12-01",
+        "freq": "MS",
+        "len": 54,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        54,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "_qt_test_custom_daily.weekly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "R_ROE"
+      ],
+      "data": {
+        "Mkt-RF": {
+          "count": 31,
+          "first": 0.0057,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": -0.0135,
+          "last_valid": "2026-01-02",
+          "max": 0.0454,
+          "min": -0.038,
+          "sum": -0.0077
+        },
+        "R_ROE": {
+          "count": 31,
+          "first": -0.009963,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": 0.001575,
+          "last_valid": "2026-01-02",
+          "max": 0.018105,
+          "min": -0.009963,
+          "sum": 0.0959
+        },
+        "SMB": {
+          "count": 31,
+          "first": -0.0101,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": -0.0058,
+          "last_valid": "2026-01-02",
+          "max": 0.022,
+          "min": -0.0304,
+          "sum": -0.0982
+        }
+      },
+      "index": {
+        "end": "2026-01-02",
+        "freq": "W-FRI",
+        "len": 31,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2025-06-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        31,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 78,
+          "first": 0.00085,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0006,
+          "last_valid": "2026-05-29",
+          "max": 0.00085,
+          "min": 0.0006,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78
+      ],
+      "type": "Series"
+    }
+  },
+  "_qt_test_custom_monthly.daily": {
+    "error": "Factor data missing columns ['BAB'] for model _QT_TEST_custom_monthly. The data source may be unavailable."
+  },
+  "_qt_test_custom_monthly.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "R_IA",
+        "BAB"
+      ],
+      "data": {
+        "BAB": {
+          "count": 54,
+          "first": -0.034179,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.008263,
+          "last_valid": "2025-12-01",
+          "max": 0.08154,
+          "min": -0.057732,
+          "sum": 0.265855
+        },
+        "Mkt-RF": {
+          "count": 54,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0638,
+          "last_valid": "2025-12-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.0996
+        },
+        "R_IA": {
+          "count": 54,
+          "first": 0.032206,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.004149,
+          "last_valid": "2025-12-01",
+          "max": 0.044163,
+          "min": -0.029686,
+          "sum": 0.013708
+        }
+      },
+      "index": {
+        "end": "2025-12-01",
+        "freq": "MS",
+        "len": 54,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        54,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "_qt_test_custom_monthly.weekly": {
+    "error": "Factor data missing columns ['BAB'] for model _QT_TEST_custom_monthly. The data source may be unavailable."
+  },
+  "aqr_bab.daily": {
+    "error": "Factor data missing columns ['BAB'] for model FF3 + BAB. The data source may be unavailable."
+  },
+  "aqr_bab.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "UMD",
+        "BAB"
+      ],
+      "data": {
+        "BAB": {
+          "count": 58,
+          "first": -0.034179,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.030085,
+          "last_valid": "2026-04-01",
+          "max": 0.08154,
+          "min": -0.057732,
+          "sum": 0.31474
+        },
+        "HML": {
+          "count": 58,
+          "first": -0.021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.0112,
+          "last_valid": "2026-04-01",
+          "max": 0.0603,
+          "min": -0.0622,
+          "sum": 0.0482
+        },
+        "Mkt-RF": {
+          "count": 58,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0569,
+          "last_valid": "2026-04-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.1122
+        },
+        "SMB": {
+          "count": 58,
+          "first": -0.0077,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0043,
+          "last_valid": "2026-04-01",
+          "max": 0.044,
+          "min": -0.0456,
+          "sum": -0.3017
+        },
+        "UMD": {
+          "count": 58,
+          "first": 0.0065,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.0451,
+          "last_valid": "2026-04-01",
+          "max": 0.0799,
+          "min": -0.075,
+          "sum": 0.5311
+        }
+      },
+      "index": {
+        "end": "2026-04-01",
+        "freq": "MS",
+        "len": 58,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        58,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "aqr_bab.weekly": {
+    "error": "Factor data missing columns ['BAB'] for model FF3 + BAB. The data source may be unavailable."
+  },
+  "aqr_full.daily": {
+    "error": "Factor data missing columns ['BAB', 'QMJ', 'HML_DEVIL'] for model AQR Full. The data source may be unavailable."
+  },
+  "aqr_full.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "UMD",
+        "BAB",
+        "QMJ",
+        "HML_DEVIL"
+      ],
+      "data": {
+        "BAB": {
+          "count": 57,
+          "first": -0.034179,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.012102,
+          "last_valid": "2026-03-01",
+          "max": 0.08154,
+          "min": -0.057732,
+          "sum": 0.284655
+        },
+        "HML": {
+          "count": 57,
+          "first": -0.021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.0081,
+          "last_valid": "2026-03-01",
+          "max": 0.0603,
+          "min": -0.0622,
+          "sum": 0.0594
+        },
+        "HML_DEVIL": {
+          "count": 57,
+          "first": 0.025841,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.031592,
+          "last_valid": "2026-03-01",
+          "max": 0.075154,
+          "min": -0.053505,
+          "sum": 0.080464
+        },
+        "Mkt-RF": {
+          "count": 57,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.0142,
+          "last_valid": "2026-03-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.0553
+        },
+        "QMJ": {
+          "count": 57,
+          "first": -0.008493,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.039263,
+          "last_valid": "2026-03-01",
+          "max": 0.072405,
+          "min": -0.066955,
+          "sum": -0.431211
+        },
+        "SMB": {
+          "count": 57,
+          "first": -0.0077,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.0064,
+          "last_valid": "2026-03-01",
+          "max": 0.044,
+          "min": -0.0456,
+          "sum": -0.306
+        },
+        "UMD": {
+          "count": 57,
+          "first": 0.0065,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.0623,
+          "last_valid": "2026-03-01",
+          "max": 0.0799,
+          "min": -0.075,
+          "sum": 0.5762
+        }
+      },
+      "index": {
+        "end": "2026-03-01",
+        "freq": "MS",
+        "len": 57,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        57,
+        7
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "aqr_full.weekly": {
+    "error": "Factor data missing columns ['BAB', 'QMJ', 'HML_DEVIL'] for model AQR Full. The data source may be unavailable."
+  },
+  "aqr_qmj.daily": {
+    "error": "Factor data missing columns ['QMJ'] for model FF3 + QMJ. The data source may be unavailable."
+  },
+  "aqr_qmj.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "UMD",
+        "QMJ"
+      ],
+      "data": {
+        "HML": {
+          "count": 59,
+          "first": -0.021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0019,
+          "last_valid": "2026-05-01",
+          "max": 0.0603,
+          "min": -0.0622,
+          "sum": 0.0501
+        },
+        "Mkt-RF": {
+          "count": 59,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0879,
+          "last_valid": "2026-05-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.2001
+        },
+        "QMJ": {
+          "count": 59,
+          "first": -0.008493,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.016413,
+          "last_valid": "2026-05-01",
+          "max": 0.072405,
+          "min": -0.066955,
+          "sum": -0.422846
+        },
+        "SMB": {
+          "count": 59,
+          "first": -0.0077,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.036,
+          "last_valid": "2026-05-01",
+          "max": 0.044,
+          "min": -0.0456,
+          "sum": -0.2657
+        },
+        "UMD": {
+          "count": 59,
+          "first": 0.0065,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0034,
+          "last_valid": "2026-05-01",
+          "max": 0.0799,
+          "min": -0.075,
+          "sum": 0.5345
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "aqr_qmj.weekly": {
+    "error": "Factor data missing columns ['QMJ'] for model FF3 + QMJ. The data source may be unavailable."
+  },
+  "capm.daily": {
+    "factors": {
+      "columns": [
+        "Mkt-RF"
+      ],
+      "data": {
+        "Mkt-RF": {
+          "count": 372,
+          "first": 0.0098,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.0101,
+          "last_valid": "2026-05-29",
+          "max": 0.0295,
+          "min": -0.026,
+          "sum": 0.1194
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 372,
+          "first": 0.00017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.00015,
+          "last_valid": "2026-05-29",
+          "max": 0.00017,
+          "min": 0.00015,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372
+      ],
+      "type": "Series"
+    }
+  },
+  "capm.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF"
+      ],
+      "data": {
+        "Mkt-RF": {
+          "count": 59,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0879,
+          "last_valid": "2026-05-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.2001
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "capm.weekly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF"
+      ],
+      "data": {
+        "Mkt-RF": {
+          "count": 78,
+          "first": -0.0036,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0107,
+          "last_valid": "2026-05-29",
+          "max": 0.0568,
+          "min": -0.0445,
+          "sum": 0.1194
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 78,
+          "first": 0.00085,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0006,
+          "last_valid": "2026-05-29",
+          "max": 0.00085,
+          "min": 0.0006,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78
+      ],
+      "type": "Series"
+    }
+  },
+  "carhart4.daily": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "UMD"
+      ],
+      "data": {
+        "HML": {
+          "count": 372,
+          "first": -0.0104,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.008,
+          "last_valid": "2026-05-29",
+          "max": 0.0175,
+          "min": -0.0146,
+          "sum": 0.0032
+        },
+        "Mkt-RF": {
+          "count": 372,
+          "first": 0.0098,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.0101,
+          "last_valid": "2026-05-29",
+          "max": 0.0295,
+          "min": -0.026,
+          "sum": 0.1194
+        },
+        "SMB": {
+          "count": 372,
+          "first": -0.0019,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.006,
+          "last_valid": "2026-05-29",
+          "max": 0.0144,
+          "min": -0.0138,
+          "sum": -0.0749
+        },
+        "UMD": {
+          "count": 372,
+          "first": 0.0012,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.0013,
+          "last_valid": "2026-05-29",
+          "max": 0.0247,
+          "min": -0.0216,
+          "sum": -0.1214
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 372,
+          "first": 0.00017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.00015,
+          "last_valid": "2026-05-29",
+          "max": 0.00017,
+          "min": 0.00015,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372
+      ],
+      "type": "Series"
+    }
+  },
+  "carhart4.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "UMD"
+      ],
+      "data": {
+        "HML": {
+          "count": 59,
+          "first": -0.021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0019,
+          "last_valid": "2026-05-01",
+          "max": 0.0603,
+          "min": -0.0622,
+          "sum": 0.0501
+        },
+        "Mkt-RF": {
+          "count": 59,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0879,
+          "last_valid": "2026-05-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.2001
+        },
+        "SMB": {
+          "count": 59,
+          "first": -0.0077,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.036,
+          "last_valid": "2026-05-01",
+          "max": 0.044,
+          "min": -0.0456,
+          "sum": -0.2657
+        },
+        "UMD": {
+          "count": 59,
+          "first": 0.0065,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0034,
+          "last_valid": "2026-05-01",
+          "max": 0.0799,
+          "min": -0.075,
+          "sum": 0.5345
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "carhart4.weekly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "UMD"
+      ],
+      "data": {
+        "HML": {
+          "count": 78,
+          "first": -0.0141,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0178,
+          "last_valid": "2026-05-29",
+          "max": 0.037,
+          "min": -0.0343,
+          "sum": 0.0032
+        },
+        "Mkt-RF": {
+          "count": 78,
+          "first": -0.0036,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0107,
+          "last_valid": "2026-05-29",
+          "max": 0.0568,
+          "min": -0.0445,
+          "sum": 0.1194
+        },
+        "SMB": {
+          "count": 78,
+          "first": -0.0115,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0049,
+          "last_valid": "2026-05-29",
+          "max": 0.022,
+          "min": -0.0304,
+          "sum": -0.0749
+        },
+        "UMD": {
+          "count": 78,
+          "first": -0.0088,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0001,
+          "last_valid": "2026-05-29",
+          "max": 0.0523,
+          "min": -0.0484,
+          "sum": -0.1214
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 78,
+          "first": 0.00085,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0006,
+          "last_valid": "2026-05-29",
+          "max": 0.00085,
+          "min": 0.0006,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78
+      ],
+      "type": "Series"
+    }
+  },
+  "ff3.daily": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML"
+      ],
+      "data": {
+        "HML": {
+          "count": 372,
+          "first": -0.0104,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.008,
+          "last_valid": "2026-05-29",
+          "max": 0.0175,
+          "min": -0.0146,
+          "sum": 0.0032
+        },
+        "Mkt-RF": {
+          "count": 372,
+          "first": 0.0098,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.0101,
+          "last_valid": "2026-05-29",
+          "max": 0.0295,
+          "min": -0.026,
+          "sum": 0.1194
+        },
+        "SMB": {
+          "count": 372,
+          "first": -0.0019,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.006,
+          "last_valid": "2026-05-29",
+          "max": 0.0144,
+          "min": -0.0138,
+          "sum": -0.0749
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 372,
+          "first": 0.00017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.00015,
+          "last_valid": "2026-05-29",
+          "max": 0.00017,
+          "min": 0.00015,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372
+      ],
+      "type": "Series"
+    }
+  },
+  "ff3.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML"
+      ],
+      "data": {
+        "HML": {
+          "count": 59,
+          "first": -0.021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0019,
+          "last_valid": "2026-05-01",
+          "max": 0.0603,
+          "min": -0.0622,
+          "sum": 0.0501
+        },
+        "Mkt-RF": {
+          "count": 59,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0879,
+          "last_valid": "2026-05-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.2001
+        },
+        "SMB": {
+          "count": 59,
+          "first": -0.0077,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.036,
+          "last_valid": "2026-05-01",
+          "max": 0.044,
+          "min": -0.0456,
+          "sum": -0.2657
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "ff3.weekly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML"
+      ],
+      "data": {
+        "HML": {
+          "count": 78,
+          "first": -0.0141,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0178,
+          "last_valid": "2026-05-29",
+          "max": 0.037,
+          "min": -0.0343,
+          "sum": 0.0032
+        },
+        "Mkt-RF": {
+          "count": 78,
+          "first": -0.0036,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0107,
+          "last_valid": "2026-05-29",
+          "max": 0.0568,
+          "min": -0.0445,
+          "sum": 0.1194
+        },
+        "SMB": {
+          "count": 78,
+          "first": -0.0115,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0049,
+          "last_valid": "2026-05-29",
+          "max": 0.022,
+          "min": -0.0304,
+          "sum": -0.0749
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 78,
+          "first": 0.00085,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0006,
+          "last_valid": "2026-05-29",
+          "max": 0.00085,
+          "min": 0.0006,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78
+      ],
+      "type": "Series"
+    }
+  },
+  "ff5.daily": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "RMW",
+        "CMA"
+      ],
+      "data": {
+        "CMA": {
+          "count": 372,
+          "first": -0.0007,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.004,
+          "last_valid": "2026-05-29",
+          "max": 0.0106,
+          "min": -0.0071,
+          "sum": 0.0245
+        },
+        "HML": {
+          "count": 372,
+          "first": -0.0104,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.008,
+          "last_valid": "2026-05-29",
+          "max": 0.0175,
+          "min": -0.0146,
+          "sum": 0.0032
+        },
+        "Mkt-RF": {
+          "count": 372,
+          "first": 0.0098,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.0101,
+          "last_valid": "2026-05-29",
+          "max": 0.0295,
+          "min": -0.026,
+          "sum": 0.1194
+        },
+        "RMW": {
+          "count": 372,
+          "first": -0.0017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.0007,
+          "last_valid": "2026-05-29",
+          "max": 0.0127,
+          "min": -0.0111,
+          "sum": 0.0921
+        },
+        "SMB": {
+          "count": 372,
+          "first": -0.0019,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.006,
+          "last_valid": "2026-05-29",
+          "max": 0.0144,
+          "min": -0.0138,
+          "sum": -0.0749
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 372,
+          "first": 0.00017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.00015,
+          "last_valid": "2026-05-29",
+          "max": 0.00017,
+          "min": 0.00015,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372
+      ],
+      "type": "Series"
+    }
+  },
+  "ff5.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "RMW",
+        "CMA"
+      ],
+      "data": {
+        "CMA": {
+          "count": 59,
+          "first": 0.002,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0077,
+          "last_valid": "2026-05-01",
+          "max": 0.0367,
+          "min": -0.042,
+          "sum": 0.0819
+        },
+        "HML": {
+          "count": 59,
+          "first": -0.021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0019,
+          "last_valid": "2026-05-01",
+          "max": 0.0603,
+          "min": -0.0622,
+          "sum": 0.0501
+        },
+        "Mkt-RF": {
+          "count": 59,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0879,
+          "last_valid": "2026-05-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.2001
+        },
+        "RMW": {
+          "count": 59,
+          "first": 0.0249,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0402,
+          "last_valid": "2026-05-01",
+          "max": 0.0405,
+          "min": -0.0427,
+          "sum": -0.0025
+        },
+        "SMB": {
+          "count": 59,
+          "first": -0.0077,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.036,
+          "last_valid": "2026-05-01",
+          "max": 0.044,
+          "min": -0.0456,
+          "sum": -0.2657
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "ff5.weekly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "RMW",
+        "CMA"
+      ],
+      "data": {
+        "CMA": {
+          "count": 78,
+          "first": -0.0045,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0005,
+          "last_valid": "2026-05-29",
+          "max": 0.0157,
+          "min": -0.0157,
+          "sum": 0.0245
+        },
+        "HML": {
+          "count": 78,
+          "first": -0.0141,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0178,
+          "last_valid": "2026-05-29",
+          "max": 0.037,
+          "min": -0.0343,
+          "sum": 0.0032
+        },
+        "Mkt-RF": {
+          "count": 78,
+          "first": -0.0036,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0107,
+          "last_valid": "2026-05-29",
+          "max": 0.0568,
+          "min": -0.0445,
+          "sum": 0.1194
+        },
+        "RMW": {
+          "count": 78,
+          "first": -0.0052,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0046,
+          "last_valid": "2026-05-29",
+          "max": 0.0171,
+          "min": -0.0248,
+          "sum": 0.0921
+        },
+        "SMB": {
+          "count": 78,
+          "first": -0.0115,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0049,
+          "last_valid": "2026-05-29",
+          "max": 0.022,
+          "min": -0.0304,
+          "sum": -0.0749
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 78,
+          "first": 0.00085,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0006,
+          "last_valid": "2026-05-29",
+          "max": 0.00085,
+          "min": 0.0006,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78
+      ],
+      "type": "Series"
+    }
+  },
+  "ff5mom.daily": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "RMW",
+        "CMA",
+        "UMD"
+      ],
+      "data": {
+        "CMA": {
+          "count": 372,
+          "first": -0.0007,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.004,
+          "last_valid": "2026-05-29",
+          "max": 0.0106,
+          "min": -0.0071,
+          "sum": 0.0245
+        },
+        "HML": {
+          "count": 372,
+          "first": -0.0104,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.008,
+          "last_valid": "2026-05-29",
+          "max": 0.0175,
+          "min": -0.0146,
+          "sum": 0.0032
+        },
+        "Mkt-RF": {
+          "count": 372,
+          "first": 0.0098,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.0101,
+          "last_valid": "2026-05-29",
+          "max": 0.0295,
+          "min": -0.026,
+          "sum": 0.1194
+        },
+        "RMW": {
+          "count": 372,
+          "first": -0.0017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.0007,
+          "last_valid": "2026-05-29",
+          "max": 0.0127,
+          "min": -0.0111,
+          "sum": 0.0921
+        },
+        "SMB": {
+          "count": 372,
+          "first": -0.0019,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.006,
+          "last_valid": "2026-05-29",
+          "max": 0.0144,
+          "min": -0.0138,
+          "sum": -0.0749
+        },
+        "UMD": {
+          "count": 372,
+          "first": 0.0012,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": -0.0013,
+          "last_valid": "2026-05-29",
+          "max": 0.0247,
+          "min": -0.0216,
+          "sum": -0.1214
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372,
+        6
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 372,
+          "first": 0.00017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.00015,
+          "last_valid": "2026-05-29",
+          "max": 0.00017,
+          "min": 0.00015,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372
+      ],
+      "type": "Series"
+    }
+  },
+  "ff5mom.monthly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "RMW",
+        "CMA",
+        "UMD"
+      ],
+      "data": {
+        "CMA": {
+          "count": 59,
+          "first": 0.002,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0077,
+          "last_valid": "2026-05-01",
+          "max": 0.0367,
+          "min": -0.042,
+          "sum": 0.0819
+        },
+        "HML": {
+          "count": 59,
+          "first": -0.021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0019,
+          "last_valid": "2026-05-01",
+          "max": 0.0603,
+          "min": -0.0622,
+          "sum": 0.0501
+        },
+        "Mkt-RF": {
+          "count": 59,
+          "first": -0.038,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0879,
+          "last_valid": "2026-05-01",
+          "max": 0.0945,
+          "min": -0.088,
+          "sum": 0.2001
+        },
+        "RMW": {
+          "count": 59,
+          "first": 0.0249,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0402,
+          "last_valid": "2026-05-01",
+          "max": 0.0405,
+          "min": -0.0427,
+          "sum": -0.0025
+        },
+        "SMB": {
+          "count": 59,
+          "first": -0.0077,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.036,
+          "last_valid": "2026-05-01",
+          "max": 0.044,
+          "min": -0.0456,
+          "sum": -0.2657
+        },
+        "UMD": {
+          "count": 59,
+          "first": 0.0065,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0034,
+          "last_valid": "2026-05-01",
+          "max": 0.0799,
+          "min": -0.075,
+          "sum": 0.5345
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59,
+        6
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "ff5mom.weekly": {
+    "factors": {
+      "columns": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "RMW",
+        "CMA",
+        "UMD"
+      ],
+      "data": {
+        "CMA": {
+          "count": 78,
+          "first": -0.0045,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0005,
+          "last_valid": "2026-05-29",
+          "max": 0.0157,
+          "min": -0.0157,
+          "sum": 0.0245
+        },
+        "HML": {
+          "count": 78,
+          "first": -0.0141,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0178,
+          "last_valid": "2026-05-29",
+          "max": 0.037,
+          "min": -0.0343,
+          "sum": 0.0032
+        },
+        "Mkt-RF": {
+          "count": 78,
+          "first": -0.0036,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0107,
+          "last_valid": "2026-05-29",
+          "max": 0.0568,
+          "min": -0.0445,
+          "sum": 0.1194
+        },
+        "RMW": {
+          "count": 78,
+          "first": -0.0052,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0046,
+          "last_valid": "2026-05-29",
+          "max": 0.0171,
+          "min": -0.0248,
+          "sum": 0.0921
+        },
+        "SMB": {
+          "count": 78,
+          "first": -0.0115,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0049,
+          "last_valid": "2026-05-29",
+          "max": 0.022,
+          "min": -0.0304,
+          "sum": -0.0749
+        },
+        "UMD": {
+          "count": 78,
+          "first": -0.0088,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": -0.0001,
+          "last_valid": "2026-05-29",
+          "max": 0.0523,
+          "min": -0.0484,
+          "sum": -0.1214
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78,
+        6
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 78,
+          "first": 0.00085,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0006,
+          "last_valid": "2026-05-29",
+          "max": 0.00085,
+          "min": 0.0006,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78
+      ],
+      "type": "Series"
+    }
+  },
+  "q4.daily": {
+    "factors": {
+      "columns": [
+        "R_MKT",
+        "R_ME",
+        "R_IA",
+        "R_ROE"
+      ],
+      "data": {
+        "R_IA": {
+          "count": 148,
+          "first": 0.005863,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.002843,
+          "last_valid": "2025-12-31",
+          "max": 0.008482,
+          "min": -0.008826,
+          "sum": -0.025122
+        },
+        "R_ME": {
+          "count": 148,
+          "first": -0.00742,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.01067,
+          "last_valid": "2025-12-31",
+          "max": 0.012083,
+          "min": -0.012195,
+          "sum": 0.005801
+        },
+        "R_MKT": {
+          "count": 148,
+          "first": -0.006511,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.009649,
+          "last_valid": "2025-12-31",
+          "max": 0.020249,
+          "min": -0.032026,
+          "sum": -0.074095
+        },
+        "R_ROE": {
+          "count": 148,
+          "first": -0.001679,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.002732,
+          "last_valid": "2025-12-31",
+          "max": 0.009249,
+          "min": -0.010536,
+          "sum": 0.0959
+        }
+      },
+      "index": {
+        "end": "2025-12-31",
+        "freq": null,
+        "len": 148,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        148,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 372,
+          "first": 0.00017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.00015,
+          "last_valid": "2026-05-29",
+          "max": 0.00017,
+          "min": 0.00015,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372
+      ],
+      "type": "Series"
+    }
+  },
+  "q4.monthly": {
+    "factors": {
+      "columns": [
+        "R_MKT",
+        "R_ME",
+        "R_IA",
+        "R_ROE"
+      ],
+      "data": {
+        "R_IA": {
+          "count": 54,
+          "first": 0.032206,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.004149,
+          "last_valid": "2025-12-01",
+          "max": 0.044163,
+          "min": -0.029686,
+          "sum": 0.013708
+        },
+        "R_ME": {
+          "count": 54,
+          "first": -0.005021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.057913,
+          "last_valid": "2025-12-01",
+          "max": 0.048786,
+          "min": -0.057913,
+          "sum": -0.257549
+        },
+        "R_MKT": {
+          "count": 54,
+          "first": 0.061604,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.045001,
+          "last_valid": "2025-12-01",
+          "max": 0.089976,
+          "min": -0.092444,
+          "sum": 0.329249
+        },
+        "R_ROE": {
+          "count": 54,
+          "first": 0.018512,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.017805,
+          "last_valid": "2025-12-01",
+          "max": 0.062966,
+          "min": -0.053856,
+          "sum": 0.032672
+        }
+      },
+      "index": {
+        "end": "2025-12-01",
+        "freq": "MS",
+        "len": 54,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        54,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "q4.weekly": {
+    "factors": {
+      "columns": [
+        "R_MKT",
+        "R_ME",
+        "R_IA",
+        "R_ROE"
+      ],
+      "data": {
+        "R_IA": {
+          "count": 31,
+          "first": 0.001528,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": -0.005546,
+          "last_valid": "2026-01-02",
+          "max": 0.013837,
+          "min": -0.020678,
+          "sum": -0.025122
+        },
+        "R_ME": {
+          "count": 31,
+          "first": -0.020927,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": -0.003909,
+          "last_valid": "2026-01-02",
+          "max": 0.018133,
+          "min": -0.020927,
+          "sum": 0.005801
+        },
+        "R_MKT": {
+          "count": 31,
+          "first": -0.003041,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": -0.000853,
+          "last_valid": "2026-01-02",
+          "max": 0.029436,
+          "min": -0.036997,
+          "sum": -0.074095
+        },
+        "R_ROE": {
+          "count": 31,
+          "first": -0.009963,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": 0.001575,
+          "last_valid": "2026-01-02",
+          "max": 0.018105,
+          "min": -0.009963,
+          "sum": 0.0959
+        }
+      },
+      "index": {
+        "end": "2026-01-02",
+        "freq": "W-FRI",
+        "len": 31,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2025-06-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        31,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 78,
+          "first": 0.00085,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0006,
+          "last_valid": "2026-05-29",
+          "max": 0.00085,
+          "min": 0.0006,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78
+      ],
+      "type": "Series"
+    }
+  },
+  "q5.daily": {
+    "factors": {
+      "columns": [
+        "R_MKT",
+        "R_ME",
+        "R_IA",
+        "R_ROE",
+        "R_EG"
+      ],
+      "data": {
+        "R_EG": {
+          "count": 148,
+          "first": 0.007093,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.003347,
+          "last_valid": "2025-12-31",
+          "max": 0.007411,
+          "min": -0.009515,
+          "sum": 0.068648
+        },
+        "R_IA": {
+          "count": 148,
+          "first": 0.005863,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.002843,
+          "last_valid": "2025-12-31",
+          "max": 0.008482,
+          "min": -0.008826,
+          "sum": -0.025122
+        },
+        "R_ME": {
+          "count": 148,
+          "first": -0.00742,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.01067,
+          "last_valid": "2025-12-31",
+          "max": 0.012083,
+          "min": -0.012195,
+          "sum": 0.005801
+        },
+        "R_MKT": {
+          "count": 148,
+          "first": -0.006511,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.009649,
+          "last_valid": "2025-12-31",
+          "max": 0.020249,
+          "min": -0.032026,
+          "sum": -0.074095
+        },
+        "R_ROE": {
+          "count": 148,
+          "first": -0.001679,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.002732,
+          "last_valid": "2025-12-31",
+          "max": 0.009249,
+          "min": -0.010536,
+          "sum": 0.0959
+        }
+      },
+      "index": {
+        "end": "2025-12-31",
+        "freq": null,
+        "len": 148,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        148,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 372,
+          "first": 0.00017,
+          "first_valid": "2024-12-02",
+          "kind": "f",
+          "last": 0.00015,
+          "last_valid": "2026-05-29",
+          "max": 0.00017,
+          "min": 0.00015,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 372,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        372
+      ],
+      "type": "Series"
+    }
+  },
+  "q5.monthly": {
+    "factors": {
+      "columns": [
+        "R_MKT",
+        "R_ME",
+        "R_IA",
+        "R_ROE",
+        "R_EG"
+      ],
+      "data": {
+        "R_EG": {
+          "count": 54,
+          "first": 0.007186,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.065563,
+          "last_valid": "2025-12-01",
+          "max": 0.065563,
+          "min": -0.026469,
+          "sum": 0.311265
+        },
+        "R_IA": {
+          "count": 54,
+          "first": 0.032206,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.004149,
+          "last_valid": "2025-12-01",
+          "max": 0.044163,
+          "min": -0.029686,
+          "sum": 0.013708
+        },
+        "R_ME": {
+          "count": 54,
+          "first": -0.005021,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.057913,
+          "last_valid": "2025-12-01",
+          "max": 0.048786,
+          "min": -0.057913,
+          "sum": -0.257549
+        },
+        "R_MKT": {
+          "count": 54,
+          "first": 0.061604,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.045001,
+          "last_valid": "2025-12-01",
+          "max": 0.089976,
+          "min": -0.092444,
+          "sum": 0.329249
+        },
+        "R_ROE": {
+          "count": 54,
+          "first": 0.018512,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": -0.017805,
+          "last_valid": "2025-12-01",
+          "max": 0.062966,
+          "min": -0.053856,
+          "sum": 0.032672
+        }
+      },
+      "index": {
+        "end": "2025-12-01",
+        "freq": "MS",
+        "len": 54,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        54,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 59,
+          "first": 0.0001,
+          "first_valid": "2021-07-01",
+          "kind": "f",
+          "last": 0.0045,
+          "last_valid": "2026-05-01",
+          "max": 0.0045,
+          "min": 0.0001,
+          "sum": 0.1357
+        }
+      },
+      "index": {
+        "end": "2026-05-01",
+        "freq": "MS",
+        "len": 59,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2021-07-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        59
+      ],
+      "type": "Series"
+    }
+  },
+  "q5.weekly": {
+    "factors": {
+      "columns": [
+        "R_MKT",
+        "R_ME",
+        "R_IA",
+        "R_ROE",
+        "R_EG"
+      ],
+      "data": {
+        "R_EG": {
+          "count": 31,
+          "first": -0.000505,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": 0.005216,
+          "last_valid": "2026-01-02",
+          "max": 0.016817,
+          "min": -0.008702,
+          "sum": 0.068648
+        },
+        "R_IA": {
+          "count": 31,
+          "first": 0.001528,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": -0.005546,
+          "last_valid": "2026-01-02",
+          "max": 0.013837,
+          "min": -0.020678,
+          "sum": -0.025122
+        },
+        "R_ME": {
+          "count": 31,
+          "first": -0.020927,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": -0.003909,
+          "last_valid": "2026-01-02",
+          "max": 0.018133,
+          "min": -0.020927,
+          "sum": 0.005801
+        },
+        "R_MKT": {
+          "count": 31,
+          "first": -0.003041,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": -0.000853,
+          "last_valid": "2026-01-02",
+          "max": 0.029436,
+          "min": -0.036997,
+          "sum": -0.074095
+        },
+        "R_ROE": {
+          "count": 31,
+          "first": -0.009963,
+          "first_valid": "2025-06-06",
+          "kind": "f",
+          "last": 0.001575,
+          "last_valid": "2026-01-02",
+          "max": 0.018105,
+          "min": -0.009963,
+          "sum": 0.0959
+        }
+      },
+      "index": {
+        "end": "2026-01-02",
+        "freq": "W-FRI",
+        "len": 31,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2025-06-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        31,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rf": {
+      "columns": [
+        "RF"
+      ],
+      "data": {
+        "RF": {
+          "count": 78,
+          "first": 0.00085,
+          "first_valid": "2024-12-06",
+          "kind": "f",
+          "last": 0.0006,
+          "last_valid": "2026-05-29",
+          "max": 0.00085,
+          "min": 0.0006,
+          "sum": 0.06092
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": "W-FRI",
+        "len": 78,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-12-06",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        78
+      ],
+      "type": "Series"
+    }
+  }
+}

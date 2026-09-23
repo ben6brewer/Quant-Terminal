@@ -1,0 +1,355 @@
+{
+  "ex_ante_beta": 1.1555556,
+  "ex_ante_beta_full_coverage": 1.22,
+  "ex_post_beta": 0.81886095,
+  "fallback_no_factor_data": {
+    "ctev_by_factor": {
+      "Country": {
+        "active_weight": 0.0,
+        "ctev": 1.03
+      },
+      "Industry": {
+        "active_weight": 0.0,
+        "ctev": 1.55
+      },
+      "Market": {
+        "active_weight": 0.0,
+        "ctev": 3.61
+      },
+      "Sector": {
+        "active_weight": 0.0,
+        "ctev": 1.55
+      },
+      "Style": {
+        "active_weight": 0.0,
+        "ctev": 2.58
+      }
+    },
+    "ctev_by_sector": {
+      "items": {
+        "Communication Services": {
+          "active_weight": -35.0,
+          "ctev": 1.49
+        },
+        "Financial Services": {
+          "active_weight": 18.0,
+          "ctev": 0.94
+        },
+        "Healthcare": {
+          "active_weight": 10.0,
+          "ctev": 0.42
+        },
+        "Technology": {
+          "active_weight": -5.0,
+          "ctev": 1.56
+        },
+        "Utilities": {
+          "active_weight": 12.0,
+          "ctev": 0.76
+        }
+      },
+      "order": [
+        "Technology",
+        "Communication Services",
+        "Financial Services",
+        "Utilities",
+        "Healthcare"
+      ]
+    },
+    "factor_exposures": {},
+    "keys": [
+      "ctev_by_factor",
+      "ctev_by_sector",
+      "factor_exposures",
+      "security_risks",
+      "summary",
+      "top_securities"
+    ],
+    "security_risks": {
+      "_QT_TEST_ALPHA": {
+        "active_weight": 15.0,
+        "benchmark_weight": 25.0,
+        "idio_ctev": 0.72,
+        "idio_tev": 7.73,
+        "idio_vol": 7.73,
+        "portfolio_weight": 40.0
+      },
+      "_QT_TEST_BRAVO": {
+        "active_weight": 18.0,
+        "benchmark_weight": 12.0,
+        "idio_ctev": 0.94,
+        "idio_tev": 8.01,
+        "idio_vol": 8.01,
+        "portfolio_weight": 30.0
+      },
+      "_QT_TEST_CHARLIE": {
+        "active_weight": 12.0,
+        "benchmark_weight": 8.0,
+        "idio_ctev": 0.76,
+        "idio_tev": 10.93,
+        "idio_vol": 10.93,
+        "portfolio_weight": 20.0
+      },
+      "_QT_TEST_DELTA": {
+        "active_weight": 10.0,
+        "benchmark_weight": 0.0,
+        "idio_ctev": 0.42,
+        "idio_tev": 8.28,
+        "idio_vol": 8.28,
+        "portfolio_weight": 10.0
+      },
+      "_QT_TEST_ECHO": {
+        "active_weight": -35.0,
+        "benchmark_weight": 35.0,
+        "idio_ctev": 1.49,
+        "idio_tev": 7.92,
+        "idio_vol": 7.92,
+        "portfolio_weight": 0.0
+      },
+      "_QT_TEST_FOXTROT": {
+        "active_weight": -20.0,
+        "benchmark_weight": 20.0,
+        "idio_ctev": 0.84,
+        "idio_tev": 12.68,
+        "idio_vol": 12.68,
+        "portfolio_weight": 0.0
+      }
+    },
+    "summary": {
+      "ex_ante_beta": 1.16,
+      "ex_post_beta": 0.82,
+      "factor_risk_pct": 50.0,
+      "idio_risk_pct": 50.0,
+      "total_active_risk": 10.32
+    },
+    "top_securities": {
+      "_QT_TEST_ALPHA": {
+        "active_weight": 15.0,
+        "benchmark_weight": 25.0,
+        "idio_ctev": 0.72,
+        "idio_tev": 7.73,
+        "idio_vol": 7.73,
+        "portfolio_weight": 40.0
+      },
+      "_QT_TEST_BRAVO": {
+        "active_weight": 18.0,
+        "benchmark_weight": 12.0,
+        "idio_ctev": 0.94,
+        "idio_tev": 8.01,
+        "idio_vol": 8.01,
+        "portfolio_weight": 30.0
+      },
+      "_QT_TEST_CHARLIE": {
+        "active_weight": 12.0,
+        "benchmark_weight": 8.0,
+        "idio_ctev": 0.76,
+        "idio_tev": 10.93,
+        "idio_vol": 10.93,
+        "portfolio_weight": 20.0
+      },
+      "_QT_TEST_DELTA": {
+        "active_weight": 10.0,
+        "benchmark_weight": 0.0,
+        "idio_ctev": 0.42,
+        "idio_tev": 8.28,
+        "idio_vol": 8.28,
+        "portfolio_weight": 10.0
+      },
+      "_QT_TEST_ECHO": {
+        "active_weight": -35.0,
+        "benchmark_weight": 35.0,
+        "idio_ctev": 1.49,
+        "idio_tev": 7.92,
+        "idio_vol": 7.92,
+        "portfolio_weight": 0.0
+      },
+      "_QT_TEST_FOXTROT": {
+        "active_weight": -20.0,
+        "benchmark_weight": 20.0,
+        "idio_ctev": 0.84,
+        "idio_tev": 12.68,
+        "idio_vol": 12.68,
+        "portfolio_weight": 0.0
+      }
+    }
+  },
+  "fallback_no_regressions": {
+    "ctev_by_factor": {
+      "Country": {
+        "active_weight": 0.0,
+        "ctev": 1.06
+      },
+      "Industry": {
+        "active_weight": 0.0,
+        "ctev": 1.59
+      },
+      "Market": {
+        "active_weight": 0.0,
+        "ctev": 3.71
+      },
+      "Sector": {
+        "active_weight": 0.0,
+        "ctev": 1.59
+      },
+      "Style": {
+        "active_weight": 0.0,
+        "ctev": 2.65
+      }
+    },
+    "ctev_by_sector": {
+      "items": {
+        "Communication Services": {
+          "active_weight": -35.0,
+          "ctev": 1.61
+        },
+        "Financial Services": {
+          "active_weight": 18.0,
+          "ctev": 0.97
+        },
+        "Healthcare": {
+          "active_weight": 10.0,
+          "ctev": 0.44
+        },
+        "Technology": {
+          "active_weight": -5.0,
+          "ctev": 1.43
+        },
+        "Utilities": {
+          "active_weight": 12.0,
+          "ctev": 0.85
+        }
+      },
+      "order": [
+        "Communication Services",
+        "Technology",
+        "Financial Services",
+        "Utilities",
+        "Healthcare"
+      ]
+    },
+    "factor_exposures": {},
+    "keys": [
+      "ctev_by_factor",
+      "ctev_by_sector",
+      "factor_exposures",
+      "security_risks",
+      "summary",
+      "top_securities"
+    ],
+    "security_risks": {
+      "_QT_TEST_ALPHA": {
+        "active_weight": 15.0,
+        "benchmark_weight": 25.0,
+        "idio_ctev": 0.68,
+        "idio_tev": 7.47,
+        "idio_vol": 7.47,
+        "portfolio_weight": 40.0
+      },
+      "_QT_TEST_BRAVO": {
+        "active_weight": 18.0,
+        "benchmark_weight": 12.0,
+        "idio_ctev": 0.97,
+        "idio_tev": 8.17,
+        "idio_vol": 8.17,
+        "portfolio_weight": 30.0
+      },
+      "_QT_TEST_CHARLIE": {
+        "active_weight": 12.0,
+        "benchmark_weight": 8.0,
+        "idio_ctev": 0.85,
+        "idio_tev": 11.43,
+        "idio_vol": 11.43,
+        "portfolio_weight": 20.0
+      },
+      "_QT_TEST_DELTA": {
+        "active_weight": 10.0,
+        "benchmark_weight": 0.0,
+        "idio_ctev": 0.44,
+        "idio_tev": 8.06,
+        "idio_vol": 8.06,
+        "portfolio_weight": 10.0
+      },
+      "_QT_TEST_ECHO": {
+        "active_weight": -35.0,
+        "benchmark_weight": 35.0,
+        "idio_ctev": 1.61,
+        "idio_tev": 7.72,
+        "idio_vol": 7.72,
+        "portfolio_weight": 0.0
+      },
+      "_QT_TEST_FOXTROT": {
+        "active_weight": -20.0,
+        "benchmark_weight": 20.0,
+        "idio_ctev": 0.75,
+        "idio_tev": 11.57,
+        "idio_vol": 11.57,
+        "portfolio_weight": 0.0
+      }
+    },
+    "summary": {
+      "ex_ante_beta": 1.16,
+      "ex_post_beta": 0.81,
+      "factor_risk_pct": 50.0,
+      "idio_risk_pct": 50.0,
+      "total_active_risk": 10.61
+    },
+    "top_securities": {
+      "_QT_TEST_ALPHA": {
+        "active_weight": 15.0,
+        "benchmark_weight": 25.0,
+        "idio_ctev": 0.68,
+        "idio_tev": 7.47,
+        "idio_vol": 7.47,
+        "portfolio_weight": 40.0
+      },
+      "_QT_TEST_BRAVO": {
+        "active_weight": 18.0,
+        "benchmark_weight": 12.0,
+        "idio_ctev": 0.97,
+        "idio_tev": 8.17,
+        "idio_vol": 8.17,
+        "portfolio_weight": 30.0
+      },
+      "_QT_TEST_CHARLIE": {
+        "active_weight": 12.0,
+        "benchmark_weight": 8.0,
+        "idio_ctev": 0.85,
+        "idio_tev": 11.43,
+        "idio_vol": 11.43,
+        "portfolio_weight": 20.0
+      },
+      "_QT_TEST_DELTA": {
+        "active_weight": 10.0,
+        "benchmark_weight": 0.0,
+        "idio_ctev": 0.44,
+        "idio_tev": 8.06,
+        "idio_vol": 8.06,
+        "portfolio_weight": 10.0
+      },
+      "_QT_TEST_ECHO": {
+        "active_weight": -35.0,
+        "benchmark_weight": 35.0,
+        "idio_ctev": 1.61,
+        "idio_tev": 7.72,
+        "idio_vol": 7.72,
+        "portfolio_weight": 0.0
+      },
+      "_QT_TEST_FOXTROT": {
+        "active_weight": -20.0,
+        "benchmark_weight": 20.0,
+        "idio_ctev": 0.75,
+        "idio_tev": 11.57,
+        "idio_vol": 11.57,
+        "portfolio_weight": 0.0
+      }
+    }
+  },
+  "summary_metrics": {
+    "ex_ante_beta": 1.16,
+    "ex_post_beta": 0.82,
+    "factor_risk_pct": 50.0,
+    "idio_risk_pct": 50.0,
+    "total_active_risk": 10.32
+  },
+  "total_active_risk": 10.323316
+}

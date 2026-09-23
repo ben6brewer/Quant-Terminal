@@ -1,0 +1,614 @@
+{
+  "_QT_TEST_ALPHA": {
+    "adj_r_squared": 0.69717597,
+    "alpha": 0.00082591573,
+    "betas": {
+      "CMA": 0.1439329,
+      "HML": -0.55531896,
+      "Mkt-RF": 1.3205042,
+      "RMW": 0.24275927,
+      "SMB": -0.13323331,
+      "UMD": 0.18391936,
+      "const": 0.00082591573
+    },
+    "country": "United States",
+    "factor_vol": 0.21641523,
+    "fitted_values": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": -0.012232448,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.01564776,
+          "last_valid": "2026-05-29",
+          "max": 0.037882348,
+          "min": -0.036004513,
+          "sum": 0.055224818
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "idio_vol": 0.1397489,
+    "n_observations": 249,
+    "p_values": {
+      "CMA": 0.44020185,
+      "HML": 2.3904809e-07,
+      "Mkt-RF": 0.0,
+      "RMW": 0.10612471,
+      "SMB": 0.22657057,
+      "UMD": 0.011547604,
+      "const": 0.14803896
+    },
+    "r_squared": 0.70572342,
+    "residuals": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": 0.008305837,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.0014223956,
+          "last_valid": "2026-05-29",
+          "max": 0.024191827,
+          "min": -0.019696104,
+          "sum": -5.5511151e-17
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "sector": "Technology",
+    "t_stats": {
+      "CMA": 0.77312678,
+      "HML": -5.3175904,
+      "Mkt-RF": 23.56663,
+      "RMW": 1.6219099,
+      "SMB": -1.2123241,
+      "UMD": 2.5450682,
+      "const": 1.451129
+    },
+    "ticker": "_QT_TEST_ALPHA"
+  },
+  "_QT_TEST_BRAVO": {
+    "adj_r_squared": 0.73886149,
+    "alpha": 0.00019947984,
+    "betas": {
+      "CMA": 0.29614117,
+      "HML": 0.87792219,
+      "Mkt-RF": 0.86916001,
+      "RMW": 0.11376357,
+      "SMB": 0.1540656,
+      "UMD": -0.16513253,
+      "const": 0.00019947984
+    },
+    "country": "United States",
+    "factor_vol": 0.16536154,
+    "fitted_values": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": -0.010299458,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.0010011809,
+          "last_valid": "2026-05-29",
+          "max": 0.030704718,
+          "min": -0.023894292,
+          "sum": 0.021417185
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "idio_vol": 0.096430766,
+    "n_observations": 249,
+    "p_values": {
+      "CMA": 0.021998045,
+      "HML": 0.0,
+      "Mkt-RF": 0.0,
+      "RMW": 0.27177081,
+      "SMB": 0.04328398,
+      "UMD": 0.0010693949,
+      "const": 0.61196653
+    },
+    "r_squared": 0.74623234,
+    "residuals": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": -0.0010148442,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.00091339872,
+          "last_valid": "2026-05-29",
+          "max": 0.017812659,
+          "min": -0.018307424,
+          "sum": 2.0469737e-16
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "sector": "Financial Services",
+    "t_stats": {
+      "CMA": 2.3052722,
+      "HML": 12.183195,
+      "Mkt-RF": 22.479685,
+      "RMW": 1.1015061,
+      "SMB": 2.0316288,
+      "UMD": -3.3115963,
+      "const": 0.50792792
+    },
+    "ticker": "_QT_TEST_BRAVO"
+  },
+  "_QT_TEST_CHARLIE": {
+    "adj_r_squared": 0.4432672,
+    "alpha": -3.9063092e-05,
+    "betas": {
+      "CMA": 0.59460155,
+      "HML": 0.51727101,
+      "Mkt-RF": 1.0856493,
+      "RMW": -0.45533316,
+      "SMB": 0.069030426,
+      "UMD": 0.053364598,
+      "const": -3.9063092e-05
+    },
+    "country": "United States",
+    "factor_vol": 0.18732512,
+    "fitted_values": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": -0.0085686897,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.0052898363,
+          "last_valid": "2026-05-29",
+          "max": 0.037482291,
+          "min": -0.02852923,
+          "sum": -0.11057768
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "idio_vol": 0.20337827,
+    "n_observations": 249,
+    "p_values": {
+      "CMA": 0.029141172,
+      "HML": 0.00077829742,
+      "Mkt-RF": 0.0,
+      "RMW": 0.037628038,
+      "SMB": 0.66641,
+      "UMD": 0.61232104,
+      "const": 0.962424
+    },
+    "r_squared": 0.45898143,
+    "residuals": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": 0.01368978,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": 0.019537188,
+          "last_valid": "2026-05-29",
+          "max": 0.034543781,
+          "min": -0.037137531,
+          "sum": 1.6653345e-16
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "sector": "Energy",
+    "t_stats": {
+      "CMA": 2.1946261,
+      "HML": 3.4035675,
+      "Mkt-RF": 13.313465,
+      "RMW": -2.0903742,
+      "SMB": 0.43160883,
+      "UMD": 0.50742174,
+      "const": -0.047160757
+    },
+    "ticker": "_QT_TEST_CHARLIE"
+  },
+  "_QT_TEST_DELTA": {
+    "adj_r_squared": 0.51892673,
+    "alpha": -6.7850777e-05,
+    "betas": {
+      "CMA": 0.17414584,
+      "HML": 0.14963766,
+      "Mkt-RF": 0.55810193,
+      "RMW": 0.64149182,
+      "SMB": -0.35221721,
+      "UMD": 0.0078942366,
+      "const": -6.7850777e-05
+    },
+    "country": "Netherlands",
+    "factor_vol": 0.10273683,
+    "fitted_values": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": -0.012040474,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.0012589106,
+          "last_valid": "2026-05-29",
+          "max": 0.021244387,
+          "min": -0.014449821,
+          "sum": -0.016539958
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "idio_vol": 0.096261455,
+    "n_observations": 249,
+    "p_values": {
+      "CMA": 0.1757285,
+      "HML": 0.038557871,
+      "Mkt-RF": 0.0,
+      "RMW": 2.1421833e-09,
+      "SMB": 5.3949071e-06,
+      "UMD": 0.87412351,
+      "const": 0.86274129
+    },
+    "r_squared": 0.53250542,
+    "residuals": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": 0.0056351645,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.0034033094,
+          "last_valid": "2026-05-29",
+          "max": 0.020323107,
+          "min": -0.019912449,
+          "sum": -1.2836954e-16
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "sector": "Healthcare",
+    "t_stats": {
+      "CMA": 1.3579998,
+      "HML": 2.08022,
+      "Mkt-RF": 14.459964,
+      "RMW": 6.2221147,
+      "SMB": -4.6527795,
+      "UMD": 0.15859084,
+      "const": -0.17306972
+    },
+    "ticker": "_QT_TEST_DELTA"
+  },
+  "_QT_TEST_ECHO": {
+    "adj_r_squared": 0.31517856,
+    "alpha": -0.001542549,
+    "betas": {
+      "CMA": -0.08916609,
+      "HML": -0.44723149,
+      "Mkt-RF": 0.90811192,
+      "RMW": 0.23533391,
+      "SMB": 0.054110944,
+      "UMD": 0.20777175,
+      "const": -0.001542549
+    },
+    "country": "United States",
+    "factor_vol": 0.150635,
+    "fitted_values": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": -0.0092260154,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.015079031,
+          "last_valid": "2026-05-29",
+          "max": 0.023574615,
+          "min": -0.027687945,
+          "sum": -0.49822542
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "idio_vol": 0.21246817,
+    "n_observations": 249,
+    "p_values": {
+      "CMA": 0.75301421,
+      "HML": 0.0052503876,
+      "Mkt-RF": 0.0,
+      "RMW": 0.30209126,
+      "SMB": 0.74633038,
+      "UMD": 0.059806255,
+      "const": 0.075898373
+    },
+    "r_squared": 0.33450819,
+    "residuals": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": 0.01918496,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.010044935,
+          "last_valid": "2026-05-29",
+          "max": 0.04493169,
+          "min": -0.036755404,
+          "sum": 5.2735594e-16
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "sector": "Communication Services",
+    "t_stats": {
+      "CMA": -0.3150249,
+      "HML": -2.8168212,
+      "Mkt-RF": 10.659863,
+      "RMW": 1.0341652,
+      "SMB": 0.32385123,
+      "UMD": 1.8910935,
+      "const": -1.7826406
+    },
+    "ticker": "_QT_TEST_ECHO"
+  },
+  "_QT_TEST_FOXTROT": {
+    "adj_r_squared": 0.17349193,
+    "alpha": 0.0023455668,
+    "betas": {
+      "CMA": 0.15736296,
+      "HML": 0.05490853,
+      "Mkt-RF": 0.82112591,
+      "RMW": 0.17388971,
+      "SMB": 0.41599223,
+      "UMD": -0.36882681,
+      "const": 0.0023455668
+    },
+    "country": "United States",
+    "factor_vol": 0.14513757,
+    "fitted_values": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": -0.0043405176,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.0067738405,
+          "last_valid": "2026-05-29",
+          "max": 0.028158698,
+          "min": -0.023231865,
+          "sum": 0.49521271
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "idio_vol": 0.29319098,
+    "n_observations": 249,
+    "p_values": {
+      "CMA": 0.68738179,
+      "HML": 0.80232312,
+      "Mkt-RF": 2.7373881e-11,
+      "RMW": 0.58025351,
+      "SMB": 0.07244052,
+      "UMD": 0.015711472,
+      "const": 0.050635532
+    },
+    "r_squared": 0.19682079,
+    "residuals": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 249,
+          "first": 0.0051184744,
+          "first_valid": "2025-06-02",
+          "kind": "f",
+          "last": -0.013153631,
+          "last_valid": "2026-05-29",
+          "max": 0.058167887,
+          "min": -0.050000292,
+          "sum": 7.4940054e-16
+        }
+      },
+      "index": {
+        "end": "2026-05-29",
+        "freq": null,
+        "len": 249,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        249
+      ],
+      "type": "Series"
+    },
+    "sector": "Technology",
+    "t_stats": {
+      "CMA": 0.40289415,
+      "HML": 0.2506167,
+      "Mkt-RF": 6.9849815,
+      "RMW": 0.5537613,
+      "SMB": 1.8042177,
+      "UMD": -2.4327208,
+      "const": 1.9643365
+    },
+    "ticker": "_QT_TEST_FOXTROT"
+  }
+}

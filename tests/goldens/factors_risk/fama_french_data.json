@@ -1,0 +1,377 @@
+{
+  "factor_returns": {
+    "columns": [
+      "Mkt-RF",
+      "SMB",
+      "HML",
+      "RMW",
+      "CMA",
+      "UMD"
+    ],
+    "data": {
+      "CMA": {
+        "count": 372,
+        "first": -0.0007,
+        "first_valid": "2024-12-02",
+        "kind": "f",
+        "last": 0.004,
+        "last_valid": "2026-05-29",
+        "max": 0.0106,
+        "min": -0.0071,
+        "sum": 0.0245
+      },
+      "HML": {
+        "count": 372,
+        "first": -0.0104,
+        "first_valid": "2024-12-02",
+        "kind": "f",
+        "last": 0.008,
+        "last_valid": "2026-05-29",
+        "max": 0.0175,
+        "min": -0.0146,
+        "sum": 0.0032
+      },
+      "Mkt-RF": {
+        "count": 372,
+        "first": 0.0098,
+        "first_valid": "2024-12-02",
+        "kind": "f",
+        "last": -0.0101,
+        "last_valid": "2026-05-29",
+        "max": 0.0295,
+        "min": -0.026,
+        "sum": 0.1194
+      },
+      "RMW": {
+        "count": 372,
+        "first": -0.0017,
+        "first_valid": "2024-12-02",
+        "kind": "f",
+        "last": 0.0007,
+        "last_valid": "2026-05-29",
+        "max": 0.0127,
+        "min": -0.0111,
+        "sum": 0.0921
+      },
+      "SMB": {
+        "count": 372,
+        "first": -0.0019,
+        "first_valid": "2024-12-02",
+        "kind": "f",
+        "last": -0.006,
+        "last_valid": "2026-05-29",
+        "max": 0.0144,
+        "min": -0.0138,
+        "sum": -0.0749
+      },
+      "UMD": {
+        "count": 372,
+        "first": 0.0012,
+        "first_valid": "2024-12-02",
+        "kind": "f",
+        "last": -0.0013,
+        "last_valid": "2026-05-29",
+        "max": 0.0247,
+        "min": -0.0216,
+        "sum": -0.1214
+      }
+    },
+    "index": {
+      "end": "2026-05-29",
+      "freq": null,
+      "len": 372,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-12-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      372,
+      6
+    ],
+    "type": "DataFrame"
+  },
+  "factor_returns_from": {
+    "columns": [
+      "Mkt-RF",
+      "SMB",
+      "HML",
+      "RMW",
+      "CMA",
+      "UMD"
+    ],
+    "data": {
+      "CMA": {
+        "count": 20,
+        "first": 0.0002,
+        "first_valid": "2026-05-01",
+        "kind": "f",
+        "last": 0.004,
+        "last_valid": "2026-05-29",
+        "max": 0.0074,
+        "min": -0.0059,
+        "sum": -0.0106
+      },
+      "HML": {
+        "count": 20,
+        "first": 0.0099,
+        "first_valid": "2026-05-01",
+        "kind": "f",
+        "last": 0.008,
+        "last_valid": "2026-05-29",
+        "max": 0.0146,
+        "min": -0.0062,
+        "sum": 0.05
+      },
+      "Mkt-RF": {
+        "count": 20,
+        "first": -0.0065,
+        "first_valid": "2026-05-01",
+        "kind": "f",
+        "last": -0.0101,
+        "last_valid": "2026-05-29",
+        "max": 0.0163,
+        "min": -0.0179,
+        "sum": -0.0669
+      },
+      "RMW": {
+        "count": 20,
+        "first": -0.0111,
+        "first_valid": "2026-05-01",
+        "kind": "f",
+        "last": 0.0007,
+        "last_valid": "2026-05-29",
+        "max": 0.0108,
+        "min": -0.0111,
+        "sum": 0.0107
+      },
+      "SMB": {
+        "count": 20,
+        "first": -0.0032,
+        "first_valid": "2026-05-01",
+        "kind": "f",
+        "last": -0.006,
+        "last_valid": "2026-05-29",
+        "max": 0.0067,
+        "min": -0.0071,
+        "sum": 0.0178
+      },
+      "UMD": {
+        "count": 20,
+        "first": -0.0056,
+        "first_valid": "2026-05-01",
+        "kind": "f",
+        "last": -0.0013,
+        "last_valid": "2026-05-29",
+        "max": 0.0194,
+        "min": -0.0216,
+        "sum": -0.0277
+      }
+    },
+    "index": {
+      "end": "2026-05-29",
+      "freq": null,
+      "len": 20,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2026-05-01",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      20,
+      6
+    ],
+    "type": "DataFrame"
+  },
+  "factor_returns_window": {
+    "columns": [
+      "Mkt-RF",
+      "SMB",
+      "HML",
+      "RMW",
+      "CMA",
+      "UMD"
+    ],
+    "data": {
+      "CMA": {
+        "count": 85,
+        "first": -0.0028,
+        "first_valid": "2025-09-02",
+        "kind": "f",
+        "last": -0.0057,
+        "last_valid": "2025-12-31",
+        "max": 0.0087,
+        "min": -0.0065,
+        "sum": -0.022
+      },
+      "HML": {
+        "count": 85,
+        "first": 0.0089,
+        "first_valid": "2025-09-02",
+        "kind": "f",
+        "last": 0.0025,
+        "last_valid": "2025-12-31",
+        "max": 0.0175,
+        "min": -0.0108,
+        "sum": -0.0056
+      },
+      "Mkt-RF": {
+        "count": 85,
+        "first": 0.0074,
+        "first_valid": "2025-09-02",
+        "kind": "f",
+        "last": 0.0022,
+        "last_valid": "2025-12-31",
+        "max": 0.0225,
+        "min": -0.0246,
+        "sum": -0.0514
+      },
+      "RMW": {
+        "count": 85,
+        "first": 0.0042,
+        "first_valid": "2025-09-02",
+        "kind": "f",
+        "last": 0.0031,
+        "last_valid": "2025-12-31",
+        "max": 0.0097,
+        "min": -0.0085,
+        "sum": 0.0596
+      },
+      "SMB": {
+        "count": 85,
+        "first": 0.0101,
+        "first_valid": "2025-09-02",
+        "kind": "f",
+        "last": -0.0009,
+        "last_valid": "2025-12-31",
+        "max": 0.0101,
+        "min": -0.0111,
+        "sum": -0.0378
+      },
+      "UMD": {
+        "count": 85,
+        "first": -0.0055,
+        "first_valid": "2025-09-02",
+        "kind": "f",
+        "last": -0.0033,
+        "last_valid": "2025-12-31",
+        "max": 0.0182,
+        "min": -0.0201,
+        "sum": 0.019
+      }
+    },
+    "index": {
+      "end": "2025-12-31",
+      "freq": null,
+      "len": 85,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2025-09-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      85,
+      6
+    ],
+    "type": "DataFrame"
+  },
+  "risk_free": {
+    "columns": [
+      "RF"
+    ],
+    "data": {
+      "RF": {
+        "count": 372,
+        "first": 0.00017,
+        "first_valid": "2024-12-02",
+        "kind": "f",
+        "last": 0.00015,
+        "last_valid": "2026-05-29",
+        "max": 0.00017,
+        "min": 0.00015,
+        "sum": 0.06092
+      }
+    },
+    "index": {
+      "end": "2026-05-29",
+      "freq": null,
+      "len": 372,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-12-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      372
+    ],
+    "type": "Series"
+  },
+  "risk_free_until": {
+    "columns": [
+      "RF"
+    ],
+    "data": {
+      "RF": {
+        "count": 21,
+        "first": 0.00017,
+        "first_valid": "2024-12-02",
+        "kind": "f",
+        "last": 0.00017,
+        "last_valid": "2024-12-31",
+        "max": 0.00017,
+        "min": 0.00017,
+        "sum": 0.00357
+      }
+    },
+    "index": {
+      "end": "2024-12-31",
+      "freq": null,
+      "len": 21,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-12-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      21
+    ],
+    "type": "Series"
+  },
+  "risk_free_window": {
+    "columns": [
+      "RF"
+    ],
+    "data": {
+      "RF": {
+        "count": 85,
+        "first": 0.00017,
+        "first_valid": "2025-09-02",
+        "kind": "f",
+        "last": 0.00015,
+        "last_valid": "2025-12-31",
+        "max": 0.00017,
+        "min": 0.00015,
+        "sum": 0.01417
+      }
+    },
+    "index": {
+      "end": "2025-12-31",
+      "freq": null,
+      "len": 85,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2025-09-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      85
+    ],
+    "type": "Series"
+  }
+}
