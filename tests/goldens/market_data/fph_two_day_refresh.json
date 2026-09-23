@@ -1,0 +1,349 @@
+{
+  "day1": {
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume"
+    ],
+    "data": {
+      "Close": {
+        "count": 11774,
+        "first": 11.006231,
+        "first_valid": "1980-12-12",
+        "kind": "f",
+        "last": 407.58719,
+        "last_valid": "2026-06-15",
+        "max": 660.69771,
+        "min": 7.536865,
+        "sum": 1548625.5
+      },
+      "High": {
+        "count": 11774,
+        "first": 11.123742,
+        "first_valid": "1980-12-12",
+        "kind": "f",
+        "last": 413.9073,
+        "last_valid": "2026-06-15",
+        "max": 673.57606,
+        "min": 7.626699,
+        "sum": 1574670.8
+      },
+      "Low": {
+        "count": 11774,
+        "first": 10.90219,
+        "first_valid": "1980-12-12",
+        "kind": "f",
+        "last": 403.39677,
+        "last_valid": "2026-06-15",
+        "max": 649.1891,
+        "min": 7.41656,
+        "sum": 1522604.1
+      },
+      "Open": {
+        "count": 11774,
+        "first": 11.019575,
+        "first_valid": "1980-12-12",
+        "kind": "f",
+        "last": 409.69521,
+        "last_valid": "2026-06-15",
+        "max": 660.24752,
+        "min": 7.481501,
+        "sum": 1548429.6
+      },
+      "Volume": {
+        "count": 11774,
+        "first": 1518778.0,
+        "first_valid": "1980-12-12",
+        "kind": "i",
+        "last": 1129237.0,
+        "last_valid": "2026-06-15",
+        "max": 5237438.0,
+        "min": 284584.0,
+        "sum": 15328999000.0
+      }
+    },
+    "index": {
+      "end": "2026-06-15",
+      "freq": null,
+      "len": 11774,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "1980-12-12",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      11774,
+      5
+    ],
+    "type": "DataFrame"
+  },
+  "day2": {
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume"
+    ],
+    "data": {
+      "Close": {
+        "count": 11785,
+        "first": 11.006231,
+        "first_valid": "1980-12-12",
+        "kind": "f",
+        "last": 381.2,
+        "last_valid": "2026-06-30",
+        "max": 660.69771,
+        "min": 7.536865,
+        "sum": 1552784.2
+      },
+      "High": {
+        "count": 11785,
+        "first": 11.123742,
+        "first_valid": "1980-12-12",
+        "kind": "f",
+        "last": 381.7154,
+        "last_valid": "2026-06-30",
+        "max": 673.57606,
+        "min": 7.626699,
+        "sum": 1578905.3
+      },
+      "Low": {
+        "count": 11785,
+        "first": 10.90219,
+        "first_valid": "1980-12-12",
+        "kind": "f",
+        "last": 370.30672,
+        "last_valid": "2026-06-30",
+        "max": 649.1891,
+        "min": 7.41656,
+        "sum": 1526708.1
+      },
+      "Open": {
+        "count": 11785,
+        "first": 11.019575,
+        "first_valid": "1980-12-12",
+        "kind": "f",
+        "last": 370.80807,
+        "last_valid": "2026-06-30",
+        "max": 660.24752,
+        "min": 7.481501,
+        "sum": 1552609.0
+      },
+      "Volume": {
+        "count": 11785,
+        "first": 1518778.0,
+        "first_valid": "1980-12-12",
+        "kind": "i",
+        "last": 608169.0,
+        "last_valid": "2026-06-30",
+        "max": 5237438.0,
+        "min": 284584.0,
+        "sum": 15343565000.0
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 11785,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "1980-12-12",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      11785,
+      5
+    ],
+    "type": "DataFrame"
+  },
+  "day2_calls": [
+    {
+      "auto_adjust": false,
+      "end": null,
+      "group_by": "column",
+      "interval": "1d",
+      "period": "max",
+      "start": null,
+      "tickers": [
+        "AAPL"
+      ]
+    }
+  ],
+  "disk_day1": {
+    "data_source_version": "yahoo_v2",
+    "parquet": {
+      "AAPL.parquet": {
+        "columns": [
+          "Open",
+          "High",
+          "Low",
+          "Close",
+          "Volume"
+        ],
+        "data": {
+          "Close": {
+            "count": 11774,
+            "first": 11.006231,
+            "first_valid": "1980-12-12",
+            "kind": "f",
+            "last": 407.58719,
+            "last_valid": "2026-06-15",
+            "max": 660.69771,
+            "min": 7.536865,
+            "sum": 1548625.5
+          },
+          "High": {
+            "count": 11774,
+            "first": 11.123742,
+            "first_valid": "1980-12-12",
+            "kind": "f",
+            "last": 413.9073,
+            "last_valid": "2026-06-15",
+            "max": 673.57606,
+            "min": 7.626699,
+            "sum": 1574670.8
+          },
+          "Low": {
+            "count": 11774,
+            "first": 10.90219,
+            "first_valid": "1980-12-12",
+            "kind": "f",
+            "last": 403.39677,
+            "last_valid": "2026-06-15",
+            "max": 649.1891,
+            "min": 7.41656,
+            "sum": 1522604.1
+          },
+          "Open": {
+            "count": 11774,
+            "first": 11.019575,
+            "first_valid": "1980-12-12",
+            "kind": "f",
+            "last": 409.69521,
+            "last_valid": "2026-06-15",
+            "max": 660.24752,
+            "min": 7.481501,
+            "sum": 1548429.6
+          },
+          "Volume": {
+            "count": 11774,
+            "first": 1518778.0,
+            "first_valid": "1980-12-12",
+            "kind": "i",
+            "last": 1129237.0,
+            "last_valid": "2026-06-15",
+            "max": 5237438.0,
+            "min": 284584.0,
+            "sum": 15328999000.0
+          }
+        },
+        "index": {
+          "end": "2026-06-15",
+          "freq": null,
+          "len": 11774,
+          "monotonic_increasing": true,
+          "name": "Date",
+          "start": "1980-12-12",
+          "type": "DatetimeIndex",
+          "unique": true
+        },
+        "shape": [
+          11774,
+          5
+        ],
+        "type": "DataFrame"
+      }
+    }
+  },
+  "disk_day2": {
+    "data_source_version": "yahoo_v2",
+    "parquet": {
+      "AAPL.parquet": {
+        "columns": [
+          "Open",
+          "High",
+          "Low",
+          "Close",
+          "Volume"
+        ],
+        "data": {
+          "Close": {
+            "count": 11785,
+            "first": 11.006231,
+            "first_valid": "1980-12-12",
+            "kind": "f",
+            "last": 381.2,
+            "last_valid": "2026-06-30",
+            "max": 660.69771,
+            "min": 7.536865,
+            "sum": 1552784.2
+          },
+          "High": {
+            "count": 11785,
+            "first": 11.123742,
+            "first_valid": "1980-12-12",
+            "kind": "f",
+            "last": 381.7154,
+            "last_valid": "2026-06-30",
+            "max": 673.57606,
+            "min": 7.626699,
+            "sum": 1578905.3
+          },
+          "Low": {
+            "count": 11785,
+            "first": 10.90219,
+            "first_valid": "1980-12-12",
+            "kind": "f",
+            "last": 370.30672,
+            "last_valid": "2026-06-30",
+            "max": 649.1891,
+            "min": 7.41656,
+            "sum": 1526708.1
+          },
+          "Open": {
+            "count": 11785,
+            "first": 11.019575,
+            "first_valid": "1980-12-12",
+            "kind": "f",
+            "last": 370.80807,
+            "last_valid": "2026-06-30",
+            "max": 660.24752,
+            "min": 7.481501,
+            "sum": 1552609.0
+          },
+          "Volume": {
+            "count": 11785,
+            "first": 1518778.0,
+            "first_valid": "1980-12-12",
+            "kind": "i",
+            "last": 608169.0,
+            "last_valid": "2026-06-30",
+            "max": 5237438.0,
+            "min": 284584.0,
+            "sum": 15343565000.0
+          }
+        },
+        "index": {
+          "end": "2026-06-30",
+          "freq": null,
+          "len": 11785,
+          "monotonic_increasing": true,
+          "name": "Date",
+          "start": "1980-12-12",
+          "type": "DatetimeIndex",
+          "unique": true
+        },
+        "shape": [
+          11785,
+          5
+        ],
+        "type": "DataFrame"
+      }
+    }
+  }
+}
