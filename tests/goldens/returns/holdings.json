@@ -1,0 +1,52 @@
+{
+  "holdings": {
+    "AAPL": {
+      "avg_cost_basis": 340.88,
+      "current_price": 381.2,
+      "market_value": 22872.0,
+      "pnl": 2419.2,
+      "quantity": 60.0,
+      "total_cost": 0,
+      "weight": 0.31446307
+    },
+    "BTC-USD": {
+      "avg_cost_basis": 91156.487,
+      "current_price": 105000.0,
+      "market_value": 15750.0,
+      "pnl": 2076.527,
+      "quantity": 0.15,
+      "total_cost": 0,
+      "weight": 0.21654396
+    },
+    "MSFT": {
+      "avg_cost_basis": 506.97,
+      "current_price": 461.1,
+      "market_value": 11527.5,
+      "pnl": -1146.75,
+      "quantity": 25.0,
+      "total_cost": 0,
+      "weight": 0.15848955
+    },
+    "SPY": {
+      "avg_cost_basis": 414.9975,
+      "current_price": 282.3,
+      "market_value": 22584.0,
+      "pnl": -10615.8,
+      "quantity": 80.0,
+      "total_cost": 0,
+      "weight": 0.31050341
+    }
+  },
+  "order": [
+    "AAPL",
+    "SPY",
+    "BTC-USD",
+    "MSFT"
+  ],
+  "ui_free_cash_balance": 15195.577,
+  "weights_portfolio": {
+    "AAPL": 0.4,
+    "MSFT": 0.25,
+    "SPY": 0.35
+  }
+}

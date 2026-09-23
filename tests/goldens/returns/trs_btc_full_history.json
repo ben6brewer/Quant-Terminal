@@ -1,0 +1,34 @@
+{
+  "digest": {
+    "columns": [
+      "BTC-USD"
+    ],
+    "data": {
+      "BTC-USD": {
+        "count": 5294,
+        "first": 0.033057851,
+        "first_valid": "2012-01-02",
+        "kind": "f",
+        "last": 0.0065255164,
+        "last_valid": "2026-06-30",
+        "max": 0.35810698,
+        "min": -0.53838462,
+        "sum": 14.879415
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": "D",
+      "len": 5294,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2012-01-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      5294
+    ],
+    "type": "Series"
+  }
+}
