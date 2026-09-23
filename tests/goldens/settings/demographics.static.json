@@ -1,0 +1,18 @@
+{
+  "defaults": {
+    "demo_series": [
+      "White",
+      "Black",
+      "Hispanic"
+    ],
+    "lookback": "5Y",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_recession_shading": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "demographics_settings.json"
+}

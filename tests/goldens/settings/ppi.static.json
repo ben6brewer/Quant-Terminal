@@ -1,0 +1,49 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_ppi_core": true,
+    "show_ppi_energy": true,
+    "show_ppi_final_demand": true,
+    "show_ppi_services": true
+  },
+  "dialog_title": "PPI Settings",
+  "options": [
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ],
+    [
+      "show_ppi_final_demand",
+      "Show PPI Final Demand"
+    ],
+    [
+      "show_ppi_core",
+      "Show PPI Core"
+    ],
+    [
+      "show_ppi_energy",
+      "Show PPI Energy"
+    ],
+    [
+      "show_ppi_services",
+      "Show PPI Services"
+    ]
+  ],
+  "settings_file": "ppi_settings.json"
+}

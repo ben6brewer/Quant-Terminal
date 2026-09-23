@@ -1,0 +1,22 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "corr_decimals",
+      "corr_fixed_color_scale",
+      "matrix_colorscale",
+      "show_matrix_overlay"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "corr_decimals": 3,
+      "corr_fixed_color_scale": true,
+      "matrix_colorscale": "Green-Yellow-Red",
+      "show_matrix_overlay": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

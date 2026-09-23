@@ -1,0 +1,43 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "line_color",
+      "line_style",
+      "line_width",
+      "rate_series",
+      "show_crosshair",
+      "show_date_label",
+      "show_fed_funds",
+      "show_fed_funds_rate",
+      "show_gridlines",
+      "show_inversion_shading",
+      "show_value_label",
+      "show_zero_line"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "line_color": null,
+      "line_style": "PenStyle.SolidLine",
+      "line_width": 2,
+      "rate_series": [
+        "2Y",
+        "5Y",
+        "10Y",
+        "30Y"
+      ],
+      "show_crosshair": true,
+      "show_date_label": true,
+      "show_fed_funds": true,
+      "show_fed_funds_rate": false,
+      "show_gridlines": true,
+      "show_inversion_shading": true,
+      "show_value_label": true,
+      "show_zero_line": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

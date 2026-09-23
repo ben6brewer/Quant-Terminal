@@ -1,0 +1,24 @@
+{
+  "defaults": {
+    "candle_down_color": [
+      200,
+      50,
+      50
+    ],
+    "candle_up_color": [
+      76,
+      153,
+      0
+    ],
+    "candle_width": 0.6,
+    "chart_background": null,
+    "line_color": null,
+    "line_style": "PenStyle.SolidLine",
+    "line_width": 2,
+    "show_date_label": true,
+    "show_price_label": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "chart_settings.json"
+}

@@ -1,0 +1,23 @@
+{
+  "custom_date": false,
+  "default_setting_lookback": "Max",
+  "has_lookback_signal": true,
+  "initial_lookback": "Max",
+  "lookback_map": {
+    "10Y": 120,
+    "1Y": 12,
+    "20Y": 240,
+    "2Y": 24,
+    "5Y": 60,
+    "Max": null
+  },
+  "offered_not_in_map": [],
+  "profile": "base.months",
+  "toolbar_initial": "Max",
+  "toolbar_options": [
+    "5Y",
+    "10Y",
+    "20Y",
+    "Max"
+  ]
+}

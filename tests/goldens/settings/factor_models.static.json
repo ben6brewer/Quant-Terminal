@@ -1,0 +1,24 @@
+{
+  "defaults": {
+    "confidence_level": 0.95,
+    "custom_end_date": null,
+    "custom_start_date": null,
+    "frequency": "monthly",
+    "input_mode": "ticker",
+    "lookback_days": 1825,
+    "model_key": "ff5mom",
+    "portfolio": "",
+    "show_col_ci": true,
+    "show_col_coefficient": true,
+    "show_col_p_value": true,
+    "show_col_std_error": true,
+    "show_col_t_stat": true,
+    "show_diagnostics": true,
+    "show_goodness_of_fit": true,
+    "show_only_significant": false,
+    "ticker": ""
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "factor_models_settings.json"
+}

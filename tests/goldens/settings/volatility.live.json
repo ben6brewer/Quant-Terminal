@@ -1,0 +1,52 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [
+      "threshold_1",
+      "threshold_2"
+    ],
+    "keys": [
+      "show_3m_vol",
+      "show_crosshair",
+      "show_djia_vol",
+      "show_em_vol",
+      "show_gridlines",
+      "show_hover_tooltip",
+      "show_legend",
+      "show_move",
+      "show_nasdaq_vol",
+      "show_oil_vol",
+      "show_recession_bands",
+      "show_russell_vol",
+      "show_thresholds",
+      "show_vix",
+      "threshold_1",
+      "threshold_2"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [
+      "threshold_1",
+      "threshold_2"
+    ],
+    "values": {
+      "show_3m_vol": false,
+      "show_crosshair": true,
+      "show_djia_vol": false,
+      "show_em_vol": false,
+      "show_gridlines": true,
+      "show_hover_tooltip": true,
+      "show_legend": true,
+      "show_move": true,
+      "show_nasdaq_vol": false,
+      "show_oil_vol": false,
+      "show_recession_bands": true,
+      "show_russell_vol": false,
+      "show_thresholds": true,
+      "show_vix": true,
+      "threshold_1": 2.0,
+      "threshold_2": 3.0
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

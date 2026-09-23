@@ -1,0 +1,34 @@
+{
+  "defaults": {
+    "lookback": "Max",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_recession_bands": true,
+    "show_target_band": true
+  },
+  "dialog_title": "Fed Funds Rate Settings",
+  "options": [
+    [
+      "show_target_band",
+      "Show target range band (post-2008)"
+    ],
+    [
+      "show_recession_bands",
+      "Show recession shading"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "fed_funds_rate_settings.json"
+}

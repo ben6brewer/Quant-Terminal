@@ -1,0 +1,28 @@
+{
+  "custom_date": true,
+  "default_setting_lookback": "1W",
+  "has_lookback_signal": true,
+  "initial_lookback": "1W",
+  "lookback_map": {
+    "1D": 2,
+    "1M": 21,
+    "1W": 5,
+    "1Y": 252,
+    "3M": 63,
+    "6M": 126,
+    "YTD": null
+  },
+  "offered_not_in_map": [],
+  "profile": "stock_heatmap.heatmap",
+  "toolbar_initial": "1W",
+  "toolbar_options": [
+    "1D",
+    "1W",
+    "1M",
+    "3M",
+    "6M",
+    "YTD",
+    "1Y",
+    "Custom"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "show_breakdown": true,
+    "show_crosshair": true,
+    "show_date_label": true,
+    "show_gridlines": true,
+    "show_headline_overlay": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_reference_lines": true,
+    "show_value_label": true
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "cpi_settings.json"
+}

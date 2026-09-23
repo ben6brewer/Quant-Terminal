@@ -1,0 +1,9 @@
+{
+  "defaults": {
+    "hide_free_cash_summary": false,
+    "highlight_editable_fields": true
+  },
+  "dialog_title": null,
+  "options": null,
+  "settings_file": "portfolio_settings.json"
+}

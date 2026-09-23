@@ -1,0 +1,50 @@
+{
+  "defaults": {
+    "lookback": "10Y",
+    "show_ci": true,
+    "show_consumer": true,
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_real_estate": true,
+    "show_recession_bands": true,
+    "view_mode": "Raw"
+  },
+  "dialog_title": "Bank Lending Settings",
+  "options": [
+    [
+      "show_ci",
+      "Show C&I Loans"
+    ],
+    [
+      "show_real_estate",
+      "Show Real Estate"
+    ],
+    [
+      "show_consumer",
+      "Show Consumer"
+    ],
+    [
+      "show_recession_bands",
+      "Show recession shading"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "bank_lending_settings.json"
+}

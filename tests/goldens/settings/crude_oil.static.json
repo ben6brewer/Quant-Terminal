@@ -1,0 +1,45 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_brent": true,
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_recession_bands": true,
+    "show_wti": true,
+    "view_mode": "Raw"
+  },
+  "dialog_title": "Crude Oil Settings",
+  "options": [
+    [
+      "show_wti",
+      "Show WTI Crude"
+    ],
+    [
+      "show_brent",
+      "Show Brent Crude"
+    ],
+    [
+      "show_recession_bands",
+      "Show recession shading"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "crude_oil_settings.json"
+}

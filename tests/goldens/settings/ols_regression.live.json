@@ -1,0 +1,22 @@
+{
+  "changed_on_init": {},
+  "dialog": {
+    "flipped_not_roundtripped": [],
+    "keys": [
+      "show_confidence_bands",
+      "show_equation",
+      "show_gridlines",
+      "show_stats_panel"
+    ],
+    "keys_not_in_defaults": [],
+    "not_roundtripped": [],
+    "values": {
+      "show_confidence_bands": true,
+      "show_equation": true,
+      "show_gridlines": true,
+      "show_stats_panel": true
+    }
+  },
+  "settings_button": true,
+  "settings_file_written_on_init": false
+}

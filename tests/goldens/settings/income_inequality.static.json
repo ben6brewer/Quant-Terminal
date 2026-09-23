@@ -1,0 +1,45 @@
+{
+  "defaults": {
+    "lookback": "Max",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hh_income": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_personal_income": true,
+    "show_recession_bands": true,
+    "view_mode": "Raw"
+  },
+  "dialog_title": "Income Inequality Settings",
+  "options": [
+    [
+      "show_hh_income",
+      "Show Median HH Income"
+    ],
+    [
+      "show_personal_income",
+      "Show Median Personal Income"
+    ],
+    [
+      "show_recession_bands",
+      "Show recession shading"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "income_inequality_settings.json"
+}

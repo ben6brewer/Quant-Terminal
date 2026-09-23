@@ -1,0 +1,44 @@
+{
+  "defaults": {
+    "lookback": "10Y",
+    "show_crosshair": true,
+    "show_existing_supply": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_new_supply": true,
+    "show_recession_bands": true
+  },
+  "dialog_title": "Housing Supply Settings",
+  "options": [
+    [
+      "show_new_supply",
+      "Show New Supply Months"
+    ],
+    [
+      "show_existing_supply",
+      "Show Existing Supply Months"
+    ],
+    [
+      "show_recession_bands",
+      "Show recession shading"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "housing_supply_settings.json"
+}

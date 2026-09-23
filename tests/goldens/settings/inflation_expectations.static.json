@@ -1,0 +1,34 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_reference_line": true
+  },
+  "dialog_title": "Inflation Expectations Settings",
+  "options": [
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ],
+    [
+      "show_reference_line",
+      "Show 2% reference line"
+    ]
+  ],
+  "settings_file": "inflation_expectations_settings.json"
+}

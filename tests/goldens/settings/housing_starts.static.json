@@ -1,0 +1,45 @@
+{
+  "defaults": {
+    "lookback": "5Y",
+    "show_crosshair": true,
+    "show_gridlines": true,
+    "show_hover_tooltip": true,
+    "show_legend": true,
+    "show_multi": true,
+    "show_recession_bands": true,
+    "show_sf": true,
+    "view_mode": "Raw"
+  },
+  "dialog_title": "Housing Starts Settings",
+  "options": [
+    [
+      "show_sf",
+      "Show Single-Family Starts"
+    ],
+    [
+      "show_multi",
+      "Show 5+ Unit Starts"
+    ],
+    [
+      "show_recession_bands",
+      "Show recession shading"
+    ],
+    [
+      "show_gridlines",
+      "Show gridlines"
+    ],
+    [
+      "show_crosshair",
+      "Show crosshair"
+    ],
+    [
+      "show_legend",
+      "Show legend"
+    ],
+    [
+      "show_hover_tooltip",
+      "Show hover tooltip"
+    ]
+  ],
+  "settings_file": "housing_starts_settings.json"
+}

@@ -1,0 +1,19 @@
+{
+  "defaults": {
+    "line_color": null,
+    "line_style": "PenStyle.SolidLine",
+    "line_width": 2,
+    "lookback_days": null,
+    "rolling_window": 63,
+    "show_crosshair": true,
+    "show_date_label": true,
+    "show_gridlines": true,
+    "show_reference_lines": true,
+    "show_value_label": true,
+    "ticker1": "",
+    "ticker2": ""
+  },
+  "dialog_title": "Settings",
+  "options": [],
+  "settings_file": "rolling_settings.json"
+}
