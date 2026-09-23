@@ -138,7 +138,6 @@ MODULE_SECTIONS = {
         {"id": "energy_production", "label": "Energy Production", "class": "app.ui.modules.energy_production:EnergyProductionModule"},
         {"id": "real_rates", "label": "Real Rates / TIPS", "class": "app.ui.modules.real_rates:RealRatesModule"},
         {"id": "stock_heatmap", "label": "Stock Heatmap", "class": "app.ui.modules.stock_heatmap:StockHeatmapModule"},
-        {"id": "market_concentration", "label": "Market Concentration", "class": "app.ui.modules.market_concentration:MarketConcentrationModule"},
     ],
     "Data": [
         {"id": "import_data", "label": "Import Data", "class": "app.ui.modules.import_data:ImportDataModule"},

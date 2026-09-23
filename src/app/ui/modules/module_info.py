@@ -1513,30 +1513,6 @@ MODULE_INFO: dict[str, dict] = {
         ],
         "source": "Wikipedia, Yahoo Finance",
     },
-
-    "MarketConcentrationModule": {
-        "title": "Market Concentration",
-        "description": (
-            "Tracks how concentrated the S&P 500 is in its largest constituents over time. "
-            "Choose between Top-N market cap share (with N controlled by the spinbox) and "
-            "the Herfindahl-Hirschman Index (HHI)."
-        ),
-        "calculation": (
-            "For each date D: weight_i(D) = price_i(D) x shares_i / sum(price_j(D) x shares_j). "
-            "Top N % = sum of the N largest weights, expressed as a 0-100 percentage. "
-            "HHI = sum(weights^2) x 10,000 (standard convention; ranges from ~0 for a perfectly "
-            "diversified index to 10,000 for a single-stock monopoly). "
-            "Approximations: (1) uses the CURRENT S&P 500 membership for the entire history "
-            "(~3-5% survivorship bias - the trend is preserved but levels are biased upward); "
-            "(2) treats shares outstanding as constant (small error from buybacks/issuance)."
-        ),
-        "data_sources": [
-            {"id": "S&P 500 constituents", "name": "Wikipedia (current members)", "frequency": "Weekly (cached 7 days)"},
-            {"id": "Historical prices", "name": "Yahoo Finance (period=max)", "frequency": "Daily (cached 1 day)"},
-            {"id": "Shares outstanding", "name": "Yahoo Finance .info (sharesOutstanding)", "frequency": "Weekly (cached 7 days)"},
-        ],
-        "source": "Wikipedia, Yahoo Finance",
-    },
 }
 
 
