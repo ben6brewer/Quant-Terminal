@@ -1,0 +1,130 @@
+{
+  "daily": {
+    "columns": [
+      "[Custom] _QT_TEST_Series"
+    ],
+    "data": {
+      "[Custom] _QT_TEST_Series": {
+        "count": 130,
+        "first": 0.00041230153,
+        "first_valid": "2024-01-01",
+        "kind": "f",
+        "last": 0.007967385,
+        "last_valid": "2024-06-28",
+        "max": 0.022847566,
+        "min": -0.024767597,
+        "sum": -0.18029132
+      }
+    },
+    "index": {
+      "end": "2024-06-28",
+      "freq": "B",
+      "len": 130,
+      "monotonic_increasing": true,
+      "name": "date",
+      "start": "2024-01-01",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      130
+    ],
+    "type": "Series"
+  },
+  "monthly": {
+    "columns": [
+      "[Custom] _QT_TEST_Series"
+    ],
+    "data": {
+      "[Custom] _QT_TEST_Series": {
+        "count": 6,
+        "first": -0.084630048,
+        "first_valid": "2024-01-31",
+        "kind": "f",
+        "last": -0.051585675,
+        "last_valid": "2024-06-30",
+        "max": 0.031225401,
+        "min": -0.084630048,
+        "sum": -0.17788943
+      }
+    },
+    "index": {
+      "end": "2024-06-30",
+      "freq": "ME",
+      "len": 6,
+      "monotonic_increasing": true,
+      "name": "date",
+      "start": "2024-01-31",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      6
+    ],
+    "type": "Series"
+  },
+  "weekly": {
+    "columns": [
+      "[Custom] _QT_TEST_Series"
+    ],
+    "data": {
+      "[Custom] _QT_TEST_Series": {
+        "count": 26,
+        "first": -0.011184786,
+        "first_valid": "2024-01-07",
+        "kind": "f",
+        "last": -0.01737912,
+        "last_valid": "2024-06-30",
+        "max": 0.022535729,
+        "min": -0.040505244,
+        "sum": -0.18117846
+      }
+    },
+    "index": {
+      "end": "2024-06-30",
+      "freq": "W-SUN",
+      "len": 26,
+      "monotonic_increasing": true,
+      "name": "date",
+      "start": "2024-01-07",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      26
+    ],
+    "type": "Series"
+  },
+  "yearly": {
+    "columns": [
+      "[Custom] _QT_TEST_Series"
+    ],
+    "data": {
+      "[Custom] _QT_TEST_Series": {
+        "count": 1,
+        "first": -0.16934986,
+        "first_valid": "2024-12-31",
+        "kind": "f",
+        "last": -0.16934986,
+        "last_valid": "2024-12-31",
+        "max": -0.16934986,
+        "min": -0.16934986,
+        "sum": -0.16934986
+      }
+    },
+    "index": {
+      "end": "2024-12-31",
+      "freq": "YE-DEC",
+      "len": 1,
+      "monotonic_increasing": true,
+      "name": "date",
+      "start": "2024-12-31",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      1
+    ],
+    "type": "Series"
+  }
+}

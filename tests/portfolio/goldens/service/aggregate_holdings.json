@@ -1,0 +1,37 @@
+{
+  "holdings": [
+    {
+      "avg_cost_basis": 470.02,
+      "current_price": 500.0,
+      "market_value": 25000.0,
+      "ticker": "SPY",
+      "total_pnl": 1499.0,
+      "total_quantity": 50.0,
+      "weight_pct": 67.567568
+    },
+    {
+      "avg_cost_basis": 181.7,
+      "current_price": 200.0,
+      "market_value": 12000.0,
+      "ticker": "AAPL",
+      "total_pnl": 1098.0,
+      "total_quantity": 60.0,
+      "weight_pct": 32.432432
+    },
+    {
+      "avg_cost_basis": 420.0,
+      "current_price": null,
+      "market_value": null,
+      "ticker": "MSFT",
+      "total_pnl": null,
+      "total_quantity": 10.0,
+      "weight_pct": 0.0
+    }
+  ],
+  "totals": {
+    "total_cost_basis": 38603.0,
+    "total_market_value": 37000.0,
+    "total_pnl": 2597.0,
+    "total_pnl_pct": 6.7274564
+  }
+}
