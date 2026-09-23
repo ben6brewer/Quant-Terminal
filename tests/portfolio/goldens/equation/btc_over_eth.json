@@ -1,0 +1,69 @@
+{
+  "columns": [
+    "Open",
+    "High",
+    "Low",
+    "Close"
+  ],
+  "data": {
+    "Close": {
+      "count": 3156,
+      "first": 4.9029673,
+      "first_valid": "2017-11-09",
+      "kind": "f",
+      "last": 30.0,
+      "last_valid": "2026-06-30",
+      "max": 81.615887,
+      "min": 1.2195107,
+      "sum": 59837.441
+    },
+    "High": {
+      "count": 3156,
+      "first": 4.9104064,
+      "first_valid": "2017-11-09",
+      "kind": "f",
+      "last": 29.60054,
+      "last_valid": "2026-06-30",
+      "max": 83.92486,
+      "min": 1.2139214,
+      "sum": 59503.015
+    },
+    "Low": {
+      "count": 3156,
+      "first": 4.7895529,
+      "first_valid": "2017-11-09",
+      "kind": "f",
+      "last": 29.701239,
+      "last_valid": "2026-06-30",
+      "max": 82.086898,
+      "min": 1.2109328,
+      "sum": 60144.074
+    },
+    "Open": {
+      "count": 3156,
+      "first": 4.7969353,
+      "first_valid": "2017-11-09",
+      "kind": "f",
+      "last": 29.310264,
+      "last_valid": "2026-06-30",
+      "max": 81.972278,
+      "min": 1.2228512,
+      "sum": 59813.831
+    }
+  },
+  "index": {
+    "end": "2026-06-30",
+    "freq": "D",
+    "len": 3156,
+    "monotonic_increasing": true,
+    "name": null,
+    "start": "2017-11-09",
+    "type": "DatetimeIndex",
+    "unique": true
+  },
+  "shape": [
+    3156,
+    4
+  ],
+  "type": "DataFrame"
+}

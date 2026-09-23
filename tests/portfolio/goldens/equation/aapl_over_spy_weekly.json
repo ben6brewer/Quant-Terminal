@@ -1,0 +1,69 @@
+{
+  "columns": [
+    "Open",
+    "High",
+    "Low",
+    "Close"
+  ],
+  "data": {
+    "Close": {
+      "count": 1745,
+      "first": 0.20840812,
+      "first_valid": "1993-01-31",
+      "kind": "f",
+      "last": 1.3503365,
+      "last_valid": "2026-07-05",
+      "max": 1.8628452,
+      "min": 0.033329469,
+      "sum": 609.03724
+    },
+    "High": {
+      "count": 1745,
+      "first": 0.23204491,
+      "first_valid": "1993-01-31",
+      "kind": "f",
+      "last": 1.336157,
+      "last_valid": "2026-07-05",
+      "max": 1.8249928,
+      "min": 0.033504188,
+      "sum": 601.27384
+    },
+    "Low": {
+      "count": 1745,
+      "first": 0.20744037,
+      "first_valid": "1993-01-31",
+      "kind": "f",
+      "last": 1.3757143,
+      "last_valid": "2026-07-05",
+      "max": 1.8711347,
+      "min": 0.033847056,
+      "sum": 616.336
+    },
+    "Open": {
+      "count": 1745,
+      "first": 0.23268497,
+      "first_valid": "1993-01-31",
+      "kind": "f",
+      "last": 1.3504805,
+      "last_valid": "2026-07-05",
+      "max": 1.8654552,
+      "min": 0.033328393,
+      "sum": 608.10129
+    }
+  },
+  "index": {
+    "end": "2026-07-05",
+    "freq": "W-SUN",
+    "len": 1745,
+    "monotonic_increasing": true,
+    "name": "Date",
+    "start": "1993-01-31",
+    "type": "DatetimeIndex",
+    "unique": true
+  },
+  "shape": [
+    1745,
+    4
+  ],
+  "type": "DataFrame"
+}

@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "asset_class": "Alternatives",
+    "end_date": "2024-02-09",
+    "frequency": "daily",
+    "name": "_QT_TEST_Series",
+    "row_count": 30,
+    "source_filename": "_QT_TEST_upload.csv",
+    "start_date": "2024-01-01"
+  },
+  "served": {
+    "columns": [
+      "[Custom] _QT_TEST_Series"
+    ],
+    "data": {
+      "[Custom] _QT_TEST_Series": {
+        "count": 30,
+        "first": 0.020909,
+        "first_valid": "2024-01-01",
+        "kind": "f",
+        "last": 0.010523,
+        "last_valid": "2024-02-09",
+        "max": 0.03373,
+        "min": -0.025057,
+        "sum": 0.032443
+      }
+    },
+    "index": {
+      "end": "2024-02-09",
+      "freq": "B",
+      "len": 30,
+      "monotonic_increasing": true,
+      "name": "date",
+      "start": "2024-01-01",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      30
+    ],
+    "type": "Series"
+  },
+  "weekly": {
+    "columns": [
+      "[Custom] _QT_TEST_Series"
+    ],
+    "data": {
+      "[Custom] _QT_TEST_Series": {
+        "count": 6,
+        "first": -0.009195822,
+        "first_valid": "2024-01-07",
+        "kind": "f",
+        "last": 0.032389377,
+        "last_valid": "2024-02-11",
+        "max": 0.032389377,
+        "min": -0.018716726,
+        "sum": 0.031415565
+      }
+    },
+    "index": {
+      "end": "2024-02-11",
+      "freq": "W-SUN",
+      "len": 6,
+      "monotonic_increasing": true,
+      "name": "date",
+      "start": "2024-01-07",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      6
+    ],
+    "type": "Series"
+  }
+}

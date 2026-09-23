@@ -1,0 +1,164 @@
+{
+  "daily": {
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume"
+    ],
+    "data": {
+      "Close": {
+        "count": 130,
+        "first": 100.04123,
+        "first_valid": "2024-01-01",
+        "kind": "f",
+        "last": 83.065014,
+        "last_valid": "2024-06-28",
+        "max": 100.38012,
+        "min": 82.408434,
+        "sum": 11662.647
+      },
+      "High": {
+        "count": 130,
+        "first": 100.04123,
+        "first_valid": "2024-01-01",
+        "kind": "f",
+        "last": 83.065014,
+        "last_valid": "2024-06-28",
+        "max": 100.38012,
+        "min": 82.408434,
+        "sum": 11662.647
+      },
+      "Low": {
+        "count": 130,
+        "first": 100.04123,
+        "first_valid": "2024-01-01",
+        "kind": "f",
+        "last": 83.065014,
+        "last_valid": "2024-06-28",
+        "max": 100.38012,
+        "min": 82.408434,
+        "sum": 11662.647
+      },
+      "Open": {
+        "count": 130,
+        "first": 100.04123,
+        "first_valid": "2024-01-01",
+        "kind": "f",
+        "last": 83.065014,
+        "last_valid": "2024-06-28",
+        "max": 100.38012,
+        "min": 82.408434,
+        "sum": 11662.647
+      },
+      "Volume": {
+        "count": 130,
+        "first": 0.0,
+        "first_valid": "2024-01-01",
+        "kind": "i",
+        "last": 0.0,
+        "last_valid": "2024-06-28",
+        "max": 0.0,
+        "min": 0.0,
+        "sum": 0.0
+      }
+    },
+    "index": {
+      "end": "2024-06-28",
+      "freq": "B",
+      "len": 130,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-01-01",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      130,
+      5
+    ],
+    "type": "DataFrame"
+  },
+  "monthly": {
+    "columns": [
+      "Open",
+      "High",
+      "Low",
+      "Close",
+      "Volume"
+    ],
+    "data": {
+      "Close": {
+        "count": 6,
+        "first": 91.536995,
+        "first_valid": "2024-01-31",
+        "kind": "f",
+        "last": 83.065014,
+        "last_valid": "2024-06-30",
+        "max": 91.536995,
+        "min": 83.065014,
+        "sum": 524.6859
+      },
+      "High": {
+        "count": 6,
+        "first": 91.536995,
+        "first_valid": "2024-01-31",
+        "kind": "f",
+        "last": 83.065014,
+        "last_valid": "2024-06-30",
+        "max": 91.536995,
+        "min": 83.065014,
+        "sum": 524.6859
+      },
+      "Low": {
+        "count": 6,
+        "first": 91.536995,
+        "first_valid": "2024-01-31",
+        "kind": "f",
+        "last": 83.065014,
+        "last_valid": "2024-06-30",
+        "max": 91.536995,
+        "min": 83.065014,
+        "sum": 524.6859
+      },
+      "Open": {
+        "count": 6,
+        "first": 91.536995,
+        "first_valid": "2024-01-31",
+        "kind": "f",
+        "last": 83.065014,
+        "last_valid": "2024-06-30",
+        "max": 91.536995,
+        "min": 83.065014,
+        "sum": 524.6859
+      },
+      "Volume": {
+        "count": 6,
+        "first": 0.0,
+        "first_valid": "2024-01-31",
+        "kind": "i",
+        "last": 0.0,
+        "last_valid": "2024-06-30",
+        "max": 0.0,
+        "min": 0.0,
+        "sum": 0.0
+      }
+    },
+    "index": {
+      "end": "2024-06-30",
+      "freq": "ME",
+      "len": 6,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-01-31",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      6,
+      5
+    ],
+    "type": "DataFrame"
+  }
+}
