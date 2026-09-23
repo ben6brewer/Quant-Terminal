@@ -1,0 +1,1068 @@
+{
+  "fetch_batch_current_prices": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "ticker",
+        "interval": "1d",
+        "period": "5d",
+        "start": null,
+        "tickers": [
+          "AAPL",
+          "SPY"
+        ]
+      }
+    ],
+    "value": {
+      "AAPL": 381.2,
+      "SPY": 282.3
+    }
+  },
+  "fetch_batch_current_prices_missing": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "5d",
+        "start": null,
+        "tickers": [
+          "_QT_TEST_NODATA"
+        ]
+      }
+    ],
+    "value": {}
+  },
+  "fetch_batch_current_prices_single": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "5d",
+        "start": null,
+        "tickers": [
+          "BTC-USD"
+        ]
+      }
+    ],
+    "value": {
+      "BTC-USD": 105000.0
+    }
+  },
+  "fetch_batch_date_range": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": "2026-06-15",
+        "group_by": "ticker",
+        "interval": "1d",
+        "period": null,
+        "start": "2026-06-01",
+        "tickers": [
+          "AAPL",
+          "SPY"
+        ]
+      },
+      {
+        "auto_adjust": false,
+        "end": "2026-06-20",
+        "group_by": "column",
+        "interval": "1d",
+        "period": null,
+        "start": "2026-06-10",
+        "tickers": [
+          "BTC-USD"
+        ]
+      }
+    ],
+    "value": {
+      "AAPL": {
+        "columns": [
+          "Open",
+          "High",
+          "Low",
+          "Close",
+          "Volume"
+        ],
+        "data": {
+          "Close": {
+            "count": 10,
+            "first": 443.6069,
+            "first_valid": "2026-06-01",
+            "kind": "f",
+            "last": 408.97265,
+            "last_valid": "2026-06-12",
+            "max": 443.6069,
+            "min": 408.97265,
+            "sum": 4282.1789
+          },
+          "High": {
+            "count": 10,
+            "first": 444.04493,
+            "first_valid": "2026-06-01",
+            "kind": "f",
+            "last": 423.19367,
+            "last_valid": "2026-06-12",
+            "max": 452.23502,
+            "min": 423.19367,
+            "sum": 4371.1421
+          },
+          "Low": {
+            "count": 10,
+            "first": 437.47166,
+            "first_valid": "2026-06-01",
+            "kind": "f",
+            "last": 401.83,
+            "last_valid": "2026-06-12",
+            "max": 438.04279,
+            "min": 401.83,
+            "sum": 4216.2853
+          },
+          "Open": {
+            "count": 10,
+            "first": 437.90405,
+            "first_valid": "2026-06-01",
+            "kind": "f",
+            "last": 415.92951,
+            "last_valid": "2026-06-12",
+            "max": 444.71097,
+            "min": 415.92951,
+            "sum": 4304.4857
+          },
+          "Volume": {
+            "count": 10,
+            "first": 967505.0,
+            "first_valid": "2026-06-01",
+            "kind": "i",
+            "last": 966990.0,
+            "last_valid": "2026-06-12",
+            "max": 3315829.0,
+            "min": 754416.0,
+            "sum": 13683794.0
+          }
+        },
+        "index": {
+          "end": "2026-06-12",
+          "freq": "B",
+          "len": 10,
+          "monotonic_increasing": true,
+          "name": "Date",
+          "start": "2026-06-01",
+          "type": "DatetimeIndex",
+          "unique": true
+        },
+        "shape": [
+          10,
+          5
+        ],
+        "type": "DataFrame"
+      },
+      "BTC-USD": {
+        "columns": [
+          "Open",
+          "High",
+          "Low",
+          "Close",
+          "Volume"
+        ],
+        "data": {
+          "Close": {
+            "count": 10,
+            "first": 100400.76,
+            "first_valid": "2026-06-10",
+            "kind": "f",
+            "last": 94627.787,
+            "last_valid": "2026-06-19",
+            "max": 108790.6,
+            "min": 94627.787,
+            "sum": 1018922.8
+          },
+          "High": {
+            "count": 10,
+            "first": 106496.59,
+            "first_valid": "2026-06-10",
+            "kind": "f",
+            "last": 99117.227,
+            "last_valid": "2026-06-19",
+            "max": 113047.75,
+            "min": 99117.227,
+            "sum": 1063767.2
+          },
+          "Low": {
+            "count": 10,
+            "first": 98590.089,
+            "first_valid": "2026-06-10",
+            "kind": "f",
+            "last": 92632.372,
+            "last_valid": "2026-06-19",
+            "max": 106949.06,
+            "min": 92632.372,
+            "sum": 988095.75
+          },
+          "Open": {
+            "count": 10,
+            "first": 104610.01,
+            "first_valid": "2026-06-10",
+            "kind": "f",
+            "last": 97070.306,
+            "last_valid": "2026-06-19",
+            "max": 109089.07,
+            "min": 96776.877,
+            "sum": 1032323.5
+          },
+          "Volume": {
+            "count": 10,
+            "first": 2283428.0,
+            "first_valid": "2026-06-10",
+            "kind": "i",
+            "last": 1404969.0,
+            "last_valid": "2026-06-19",
+            "max": 2314236.0,
+            "min": 368048.0,
+            "sum": 12221211.0
+          }
+        },
+        "index": {
+          "end": "2026-06-19",
+          "freq": "D",
+          "len": 10,
+          "monotonic_increasing": true,
+          "name": "Date",
+          "start": "2026-06-10",
+          "type": "DatetimeIndex",
+          "unique": true
+        },
+        "shape": [
+          10,
+          5
+        ],
+        "type": "DataFrame"
+      },
+      "SPY": {
+        "columns": [
+          "Open",
+          "High",
+          "Low",
+          "Close",
+          "Volume"
+        ],
+        "data": {
+          "Close": {
+            "count": 10,
+            "first": 304.3769,
+            "first_valid": "2026-06-01",
+            "kind": "f",
+            "last": 307.10769,
+            "last_valid": "2026-06-12",
+            "max": 318.87917,
+            "min": 296.56976,
+            "sum": 3084.09
+          },
+          "High": {
+            "count": 10,
+            "first": 305.88809,
+            "first_valid": "2026-06-01",
+            "kind": "f",
+            "last": 321.81306,
+            "last_valid": "2026-06-12",
+            "max": 324.57263,
+            "min": 305.88809,
+            "sum": 3158.7554
+          },
+          "Low": {
+            "count": 10,
+            "first": 303.2122,
+            "first_valid": "2026-06-01",
+            "kind": "f",
+            "last": 300.42246,
+            "last_valid": "2026-06-12",
+            "max": 307.59862,
+            "min": 291.0011,
+            "sum": 3006.3244
+          },
+          "Open": {
+            "count": 10,
+            "first": 304.72207,
+            "first_valid": "2026-06-01",
+            "kind": "f",
+            "last": 314.95696,
+            "last_valid": "2026-06-12",
+            "max": 316.18406,
+            "min": 296.61012,
+            "sum": 3080.1576
+          },
+          "Volume": {
+            "count": 10,
+            "first": 29080986.0,
+            "first_valid": "2026-06-01",
+            "kind": "i",
+            "last": 16856472.0,
+            "last_valid": "2026-06-12",
+            "max": 42900776.0,
+            "min": 13975457.0,
+            "sum": 243829080.0
+          }
+        },
+        "index": {
+          "end": "2026-06-12",
+          "freq": "B",
+          "len": 10,
+          "monotonic_increasing": true,
+          "name": "Date",
+          "start": "2026-06-01",
+          "type": "DatetimeIndex",
+          "unique": true
+        },
+        "shape": [
+          10,
+          5
+        ],
+        "type": "DataFrame"
+      }
+    }
+  },
+  "fetch_batch_full_history": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "ticker",
+        "interval": "1d",
+        "period": "max",
+        "start": null,
+        "tickers": [
+          "AAPL",
+          "BTC-USD",
+          "_QT_TEST_NODATA"
+        ]
+      }
+    ],
+    "value": {
+      "failed": [
+        "_QT_TEST_NODATA"
+      ],
+      "results": {
+        "AAPL": {
+          "columns": [
+            "Open",
+            "High",
+            "Low",
+            "Close",
+            "Volume"
+          ],
+          "data": {
+            "Close": {
+              "count": 11785,
+              "first": 11.006231,
+              "first_valid": "1980-12-12",
+              "kind": "f",
+              "last": 381.2,
+              "last_valid": "2026-06-30",
+              "max": 660.69771,
+              "min": 7.536865,
+              "sum": 1552784.2
+            },
+            "High": {
+              "count": 11785,
+              "first": 11.123742,
+              "first_valid": "1980-12-12",
+              "kind": "f",
+              "last": 381.7154,
+              "last_valid": "2026-06-30",
+              "max": 673.57606,
+              "min": 7.626699,
+              "sum": 1578905.3
+            },
+            "Low": {
+              "count": 11785,
+              "first": 10.90219,
+              "first_valid": "1980-12-12",
+              "kind": "f",
+              "last": 370.30672,
+              "last_valid": "2026-06-30",
+              "max": 649.1891,
+              "min": 7.41656,
+              "sum": 1526708.1
+            },
+            "Open": {
+              "count": 11785,
+              "first": 11.019575,
+              "first_valid": "1980-12-12",
+              "kind": "f",
+              "last": 370.80807,
+              "last_valid": "2026-06-30",
+              "max": 660.24752,
+              "min": 7.481501,
+              "sum": 1552609.0
+            },
+            "Volume": {
+              "count": 11785,
+              "first": 1518778.0,
+              "first_valid": "1980-12-12",
+              "kind": "f",
+              "last": 608169.0,
+              "last_valid": "2026-06-30",
+              "max": 5237438.0,
+              "min": 284584.0,
+              "sum": 15343565000.0
+            }
+          },
+          "index": {
+            "end": "2026-06-30",
+            "freq": null,
+            "len": 11785,
+            "monotonic_increasing": true,
+            "name": "Date",
+            "start": "1980-12-12",
+            "type": "DatetimeIndex",
+            "unique": true
+          },
+          "shape": [
+            11785,
+            5
+          ],
+          "type": "DataFrame"
+        },
+        "BTC-USD": {
+          "columns": [
+            "Open",
+            "High",
+            "Low",
+            "Close",
+            "Volume"
+          ],
+          "data": {
+            "Close": {
+              "count": 4305,
+              "first": 111.11172,
+              "first_valid": "2014-09-17",
+              "kind": "f",
+              "last": 105000.0,
+              "last_valid": "2026-06-30",
+              "max": 182803.43,
+              "min": 92.201761,
+              "sum": 118561880.0
+            },
+            "High": {
+              "count": 4305,
+              "first": 112.77133,
+              "first_valid": "2014-09-17",
+              "kind": "f",
+              "last": 106602.97,
+              "last_valid": "2026-06-30",
+              "max": 187223.91,
+              "min": 94.135785,
+              "sum": 122017400.0
+            },
+            "Low": {
+              "count": 4305,
+              "first": 107.02702,
+              "first_valid": "2014-09-17",
+              "kind": "f",
+              "last": 103665.74,
+              "last_valid": "2026-06-30",
+              "max": 175202.2,
+              "min": 88.560458,
+              "sum": 115041910.0
+            },
+            "Open": {
+              "count": 4305,
+              "first": 108.64986,
+              "first_valid": "2014-09-17",
+              "kind": "f",
+              "last": 105265.34,
+              "last_valid": "2026-06-30",
+              "max": 182530.56,
+              "min": 91.598006,
+              "sum": 118446380.0
+            },
+            "Volume": {
+              "count": 4305,
+              "first": 1520906.0,
+              "first_valid": "2014-09-17",
+              "kind": "f",
+              "last": 1067189.0,
+              "last_valid": "2026-06-30",
+              "max": 4862267.0,
+              "min": 201812.0,
+              "sum": 5658297500.0
+            }
+          },
+          "index": {
+            "end": "2026-06-30",
+            "freq": "D",
+            "len": 4305,
+            "monotonic_increasing": true,
+            "name": "Date",
+            "start": "2014-09-17",
+            "type": "DatetimeIndex",
+            "unique": true
+          },
+          "shape": [
+            4305,
+            5
+          ],
+          "type": "DataFrame"
+        }
+      }
+    }
+  },
+  "fetch_batch_short_history": {
+    "calls": [
+      {
+        "auto_adjust": true,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "5d",
+        "start": null,
+        "tickers": [
+          "AAPL",
+          "SPY"
+        ]
+      }
+    ],
+    "value": {
+      "columns": [
+        "AAPL",
+        "SPY"
+      ],
+      "data": {
+        "AAPL": {
+          "count": 5,
+          "first": 371.67008,
+          "first_valid": "2026-06-24",
+          "kind": "f",
+          "last": 381.2,
+          "last_valid": "2026-06-30",
+          "max": 381.2,
+          "min": 363.85317,
+          "sum": 1853.0249
+        },
+        "SPY": {
+          "count": 5,
+          "first": 268.05803,
+          "first_valid": "2026-06-24",
+          "kind": "f",
+          "last": 282.3,
+          "last_valid": "2026-06-30",
+          "max": 282.3,
+          "min": 265.39155,
+          "sum": 1363.4829
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "B",
+        "len": 5,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2026-06-24",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        5,
+        2
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "fetch_batch_short_history_single": {
+    "calls": [
+      {
+        "auto_adjust": true,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "1mo",
+        "start": null,
+        "tickers": [
+          "^VIX"
+        ]
+      }
+    ],
+    "value": {
+      "columns": [
+        "^VIX"
+      ],
+      "data": {
+        "^VIX": {
+          "count": 22,
+          "first": 26.337468,
+          "first_valid": "2026-06-01",
+          "kind": "f",
+          "last": 23.914993,
+          "last_valid": "2026-06-30",
+          "max": 26.337468,
+          "min": 23.137625,
+          "sum": 541.93163
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "B",
+        "len": 22,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2026-06-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        22,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "fetch_full_history_index": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "max",
+        "start": null,
+        "tickers": [
+          "^VIX"
+        ]
+      }
+    ],
+    "value": {
+      "columns": [
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Volume"
+      ],
+      "data": {
+        "Close": {
+          "count": 9443,
+          "first": 17.002487,
+          "first_valid": "1990-01-02",
+          "kind": "f",
+          "last": 23.914993,
+          "last_valid": "2026-06-30",
+          "max": 36.586904,
+          "min": 9.0,
+          "sum": 144728.07
+        },
+        "High": {
+          "count": 9443,
+          "first": 17.347884,
+          "first_valid": "1990-01-02",
+          "kind": "f",
+          "last": 24.154298,
+          "last_valid": "2026-06-30",
+          "max": 37.612481,
+          "min": 9.000039,
+          "sum": 147074.41
+        },
+        "Low": {
+          "count": 9443,
+          "first": 16.741665,
+          "first_valid": "1990-01-02",
+          "kind": "f",
+          "last": 23.397557,
+          "last_valid": "2026-06-30",
+          "max": 36.214814,
+          "min": 8.597284,
+          "sum": 142387.3
+        },
+        "Open": {
+          "count": 9443,
+          "first": 17.085784,
+          "first_valid": "1990-01-02",
+          "kind": "f",
+          "last": 23.634051,
+          "last_valid": "2026-06-30",
+          "max": 36.597629,
+          "min": 8.80295,
+          "sum": 144714.69
+        },
+        "Volume": {
+          "count": 9443,
+          "first": 0.0,
+          "first_valid": "1990-01-02",
+          "kind": "i",
+          "last": 0.0,
+          "last_valid": "2026-06-30",
+          "max": 0.0,
+          "min": 0.0,
+          "sum": 0.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 9443,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1990-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        9443,
+        5
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "fetch_full_history_safe_missing": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "max",
+        "start": null,
+        "tickers": [
+          "_QT_TEST_NODATA"
+        ]
+      }
+    ],
+    "value": [
+      {
+        "columns": [],
+        "data": {},
+        "index": {
+          "end": null,
+          "freq": null,
+          "len": 0,
+          "monotonic_increasing": true,
+          "name": null,
+          "start": null,
+          "type": "RangeIndex",
+          "unique": true
+        },
+        "shape": [
+          0,
+          0
+        ],
+        "type": "DataFrame"
+      },
+      true
+    ]
+  },
+  "fetch_full_history_safe_ok": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "max",
+        "start": null,
+        "tickers": [
+          "SPY"
+        ]
+      }
+    ],
+    "value": false
+  },
+  "fetch_historical": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": "2026-06-30",
+        "group_by": "column",
+        "interval": "1d",
+        "period": null,
+        "start": "2026-06-01",
+        "tickers": [
+          "AAPL"
+        ]
+      }
+    ],
+    "value": {
+      "columns": [
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Volume"
+      ],
+      "data": {
+        "Close": {
+          "count": 21,
+          "first": 443.6069,
+          "first_valid": "2026-06-01",
+          "kind": "f",
+          "last": 370.69786,
+          "last_valid": "2026-06-29",
+          "max": 443.6069,
+          "min": 363.85317,
+          "sum": 8467.2352
+        },
+        "High": {
+          "count": 21,
+          "first": 444.04493,
+          "first_valid": "2026-06-01",
+          "kind": "f",
+          "last": 371.03341,
+          "last_valid": "2026-06-29",
+          "max": 452.23502,
+          "min": 371.03341,
+          "sum": 8637.8405
+        },
+        "Low": {
+          "count": 21,
+          "first": 437.47166,
+          "first_valid": "2026-06-01",
+          "kind": "f",
+          "last": 368.24472,
+          "last_valid": "2026-06-29",
+          "max": 438.04279,
+          "min": 355.80361,
+          "sum": 8353.3028
+        },
+        "Open": {
+          "count": 21,
+          "first": 437.90405,
+          "first_valid": "2026-06-01",
+          "kind": "f",
+          "last": 368.57835,
+          "last_valid": "2026-06-29",
+          "max": 444.71097,
+          "min": 365.29533,
+          "sum": 8522.6925
+        },
+        "Volume": {
+          "count": 21,
+          "first": 967505.0,
+          "first_valid": "2026-06-01",
+          "kind": "i",
+          "last": 1096817.0,
+          "last_valid": "2026-06-29",
+          "max": 3315829.0,
+          "min": 694297.0,
+          "sum": 28770918.0
+        }
+      },
+      "index": {
+        "end": "2026-06-29",
+        "freq": "B",
+        "len": 21,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2026-06-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        21,
+        5
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "fetch_historical_failure": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": "2026-06-30",
+        "group_by": "column",
+        "interval": "1d",
+        "period": null,
+        "start": "2026-06-01",
+        "tickers": [
+          "_QT_TEST_FAIL"
+        ]
+      }
+    ],
+    "value": {
+      "columns": [],
+      "data": {},
+      "index": {
+        "end": null,
+        "freq": null,
+        "len": 0,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": null,
+        "type": "RangeIndex",
+        "unique": true
+      },
+      "shape": [
+        0,
+        0
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "fetch_historical_missing": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": "2026-06-30",
+        "group_by": "column",
+        "interval": "1d",
+        "period": null,
+        "start": "2026-06-01",
+        "tickers": [
+          "_QT_TEST_NODATA"
+        ]
+      }
+    ],
+    "value": {
+      "columns": [],
+      "data": {},
+      "index": {
+        "end": null,
+        "freq": null,
+        "len": 0,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": null,
+        "type": "RangeIndex",
+        "unique": true
+      },
+      "shape": [
+        0,
+        0
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "fetch_today_ohlcv": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "5d",
+        "start": null,
+        "tickers": [
+          "BTC-USD"
+        ]
+      }
+    ],
+    "value": {
+      "columns": [
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Volume"
+      ],
+      "data": {
+        "Close": {
+          "count": 1,
+          "first": 105000.0,
+          "first_valid": "2026-06-30",
+          "kind": "f",
+          "last": 105000.0,
+          "last_valid": "2026-06-30",
+          "max": 105000.0,
+          "min": 105000.0,
+          "sum": 105000.0
+        },
+        "High": {
+          "count": 1,
+          "first": 106602.97,
+          "first_valid": "2026-06-30",
+          "kind": "f",
+          "last": 106602.97,
+          "last_valid": "2026-06-30",
+          "max": 106602.97,
+          "min": 106602.97,
+          "sum": 106602.97
+        },
+        "Low": {
+          "count": 1,
+          "first": 103665.74,
+          "first_valid": "2026-06-30",
+          "kind": "f",
+          "last": 103665.74,
+          "last_valid": "2026-06-30",
+          "max": 103665.74,
+          "min": 103665.74,
+          "sum": 103665.74
+        },
+        "Open": {
+          "count": 1,
+          "first": 105265.34,
+          "first_valid": "2026-06-30",
+          "kind": "f",
+          "last": 105265.34,
+          "last_valid": "2026-06-30",
+          "max": 105265.34,
+          "min": 105265.34,
+          "sum": 105265.34
+        },
+        "Volume": {
+          "count": 1,
+          "first": 1067189.0,
+          "first_valid": "2026-06-30",
+          "kind": "i",
+          "last": 1067189.0,
+          "last_valid": "2026-06-30",
+          "max": 1067189.0,
+          "min": 1067189.0,
+          "sum": 1067189.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 1,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2026-06-30",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        1,
+        5
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "fetch_today_ohlcv_missing": {
+    "calls": [
+      {
+        "auto_adjust": false,
+        "end": null,
+        "group_by": "column",
+        "interval": "1d",
+        "period": "5d",
+        "start": null,
+        "tickers": [
+          "_QT_TEST_NODATA"
+        ]
+      }
+    ],
+    "value": null
+  },
+  "info_calls": [
+    "AAPL",
+    "BTC-USD",
+    "SPY",
+    "^VIX",
+    "_QT_TEST_FAIL",
+    "_QT_TEST_NODATA"
+  ],
+  "is_valid_ticker": {
+    "calls": [],
+    "value": true
+  },
+  "is_valid_ticker_failure": {
+    "calls": [],
+    "value": false
+  },
+  "is_valid_ticker_missing": {
+    "calls": [],
+    "value": false
+  }
+}
