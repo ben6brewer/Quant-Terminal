@@ -1,0 +1,323 @@
+{
+  "ATR(14)": {
+    "config": {
+      "kind": "atr",
+      "length": 14
+    },
+    "is_overlay": false,
+    "per_line_appearance": {
+      "ATR": {
+        "color": [
+          255,
+          200,
+          0
+        ],
+        "label": "ATR",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "BB(10,2.5)": {
+    "config": {
+      "kind": "bbands",
+      "length": 10,
+      "std": 2.5
+    },
+    "is_overlay": true,
+    "per_line_appearance": {
+      "BB_Lower": {
+        "color": [
+          100,
+          255,
+          100
+        ],
+        "label": "Lower Band",
+        "line_style": "DashLine",
+        "line_width": 2,
+        "visible": true
+      },
+      "BB_Middle": {
+        "color": [
+          255,
+          255,
+          100
+        ],
+        "label": "Middle Band",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      },
+      "BB_Upper": {
+        "color": [
+          255,
+          100,
+          100
+        ],
+        "label": "Upper Band",
+        "line_style": "DashLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "BB(20,2.0)": {
+    "config": {
+      "kind": "bbands",
+      "length": 20,
+      "std": 2.0
+    },
+    "is_overlay": true,
+    "per_line_appearance": {
+      "BB_Lower": {
+        "color": [
+          100,
+          255,
+          100
+        ],
+        "label": "Lower Band",
+        "line_style": "DashLine",
+        "line_width": 2,
+        "visible": true
+      },
+      "BB_Middle": {
+        "color": [
+          255,
+          255,
+          100
+        ],
+        "label": "Middle Band",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      },
+      "BB_Upper": {
+        "color": [
+          255,
+          100,
+          100
+        ],
+        "label": "Upper Band",
+        "line_style": "DashLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "EMA(12)": {
+    "config": {
+      "kind": "ema",
+      "length": 12
+    },
+    "is_overlay": true,
+    "per_line_appearance": {
+      "EMA": {
+        "color": [
+          255,
+          150,
+          0
+        ],
+        "label": "EMA",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "MACD(12,26,9)": {
+    "config": {
+      "fast": 12,
+      "kind": "macd",
+      "signal": 9,
+      "slow": 26
+    },
+    "is_overlay": false,
+    "per_line_appearance": {
+      "MACD": {
+        "color": [
+          0,
+          150,
+          255
+        ],
+        "label": "MACD Line",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      },
+      "MACDh": {
+        "color": [
+          150,
+          150,
+          150
+        ],
+        "label": "Histogram",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      },
+      "MACDs": {
+        "color": [
+          255,
+          150,
+          0
+        ],
+        "label": "Signal Line",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "OBV": {
+    "config": {
+      "kind": "obv"
+    },
+    "is_overlay": false,
+    "per_line_appearance": {
+      "OBV": {
+        "color": [
+          0,
+          255,
+          150
+        ],
+        "label": "OBV",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "RSI(14)": {
+    "config": {
+      "kind": "rsi",
+      "length": 14
+    },
+    "is_overlay": false,
+    "per_line_appearance": {
+      "RSI": {
+        "color": [
+          150,
+          0,
+          255
+        ],
+        "label": "RSI",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "SMA(20)": {
+    "config": {
+      "kind": "sma",
+      "length": 20
+    },
+    "is_overlay": true,
+    "per_line_appearance": {
+      "SMA": {
+        "color": [
+          0,
+          150,
+          255
+        ],
+        "label": "SMA",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "SMA(50)": {
+    "config": {
+      "kind": "sma",
+      "length": 50
+    },
+    "is_overlay": true,
+    "per_line_appearance": {
+      "SMA": {
+        "color": [
+          0,
+          150,
+          255
+        ],
+        "label": "SMA",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "Stochastic(14,3,3)": {
+    "config": {
+      "d": 3,
+      "k": 14,
+      "kind": "stochastic",
+      "smooth_k": 3
+    },
+    "is_overlay": false,
+    "per_line_appearance": {
+      "STOCHd": {
+        "color": [
+          255,
+          150,
+          0
+        ],
+        "label": "%D Line",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      },
+      "STOCHk": {
+        "color": [
+          0,
+          150,
+          255
+        ],
+        "label": "%K Line",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "VWAP": {
+    "config": {
+      "kind": "vwap"
+    },
+    "is_overlay": true,
+    "per_line_appearance": {
+      "VWAP": {
+        "color": [
+          255,
+          0,
+          150
+        ],
+        "label": "VWAP",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  },
+  "_QT_TEST_fast_ema": {
+    "config": {
+      "kind": "ema",
+      "length": 9
+    },
+    "is_overlay": true,
+    "per_line_appearance": {
+      "EMA": {
+        "color": [
+          255,
+          150,
+          0
+        ],
+        "label": "EMA",
+        "line_style": "SolidLine",
+        "line_width": 2,
+        "visible": true
+      }
+    }
+  }
+}

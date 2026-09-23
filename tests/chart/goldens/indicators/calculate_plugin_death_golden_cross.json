@@ -1,0 +1,225 @@
+{
+  "columns": [
+    "SMA50",
+    "SMA200",
+    "Golden_Cross",
+    "Death_Cross"
+  ],
+  "config": {
+    "class": "Death/Golden Cross",
+    "kind": "plugin"
+  },
+  "crossings": {
+    "Death_Cross": [
+      "2025-09-11"
+    ],
+    "Golden_Cross": []
+  },
+  "digest": {
+    "columns": [
+      "SMA50",
+      "SMA200",
+      "Golden_Cross",
+      "Death_Cross"
+    ],
+    "data": {
+      "Death_Cross": {
+        "count": 1,
+        "first": 59.606575,
+        "first_valid": "2025-09-11",
+        "kind": "f",
+        "last": 59.606575,
+        "last_valid": "2025-09-11",
+        "max": 59.606575,
+        "min": 59.606575,
+        "sum": 59.606575
+      },
+      "Golden_Cross": {
+        "count": 0,
+        "first": null,
+        "first_valid": null,
+        "kind": "f",
+        "last": null,
+        "last_valid": null
+      },
+      "SMA200": {
+        "count": 321,
+        "first": 47.816473,
+        "first_valid": "2025-04-03",
+        "kind": "f",
+        "last": 50.052181,
+        "last_valid": "2026-06-30",
+        "max": 76.49616,
+        "min": 47.816473,
+        "sum": 20928.792
+      },
+      "SMA50": {
+        "count": 471,
+        "first": 35.947803,
+        "first_valid": "2024-09-03",
+        "kind": "f",
+        "last": 39.828152,
+        "last_valid": "2026-06-30",
+        "max": 95.673886,
+        "min": 35.081601,
+        "sum": 27515.89
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 520,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-06-25",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      520,
+      4
+    ],
+    "type": "DataFrame"
+  },
+  "dtypes": [
+    "float64",
+    "float64",
+    "float64",
+    "float64"
+  ],
+  "is_overlay": true,
+  "samples": {
+    "000@2024-06-25": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "001@2024-06-26": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "004@2024-07-01": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "005@2024-07-02": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "009@2024-07-09": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "010@2024-07-10": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "013@2024-07-15": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "014@2024-07-16": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "019@2024-07-23": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "020@2024-07-24": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "025@2024-07-31": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "033@2024-08-12": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "037@2024-08-16": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "049@2024-09-03": [
+      35.947803,
+      null,
+      null,
+      null
+    ],
+    "050@2024-09-04": [
+      35.804363,
+      null,
+      null,
+      null
+    ],
+    "100@2024-11-13": [
+      40.654158,
+      null,
+      null,
+      null
+    ],
+    "199@2025-04-03": [
+      69.242459,
+      47.816473,
+      null,
+      null
+    ],
+    "200@2025-04-04": [
+      70.061226,
+      48.082801,
+      null,
+      null
+    ],
+    "211@2025-04-21": [
+      78.427247,
+      51.153545,
+      null,
+      null
+    ],
+    "333@2025-10-09": [
+      66.376511,
+      75.119078,
+      null,
+      null
+    ],
+    "518@2026-06-29": [
+      39.698132,
+      50.146772,
+      null,
+      null
+    ],
+    "519@2026-06-30": [
+      39.828152,
+      50.052181,
+      null,
+      null
+    ]
+  }
+}
