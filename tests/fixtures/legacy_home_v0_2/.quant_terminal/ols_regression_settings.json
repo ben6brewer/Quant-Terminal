@@ -1,0 +1,11 @@
+{
+  "ticker_x": "SPY",
+  "ticker_y": "QQQ",
+  "data_mode": "log_returns",
+  "frequency": "weekly",
+  "lookback_days": 1825,
+  "show_gridlines": true,
+  "show_confidence_bands": true,
+  "show_equation": false,
+  "show_stats_panel": true
+}

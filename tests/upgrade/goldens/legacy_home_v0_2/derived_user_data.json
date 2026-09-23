@@ -1,0 +1,99 @@
+{
+  "custom_prices_weekly_rejected": "ValueError: Custom ticker '_QT_TEST_series' was imported at monthly frequency; cannot serve weekly data (which is finer). Reimport at weekly or finer to use this interval.",
+  "custom_returns_monthly": {
+    "columns": [
+      "[Custom] _QT_TEST_series"
+    ],
+    "data": {
+      "[Custom] _QT_TEST_series": {
+        "count": 125,
+        "first": -0.011684,
+        "first_valid": "2016-01-31",
+        "kind": "f",
+        "last": 0.04005,
+        "last_valid": "2026-05-31",
+        "max": 0.09897,
+        "min": -0.057644,
+        "sum": 1.076525
+      }
+    },
+    "index": {
+      "end": "2026-05-31",
+      "freq": "ME",
+      "len": 125,
+      "monotonic_increasing": true,
+      "name": "date",
+      "start": "2016-01-31",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      125
+    ],
+    "type": "Series"
+  },
+  "custom_returns_yearly": {
+    "columns": [
+      "[Custom] _QT_TEST_series"
+    ],
+    "data": {
+      "[Custom] _QT_TEST_series": {
+        "count": 11,
+        "first": -0.073346315,
+        "first_valid": "2016-12-31",
+        "kind": "f",
+        "last": 0.091477646,
+        "last_valid": "2026-12-31",
+        "max": 0.23517852,
+        "min": -0.073346315,
+        "sum": 1.1052206
+      }
+    },
+    "index": {
+      "end": "2026-12-31",
+      "freq": "YE-DEC",
+      "len": 11,
+      "monotonic_increasing": true,
+      "name": "date",
+      "start": "2016-12-31",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      11
+    ],
+    "type": "Series"
+  },
+  "holdings": [
+    {
+      "avg_cost_basis": 421.22429,
+      "current_price": 600.0,
+      "market_value": 42000.0,
+      "pnl": 12514.3,
+      "quantity": 70.0,
+      "ticker": "SPY",
+      "total_cost": 0,
+      "weight": 0.4496788
+    },
+    {
+      "avg_cost_basis": 185.64667,
+      "current_price": 210.0,
+      "market_value": 31500.0,
+      "pnl": 3653.0,
+      "quantity": 150.0,
+      "ticker": "AAPL",
+      "total_cost": 0,
+      "weight": 0.3372591
+    },
+    {
+      "avg_cost_basis": 97.1,
+      "current_price": 99.5,
+      "market_value": 19900.0,
+      "pnl": 480.0,
+      "quantity": 200.0,
+      "ticker": "AGG",
+      "total_cost": 0,
+      "weight": 0.2130621
+    }
+  ]
+}

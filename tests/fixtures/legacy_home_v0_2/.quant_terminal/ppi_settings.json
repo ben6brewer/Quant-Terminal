@@ -1,0 +1,11 @@
+{
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "10Y",
+  "show_ppi_final_demand": true,
+  "show_ppi_core": true,
+  "show_ppi_energy": false,
+  "show_ppi_services": true
+}

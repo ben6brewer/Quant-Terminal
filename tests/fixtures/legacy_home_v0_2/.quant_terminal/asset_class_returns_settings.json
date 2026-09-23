@@ -1,0 +1,7 @@
+{
+  "decimals": 2,
+  "label_mode": "ticker",
+  "custom_tickers": [],
+  "cagr_years": 10,
+  "show_cagr": false
+}

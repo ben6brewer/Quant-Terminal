@@ -1,0 +1,11 @@
+{
+  "market": "S&P 500",
+  "view_mode": "Flat",
+  "sizing_mode": "Equal Weight",
+  "lookback": "1M",
+  "show_hover_tooltip": true,
+  "show_ticker": true,
+  "show_logo": false,
+  "color_scale": 5.0,
+  "click_to_chart": true
+}

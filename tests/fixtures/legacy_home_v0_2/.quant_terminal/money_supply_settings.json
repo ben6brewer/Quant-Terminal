@@ -1,0 +1,11 @@
+{
+  "show_m1": false,
+  "show_m2": true,
+  "view_mode": "YoY %",
+  "show_recession_bands": false,
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "20Y"
+}

@@ -1,0 +1,13 @@
+{
+  "view_mode": "Line",
+  "show_top1": true,
+  "show_90_99": true,
+  "show_50_90": true,
+  "show_bottom50": false,
+  "show_recession_bands": false,
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "10Y"
+}

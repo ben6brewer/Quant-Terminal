@@ -1,0 +1,11 @@
+{
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "show_reference_line": true,
+  "show_recession_shading": true,
+  "lookback": "10Y",
+  "show_pce": true,
+  "show_core_pce": false
+}

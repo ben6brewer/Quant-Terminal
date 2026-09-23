@@ -1,0 +1,12 @@
+{
+  "show_tips_5y": true,
+  "show_tips_10y": true,
+  "show_tips_20y": true,
+  "show_tips_30y": false,
+  "show_recession_bands": false,
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "10Y"
+}

@@ -1,0 +1,9 @@
+{
+  "default_benchmark": "QQQ",
+  "show_currency_factor": false,
+  "decimal_places": 1,
+  "collapsed_sectors": [
+    "Technology",
+    "Energy"
+  ]
+}

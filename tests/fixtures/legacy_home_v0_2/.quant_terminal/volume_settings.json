@@ -1,0 +1,19 @@
+{
+  "display_type": "line",
+  "up_color": [
+    0,
+    180,
+    90
+  ],
+  "down_color": [
+    200,
+    50,
+    50
+  ],
+  "line_color": [
+    200,
+    200,
+    50
+  ],
+  "line_width": 3
+}

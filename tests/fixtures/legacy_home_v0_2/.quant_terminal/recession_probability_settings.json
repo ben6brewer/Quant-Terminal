@@ -1,0 +1,7 @@
+{
+  "show_recession_bands": false,
+  "show_gridlines": true,
+  "show_crosshair": false,
+  "show_hover_tooltip": false,
+  "lookback": "10Y"
+}

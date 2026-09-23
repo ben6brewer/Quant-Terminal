@@ -1,0 +1,13 @@
+{
+  "view_mode": "YoY %",
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "show_recession_shading": false,
+  "jolts_series": [
+    "Job Openings",
+    "Quits"
+  ],
+  "lookback": "10Y"
+}

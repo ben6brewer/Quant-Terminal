@@ -1,0 +1,11 @@
+{
+  "risk_free_source": "manual",
+  "manual_risk_free_rate": 0.042,
+  "decimal_places": 3,
+  "show_3_months": true,
+  "show_6_months": true,
+  "show_12_months": true,
+  "show_ytd": false,
+  "custom_period_enabled": true,
+  "custom_period_years": 3.0
+}

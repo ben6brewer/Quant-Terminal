@@ -1,0 +1,13 @@
+{
+  "view_mode": "Raw",
+  "show_gold": true,
+  "show_silver": true,
+  "show_copper": true,
+  "show_platinum": true,
+  "show_palladium": false,
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "10Y"
+}

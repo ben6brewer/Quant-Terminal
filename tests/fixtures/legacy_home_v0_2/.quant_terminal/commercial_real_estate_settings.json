@@ -1,0 +1,10 @@
+{
+  "view_mode": "YoY %",
+  "show_cre_prices": true,
+  "show_recession_bands": false,
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "10Y"
+}

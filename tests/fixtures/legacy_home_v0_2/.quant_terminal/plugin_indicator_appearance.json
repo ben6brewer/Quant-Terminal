@@ -1,0 +1,17 @@
+{
+  "Death/Golden Cross": {
+    "SMA50": {
+      "label": "SMA50",
+      "visible": true,
+      "color": [
+        255,
+        0,
+        255
+      ],
+      "line_width": 4,
+      "line_style": "dot",
+      "marker_shape": "o",
+      "marker_size": 10
+    }
+  }
+}

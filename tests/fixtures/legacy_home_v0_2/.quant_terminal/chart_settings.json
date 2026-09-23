@@ -1,0 +1,19 @@
+{
+  "candle_up_color": [
+    0,
+    200,
+    120
+  ],
+  "candle_down_color": [
+    220,
+    40,
+    90
+  ],
+  "chart_background": null,
+  "candle_width": 0.6,
+  "line_color": null,
+  "line_width": 3,
+  "line_style": "dash",
+  "show_price_label": false,
+  "show_date_label": true
+}
