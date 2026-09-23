@@ -1,0 +1,340 @@
+{
+  "daily": {
+    "columns": [
+      "SPY"
+    ],
+    "data": {
+      "SPY": {
+        "count": 645,
+        "first": -0.0081202731,
+        "first_valid": "2024-01-02",
+        "kind": "f",
+        "last": 0.04764901,
+        "last_valid": "2026-06-30",
+        "max": 0.093063339,
+        "min": -0.081469678,
+        "sum": -0.57123432
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 645,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-01-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      645
+    ],
+    "type": "Series"
+  },
+  "drawdowns": {
+    "columns": [
+      "SPY"
+    ],
+    "data": {
+      "SPY": {
+        "count": 645,
+        "first": 0.0,
+        "first_valid": "2024-01-02",
+        "kind": "f",
+        "last": -0.62059419,
+        "last_valid": "2026-06-30",
+        "max": 0.0,
+        "min": -0.64662358,
+        "sum": -261.94644
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 645,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-01-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      645
+    ],
+    "type": "Series"
+  },
+  "monthly": {
+    "digest": {
+      "columns": [
+        "SPY"
+      ],
+      "data": {
+        "SPY": {
+          "count": 30,
+          "first": 0.01191806,
+          "first_valid": "2024-01-31",
+          "kind": "f",
+          "last": -0.074701501,
+          "last_valid": "2026-06-30",
+          "max": 0.21151687,
+          "min": -0.23758377,
+          "sum": -0.63723228
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "ME",
+        "len": 30,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-01-31",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        30
+      ],
+      "type": "Series"
+    },
+    "values": [
+      0.01191806,
+      0.072185959,
+      -0.068892243,
+      -0.18234893,
+      0.21151687,
+      -0.14601032,
+      -0.13703809,
+      0.045987857,
+      -0.11122086,
+      0.01953599,
+      0.056057917,
+      -0.13160415,
+      -0.14264191,
+      0.074630634,
+      0.091320725,
+      -0.10459771,
+      0.18388307,
+      -0.13763175,
+      0.10085649,
+      -0.070445826,
+      -0.060219036,
+      -0.15665617,
+      -0.057295052,
+      0.079270263,
+      0.0964275,
+      0.024016555,
+      -0.23758377,
+      0.089651189,
+      0.02439597,
+      -0.074701501
+    ]
+  },
+  "rolling_return_21": {
+    "columns": [
+      "SPY"
+    ],
+    "data": {
+      "SPY": {
+        "count": 625,
+        "first": 0.008259484,
+        "first_valid": "2024-01-30",
+        "kind": "f",
+        "last": -0.072531445,
+        "last_valid": "2026-06-30",
+        "max": 0.3180178,
+        "min": -0.28359715,
+        "sum": -12.754208
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 625,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-01-30",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      625
+    ],
+    "type": "Series"
+  },
+  "rolling_return_63": {
+    "columns": [
+      "SPY"
+    ],
+    "data": {
+      "SPY": {
+        "count": 583,
+        "first": -0.013274609,
+        "first_valid": "2024-03-28",
+        "kind": "f",
+        "last": 0.0098400525,
+        "last_valid": "2026-06-30",
+        "max": 0.31686221,
+        "min": -0.32268533,
+        "sum": -47.023434
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 583,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-03-28",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      583
+    ],
+    "type": "Series"
+  },
+  "time_under_water": {
+    "digest": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 645,
+          "first": 0.0,
+          "first_valid": "2024-01-02",
+          "kind": "i",
+          "last": 594.0,
+          "last_valid": "2026-06-30",
+          "max": 594.0,
+          "min": 0.0,
+          "sum": 176987.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 645,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2024-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        645
+      ],
+      "type": "Series"
+    },
+    "last": 594,
+    "max": 594
+  },
+  "vol21": {
+    "columns": [
+      "SPY"
+    ],
+    "data": {
+      "SPY": {
+        "count": 625,
+        "first": 0.34860059,
+        "first_valid": "2024-01-30",
+        "kind": "f",
+        "last": 0.51876425,
+        "last_valid": "2026-06-30",
+        "max": 0.66753125,
+        "min": 0.28952066,
+        "sum": 287.26858
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 625,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-01-30",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      625
+    ],
+    "type": "Series"
+  },
+  "vol63": {
+    "columns": [
+      "SPY"
+    ],
+    "data": {
+      "SPY": {
+        "count": 583,
+        "first": 0.37218286,
+        "first_valid": "2024-03-28",
+        "kind": "f",
+        "last": 0.43947695,
+        "last_valid": "2026-06-30",
+        "max": 0.56833635,
+        "min": 0.34781024,
+        "sum": 271.84185
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 583,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-03-28",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      583
+    ],
+    "type": "Series"
+  },
+  "weekly": {
+    "columns": [
+      "SPY"
+    ],
+    "data": {
+      "SPY": {
+        "count": 131,
+        "first": -0.018755763,
+        "first_valid": "2024-01-07",
+        "kind": "f",
+        "last": 0.014472108,
+        "last_valid": "2026-07-05",
+        "max": 0.1294057,
+        "min": -0.18024756,
+        "sum": -0.62433105
+      }
+    },
+    "index": {
+      "end": "2026-07-05",
+      "freq": "W-SUN",
+      "len": 131,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2024-01-07",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      131
+    ],
+    "type": "Series"
+  },
+  "yearly": {
+    "index": [
+      "2024-12-31",
+      "2025-12-31",
+      "2026-12-31"
+    ],
+    "values": [
+      -0.35895922,
+      -0.24153356,
+      -0.11586976
+    ]
+  }
+}

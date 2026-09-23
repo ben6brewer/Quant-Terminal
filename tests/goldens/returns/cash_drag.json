@@ -1,0 +1,25 @@
+{
+  "full": {
+    "avg_cash_weight": 0.55613645,
+    "cash_drag_annualized": 0.10068097,
+    "cash_drag_bps": 1006.8097,
+    "period_days": 545
+  },
+  "no_cash_portfolio": {
+    "avg_cash_weight": 0.0,
+    "cash_drag_bps": 0.0,
+    "period_days": 545
+  },
+  "weights_portfolio": {
+    "avg_cash_weight": 0.0,
+    "cash_drag_annualized": 0.0,
+    "cash_drag_bps": 0.0,
+    "period_days": 0
+  },
+  "window_2025-03_2025-12": {
+    "avg_cash_weight": 0.54731373,
+    "cash_drag_annualized": -0.01065395,
+    "cash_drag_bps": -106.5395,
+    "period_days": 306
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "btc": {
+    "appended": 0.03,
+    "len": 182
+  },
+  "spy_closed_len": 128,
+  "spy_open": {
+    "appended": 0.01,
+    "len": 129
+  }
+}

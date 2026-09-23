@@ -1,0 +1,11 @@
+{
+  "name": "_QT_TEST_weights_portfolio",
+  "type": "weights",
+  "created_date": "2025-01-02T09:30:00",
+  "last_modified": "2025-01-02T09:30:00",
+  "weights": {
+    "AAPL": 0.4,
+    "MSFT": 0.25,
+    "SPY": 0.35
+  }
+}

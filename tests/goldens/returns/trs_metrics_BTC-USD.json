@@ -1,0 +1,340 @@
+{
+  "daily": {
+    "columns": [
+      "BTC-USD"
+    ],
+    "data": {
+      "BTC-USD": {
+        "count": 912,
+        "first": -0.0065449413,
+        "first_valid": "2024-01-01",
+        "kind": "f",
+        "last": 0.0065255164,
+        "last_valid": "2026-06-30",
+        "max": 0.12756271,
+        "min": -0.10724784,
+        "sum": 1.0253695
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": "D",
+      "len": 912,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-01-01",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      912
+    ],
+    "type": "Series"
+  },
+  "drawdowns": {
+    "columns": [
+      "BTC-USD"
+    ],
+    "data": {
+      "BTC-USD": {
+        "count": 912,
+        "first": 0.0,
+        "first_valid": "2024-01-01",
+        "kind": "f",
+        "last": -0.42561253,
+        "last_valid": "2026-06-30",
+        "max": 0.0,
+        "min": -0.52084249,
+        "sum": -207.12689
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": "D",
+      "len": 912,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-01-01",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      912
+    ],
+    "type": "Series"
+  },
+  "monthly": {
+    "digest": {
+      "columns": [
+        "BTC-USD"
+      ],
+      "data": {
+        "BTC-USD": {
+          "count": 30,
+          "first": 0.12752101,
+          "first_valid": "2024-01-31",
+          "kind": "f",
+          "last": 0.00013653025,
+          "last_valid": "2026-06-30",
+          "max": 0.48801749,
+          "min": -0.35516419,
+          "sum": 0.88131579
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "ME",
+        "len": 30,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2024-01-31",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        30
+      ],
+      "type": "Series"
+    },
+    "values": [
+      0.12752101,
+      -0.045590918,
+      0.087841106,
+      0.29228059,
+      -0.10617285,
+      -0.15123895,
+      -0.037047713,
+      0.014745608,
+      0.14227663,
+      -0.1226031,
+      0.48801749,
+      0.017447752,
+      -0.071450711,
+      0.27961231,
+      -0.23199381,
+      0.061282441,
+      0.020528782,
+      -0.049452478,
+      0.077580594,
+      0.18666663,
+      0.16349219,
+      0.10590986,
+      -0.099806788,
+      -0.015483651,
+      -0.35516419,
+      -0.0017880476,
+      0.10196045,
+      0.24158124,
+      -0.23977223,
+      0.00013653025
+    ]
+  },
+  "rolling_return_21": {
+    "columns": [
+      "BTC-USD"
+    ],
+    "data": {
+      "BTC-USD": {
+        "count": 892,
+        "first": 0.09887083,
+        "first_valid": "2024-01-21",
+        "kind": "f",
+        "last": 0.013121008,
+        "last_valid": "2026-06-30",
+        "max": 0.46676473,
+        "min": -0.34269355,
+        "sum": 18.500264
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": "D",
+      "len": 892,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-01-21",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      892
+    ],
+    "type": "Series"
+  },
+  "rolling_return_63": {
+    "columns": [
+      "BTC-USD"
+    ],
+    "data": {
+      "BTC-USD": {
+        "count": 850,
+        "first": 0.061686829,
+        "first_valid": "2024-03-03",
+        "kind": "f",
+        "last": -0.18756238,
+        "last_valid": "2026-06-30",
+        "max": 0.87410687,
+        "min": -0.41067138,
+        "sum": 48.624217
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": "D",
+      "len": 850,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-03-03",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      850
+    ],
+    "type": "Series"
+  },
+  "time_under_water": {
+    "digest": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 912,
+          "first": 0.0,
+          "first_valid": "2024-01-01",
+          "kind": "i",
+          "last": 280.0,
+          "last_valid": "2026-06-30",
+          "max": 280.0,
+          "min": 0.0,
+          "sum": 92902.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "D",
+        "len": 912,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2024-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        912
+      ],
+      "type": "Series"
+    },
+    "last": 280,
+    "max": 280
+  },
+  "vol21": {
+    "columns": [
+      "BTC-USD"
+    ],
+    "data": {
+      "BTC-USD": {
+        "count": 892,
+        "first": 0.53496155,
+        "first_valid": "2024-01-21",
+        "kind": "f",
+        "last": 0.6560973,
+        "last_valid": "2026-06-30",
+        "max": 0.80756279,
+        "min": 0.32314051,
+        "sum": 500.84307
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": "D",
+      "len": 892,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-01-21",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      892
+    ],
+    "type": "Series"
+  },
+  "vol63": {
+    "columns": [
+      "BTC-USD"
+    ],
+    "data": {
+      "BTC-USD": {
+        "count": 850,
+        "first": 0.53272895,
+        "first_valid": "2024-03-03",
+        "kind": "f",
+        "last": 0.57383062,
+        "last_valid": "2026-06-30",
+        "max": 0.69641815,
+        "min": 0.44084958,
+        "sum": 481.27205
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": "D",
+      "len": 850,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-03-03",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      850
+    ],
+    "type": "Series"
+  },
+  "weekly": {
+    "columns": [
+      "BTC-USD"
+    ],
+    "data": {
+      "BTC-USD": {
+        "count": 131,
+        "first": -0.015378565,
+        "first_valid": "2024-01-07",
+        "kind": "f",
+        "last": 0.06831384,
+        "last_valid": "2026-07-05",
+        "max": 0.25277469,
+        "min": -0.22657987,
+        "sum": 0.98434763
+      }
+    },
+    "index": {
+      "end": "2026-07-05",
+      "freq": "W-SUN",
+      "len": 131,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2024-01-07",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      131
+    ],
+    "type": "Series"
+  },
+  "yearly": {
+    "index": [
+      "2024-12-31",
+      "2025-12-31",
+      "2026-12-31"
+    ],
+    "values": [
+      0.70164894,
+      0.36993047,
+      -0.33039902
+    ]
+  }
+}

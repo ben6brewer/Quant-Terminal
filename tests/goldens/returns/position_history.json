@@ -1,0 +1,469 @@
+{
+  "end_2025-06-30": {
+    "digest": {
+      "columns": [
+        "AAPL",
+        "BTC-USD",
+        "FREE CASH",
+        "MSFT",
+        "SPY"
+      ],
+      "data": {
+        "AAPL": {
+          "count": 180,
+          "first": 80.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 50.0,
+          "last_valid": "2025-06-30",
+          "max": 80.0,
+          "min": 50.0,
+          "sum": 12090.0
+        },
+        "BTC-USD": {
+          "count": 180,
+          "first": 0.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 0.2,
+          "last_valid": "2025-06-30",
+          "max": 0.2,
+          "min": 0.0,
+          "sum": 10.4
+        },
+        "FREE CASH": {
+          "count": 180,
+          "first": 100000.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 100143.4,
+          "last_valid": "2025-06-30",
+          "max": 100143.4,
+          "min": 100000.0,
+          "sum": 18006519.0
+        },
+        "MSFT": {
+          "count": 180,
+          "first": 0.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 40.0,
+          "last_valid": "2025-06-30",
+          "max": 40.0,
+          "min": 0.0,
+          "sum": 5920.0
+        },
+        "SPY": {
+          "count": 180,
+          "first": 60.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 60.0,
+          "last_valid": "2025-06-30",
+          "max": 60.0,
+          "min": 60.0,
+          "sum": 10800.0
+        }
+      },
+      "index": {
+        "end": "2025-06-30",
+        "freq": "D",
+        "len": 180,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        180,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "last_row": {
+      "2025-06-30": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 100143.4,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      }
+    }
+  },
+  "full": {
+    "digest": {
+      "columns": [
+        "AAPL",
+        "BTC-USD",
+        "FREE CASH",
+        "MSFT",
+        "SPY"
+      ],
+      "data": {
+        "AAPL": {
+          "count": 545,
+          "first": 80.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 60.0,
+          "last_valid": "2026-06-30",
+          "max": 80.0,
+          "min": 50.0,
+          "sum": 30640.0
+        },
+        "BTC-USD": {
+          "count": 545,
+          "first": 0.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 0.15,
+          "last_valid": "2026-06-30",
+          "max": 0.2,
+          "min": 0.0,
+          "sum": 71.95
+        },
+        "FREE CASH": {
+          "count": 545,
+          "first": 100000.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 95195.9,
+          "last_valid": "2026-06-30",
+          "max": 100143.4,
+          "min": 95143.4,
+          "sum": 52739478.0
+        },
+        "MSFT": {
+          "count": 545,
+          "first": 0.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 25.0,
+          "last_valid": "2026-06-30",
+          "max": 40.0,
+          "min": 0.0,
+          "sum": 12865.0
+        },
+        "SPY": {
+          "count": 545,
+          "first": 60.0,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 80.0,
+          "last_valid": "2026-06-30",
+          "max": 80.0,
+          "min": 60.0,
+          "sum": 38740.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "D",
+        "len": 545,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        545,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rows": {
+      "2025-01-02": {
+        "AAPL": 80.0,
+        "BTC-USD": 0.0,
+        "FREE CASH": 100000.0,
+        "MSFT": 0.0,
+        "SPY": 60.0
+      },
+      "2025-01-04": {
+        "AAPL": 80.0,
+        "BTC-USD": 0.0,
+        "FREE CASH": 100000.0,
+        "MSFT": 0.0,
+        "SPY": 60.0
+      },
+      "2025-02-02": {
+        "AAPL": 80.0,
+        "BTC-USD": 0.0,
+        "FREE CASH": 100000.0,
+        "MSFT": 0.0,
+        "SPY": 60.0
+      },
+      "2025-02-03": {
+        "AAPL": 80.0,
+        "BTC-USD": 0.0,
+        "FREE CASH": 100000.0,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-03-17": {
+        "AAPL": 80.0,
+        "BTC-USD": 0.0,
+        "FREE CASH": 100048.0,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-04-14": {
+        "AAPL": 80.0,
+        "BTC-USD": 0.0,
+        "FREE CASH": 100048.0,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-04-15": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.0,
+        "FREE CASH": 100048.0,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-05-09": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.0,
+        "FREE CASH": 100048.0,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-05-10": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 100048.0,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-05-11": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 100048.0,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-06-16": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 100143.4,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-07-01": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 95143.4,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-09-01": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 95143.4,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-09-02": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 95143.4,
+        "MSFT": 0.0,
+        "SPY": 80.0
+      },
+      "2025-11-14": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.15,
+        "FREE CASH": 95143.4,
+        "MSFT": 0.0,
+        "SPY": 80.0
+      },
+      "2026-01-04": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.15,
+        "FREE CASH": 95143.4,
+        "MSFT": 0.0,
+        "SPY": 80.0
+      },
+      "2026-01-05": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.15,
+        "FREE CASH": 95143.4,
+        "MSFT": 25.0,
+        "SPY": 80.0
+      },
+      "2026-03-16": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.15,
+        "FREE CASH": 95195.9,
+        "MSFT": 25.0,
+        "SPY": 80.0
+      },
+      "2026-05-31": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.15,
+        "FREE CASH": 95195.9,
+        "MSFT": 25.0,
+        "SPY": 80.0
+      },
+      "2026-06-01": {
+        "AAPL": 60.0,
+        "BTC-USD": 0.15,
+        "FREE CASH": 95195.9,
+        "MSFT": 25.0,
+        "SPY": 80.0
+      },
+      "2026-06-30": {
+        "AAPL": 60.0,
+        "BTC-USD": 0.15,
+        "FREE CASH": 95195.9,
+        "MSFT": 25.0,
+        "SPY": 80.0
+      }
+    }
+  },
+  "missing_portfolio_empty": true,
+  "no_cash_columns": [
+    "AAPL",
+    "BTC-USD",
+    "MSFT",
+    "SPY"
+  ],
+  "window_2025H2": {
+    "digest": {
+      "columns": [
+        "AAPL",
+        "BTC-USD",
+        "FREE CASH",
+        "MSFT",
+        "SPY"
+      ],
+      "data": {
+        "AAPL": {
+          "count": 214,
+          "first": 50.0,
+          "first_valid": "2025-06-01",
+          "kind": "f",
+          "last": 50.0,
+          "last_valid": "2025-12-31",
+          "max": 50.0,
+          "min": 50.0,
+          "sum": 10700.0
+        },
+        "BTC-USD": {
+          "count": 214,
+          "first": 0.2,
+          "first_valid": "2025-06-01",
+          "kind": "f",
+          "last": 0.15,
+          "last_valid": "2025-12-31",
+          "max": 0.2,
+          "min": 0.15,
+          "sum": 40.4
+        },
+        "FREE CASH": {
+          "count": 214,
+          "first": 100048.0,
+          "first_valid": "2025-06-01",
+          "kind": "f",
+          "last": 95143.4,
+          "last_valid": "2025-12-31",
+          "max": 100143.4,
+          "min": 95143.4,
+          "sum": 20509257.0
+        },
+        "MSFT": {
+          "count": 214,
+          "first": 40.0,
+          "first_valid": "2025-06-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2025-12-31",
+          "max": 40.0,
+          "min": 0.0,
+          "sum": 3720.0
+        },
+        "SPY": {
+          "count": 214,
+          "first": 60.0,
+          "first_valid": "2025-06-01",
+          "kind": "f",
+          "last": 80.0,
+          "last_valid": "2025-12-31",
+          "max": 80.0,
+          "min": 60.0,
+          "sum": 15260.0
+        }
+      },
+      "index": {
+        "end": "2025-12-31",
+        "freq": "D",
+        "len": 214,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-06-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        214,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "rows": {
+      "2025-01-02": null,
+      "2025-01-04": null,
+      "2025-02-02": null,
+      "2025-02-03": null,
+      "2025-03-17": null,
+      "2025-04-14": null,
+      "2025-04-15": null,
+      "2025-05-09": null,
+      "2025-05-10": null,
+      "2025-05-11": null,
+      "2025-06-16": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 100143.4,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-07-01": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 95143.4,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-09-01": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 95143.4,
+        "MSFT": 40.0,
+        "SPY": 60.0
+      },
+      "2025-09-02": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.2,
+        "FREE CASH": 95143.4,
+        "MSFT": 0.0,
+        "SPY": 80.0
+      },
+      "2025-11-14": {
+        "AAPL": 50.0,
+        "BTC-USD": 0.15,
+        "FREE CASH": 95143.4,
+        "MSFT": 0.0,
+        "SPY": 80.0
+      },
+      "2026-01-04": null,
+      "2026-01-05": null,
+      "2026-03-16": null,
+      "2026-05-31": null,
+      "2026-06-01": null,
+      "2026-06-30": null
+    }
+  }
+}

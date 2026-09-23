@@ -1,0 +1,308 @@
+{
+  "daily_cash": {
+    "digest": {
+      "columns": [
+        "portfolio_return"
+      ],
+      "data": {
+        "portfolio_return": {
+          "count": 545,
+          "first": 8.9424356e-05,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 0.013062288,
+          "last_valid": "2026-06-30",
+          "max": 0.019940741,
+          "min": -0.021026697,
+          "sum": 0.093094906
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "D",
+        "len": 545,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        545
+      ],
+      "type": "Series"
+    },
+    "points": {
+      "2025-01-02": 8.9424356e-05,
+      "2025-01-03": 0.0073958256,
+      "2025-01-04": 0.0,
+      "2025-05-10": 0.0019993489,
+      "2025-09-02": 0.0017406398,
+      "2026-06-30": 0.013062288
+    }
+  },
+  "daily_nocash": {
+    "digest": {
+      "columns": [
+        "portfolio_return"
+      ],
+      "data": {
+        "portfolio_return": {
+          "count": 545,
+          "first": 0.00024015641,
+          "first_valid": "2025-01-02",
+          "kind": "f",
+          "last": 0.030158622,
+          "last_valid": "2026-06-30",
+          "max": 0.044139691,
+          "min": -0.045311753,
+          "sum": 0.18570798
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "D",
+        "len": 545,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        545
+      ],
+      "type": "Series"
+    },
+    "points": {
+      "2025-01-02": 0.00024015641,
+      "2025-01-03": 0.019623059,
+      "2025-01-04": 0.0,
+      "2025-05-10": 0.0042632517,
+      "2025-09-02": 0.0037754023,
+      "2026-06-30": 0.030158622
+    }
+  },
+  "missing_portfolio_empty": true,
+  "monthly_nocash": {
+    "digest": {
+      "columns": [
+        "portfolio_return"
+      ],
+      "data": {
+        "portfolio_return": {
+          "count": 18,
+          "first": 0.054796445,
+          "first_valid": "2025-01-31",
+          "kind": "f",
+          "last": -0.044405401,
+          "last_valid": "2026-06-30",
+          "max": 0.1187776,
+          "min": -0.082216604,
+          "sum": 0.15554848
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "ME",
+        "len": 18,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-01-31",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        18
+      ],
+      "type": "Series"
+    },
+    "values": [
+      0.054796445,
+      0.095920032,
+      0.015926937,
+      0.035356769,
+      0.03691821,
+      -0.011865016,
+      0.016819554,
+      0.0099289248,
+      0.020514787,
+      -0.023523402,
+      -0.071204554,
+      0.0095591177,
+      -0.053657594,
+      0.027965872,
+      -6.3197018e-05,
+      0.1187776,
+      -0.082216604,
+      -0.044405401
+    ]
+  },
+  "weekly_nocash": {
+    "digest": {
+      "columns": [
+        "portfolio_return"
+      ],
+      "data": {
+        "portfolio_return": {
+          "count": 79,
+          "first": 0.019867928,
+          "first_valid": "2025-01-05",
+          "kind": "f",
+          "last": 0.042070158,
+          "last_valid": "2026-07-05",
+          "max": 0.080927352,
+          "min": -0.070766832,
+          "sum": 0.17114671
+        }
+      },
+      "index": {
+        "end": "2026-07-05",
+        "freq": "W-SUN",
+        "len": 79,
+        "monotonic_increasing": true,
+        "name": null,
+        "start": "2025-01-05",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        79
+      ],
+      "type": "Series"
+    },
+    "head": [
+      0.019867928,
+      0.028161686,
+      0.011806747
+    ]
+  },
+  "weights_portfolio_daily": {
+    "columns": [
+      "value"
+    ],
+    "data": {
+      "value": {
+        "count": 386,
+        "first": -0.0025053553,
+        "first_valid": "2025-01-02",
+        "kind": "f",
+        "last": 0.035961725,
+        "last_valid": "2026-06-30",
+        "max": 0.043600928,
+        "min": -0.045925021,
+        "sum": -0.046095109
+      }
+    },
+    "index": {
+      "end": "2026-06-30",
+      "freq": null,
+      "len": 386,
+      "monotonic_increasing": true,
+      "name": "Date",
+      "start": "2025-01-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      386
+    ],
+    "type": "Series"
+  },
+  "weights_portfolio_monthly": {
+    "digest": {
+      "columns": [
+        "value"
+      ],
+      "data": {
+        "value": {
+          "count": 18,
+          "first": 0.00098039433,
+          "first_valid": "2025-01-31",
+          "kind": "f",
+          "last": -0.057756484,
+          "last_valid": "2026-06-30",
+          "max": 0.074817178,
+          "min": -0.06547051,
+          "sum": -0.068420138
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": "ME",
+        "len": 18,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "2025-01-31",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        18
+      ],
+      "type": "Series"
+    },
+    "values": [
+      0.00098039433,
+      0.074817178,
+      0.023142885,
+      -0.0088131388,
+      0.030836041,
+      -0.010617308,
+      -0.013091989,
+      -0.058488946,
+      -0.063714262,
+      -0.06547051,
+      -0.024642728,
+      0.012917427,
+      0.060318445,
+      0.020964717,
+      -0.0035421867,
+      0.054823804,
+      -0.041083475,
+      -0.057756484
+    ]
+  },
+  "window_2025-03_2025-12": {
+    "columns": [
+      "portfolio_return"
+    ],
+    "data": {
+      "portfolio_return": {
+        "count": 306,
+        "first": 0.0,
+        "first_valid": "2025-03-01",
+        "kind": "f",
+        "last": -0.011886894,
+        "last_valid": "2025-12-31",
+        "max": 0.019940741,
+        "min": -0.021026697,
+        "sum": 0.035867868
+      }
+    },
+    "index": {
+      "end": "2025-12-31",
+      "freq": "D",
+      "len": 306,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2025-03-01",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      306
+    ],
+    "type": "Series"
+  },
+  "yearly_nocash": {
+    "index": [
+      "2025-12-31",
+      "2026-12-31"
+    ],
+    "values": [
+      0.19544191,
+      -0.045541178
+    ]
+  }
+}
