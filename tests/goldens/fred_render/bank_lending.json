@@ -1,0 +1,2195 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Raw",
+      "YoY %"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading bank lending data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              120.5,
+              135.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 520,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 520,
+              "first": 0.0,
+              "last": 519.0,
+              "max": 519.0,
+              "min": 0.0,
+              "n": 520,
+              "sum": 134940.0
+            },
+            "y": {
+              "finite": 520,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": 0.0,
+              "n": 520,
+              "sum": 0.0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 520,
+            "name": "C&I Loans",
+            "pen": [
+              102,
+              187,
+              106,
+              220
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 520,
+              "first": 0.0,
+              "last": 519.0,
+              "max": 519.0,
+              "min": 0.0,
+              "n": 520,
+              "sum": 134940.0
+            },
+            "y": {
+              "finite": 520,
+              "first": 2122.439,
+              "last": 2800.0,
+              "max": 2817.53,
+              "min": 2104.348,
+              "n": 520,
+              "sum": 1282209.7
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              102,
+              187,
+              106,
+              180
+            ],
+            "type": "FillBetweenItem",
+            "visible": true,
+            "z": -1.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 520,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 520,
+              "first": 0.0,
+              "last": 519.0,
+              "max": 519.0,
+              "min": 0.0,
+              "n": 520,
+              "sum": 134940.0
+            },
+            "y": {
+              "finite": 520,
+              "first": 2122.439,
+              "last": 2800.0,
+              "max": 2817.53,
+              "min": 2104.348,
+              "n": 520,
+              "sum": 1282209.7
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 520,
+            "name": "Real Estate",
+            "pen": [
+              66,
+              165,
+              245,
+              220
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 520,
+              "first": 0.0,
+              "last": 519.0,
+              "max": 519.0,
+              "min": 0.0,
+              "n": 520,
+              "sum": 134940.0
+            },
+            "y": {
+              "finite": 520,
+              "first": 6338.592,
+              "last": 8400.0,
+              "max": 8450.527,
+              "min": 6338.592,
+              "n": 520,
+              "sum": 3760793.6
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              66,
+              165,
+              245,
+              180
+            ],
+            "type": "FillBetweenItem",
+            "visible": true,
+            "z": -1.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 520,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 520,
+              "first": 0.0,
+              "last": 519.0,
+              "max": 519.0,
+              "min": 0.0,
+              "n": 520,
+              "sum": 134940.0
+            },
+            "y": {
+              "finite": 520,
+              "first": 6338.592,
+              "last": 8400.0,
+              "max": 8450.527,
+              "min": 6338.592,
+              "n": 520,
+              "sum": 3760793.6
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 520,
+            "name": "Consumer",
+            "pen": [
+              255,
+              107,
+              107,
+              220
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 520,
+              "first": 0.0,
+              "last": 519.0,
+              "max": 519.0,
+              "min": 0.0,
+              "n": 520,
+              "sum": 134940.0
+            },
+            "y": {
+              "finite": 520,
+              "first": 7732.023,
+              "last": 10350.0,
+              "max": 10371.311,
+              "min": 7732.023,
+              "n": 520,
+              "sum": 4632974.4
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              255,
+              107,
+              107,
+              180
+            ],
+            "type": "FillBetweenItem",
+            "visible": true,
+            "z": -1.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "C&I Loans",
+            "Real Estate",
+            "Consumer"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -10.38,
+            529.38
+          ],
+          "y": [
+            0.0,
+            11201.016
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "BankLendingChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=YoY %",
+    "tooltip": "Dec 2007\n\u25a0 Total Loans: +4.1%\n\u25a0 C&I Loans: +5.5%\n\u25a0 Real Estate: +1.2%\n\u25a0 Consumer: +0.2%"
+  },
+  "module": "bank_lending",
+  "renders": {
+    "lookback=5Y view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading bank lending data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 0.0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": "C&I Loans",
+              "pen": [
+                102,
+                187,
+                106,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": 2493.825,
+                "last": 2800.0,
+                "max": 2817.53,
+                "min": 2477.214,
+                "n": 260,
+                "sum": 690001.81
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": 2493.825,
+                "last": 2800.0,
+                "max": 2817.53,
+                "min": 2477.214,
+                "n": 260,
+                "sum": 690001.81
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": "Real Estate",
+              "pen": [
+                66,
+                165,
+                245,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": 7093.007,
+                "last": 8400.0,
+                "max": 8450.527,
+                "min": 7093.007,
+                "n": 260,
+                "sum": 2031387.8
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                66,
+                165,
+                245,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": 7093.007,
+                "last": 8400.0,
+                "max": 8450.527,
+                "min": 7093.007,
+                "n": 260,
+                "sum": 2031387.8
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": "Consumer",
+              "pen": [
+                255,
+                107,
+                107,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": 8749.968,
+                "last": 10350.0,
+                "max": 10371.311,
+                "min": 8749.968,
+                "n": 260,
+                "sum": 2501775.1
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                107,
+                107,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "C&I Loans",
+              "Real Estate",
+              "Consumer"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -5.18,
+              264.18
+            ],
+            "y": [
+              0.0,
+              11201.016
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "BankLendingChart"
+    },
+    "lookback=5Y view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading bank lending data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 208,
+              "name": "Total Loans",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 208,
+                "first": 0.0,
+                "last": 207.0,
+                "max": 207.0,
+                "min": 0.0,
+                "n": 208,
+                "sum": 21528.0
+              },
+              "y": {
+                "finite": 208,
+                "first": 3.2968188,
+                "last": 4.4253014,
+                "max": 4.4427108,
+                "min": 0.37451367,
+                "n": 208,
+                "sum": 449.82368
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 208,
+              "name": "C&I Loans",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 208,
+                "first": 0.0,
+                "last": 207.0,
+                "max": 207.0,
+                "min": 0.0,
+                "n": 208,
+                "sum": 21528.0
+              },
+              "y": {
+                "finite": 208,
+                "first": 1.5738073,
+                "last": 2.9682814,
+                "max": 5.7025881,
+                "min": -2.06571,
+                "n": 208,
+                "sum": 515.08717
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 208,
+              "name": "Real Estate",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 208,
+                "first": 0.0,
+                "last": 207.0,
+                "max": 207.0,
+                "min": 0.0,
+                "n": 208,
+                "sum": 21528.0
+              },
+              "y": {
+                "finite": 208,
+                "first": 4.4355931,
+                "last": 2.1253377,
+                "max": 8.5140569,
+                "min": -0.75483407,
+                "n": 208,
+                "sum": 878.01629
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 208,
+              "name": "Consumer",
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 208,
+                "first": 0.0,
+                "last": 207.0,
+                "max": 207.0,
+                "min": 0.0,
+                "n": 208,
+                "sum": 21528.0
+              },
+              "y": {
+                "finite": 208,
+                "first": 1.1107081,
+                "last": 1.9105884,
+                "max": 9.8723939,
+                "min": -0.27076326,
+                "n": 208,
+                "sum": 775.83722
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Total Loans",
+              "C&I Loans",
+              "Real Estate",
+              "Consumer"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.14,
+              211.14
+            ],
+            "y": [
+              -3.2595204,
+              11.066204
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "BankLendingChart"
+    },
+    "lookback=Max view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading bank lending data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                33.5,
+                50.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                107.5,
+                114.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                125.5,
+                142.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                233.5,
+                242.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                772.5,
+                819.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                1194.5,
+                1293.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                1955.5,
+                1970.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2355,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2355,
+                "first": 0.0,
+                "last": 2354.0,
+                "max": 2354.0,
+                "min": 0.0,
+                "n": 2355,
+                "sum": 2771835.0
+              },
+              "y": {
+                "finite": 2355,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": 0.0,
+                "n": 2355,
+                "sum": 0.0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2355,
+              "name": "C&I Loans",
+              "pen": [
+                102,
+                187,
+                106,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2355,
+                "first": 0.0,
+                "last": 2354.0,
+                "max": 2354.0,
+                "min": 0.0,
+                "n": 2355,
+                "sum": 2771835.0
+              },
+              "y": {
+                "finite": 2355,
+                "first": 250.756,
+                "last": 2800.0,
+                "max": 2817.53,
+                "min": 250.458,
+                "n": 2355,
+                "sum": 3612919.2
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2355,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2355,
+                "first": 0.0,
+                "last": 2354.0,
+                "max": 2354.0,
+                "min": 0.0,
+                "n": 2355,
+                "sum": 2771835.0
+              },
+              "y": {
+                "finite": 2355,
+                "first": 250.756,
+                "last": 2800.0,
+                "max": 2817.53,
+                "min": 250.458,
+                "n": 2355,
+                "sum": 3612919.2
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2355,
+              "name": "Real Estate",
+              "pen": [
+                66,
+                165,
+                245,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2355,
+                "first": 0.0,
+                "last": 2354.0,
+                "max": 2354.0,
+                "min": 0.0,
+                "n": 2355,
+                "sum": 2771835.0
+              },
+              "y": {
+                "finite": 2355,
+                "first": 605.236,
+                "last": 8400.0,
+                "max": 8450.527,
+                "min": 605.236,
+                "n": 2355,
+                "sum": 10466969.0
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                66,
+                165,
+                245,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2355,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2355,
+                "first": 0.0,
+                "last": 2354.0,
+                "max": 2354.0,
+                "min": 0.0,
+                "n": 2355,
+                "sum": 2771835.0
+              },
+              "y": {
+                "finite": 2355,
+                "first": 605.236,
+                "last": 8400.0,
+                "max": 8450.527,
+                "min": 605.236,
+                "n": 2355,
+                "sum": 10466969.0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2355,
+              "name": "Consumer",
+              "pen": [
+                255,
+                107,
+                107,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2355,
+                "first": 0.0,
+                "last": 2354.0,
+                "max": 2354.0,
+                "min": 0.0,
+                "n": 2355,
+                "sum": 2771835.0
+              },
+              "y": {
+                "finite": 2355,
+                "first": 605.236,
+                "last": 10350.0,
+                "max": 10371.311,
+                "min": 605.236,
+                "n": 2355,
+                "sum": 12539526.0
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                107,
+                107,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "C&I Loans",
+              "Real Estate",
+              "Consumer"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -47.08,
+              2401.08
+            ],
+            "y": [
+              0.0,
+              11201.016
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "BankLendingChart"
+    },
+    "lookback=Max view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading bank lending data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                10.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                67.5,
+                74.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                85.5,
+                102.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                193.5,
+                202.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                732.5,
+                779.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                1154.5,
+                1253.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                1915.5,
+                1930.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2315,
+              "name": "Total Loans",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2315,
+                "first": 0.0,
+                "last": 2314.0,
+                "max": 2314.0,
+                "min": 0.0,
+                "n": 2315,
+                "sum": 2678455.0
+              },
+              "y": {
+                "finite": 2038,
+                "first": 8.6718564,
+                "last": 4.4253014,
+                "max": 11.780231,
+                "min": -3.5031324,
+                "n": 2315,
+                "sum": 7695.5571
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2315,
+              "name": "C&I Loans",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2315,
+                "first": 0.0,
+                "last": 2314.0,
+                "max": 2314.0,
+                "min": 0.0,
+                "n": 2315,
+                "sum": 2678455.0
+              },
+              "y": {
+                "finite": 2303,
+                "first": 30.824786,
+                "last": 2.9682814,
+                "max": 39.516562,
+                "min": -4.3811476,
+                "n": 2315,
+                "sum": 12723.121
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2315,
+              "name": "Real Estate",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2315,
+                "first": 0.0,
+                "last": 2314.0,
+                "max": 2314.0,
+                "min": 0.0,
+                "n": 2315,
+                "sum": 2678455.0
+              },
+              "y": {
+                "finite": 2315,
+                "first": 21.664266,
+                "last": 2.1253377,
+                "max": 40.971726,
+                "min": -3.0698727,
+                "n": 2315,
+                "sum": 15238.41
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 2315,
+              "name": "Consumer",
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 2315,
+                "first": 0.0,
+                "last": 2314.0,
+                "max": 2314.0,
+                "min": 0.0,
+                "n": 2315,
+                "sum": 2678455.0
+              },
+              "y": {
+                "finite": 2279,
+                "first": 15.915235,
+                "last": 1.9105884,
+                "max": 46.080968,
+                "min": -3.1425599,
+                "n": 2315,
+                "sum": 13591.618
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Total Loans",
+              "C&I Loans",
+              "Real Estate",
+              "Consumer"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -46.28,
+              2360.28
+            ],
+            "y": [
+              -9.4273592,
+              51.12718
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "BankLendingChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Loans",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Loans",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Real Estate",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Consumer",
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Loans",
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Loans",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Real Estate",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Consumer",
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Loans",
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Loans",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Real Estate",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Consumer",
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Lookback:",
+    "Total: $12,900B",
+    "View:",
+    "|"
+  ]
+}

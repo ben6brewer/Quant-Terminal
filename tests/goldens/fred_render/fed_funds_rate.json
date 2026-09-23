@@ -1,0 +1,1277 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading Fed funds rate data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              33.5,
+              50.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              107.5,
+              114.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              125.5,
+              142.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              233.5,
+              242.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              361.5,
+              370.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              442.5,
+              652.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              4519.5,
+              4609.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 6862,
+            "name": null,
+            "pen": [
+              255,
+              128,
+              0,
+              80
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 6862,
+              "first": 0.0,
+              "last": 6861.0,
+              "max": 6861.0,
+              "min": 0.0,
+              "n": 6862,
+              "sum": 23540091.0
+            },
+            "y": {
+              "finite": 6406,
+              "first": 0.0,
+              "last": 1.5,
+              "max": 2.75,
+              "min": 0.0,
+              "n": 6862,
+              "sum": 8709.5
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 6862,
+            "name": null,
+            "pen": [
+              255,
+              128,
+              0,
+              80
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 6862,
+              "first": 0.0,
+              "last": 6861.0,
+              "max": 6861.0,
+              "min": 0.0,
+              "n": 6862,
+              "sum": 23540091.0
+            },
+            "y": {
+              "finite": 6406,
+              "first": 0.25,
+              "last": 1.75,
+              "max": 3.0,
+              "min": 0.25,
+              "n": 6862,
+              "sum": 10311.0
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              255,
+              128,
+              0,
+              40
+            ],
+            "type": "FillBetweenItem",
+            "visible": true,
+            "z": -1.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 6862,
+            "name": "Fed Funds Rate",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 6862,
+              "first": 0.0,
+              "last": 6861.0,
+              "max": 6861.0,
+              "min": 0.0,
+              "n": 6862,
+              "sum": 23540091.0
+            },
+            "y": {
+              "finite": 6862,
+              "first": 1.487,
+              "last": 1.248,
+              "max": 8.014,
+              "min": 0.05,
+              "n": 6862,
+              "sum": 12683.147
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": null,
+        "title": "",
+        "view_range": {
+          "x": [
+            -137.22,
+            6998.22
+          ],
+          "y": [
+            0.0,
+            8.8104
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "FedFundsRateChart"
+  },
+  "hover": {
+    "state": "lookback=Max",
+    "tooltip": "Feb 2017\n\u25a0 EFFR: 2.24%\nTarget: 1.00%\u20131.25%"
+  },
+  "module": "fed_funds_rate",
+  "renders": {
+    "lookback=5Y": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading Fed funds rate data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1827,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1827,
+                "first": 0.0,
+                "last": 1826.0,
+                "max": 1826.0,
+                "min": 0.0,
+                "n": 1827,
+                "sum": 1668051.0
+              },
+              "y": {
+                "finite": 1827,
+                "first": 1.5,
+                "last": 1.5,
+                "max": 2.75,
+                "min": 1.25,
+                "n": 1827,
+                "sum": 3356.5
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1827,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1827,
+                "first": 0.0,
+                "last": 1826.0,
+                "max": 1826.0,
+                "min": 0.0,
+                "n": 1827,
+                "sum": 1668051.0
+              },
+              "y": {
+                "finite": 1827,
+                "first": 1.75,
+                "last": 1.75,
+                "max": 3.0,
+                "min": 1.5,
+                "n": 1827,
+                "sum": 3813.25
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                128,
+                0,
+                40
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1827,
+              "name": "Fed Funds Rate",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1827,
+                "first": 0.0,
+                "last": 1826.0,
+                "max": 1826.0,
+                "min": 0.0,
+                "n": 1827,
+                "sum": 1668051.0
+              },
+              "y": {
+                "finite": 1827,
+                "first": 1.133,
+                "last": 1.248,
+                "max": 2.706,
+                "min": 0.05,
+                "n": 1827,
+                "sum": 2144.9
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -36.52,
+              1862.52
+            ],
+            "y": [
+              0.0,
+              2.9716
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "FedFundsRateChart"
+    },
+    "lookback=Max": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading Fed funds rate data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                33.5,
+                50.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                107.5,
+                114.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                125.5,
+                142.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                233.5,
+                242.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                361.5,
+                370.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                442.5,
+                652.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                4519.5,
+                4609.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6862,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6862,
+                "first": 0.0,
+                "last": 6861.0,
+                "max": 6861.0,
+                "min": 0.0,
+                "n": 6862,
+                "sum": 23540091.0
+              },
+              "y": {
+                "finite": 6406,
+                "first": 0.0,
+                "last": 1.5,
+                "max": 2.75,
+                "min": 0.0,
+                "n": 6862,
+                "sum": 8709.5
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6862,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6862,
+                "first": 0.0,
+                "last": 6861.0,
+                "max": 6861.0,
+                "min": 0.0,
+                "n": 6862,
+                "sum": 23540091.0
+              },
+              "y": {
+                "finite": 6406,
+                "first": 0.25,
+                "last": 1.75,
+                "max": 3.0,
+                "min": 0.25,
+                "n": 6862,
+                "sum": 10311.0
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                128,
+                0,
+                40
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6862,
+              "name": "Fed Funds Rate",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6862,
+                "first": 0.0,
+                "last": 6861.0,
+                "max": 6861.0,
+                "min": 0.0,
+                "n": 6862,
+                "sum": 23540091.0
+              },
+              "y": {
+                "finite": 6862,
+                "first": 1.487,
+                "last": 1.248,
+                "max": 8.014,
+                "min": 0.05,
+                "n": 6862,
+                "sum": 12683.147
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -137.22,
+              6998.22
+            ],
+            "y": [
+              0.0,
+              8.8104
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "FedFundsRateChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                128,
+                0,
+                40
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Fed Funds Rate",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                128,
+                0,
+                40
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Fed Funds Rate",
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                80
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                128,
+                0,
+                40
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Fed Funds Rate",
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "EFFR: 1.25%",
+    "Lookback:",
+    "|"
+  ]
+}

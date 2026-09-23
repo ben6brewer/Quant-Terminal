@@ -1,0 +1,1340 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading financial conditions data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              136,
+              136,
+              136,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": true,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 260,
+            "name": "NFCI",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 260,
+              "first": 0.0,
+              "last": 259.0,
+              "max": 259.0,
+              "min": 0.0,
+              "n": 260,
+              "sum": 33670.0
+            },
+            "y": {
+              "finite": 260,
+              "first": -0.571,
+              "last": -0.614,
+              "max": -0.479,
+              "min": -0.879,
+              "n": 260,
+              "sum": -170.838
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 260,
+            "name": "Adjusted NFCI",
+            "pen": [
+              102,
+              187,
+              106,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 260,
+              "first": 0.0,
+              "last": 259.0,
+              "max": 259.0,
+              "min": 0.0,
+              "n": 260,
+              "sum": 33670.0
+            },
+            "y": {
+              "finite": 260,
+              "first": -0.677,
+              "last": -0.892,
+              "max": -0.525,
+              "min": -1.081,
+              "n": 260,
+              "sum": -206.487
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 260,
+            "name": "Credit Sub",
+            "pen": [
+              239,
+              83,
+              80,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 260,
+              "first": 0.0,
+              "last": 259.0,
+              "max": 259.0,
+              "min": 0.0,
+              "n": 260,
+              "sum": 33670.0
+            },
+            "y": {
+              "finite": 260,
+              "first": -0.196,
+              "last": -0.065,
+              "max": 0.087,
+              "min": -0.247,
+              "n": 260,
+              "sum": -21.048
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 260,
+            "name": "Leverage Sub",
+            "pen": [
+              255,
+              112,
+              67,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 260,
+              "first": 0.0,
+              "last": 259.0,
+              "max": 259.0,
+              "min": 0.0,
+              "n": 260,
+              "sum": 33670.0
+            },
+            "y": {
+              "finite": 260,
+              "first": -0.167,
+              "last": -0.108,
+              "max": -0.066,
+              "min": -0.397,
+              "n": 260,
+              "sum": -52.626
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 260,
+            "name": "NonFin Leverage Sub",
+            "pen": [
+              79,
+              195,
+              247,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 260,
+              "first": 0.0,
+              "last": 259.0,
+              "max": 259.0,
+              "min": 0.0,
+              "n": 260,
+              "sum": 33670.0
+            },
+            "y": {
+              "finite": 260,
+              "first": -0.062,
+              "last": -0.362,
+              "max": 0.009,
+              "min": -0.428,
+              "n": 260,
+              "sum": -49.721
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "NFCI",
+            "Adjusted NFCI",
+            "Credit Sub",
+            "Leverage Sub",
+            "NonFin Leverage Sub"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -5.18,
+            264.18
+          ],
+          "y": [
+            -1.17444,
+            0.18044
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "FinancialConditionsChart"
+  },
+  "hover": {
+    "state": "lookback=Max",
+    "tooltip": "Jun 2012\n\u25a0 NFCI: -0.889\n\u25a0 Adjusted NFCI: -1.205\n\u25a0 Credit Sub: +0.095\n\u25a0 Leverage Sub: -0.237\n\u25a0 NonFin Leverage Sub: -0.998"
+  },
+  "module": "financial_conditions",
+  "renders": {
+    "lookback=5Y": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading financial conditions data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": "NFCI",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": -0.571,
+                "last": -0.614,
+                "max": -0.479,
+                "min": -0.879,
+                "n": 260,
+                "sum": -170.838
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": "Adjusted NFCI",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": -0.677,
+                "last": -0.892,
+                "max": -0.525,
+                "min": -1.081,
+                "n": 260,
+                "sum": -206.487
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": "Credit Sub",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": -0.196,
+                "last": -0.065,
+                "max": 0.087,
+                "min": -0.247,
+                "n": 260,
+                "sum": -21.048
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": "Leverage Sub",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": -0.167,
+                "last": -0.108,
+                "max": -0.066,
+                "min": -0.397,
+                "n": 260,
+                "sum": -52.626
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 260,
+              "name": "NonFin Leverage Sub",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 260,
+                "first": 0.0,
+                "last": 259.0,
+                "max": 259.0,
+                "min": 0.0,
+                "n": 260,
+                "sum": 33670.0
+              },
+              "y": {
+                "finite": 260,
+                "first": -0.062,
+                "last": -0.362,
+                "max": 0.009,
+                "min": -0.428,
+                "n": 260,
+                "sum": -49.721
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "NFCI",
+              "Adjusted NFCI",
+              "Credit Sub",
+              "Leverage Sub",
+              "NonFin Leverage Sub"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -5.18,
+              264.18
+            ],
+            "y": [
+              -1.17444,
+              0.18044
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "FinancialConditionsChart"
+    },
+    "lookback=Max": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading financial conditions data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                29.5,
+                75.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                727.5,
+                927.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                2513.5,
+                2931.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                5730.5,
+                5796.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 7425,
+              "name": "NFCI",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 7425,
+                "first": 0.0,
+                "last": 7424.0,
+                "max": 7424.0,
+                "min": 0.0,
+                "n": 7425,
+                "sum": 27561600.0
+              },
+              "y": {
+                "finite": 7425,
+                "first": -0.344,
+                "last": -0.614,
+                "max": 0.424,
+                "min": -1.108,
+                "n": 7425,
+                "sum": -2348.886
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 7425,
+              "name": "Adjusted NFCI",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 7425,
+                "first": 0.0,
+                "last": 7424.0,
+                "max": 7424.0,
+                "min": 0.0,
+                "n": 7425,
+                "sum": 27561600.0
+              },
+              "y": {
+                "finite": 7175,
+                "first": -0.534,
+                "last": -0.892,
+                "max": 0.232,
+                "min": -1.48,
+                "n": 7425,
+                "sum": -5298.587
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 7425,
+              "name": "Credit Sub",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 7425,
+                "first": 0.0,
+                "last": 7424.0,
+                "max": 7424.0,
+                "min": 0.0,
+                "n": 7425,
+                "sum": 27561600.0
+              },
+              "y": {
+                "finite": 7362,
+                "first": -0.29,
+                "last": -0.065,
+                "max": 0.756,
+                "min": -1.264,
+                "n": 7425,
+                "sum": -1472.72
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 7425,
+              "name": "Leverage Sub",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 7425,
+                "first": 0.0,
+                "last": 7424.0,
+                "max": 7424.0,
+                "min": 0.0,
+                "n": 7425,
+                "sum": 27561600.0
+              },
+              "y": {
+                "finite": 7175,
+                "first": 0.397,
+                "last": -0.108,
+                "max": 0.901,
+                "min": -0.702,
+                "n": 7425,
+                "sum": -538.204
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 7425,
+              "name": "NonFin Leverage Sub",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 7425,
+                "first": 0.0,
+                "last": 7424.0,
+                "max": 7424.0,
+                "min": 0.0,
+                "n": 7425,
+                "sum": 27561600.0
+              },
+              "y": {
+                "finite": 7175,
+                "first": -0.911,
+                "last": -0.362,
+                "max": 0.443,
+                "min": -1.17,
+                "n": 7425,
+                "sum": -3123.909
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "NFCI",
+              "Adjusted NFCI",
+              "Credit Sub",
+              "Leverage Sub",
+              "NonFin Leverage Sub"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -148.48,
+              7572.48
+            ],
+            "y": [
+              -1.67048,
+              1.09148
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "FinancialConditionsChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "NFCI",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Adjusted NFCI",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Credit Sub",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Leverage Sub",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "NonFin Leverage Sub",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "NFCI",
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Adjusted NFCI",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Credit Sub",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Leverage Sub",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "NonFin Leverage Sub",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "NFCI",
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Adjusted NFCI",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Credit Sub",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Leverage Sub",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "NonFin Leverage Sub",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Lookback:",
+    "NFCI: -0.61",
+    "|"
+  ]
+}

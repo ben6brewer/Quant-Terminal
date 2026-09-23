@@ -1,0 +1,1757 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading unemployment by age data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              16.5,
+              35.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              162.5,
+              165.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 240,
+            "name": "16+",
+            "pen": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 240,
+              "first": 0.0,
+              "last": 239.0,
+              "max": 239.0,
+              "min": 0.0,
+              "n": 240,
+              "sum": 28680.0
+            },
+            "y": {
+              "finite": 240,
+              "first": 4.659,
+              "last": 6.059,
+              "max": 8.399,
+              "min": 2.5,
+              "n": 240,
+              "sum": 1356.801
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 240,
+            "name": "20-24",
+            "pen": [
+              255,
+              238,
+              88,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 240,
+              "first": 0.0,
+              "last": 239.0,
+              "max": 239.0,
+              "min": 0.0,
+              "n": 240,
+              "sum": 28680.0
+            },
+            "y": {
+              "finite": 240,
+              "first": 5.763,
+              "last": 6.137,
+              "max": 7.733,
+              "min": 3.563,
+              "n": 240,
+              "sum": 1394.764
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 240,
+            "name": "25-34",
+            "pen": [
+              38,
+              198,
+              218,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 240,
+              "first": 0.0,
+              "last": 239.0,
+              "max": 239.0,
+              "min": 0.0,
+              "n": 240,
+              "sum": 28680.0
+            },
+            "y": {
+              "finite": 240,
+              "first": 6.119,
+              "last": 7.188,
+              "max": 8.044,
+              "min": 4.736,
+              "n": 240,
+              "sum": 1537.86
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 240,
+            "name": "35-44",
+            "pen": [
+              66,
+              165,
+              245,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 240,
+              "first": 0.0,
+              "last": 239.0,
+              "max": 239.0,
+              "min": 0.0,
+              "n": 240,
+              "sum": 28680.0
+            },
+            "y": {
+              "finite": 240,
+              "first": 5.564,
+              "last": 6.725,
+              "max": 7.869,
+              "min": 2.5,
+              "n": 240,
+              "sum": 1163.882
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 240,
+            "name": "45-54",
+            "pen": [
+              92,
+              107,
+              192,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 240,
+              "first": 0.0,
+              "last": 239.0,
+              "max": 239.0,
+              "min": 0.0,
+              "n": 240,
+              "sum": 28680.0
+            },
+            "y": {
+              "finite": 240,
+              "first": 6.664,
+              "last": 2.5,
+              "max": 7.266,
+              "min": 2.5,
+              "n": 240,
+              "sum": 1043.841
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 240,
+            "name": "55-64",
+            "pen": [
+              171,
+              71,
+              188,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 240,
+              "first": 0.0,
+              "last": 239.0,
+              "max": 239.0,
+              "min": 0.0,
+              "n": 240,
+              "sum": 28680.0
+            },
+            "y": {
+              "finite": 240,
+              "first": 4.696,
+              "last": 4.09,
+              "max": 8.33,
+              "min": 2.552,
+              "n": 240,
+              "sum": 1369.076
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 240,
+            "name": "65+",
+            "pen": [
+              236,
+              64,
+              122,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 240,
+              "first": 0.0,
+              "last": 239.0,
+              "max": 239.0,
+              "min": 0.0,
+              "n": 240,
+              "sum": 28680.0
+            },
+            "y": {
+              "finite": 240,
+              "first": 3.045,
+              "last": 4.682,
+              "max": 7.267,
+              "min": 2.891,
+              "n": 240,
+              "sum": 1253.845
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "16+",
+            "20-24",
+            "25-34",
+            "35-44",
+            "45-54",
+            "55-64",
+            "65+"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -4.78,
+            243.78
+          ],
+          "y": [
+            2.02808,
+            8.87092
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "UnemploymentAgeChart"
+  },
+  "hover": {
+    "state": "lookback=Max",
+    "tooltip": "Mar 1998\n\u25a0 16+              5.5%\n\u25a0 20-24            7.0%\n\u25a0 25-34            5.6%\n\u25a0 35-44            2.8%\n\u25a0 45-54            2.5%\n\u25a0 55-64            6.0%\n\u25a0 65+              3.4%"
+  },
+  "module": "unemployment_age",
+  "renders": {
+    "lookback=5Y": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading unemployment by age data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "16+",
+              "pen": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 7.238,
+                "last": 6.059,
+                "max": 8.399,
+                "min": 4.264,
+                "n": 60,
+                "sum": 387.407
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "20-24",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 4.8,
+                "last": 6.137,
+                "max": 7.588,
+                "min": 3.563,
+                "n": 60,
+                "sum": 332.801
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "25-34",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 7.804,
+                "last": 7.188,
+                "max": 8.044,
+                "min": 5.986,
+                "n": 60,
+                "sum": 420.33
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "35-44",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 5.52,
+                "last": 6.725,
+                "max": 7.869,
+                "min": 4.836,
+                "n": 60,
+                "sum": 376.963
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "45-54",
+              "pen": [
+                92,
+                107,
+                192,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 5.986,
+                "last": 2.5,
+                "max": 5.986,
+                "min": 2.5,
+                "n": 60,
+                "sum": 202.96
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "55-64",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 5.96,
+                "last": 4.09,
+                "max": 8.027,
+                "min": 4.09,
+                "n": 60,
+                "sum": 388.467
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "65+",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 4.565,
+                "last": 4.682,
+                "max": 7.161,
+                "min": 3.495,
+                "n": 60,
+                "sum": 296.8
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "16+",
+              "20-24",
+              "25-34",
+              "35-44",
+              "45-54",
+              "55-64",
+              "65+"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.18,
+              60.18
+            ],
+            "y": [
+              2.02808,
+              8.87092
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "UnemploymentAgeChart"
+    },
+    "lookback=Max": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading unemployment by age data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                10.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                45.5,
+                62.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                119.5,
+                126.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                137.5,
+                154.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                245.5,
+                254.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                373.5,
+                382.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                454.5,
+                473.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                600.5,
+                603.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "16+",
+              "pen": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 678,
+                "first": 2.992,
+                "last": 6.059,
+                "max": 8.399,
+                "min": 2.5,
+                "n": 678,
+                "sum": 3579.297
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "20-24",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 642,
+                "first": 5.678,
+                "last": 6.137,
+                "max": 9.125,
+                "min": 2.5,
+                "n": 678,
+                "sum": 3724.597
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "25-34",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 642,
+                "first": 5.33,
+                "last": 7.188,
+                "max": 10.041,
+                "min": 2.897,
+                "n": 678,
+                "sum": 3795.826
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "35-44",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 678,
+                "first": 5.932,
+                "last": 6.725,
+                "max": 7.869,
+                "min": 2.5,
+                "n": 678,
+                "sum": 3118.699
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "45-54",
+              "pen": [
+                92,
+                107,
+                192,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 654,
+                "first": 2.69,
+                "last": 2.5,
+                "max": 8.704,
+                "min": 2.5,
+                "n": 678,
+                "sum": 2770.385
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "55-64",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 642,
+                "first": 4.639,
+                "last": 4.09,
+                "max": 9.876,
+                "min": 2.552,
+                "n": 678,
+                "sum": 3684.805
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "65+",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 618,
+                "first": 5.263,
+                "last": 4.682,
+                "max": 8.72,
+                "min": 2.5,
+                "n": 678,
+                "sum": 2980.0
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "16+",
+              "20-24",
+              "25-34",
+              "35-44",
+              "45-54",
+              "55-64",
+              "65+"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -13.54,
+              690.54
+            ],
+            "y": [
+              1.89672,
+              10.64428
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "UnemploymentAgeChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "16+",
+              "pen": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "20-24",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "25-34",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "35-44",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "45-54",
+              "pen": [
+                92,
+                107,
+                192,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "55-64",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "65+",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "16+",
+              "pen": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "20-24",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "25-34",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "35-44",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "45-54",
+              "pen": [
+                92,
+                107,
+                192,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "55-64",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "65+",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "16+",
+              "pen": [
+                255,
+                255,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "20-24",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "25-34",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "35-44",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "45-54",
+              "pen": [
+                92,
+                107,
+                192,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "55-64",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "65+",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "As of Jun 2026",
+    "Lookback:",
+    "|"
+  ]
+}

@@ -1,0 +1,1352 @@
+{
+  "controls": {
+    "view": [
+      "FedWatch",
+      "Rate Path",
+      "Evolution"
+    ]
+  },
+  "default": {
+    "background": null,
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading rate probabilities..."
+    },
+    "plots": [],
+    "tables": [
+      {
+        "cells": [
+          [
+            "Jul 29, 2026",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "0.8%",
+            "99.2%",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Sep 16, 2026",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "0.4%",
+            "50.2%",
+            "49.4%",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Oct 28, 2026",
+            "",
+            "",
+            "0.4%",
+            "48.5%",
+            "49.4%",
+            "1.6%",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Dec 09, 2026",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "1.9%",
+            "48.6%",
+            "48.0%",
+            "1.6%"
+          ],
+          [
+            "Jan 27, 2027",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "0.6%",
+            "17.4%",
+            "48.4%",
+            "32.6%",
+            "1.0%",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Mar 17, 2027",
+            "3.9%",
+            "23.4%",
+            "45.3%",
+            "26.4%",
+            "0.8%",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Apr 28, 2027",
+            "",
+            "",
+            "",
+            "",
+            "1.0%",
+            "8.3%",
+            "28.3%",
+            "41.1%",
+            "20.7%",
+            "0.6%",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Jun 09, 2027",
+            "",
+            "",
+            "",
+            "0.3%",
+            "2.9%",
+            "13.6%",
+            "31.7%",
+            "35.6%",
+            "15.3%",
+            "0.5%",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Jul 28, 2027",
+            "",
+            "",
+            "",
+            "0.2%",
+            "1.7%",
+            "8.7%",
+            "23.5%",
+            "33.9%",
+            "24.6%",
+            "7.2%",
+            "0.2%",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Sep 15, 2027",
+            "6.8%",
+            "19.4%",
+            "31.2%",
+            "27.7%",
+            "12.6%",
+            "2.3%",
+            "0.1%",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "Oct 27, 2027",
+            "",
+            "",
+            "",
+            "0.6%",
+            "3.5%",
+            "11.9%",
+            "24.0%",
+            "29.3%",
+            "21.0%",
+            "8.1%",
+            "1.4%",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        ],
+        "headers": [
+          "Meeting",
+          "25-50",
+          "50-75",
+          "75-100",
+          "100-125",
+          "125-150",
+          "150-175",
+          "175-200",
+          "200-225",
+          "225-250",
+          "250-275",
+          "275-300",
+          "300-325",
+          "350-375",
+          "375-400",
+          "400-425",
+          "425-450"
+        ],
+        "shown": true
+      },
+      {
+        "cells": [
+          [
+            "ZQM26",
+            "96.119",
+            "3.881%"
+          ],
+          [
+            "ZQN26",
+            "96.004",
+            "3.996%"
+          ],
+          [
+            "ZQQ26",
+            "95.871",
+            "4.129%"
+          ],
+          [
+            "ZQU26",
+            "95.308",
+            "4.692%"
+          ],
+          [
+            "ZQV26",
+            "95.450",
+            "4.550%"
+          ],
+          [
+            "ZQX26",
+            "96.488",
+            "3.512%"
+          ],
+          [
+            "ZQZ26",
+            "94.453",
+            "5.547%"
+          ],
+          [
+            "ZQF27",
+            "96.568",
+            "3.432%"
+          ],
+          [
+            "ZQG27",
+            "95.579",
+            "4.421%"
+          ],
+          [
+            "ZQH27",
+            "96.207",
+            "3.793%"
+          ],
+          [
+            "ZQJ27",
+            "95.807",
+            "4.193%"
+          ],
+          [
+            "ZQK27",
+            "95.683",
+            "4.317%"
+          ],
+          [
+            "ZQM27",
+            "95.732",
+            "4.268%"
+          ],
+          [
+            "ZQN27",
+            "96.185",
+            "3.815%"
+          ],
+          [
+            "ZQQ27",
+            "95.636",
+            "4.364%"
+          ],
+          [
+            "ZQU27",
+            "96.263",
+            "3.737%"
+          ],
+          [
+            "ZQV27",
+            "95.523",
+            "4.476%"
+          ],
+          [
+            "ZQX27",
+            "95.668",
+            "4.332%"
+          ]
+        ],
+        "headers": [
+          "Contract",
+          "Price",
+          "Implied Rate"
+        ],
+        "shown": true
+      }
+    ],
+    "theme": null,
+    "tooltip": null,
+    "type": "ProbabilityTableView"
+  },
+  "hover": {
+    "state": "view=Evolution",
+    "tooltip": null
+  },
+  "module": "rate_probability",
+  "renders": {
+    "view=Evolution": {
+      "background": null,
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Select a meeting to view probability evolution"
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "Date",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "Probability (%)",
+              "units": "",
+              "visible": true
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "brush": [
+                0,
+                100,
+                200,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "brush": [
+                0,
+                150,
+                220,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "brush": [
+                0,
+                200,
+                180,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "brush": [
+                180,
+                180,
+                180,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "brush": [
+                220,
+                160,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "brush": [
+                220,
+                100,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "brush": [
+                200,
+                50,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.78,
+              90.78
+            ],
+            "y": [
+              -2.0,
+              102.0
+            ]
+          }
+        }
+      ],
+      "theme": null,
+      "tooltip": null,
+      "type": "ProbabilityEvolutionChart"
+    },
+    "view=FedWatch": {
+      "background": null,
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading rate probabilities..."
+      },
+      "plots": [],
+      "tables": [
+        {
+          "cells": [
+            [
+              "Jul 29, 2026",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "0.8%",
+              "99.2%",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Sep 16, 2026",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "0.4%",
+              "50.2%",
+              "49.4%",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Oct 28, 2026",
+              "",
+              "",
+              "0.4%",
+              "48.5%",
+              "49.4%",
+              "1.6%",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Dec 09, 2026",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "1.9%",
+              "48.6%",
+              "48.0%",
+              "1.6%"
+            ],
+            [
+              "Jan 27, 2027",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "0.6%",
+              "17.4%",
+              "48.4%",
+              "32.6%",
+              "1.0%",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Mar 17, 2027",
+              "3.9%",
+              "23.4%",
+              "45.3%",
+              "26.4%",
+              "0.8%",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Apr 28, 2027",
+              "",
+              "",
+              "",
+              "",
+              "1.0%",
+              "8.3%",
+              "28.3%",
+              "41.1%",
+              "20.7%",
+              "0.6%",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Jun 09, 2027",
+              "",
+              "",
+              "",
+              "0.3%",
+              "2.9%",
+              "13.6%",
+              "31.7%",
+              "35.6%",
+              "15.3%",
+              "0.5%",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Jul 28, 2027",
+              "",
+              "",
+              "",
+              "0.2%",
+              "1.7%",
+              "8.7%",
+              "23.5%",
+              "33.9%",
+              "24.6%",
+              "7.2%",
+              "0.2%",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Sep 15, 2027",
+              "6.8%",
+              "19.4%",
+              "31.2%",
+              "27.7%",
+              "12.6%",
+              "2.3%",
+              "0.1%",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            [
+              "Oct 27, 2027",
+              "",
+              "",
+              "",
+              "0.6%",
+              "3.5%",
+              "11.9%",
+              "24.0%",
+              "29.3%",
+              "21.0%",
+              "8.1%",
+              "1.4%",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          ],
+          "headers": [
+            "Meeting",
+            "25-50",
+            "50-75",
+            "75-100",
+            "100-125",
+            "125-150",
+            "150-175",
+            "175-200",
+            "200-225",
+            "225-250",
+            "250-275",
+            "275-300",
+            "300-325",
+            "350-375",
+            "375-400",
+            "400-425",
+            "425-450"
+          ],
+          "shown": true
+        },
+        {
+          "cells": [
+            [
+              "ZQM26",
+              "96.119",
+              "3.881%"
+            ],
+            [
+              "ZQN26",
+              "96.004",
+              "3.996%"
+            ],
+            [
+              "ZQQ26",
+              "95.871",
+              "4.129%"
+            ],
+            [
+              "ZQU26",
+              "95.308",
+              "4.692%"
+            ],
+            [
+              "ZQV26",
+              "95.450",
+              "4.550%"
+            ],
+            [
+              "ZQX26",
+              "96.488",
+              "3.512%"
+            ],
+            [
+              "ZQZ26",
+              "94.453",
+              "5.547%"
+            ],
+            [
+              "ZQF27",
+              "96.568",
+              "3.432%"
+            ],
+            [
+              "ZQG27",
+              "95.579",
+              "4.421%"
+            ],
+            [
+              "ZQH27",
+              "96.207",
+              "3.793%"
+            ],
+            [
+              "ZQJ27",
+              "95.807",
+              "4.193%"
+            ],
+            [
+              "ZQK27",
+              "95.683",
+              "4.317%"
+            ],
+            [
+              "ZQM27",
+              "95.732",
+              "4.268%"
+            ],
+            [
+              "ZQN27",
+              "96.185",
+              "3.815%"
+            ],
+            [
+              "ZQQ27",
+              "95.636",
+              "4.364%"
+            ],
+            [
+              "ZQU27",
+              "96.263",
+              "3.737%"
+            ],
+            [
+              "ZQV27",
+              "95.523",
+              "4.476%"
+            ],
+            [
+              "ZQX27",
+              "95.668",
+              "4.332%"
+            ]
+          ],
+          "headers": [
+            "Contract",
+            "Price",
+            "Implied Rate"
+          ],
+          "shown": true
+        }
+      ],
+      "theme": null,
+      "tooltip": null,
+      "type": "ProbabilityTableView"
+    },
+    "view=Rate Path": {
+      "background": null,
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading rate path..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "FOMC Meeting",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "Rate (%)",
+              "units": "",
+              "visible": true
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 0.0,
+              "label": "Current: 1.62%",
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 1.625,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 11,
+              "name": "Implied Rate",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 11,
+                "first": 0.0,
+                "last": 10.0,
+                "max": 10.0,
+                "min": 0.0,
+                "n": 11,
+                "sum": 55.0
+              },
+              "y": {
+                "finite": 11,
+                "first": 1.873,
+                "last": 2.0767,
+                "max": 3.9981,
+                "min": 0.867,
+                "n": 11,
+                "sum": 22.3364
+              },
+              "z": 0.0
+            },
+            {
+              "len_x": 11,
+              "name": null,
+              "type": "ScatterPlotItem",
+              "visible": true,
+              "x": {
+                "finite": 11,
+                "first": 0.0,
+                "last": 10.0,
+                "max": 10.0,
+                "min": 0.0,
+                "n": 11,
+                "sum": 55.0
+              },
+              "y": {
+                "finite": 11,
+                "first": 1.873,
+                "last": 2.0767,
+                "max": 3.9981,
+                "min": 0.867,
+                "n": 11,
+                "sum": 22.3364
+              },
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "1.87%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "3.00%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "1.26%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "4.00%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "2.17%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "0.87%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "2.06%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "1.99%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "2.11%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "0.94%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "color": [
+                232,
+                232,
+                232,
+                255
+              ],
+              "text": "2.08%",
+              "type": "TextItem",
+              "visible": true,
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.05,
+              11.05
+            ],
+            "y": [
+              0.63402834,
+              4.2310717
+            ]
+          }
+        }
+      ],
+      "theme": null,
+      "tooltip": null,
+      "type": "RatePathChart"
+    }
+  },
+  "size": [
+    1490,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": null,
+      "plots": [
+        {
+          "items": [
+            {
+              "brush": [
+                0,
+                100,
+                200,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                0,
+                150,
+                220,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                0,
+                200,
+                180,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                180,
+                180,
+                180,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                220,
+                160,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                220,
+                100,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                200,
+                50,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": null,
+      "plots": [
+        {
+          "items": [
+            {
+              "brush": [
+                0,
+                100,
+                200,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                0,
+                150,
+                220,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                0,
+                200,
+                180,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                180,
+                180,
+                180,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                220,
+                160,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                220,
+                100,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                200,
+                50,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": null,
+      "plots": [
+        {
+          "items": [
+            {
+              "brush": [
+                0,
+                100,
+                200,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                0,
+                150,
+                220,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                0,
+                200,
+                180,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                180,
+                180,
+                180,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                220,
+                160,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                220,
+                100,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                200,
+                50,
+                0,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Next FOMC: Jul 29 (in 29d)",
+    "Rate: 1.50-1.75%",
+    "|"
+  ]
+}

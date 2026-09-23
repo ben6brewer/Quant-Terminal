@@ -1,0 +1,887 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading inflation expectations data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "5Y Breakeven",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 1.896,
+              "last": 1.616,
+              "max": 1.973,
+              "min": 1.416,
+              "n": 60,
+              "sum": 101.547
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "10Y Breakeven",
+            "pen": [
+              239,
+              83,
+              80,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 2.184,
+              "last": 2.349,
+              "max": 2.698,
+              "min": 2.053,
+              "n": 60,
+              "sum": 144.758
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "Michigan 1Y",
+            "pen": [
+              255,
+              167,
+              38,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 2.985,
+              "last": 3.557,
+              "max": 4.386,
+              "min": 2.512,
+              "n": 60,
+              "sum": 214.251
+            },
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "label": "Fed Target: 2%",
+            "pen": [
+              255,
+              80,
+              80,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 2.0,
+            "visible": true,
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "5Y Breakeven",
+            "10Y Breakeven",
+            "Michigan 1Y"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -1.18,
+            60.18
+          ],
+          "y": [
+            1.1784,
+            4.6236
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "InflationExpectationsChart"
+  },
+  "hover": {
+    "state": "lookback=Max",
+    "tooltip": "Mar 1998\n\u25a0 5Y Breakeven: 1.66%\n\u25a0 10Y Breakeven: 2.17%\n\u25a0 Michigan 1Y: 3.41%"
+  },
+  "module": "inflation_expectations",
+  "renders": {
+    "lookback=5Y": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading inflation expectations data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "5Y Breakeven",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 1.896,
+                "last": 1.616,
+                "max": 1.973,
+                "min": 1.416,
+                "n": 60,
+                "sum": 101.547
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "10Y Breakeven",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 2.184,
+                "last": 2.349,
+                "max": 2.698,
+                "min": 2.053,
+                "n": 60,
+                "sum": 144.758
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Michigan 1Y",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 2.985,
+                "last": 3.557,
+                "max": 4.386,
+                "min": 2.512,
+                "n": 60,
+                "sum": 214.251
+              },
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "label": "Fed Target: 2%",
+              "pen": [
+                255,
+                80,
+                80,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 2.0,
+              "visible": true,
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "5Y Breakeven",
+              "10Y Breakeven",
+              "Michigan 1Y"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.18,
+              60.18
+            ],
+            "y": [
+              1.1784,
+              4.6236
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "InflationExpectationsChart"
+    },
+    "lookback=Max": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading inflation expectations data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "5Y Breakeven",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 678,
+                "first": 1.732,
+                "last": 1.616,
+                "max": 2.539,
+                "min": 0.966,
+                "n": 678,
+                "sum": 1197.395
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "10Y Breakeven",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 678,
+                "first": 2.113,
+                "last": 2.349,
+                "max": 2.758,
+                "min": 1.428,
+                "n": 678,
+                "sum": 1460.95
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "Michigan 1Y",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 666,
+                "first": 2.018,
+                "last": 3.557,
+                "max": 4.964,
+                "min": 0.669,
+                "n": 678,
+                "sum": 2246.884
+              },
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "label": "Fed Target: 2%",
+              "pen": [
+                255,
+                80,
+                80,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 2.0,
+              "visible": true,
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "5Y Breakeven",
+              "10Y Breakeven",
+              "Michigan 1Y"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -13.54,
+              690.54
+            ],
+            "y": [
+              0.3254,
+              5.3076
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "InflationExpectationsChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "fill_brush": null,
+              "name": "5Y Breakeven",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "10Y Breakeven",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Michigan 1Y",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                255,
+                80,
+                80,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "fill_brush": null,
+              "name": "5Y Breakeven",
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "10Y Breakeven",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Michigan 1Y",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                255,
+                80,
+                80,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "fill_brush": null,
+              "name": "5Y Breakeven",
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "10Y Breakeven",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Michigan 1Y",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                255,
+                80,
+                80,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "5Y Breakeven: 1.62%",
+    "Lookback:",
+    "|"
+  ]
+}

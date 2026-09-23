@@ -1,0 +1,2464 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Stacked Area",
+      "Line"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading wealth distribution data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              -0.5,
+              0.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              19.5,
+              22.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              25.5,
+              31.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              61.5,
+              64.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              104.5,
+              107.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              131.5,
+              137.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              180.5,
+              181.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 206,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 205.0,
+              "max": 205.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 21115.0
+            },
+            "y": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 0.0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 206,
+            "name": "Bottom 50%",
+            "pen": [
+              66,
+              165,
+              245,
+              220
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 205.0,
+              "max": 205.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 21115.0
+            },
+            "y": {
+              "finite": 206,
+              "first": 2.691,
+              "last": 2.497,
+              "max": 4.219,
+              "min": 1.781,
+              "n": 206,
+              "sum": 571.196
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              66,
+              165,
+              245,
+              180
+            ],
+            "type": "FillBetweenItem",
+            "visible": true,
+            "z": -1.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 206,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 205.0,
+              "max": 205.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 21115.0
+            },
+            "y": {
+              "finite": 206,
+              "first": 2.691,
+              "last": 2.497,
+              "max": 4.219,
+              "min": 1.781,
+              "n": 206,
+              "sum": 571.196
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 206,
+            "name": "50th-90th",
+            "pen": [
+              102,
+              187,
+              106,
+              220
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 205.0,
+              "max": 205.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 21115.0
+            },
+            "y": {
+              "finite": 206,
+              "first": 39.198,
+              "last": 40.598,
+              "max": 41.769,
+              "min": 36.755,
+              "n": 206,
+              "sum": 8097.15
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              102,
+              187,
+              106,
+              180
+            ],
+            "type": "FillBetweenItem",
+            "visible": true,
+            "z": -1.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 206,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 205.0,
+              "max": 205.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 21115.0
+            },
+            "y": {
+              "finite": 206,
+              "first": 39.198,
+              "last": 40.598,
+              "max": 41.769,
+              "min": 36.755,
+              "n": 206,
+              "sum": 8097.15
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 206,
+            "name": "90th-99th",
+            "pen": [
+              255,
+              167,
+              38,
+              220
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 205.0,
+              "max": 205.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 21115.0
+            },
+            "y": {
+              "finite": 206,
+              "first": 70.629,
+              "last": 69.18,
+              "max": 73.839,
+              "min": 61.574,
+              "n": 206,
+              "sum": 14005.494
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              255,
+              167,
+              38,
+              180
+            ],
+            "type": "FillBetweenItem",
+            "visible": true,
+            "z": -1.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 206,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 205.0,
+              "max": 205.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 21115.0
+            },
+            "y": {
+              "finite": 206,
+              "first": 70.629,
+              "last": 69.18,
+              "max": 73.839,
+              "min": 61.574,
+              "n": 206,
+              "sum": 14005.494
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 206,
+            "name": "Top 1%",
+            "pen": [
+              239,
+              83,
+              80,
+              220
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 206,
+              "first": 0.0,
+              "last": 205.0,
+              "max": 205.0,
+              "min": 0.0,
+              "n": 206,
+              "sum": 21115.0
+            },
+            "y": {
+              "finite": 206,
+              "first": 101.517,
+              "last": 100.859,
+              "max": 104.173,
+              "min": 92.298,
+              "n": 206,
+              "sum": 20413.803
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              239,
+              83,
+              80,
+              180
+            ],
+            "type": "FillBetweenItem",
+            "visible": true,
+            "z": -1.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Bottom 50%",
+            "50th-90th",
+            "90th-99th",
+            "Top 1%"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -4.1,
+            209.1
+          ],
+          "y": [
+            0.0,
+            109.38165
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "WealthDistributionChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=Line",
+    "tooltip": "Oct 2000\n\u25a0 Top 1%: 33.1%\n\u25a0 90th-99th: 25.1%\n\u25a0 50th-90th: 36.4%\n\u25a0 Bottom 50%: 2.8%"
+  },
+  "module": "wealth_distribution",
+  "renders": {
+    "lookback=5Y view=Line": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading wealth distribution data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "Top 1%",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 29.678,
+                "last": 31.679,
+                "max": 32.916,
+                "min": 28.382,
+                "n": 20,
+                "sum": 614.773
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "90th-99th",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 26.586,
+                "last": 28.582,
+                "max": 28.582,
+                "min": 24.801,
+                "n": 20,
+                "sum": 535.158
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "50th-90th",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 38.108,
+                "last": 38.101,
+                "max": 38.278,
+                "min": 36.613,
+                "n": 20,
+                "sum": 752.499
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "Bottom 50%",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 2.243,
+                "last": 2.497,
+                "max": 2.896,
+                "min": 1.781,
+                "n": 20,
+                "sum": 43.794
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Top 1%",
+              "90th-99th",
+              "50th-90th",
+              "Bottom 50%"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.38,
+              19.38
+            ],
+            "y": [
+              -1.13876,
+              41.19776
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "WealthDistributionChart"
+    },
+    "lookback=5Y view=Stacked Area": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading wealth distribution data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 0.0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "Bottom 50%",
+              "pen": [
+                66,
+                165,
+                245,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 2.243,
+                "last": 2.497,
+                "max": 2.896,
+                "min": 1.781,
+                "n": 20,
+                "sum": 43.794
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                66,
+                165,
+                245,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 2.243,
+                "last": 2.497,
+                "max": 2.896,
+                "min": 1.781,
+                "n": 20,
+                "sum": 43.794
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "50th-90th",
+              "pen": [
+                102,
+                187,
+                106,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 40.351,
+                "last": 40.598,
+                "max": 40.985,
+                "min": 38.551,
+                "n": 20,
+                "sum": 796.293
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 40.351,
+                "last": 40.598,
+                "max": 40.985,
+                "min": 38.551,
+                "n": 20,
+                "sum": 796.293
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "90th-99th",
+              "pen": [
+                255,
+                167,
+                38,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 66.937,
+                "last": 69.18,
+                "max": 69.18,
+                "min": 64.369,
+                "n": 20,
+                "sum": 1331.451
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 66.937,
+                "last": 69.18,
+                "max": 69.18,
+                "min": 64.369,
+                "n": 20,
+                "sum": 1331.451
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "Top 1%",
+              "pen": [
+                239,
+                83,
+                80,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 96.615,
+                "last": 100.859,
+                "max": 100.859,
+                "min": 95.074,
+                "n": 20,
+                "sum": 1946.224
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                239,
+                83,
+                80,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Bottom 50%",
+              "50th-90th",
+              "90th-99th",
+              "Top 1%"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.38,
+              19.38
+            ],
+            "y": [
+              0.0,
+              105.90195
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "WealthDistributionChart"
+    },
+    "lookback=Max view=Line": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading wealth distribution data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                0.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                19.5,
+                22.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                25.5,
+                31.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                61.5,
+                64.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                104.5,
+                107.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                131.5,
+                137.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                180.5,
+                181.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": "Top 1%",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 30.888,
+                "last": 31.679,
+                "max": 34.812,
+                "min": 27.275,
+                "n": 206,
+                "sum": 6408.309
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": "90th-99th",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 31.431,
+                "last": 28.582,
+                "max": 34.585,
+                "min": 23.038,
+                "n": 206,
+                "sum": 5908.344
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": "50th-90th",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 36.507,
+                "last": 38.101,
+                "max": 39.389,
+                "min": 33.271,
+                "n": 206,
+                "sum": 7525.954
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": "Bottom 50%",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 2.691,
+                "last": 2.497,
+                "max": 4.219,
+                "min": 1.781,
+                "n": 206,
+                "sum": 571.196
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Top 1%",
+              "90th-99th",
+              "50th-90th",
+              "Bottom 50%"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.1,
+              209.1
+            ],
+            "y": [
+              -1.22764,
+              42.39764
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "WealthDistributionChart"
+    },
+    "lookback=Max view=Stacked Area": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading wealth distribution data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                0.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                19.5,
+                22.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                25.5,
+                31.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                61.5,
+                64.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                104.5,
+                107.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                131.5,
+                137.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                180.5,
+                181.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 0.0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": "Bottom 50%",
+              "pen": [
+                66,
+                165,
+                245,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 2.691,
+                "last": 2.497,
+                "max": 4.219,
+                "min": 1.781,
+                "n": 206,
+                "sum": 571.196
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                66,
+                165,
+                245,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 2.691,
+                "last": 2.497,
+                "max": 4.219,
+                "min": 1.781,
+                "n": 206,
+                "sum": 571.196
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": "50th-90th",
+              "pen": [
+                102,
+                187,
+                106,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 39.198,
+                "last": 40.598,
+                "max": 41.769,
+                "min": 36.755,
+                "n": 206,
+                "sum": 8097.15
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 39.198,
+                "last": 40.598,
+                "max": 41.769,
+                "min": 36.755,
+                "n": 206,
+                "sum": 8097.15
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": "90th-99th",
+              "pen": [
+                255,
+                167,
+                38,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 70.629,
+                "last": 69.18,
+                "max": 73.839,
+                "min": 61.574,
+                "n": 206,
+                "sum": 14005.494
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 70.629,
+                "last": 69.18,
+                "max": 73.839,
+                "min": 61.574,
+                "n": 206,
+                "sum": 14005.494
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 206,
+              "name": "Top 1%",
+              "pen": [
+                239,
+                83,
+                80,
+                220
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 206,
+                "first": 0.0,
+                "last": 205.0,
+                "max": 205.0,
+                "min": 0.0,
+                "n": 206,
+                "sum": 21115.0
+              },
+              "y": {
+                "finite": 206,
+                "first": 101.517,
+                "last": 100.859,
+                "max": 104.173,
+                "min": 92.298,
+                "n": 206,
+                "sum": 20413.803
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                239,
+                83,
+                80,
+                180
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Bottom 50%",
+              "50th-90th",
+              "90th-99th",
+              "Top 1%"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.1,
+              209.1
+            ],
+            "y": [
+              0.0,
+              109.38165
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "WealthDistributionChart"
+    }
+  },
+  "size": [
+    1517,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Top 1%",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "90th-99th",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "50th-90th",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Bottom 50%",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Top 1%",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "90th-99th",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "50th-90th",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Bottom 50%",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Top 1%",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "90th-99th",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "50th-90th",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Bottom 50%",
+              "pen": [
+                66,
+                165,
+                245,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Bottom 50%: 2.5%",
+    "Lookback:",
+    "Top 1%: 31.7%",
+    "View:",
+    "|"
+  ]
+}

@@ -1,0 +1,4724 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading payrolls data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": false,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": false,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 0.0,
+            "pen": [
+              160,
+              160,
+              160,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": true,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              38,
+              198,
+              218,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 14.847,
+              "last": 50.609,
+              "max": 165.338,
+              "min": 0.0,
+              "n": 59,
+              "sum": 2210.355
+            },
+            "y0": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 0.0
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              38,
+              198,
+              218,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -86.742,
+              "n": 59,
+              "sum": -710.025
+            },
+            "y0": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 0.0
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              236,
+              64,
+              122,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 96.166,
+              "last": 11.21,
+              "max": 96.166,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1599.856
+            },
+            "y0": {
+              "finite": 59,
+              "first": 14.847,
+              "last": 50.609,
+              "max": 165.338,
+              "min": 0.0,
+              "n": 59,
+              "sum": 2210.355
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              236,
+              64,
+              122,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -81.898,
+              "n": 59,
+              "sum": -641.384
+            },
+            "y0": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -86.742,
+              "n": 59,
+              "sum": -710.025
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              171,
+              71,
+              188,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 73.514,
+              "max": 143.002,
+              "min": 0.0,
+              "n": 59,
+              "sum": 2525.245
+            },
+            "y0": {
+              "finite": 59,
+              "first": 111.013,
+              "last": 61.819,
+              "max": 213.115,
+              "min": 0.0,
+              "n": 59,
+              "sum": 3810.211
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              171,
+              71,
+              188,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": -15.445,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -84.393,
+              "n": 59,
+              "sum": -510.691
+            },
+            "y0": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -95.594,
+              "n": 59,
+              "sum": -1351.409
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              120,
+              144,
+              156,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 3.425,
+              "max": 147.429,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1924.913
+            },
+            "y0": {
+              "finite": 59,
+              "first": 111.013,
+              "last": 135.333,
+              "max": 356.117,
+              "min": 0.0,
+              "n": 59,
+              "sum": 6335.456
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              120,
+              144,
+              156,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": -25.327,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -140.912,
+              "n": 59,
+              "sum": -816.656
+            },
+            "y0": {
+              "finite": 59,
+              "first": -15.445,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -106.974,
+              "n": 59,
+              "sum": -1862.1
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              79,
+              195,
+              247,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 43.837,
+              "max": 57.882,
+              "min": 0.0,
+              "n": 59,
+              "sum": 986.653
+            },
+            "y0": {
+              "finite": 59,
+              "first": 111.013,
+              "last": 138.758,
+              "max": 448.678,
+              "min": 20.855,
+              "n": 59,
+              "sum": 8260.369
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              79,
+              195,
+              247,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": -20.53,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -21.635,
+              "n": 59,
+              "sum": -103.524
+            },
+            "y0": {
+              "finite": 59,
+              "first": -40.772,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -153.553,
+              "n": 59,
+              "sum": -2678.756
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              255,
+              112,
+              67,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 41.57,
+              "last": 4.353,
+              "max": 43.672,
+              "min": 0.0,
+              "n": 59,
+              "sum": 894.967
+            },
+            "y0": {
+              "finite": 59,
+              "first": 111.013,
+              "last": 182.595,
+              "max": 457.315,
+              "min": 36.713,
+              "n": 59,
+              "sum": 9247.022
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              255,
+              112,
+              67,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -33.466,
+              "n": 59,
+              "sum": -177.837
+            },
+            "y0": {
+              "finite": 59,
+              "first": -61.302,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -164.489,
+              "n": 59,
+              "sum": -2782.28
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              102,
+              187,
+              106,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 34.869,
+              "max": 93.451,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1198.464
+            },
+            "y0": {
+              "finite": 59,
+              "first": 152.583,
+              "last": 186.948,
+              "max": 479.946,
+              "min": 59.125,
+              "n": 59,
+              "sum": 10141.989
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              102,
+              187,
+              106,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": -5.019,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -62.304,
+              "n": 59,
+              "sum": -313.464
+            },
+            "y0": {
+              "finite": 59,
+              "first": -61.302,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -164.489,
+              "n": 59,
+              "sum": -2960.117
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              255,
+              167,
+              38,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 14.06,
+              "max": 16.274,
+              "min": 0.0,
+              "n": 59,
+              "sum": 272.578
+            },
+            "y0": {
+              "finite": 59,
+              "first": 152.583,
+              "last": 221.817,
+              "max": 503.948,
+              "min": 59.125,
+              "n": 59,
+              "sum": 11340.453
+            },
+            "z": 0.0
+          },
+          {
+            "brush": [
+              255,
+              167,
+              38,
+              200
+            ],
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              200,
+              200,
+              200,
+              255
+            ],
+            "type": "BarGraphItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": -1.572,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -15.722,
+              "n": 59,
+              "sum": -100.168
+            },
+            "y0": {
+              "finite": 59,
+              "first": -66.321,
+              "last": 0.0,
+              "max": 0.0,
+              "min": -164.546,
+              "n": 59,
+              "sum": -3273.581
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 59,
+            "name": null,
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 59,
+              "first": 0.0,
+              "last": 58.0,
+              "max": 58.0,
+              "min": 0.0,
+              "n": 59,
+              "sum": 1711.0
+            },
+            "y": {
+              "finite": 59,
+              "first": -254.934,
+              "last": 231.16,
+              "max": 972.039,
+              "min": -604.42,
+              "n": 59,
+              "sum": 4942.344
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Total Nonfarm",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Education & Health",
+            "pen": [
+              38,
+              198,
+              218,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Leisure & Hospitality",
+            "pen": [
+              236,
+              64,
+              122,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Prof & Business Svcs",
+            "pen": [
+              171,
+              71,
+              188,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Government",
+            "pen": [
+              120,
+              144,
+              156,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Financial Activities",
+            "pen": [
+              79,
+              195,
+              247,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Construction",
+            "pen": [
+              255,
+              112,
+              67,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Manufacturing",
+            "pen": [
+              102,
+              187,
+              106,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 0,
+            "name": "Information",
+            "pen": [
+              255,
+              167,
+              38,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "n": 0
+            },
+            "y": {
+              "n": 0
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Total Nonfarm",
+            "Education & Health",
+            "Leisure & Hospitality",
+            "Prof & Business Svcs",
+            "Government",
+            "Financial Activities",
+            "Construction",
+            "Manufacturing",
+            "Information"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -1.09,
+            59.09
+          ],
+          "y": [
+            -730.53672,
+            1098.1557
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "PayrollsChart"
+  },
+  "hover": {
+    "state": "lookback=Max",
+    "tooltip": "Oct '98 \u2014 Total: +118K\n\u25a0 Prof & Business Svcs     +61K\n\u25a0 Leisure & Hospitality    +38K\n\u25a0 Education & Health       +35K\n\u25a0 Manufacturing            +31K\n\u25a0 Government               -26K\n\u25a0 Construction             +18K\n\u25a0 Financial Activities     -5K\n\u25a0 Information              -2K"
+  },
+  "module": "payrolls",
+  "renders": {
+    "lookback=5Y": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading payrolls data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 0.0,
+              "pen": [
+                160,
+                160,
+                160,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 14.847,
+                "last": 50.609,
+                "max": 165.338,
+                "min": 0.0,
+                "n": 59,
+                "sum": 2210.355
+              },
+              "y0": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 0.0
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -86.742,
+                "n": 59,
+                "sum": -710.025
+              },
+              "y0": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 0.0
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 96.166,
+                "last": 11.21,
+                "max": 96.166,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1599.856
+              },
+              "y0": {
+                "finite": 59,
+                "first": 14.847,
+                "last": 50.609,
+                "max": 165.338,
+                "min": 0.0,
+                "n": 59,
+                "sum": 2210.355
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -81.898,
+                "n": 59,
+                "sum": -641.384
+              },
+              "y0": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -86.742,
+                "n": 59,
+                "sum": -710.025
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 73.514,
+                "max": 143.002,
+                "min": 0.0,
+                "n": 59,
+                "sum": 2525.245
+              },
+              "y0": {
+                "finite": 59,
+                "first": 111.013,
+                "last": 61.819,
+                "max": 213.115,
+                "min": 0.0,
+                "n": 59,
+                "sum": 3810.211
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": -15.445,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -84.393,
+                "n": 59,
+                "sum": -510.691
+              },
+              "y0": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -95.594,
+                "n": 59,
+                "sum": -1351.409
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 3.425,
+                "max": 147.429,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1924.913
+              },
+              "y0": {
+                "finite": 59,
+                "first": 111.013,
+                "last": 135.333,
+                "max": 356.117,
+                "min": 0.0,
+                "n": 59,
+                "sum": 6335.456
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": -25.327,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -140.912,
+                "n": 59,
+                "sum": -816.656
+              },
+              "y0": {
+                "finite": 59,
+                "first": -15.445,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -106.974,
+                "n": 59,
+                "sum": -1862.1
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 43.837,
+                "max": 57.882,
+                "min": 0.0,
+                "n": 59,
+                "sum": 986.653
+              },
+              "y0": {
+                "finite": 59,
+                "first": 111.013,
+                "last": 138.758,
+                "max": 448.678,
+                "min": 20.855,
+                "n": 59,
+                "sum": 8260.369
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": -20.53,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -21.635,
+                "n": 59,
+                "sum": -103.524
+              },
+              "y0": {
+                "finite": 59,
+                "first": -40.772,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -153.553,
+                "n": 59,
+                "sum": -2678.756
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 41.57,
+                "last": 4.353,
+                "max": 43.672,
+                "min": 0.0,
+                "n": 59,
+                "sum": 894.967
+              },
+              "y0": {
+                "finite": 59,
+                "first": 111.013,
+                "last": 182.595,
+                "max": 457.315,
+                "min": 36.713,
+                "n": 59,
+                "sum": 9247.022
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -33.466,
+                "n": 59,
+                "sum": -177.837
+              },
+              "y0": {
+                "finite": 59,
+                "first": -61.302,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -164.489,
+                "n": 59,
+                "sum": -2782.28
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 34.869,
+                "max": 93.451,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1198.464
+              },
+              "y0": {
+                "finite": 59,
+                "first": 152.583,
+                "last": 186.948,
+                "max": 479.946,
+                "min": 59.125,
+                "n": 59,
+                "sum": 10141.989
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": -5.019,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -62.304,
+                "n": 59,
+                "sum": -313.464
+              },
+              "y0": {
+                "finite": 59,
+                "first": -61.302,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -164.489,
+                "n": 59,
+                "sum": -2960.117
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 14.06,
+                "max": 16.274,
+                "min": 0.0,
+                "n": 59,
+                "sum": 272.578
+              },
+              "y0": {
+                "finite": 59,
+                "first": 152.583,
+                "last": 221.817,
+                "max": 503.948,
+                "min": 59.125,
+                "n": 59,
+                "sum": 11340.453
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": -1.572,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -15.722,
+                "n": 59,
+                "sum": -100.168
+              },
+              "y0": {
+                "finite": 59,
+                "first": -66.321,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -164.546,
+                "n": 59,
+                "sum": -3273.581
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 59,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 59,
+                "first": 0.0,
+                "last": 58.0,
+                "max": 58.0,
+                "min": 0.0,
+                "n": 59,
+                "sum": 1711.0
+              },
+              "y": {
+                "finite": 59,
+                "first": -254.934,
+                "last": 231.16,
+                "max": 972.039,
+                "min": -604.42,
+                "n": 59,
+                "sum": 4942.344
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Total Nonfarm",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Education & Health",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Leisure & Hospitality",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Prof & Business Svcs",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Government",
+              "pen": [
+                120,
+                144,
+                156,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Financial Activities",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Construction",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Manufacturing",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Information",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Total Nonfarm",
+              "Education & Health",
+              "Leisure & Hospitality",
+              "Prof & Business Svcs",
+              "Government",
+              "Financial Activities",
+              "Construction",
+              "Manufacturing",
+              "Information"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.09,
+              59.09
+            ],
+            "y": [
+              -730.53672,
+              1098.1557
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "PayrollsChart"
+    },
+    "lookback=Max": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading payrolls data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                32.5,
+                49.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                106.5,
+                113.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                124.5,
+                141.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                232.5,
+                241.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                360.5,
+                369.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                441.5,
+                460.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                587.5,
+                590.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                160,
+                160,
+                160,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 50.609,
+                "max": 167.14,
+                "min": 0.0,
+                "n": 665,
+                "sum": 20064.957
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 0.0
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -139.355,
+                "n": 665,
+                "sum": -6205.411
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 0.0
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 11.21,
+                "max": 96.907,
+                "min": 0.0,
+                "n": 665,
+                "sum": 12235.453
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 50.609,
+                "max": 167.14,
+                "min": 0.0,
+                "n": 665,
+                "sum": 20064.957
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -91.908,
+                "n": 665,
+                "sum": -4742.592
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -139.355,
+                "n": 665,
+                "sum": -6205.411
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 73.514,
+                "max": 143.002,
+                "min": 0.0,
+                "n": 665,
+                "sum": 16150.544
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 61.819,
+                "max": 230.552,
+                "min": 0.0,
+                "n": 665,
+                "sum": 32300.41
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -94.482,
+                "n": 665,
+                "sum": -5348.247
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -148.108,
+                "n": 665,
+                "sum": -10948.003
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 3.425,
+                "max": 160.692,
+                "min": 0.0,
+                "n": 665,
+                "sum": 16949.058
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 135.333,
+                "max": 356.117,
+                "min": 0.0,
+                "n": 665,
+                "sum": 48450.954
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -140.912,
+                "n": 665,
+                "sum": -5328.003
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -173.358,
+                "n": 665,
+                "sum": -16296.25
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 20.514,
+                "last": 43.837,
+                "max": 61.429,
+                "min": 0.0,
+                "n": 665,
+                "sum": 6722.335
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 138.758,
+                "max": 448.678,
+                "min": 0.0,
+                "n": 665,
+                "sum": 65400.012
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -34.587,
+                "n": 665,
+                "sum": -2151.397
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -186.699,
+                "n": 665,
+                "sum": -21624.253
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 4.353,
+                "max": 44.845,
+                "min": 0.0,
+                "n": 665,
+                "sum": 5930.633
+              },
+              "y0": {
+                "finite": 665,
+                "first": 20.514,
+                "last": 182.595,
+                "max": 457.315,
+                "min": 0.0,
+                "n": 665,
+                "sum": 72122.347
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -33.466,
+                "n": 665,
+                "sum": -1540.801
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -215.658,
+                "n": 665,
+                "sum": -23775.65
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 2.415,
+                "last": 34.869,
+                "max": 93.451,
+                "min": 0.0,
+                "n": 665,
+                "sum": 9308.82
+              },
+              "y0": {
+                "finite": 665,
+                "first": 20.514,
+                "last": 186.948,
+                "max": 479.946,
+                "min": 0.0,
+                "n": 665,
+                "sum": 78052.98
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -62.304,
+                "n": 665,
+                "sum": -2962.412
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -232.144,
+                "n": 665,
+                "sum": -25316.451
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 14.06,
+                "max": 18.799,
+                "min": 0.0,
+                "n": 665,
+                "sum": 2088.643
+              },
+              "y0": {
+                "finite": 665,
+                "first": 22.929,
+                "last": 221.817,
+                "max": 503.948,
+                "min": 0.0,
+                "n": 665,
+                "sum": 87361.8
+              },
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -15.722,
+                "n": 665,
+                "sum": -690.919
+              },
+              "y0": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 0.0,
+                "max": 0.0,
+                "min": -278.446,
+                "n": 665,
+                "sum": -28278.863
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 665,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 665,
+                "first": 0.0,
+                "last": 664.0,
+                "max": 664.0,
+                "min": 0.0,
+                "n": 665,
+                "sum": 220780.0
+              },
+              "y": {
+                "finite": 653,
+                "first": 7.992,
+                "last": 231.16,
+                "max": 972.039,
+                "min": -820.898,
+                "n": 665,
+                "sum": 71520.052
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Total Nonfarm",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Education & Health",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Leisure & Hospitality",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Prof & Business Svcs",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Government",
+              "pen": [
+                120,
+                144,
+                156,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Financial Activities",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Construction",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Manufacturing",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 0,
+              "name": "Information",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "n": 0
+              },
+              "y": {
+                "n": 0
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Total Nonfarm",
+              "Education & Health",
+              "Leisure & Hospitality",
+              "Prof & Business Svcs",
+              "Government",
+              "Financial Activities",
+              "Construction",
+              "Manufacturing",
+              "Information"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -7.15,
+              671.15
+            ],
+            "y": [
+              -964.33296,
+              1115.474
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "PayrollsChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                160,
+                160,
+                160,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Nonfarm",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Education & Health",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Leisure & Hospitality",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Prof & Business Svcs",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Government",
+              "pen": [
+                120,
+                144,
+                156,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Financial Activities",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Construction",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Manufacturing",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Information",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                160,
+                160,
+                160,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Nonfarm",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Education & Health",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Leisure & Hospitality",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Prof & Business Svcs",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Government",
+              "pen": [
+                120,
+                144,
+                156,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Financial Activities",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Construction",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Manufacturing",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Information",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                160,
+                160,
+                160,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                38,
+                198,
+                218,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                236,
+                64,
+                122,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                171,
+                71,
+                188,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                120,
+                144,
+                156,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                79,
+                195,
+                247,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                112,
+                67,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                102,
+                187,
+                106,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                167,
+                38,
+                200
+              ],
+              "name": null,
+              "pen": [
+                200,
+                200,
+                200,
+                255
+              ],
+              "type": "BarGraphItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Nonfarm",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Education & Health",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Leisure & Hospitality",
+              "pen": [
+                236,
+                64,
+                122,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Prof & Business Svcs",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Government",
+              "pen": [
+                120,
+                144,
+                156,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Financial Activities",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Construction",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Manufacturing",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Information",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Lookback:",
+    "Payrolls: +231K",
+    "|"
+  ]
+}

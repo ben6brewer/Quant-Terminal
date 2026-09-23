@@ -1,0 +1,1460 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Curve",
+      "Rates",
+      "Spread"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading yield curve..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "Yield (%)",
+            "units": "",
+            "visible": true
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 200,
+            "name": "Today",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 200,
+              "first": 0.22516001,
+              "last": 7.6961363,
+              "max": 7.6961363,
+              "min": 0.22516001,
+              "n": 200,
+              "sum": 963.73797
+            },
+            "y": {
+              "finite": 200,
+              "first": 2.12,
+              "last": 4.092,
+              "max": 4.4316095,
+              "min": 0.50213823,
+              "n": 200,
+              "sum": 575.80988
+            },
+            "z": 0.0
+          },
+          {
+            "len_x": 11,
+            "name": null,
+            "type": "ScatterPlotItem",
+            "visible": true,
+            "x": {
+              "finite": 11,
+              "first": 0.22516001,
+              "last": 7.6961363,
+              "max": 7.6961363,
+              "min": 0.22516001,
+              "n": 11,
+              "sum": 29.321096
+            },
+            "y": {
+              "finite": 11,
+              "first": 2.12,
+              "last": 4.092,
+              "max": 4.408,
+              "min": 0.628,
+              "n": 11,
+              "sum": 27.131
+            },
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "label": "Fed Funds: 1.25%",
+            "pen": [
+              255,
+              80,
+              80,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 1.248,
+            "visible": true,
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Today"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -0.015314684,
+            7.936611
+          ],
+          "y": [
+            0.34672676,
+            4.587021
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "TreasuryYieldCurveChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=Spread",
+    "tooltip": null
+  },
+  "module": "yields",
+  "renders": {
+    "lookback=5Y view=Curve": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading yield curve..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "Yield (%)",
+              "units": "",
+              "visible": true
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 200,
+              "name": "Today",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 200,
+                "first": 0.22516001,
+                "last": 7.6961363,
+                "max": 7.6961363,
+                "min": 0.22516001,
+                "n": 200,
+                "sum": 963.73797
+              },
+              "y": {
+                "finite": 200,
+                "first": 2.12,
+                "last": 4.092,
+                "max": 4.4316095,
+                "min": 0.50213823,
+                "n": 200,
+                "sum": 575.80988
+              },
+              "z": 0.0
+            },
+            {
+              "len_x": 11,
+              "name": null,
+              "type": "ScatterPlotItem",
+              "visible": true,
+              "x": {
+                "finite": 11,
+                "first": 0.22516001,
+                "last": 7.6961363,
+                "max": 7.6961363,
+                "min": 0.22516001,
+                "n": 11,
+                "sum": 29.321096
+              },
+              "y": {
+                "finite": 11,
+                "first": 2.12,
+                "last": 4.092,
+                "max": 4.408,
+                "min": 0.628,
+                "n": 11,
+                "sum": 27.131
+              },
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "label": "Fed Funds: 1.25%",
+              "pen": [
+                255,
+                80,
+                80,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 1.248,
+              "visible": true,
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Today"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              0.01032597,
+              7.9109704
+            ],
+            "y": [
+              0.34672676,
+              4.587021
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TreasuryYieldCurveChart"
+    },
+    "lookback=5Y view=Rates": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading rates data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "2Y",
+              "pen": [
+                0,
+                200,
+                255,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 0.05,
+                "last": 0.628,
+                "max": 2.573,
+                "min": 0.05,
+                "n": 1260,
+                "sum": 906.476
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "5Y",
+              "pen": [
+                100,
+                255,
+                100,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 5.307,
+                "last": 1.126,
+                "max": 5.83,
+                "min": 0.578,
+                "n": 1260,
+                "sum": 3341.887
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "10Y",
+              "pen": [
+                255,
+                180,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 3.69,
+                "last": 4.408,
+                "max": 5.126,
+                "min": 2.146,
+                "n": 1260,
+                "sum": 4311.079
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "30Y",
+              "pen": [
+                255,
+                80,
+                180,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 2.254,
+                "last": 4.092,
+                "max": 4.569,
+                "min": 1.865,
+                "n": 1260,
+                "sum": 4237.736
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "2Y",
+              "5Y",
+              "10Y",
+              "30Y"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -25.18,
+              1284.18
+            ],
+            "y": [
+              -0.4124,
+              6.2924
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TreasuryRatesChart"
+    },
+    "lookback=5Y view=Spread": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading spread data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                60,
+                60,
+                60
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": -0.167,
+                "last": 1.689,
+                "max": 2.777,
+                "min": -0.364,
+                "n": 1260,
+                "sum": 1402.838
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -25.18,
+              1284.18
+            ],
+            "y": [
+              -0.61528,
+              3.02828
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TreasurySpreadChart"
+    },
+    "lookback=Max view=Curve": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading yield curve..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "Yield (%)",
+              "units": "",
+              "visible": true
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 200,
+              "name": "Today",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 200,
+                "first": 0.22516001,
+                "last": 7.6961363,
+                "max": 7.6961363,
+                "min": 0.22516001,
+                "n": 200,
+                "sum": 963.73797
+              },
+              "y": {
+                "finite": 200,
+                "first": 2.12,
+                "last": 4.092,
+                "max": 4.4316095,
+                "min": 0.50213823,
+                "n": 200,
+                "sum": 575.80988
+              },
+              "z": 0.0
+            },
+            {
+              "len_x": 11,
+              "name": null,
+              "type": "ScatterPlotItem",
+              "visible": true,
+              "x": {
+                "finite": 11,
+                "first": 0.22516001,
+                "last": 7.6961363,
+                "max": 7.6961363,
+                "min": 0.22516001,
+                "n": 11,
+                "sum": 29.321096
+              },
+              "y": {
+                "finite": 11,
+                "first": 2.12,
+                "last": 4.092,
+                "max": 4.408,
+                "min": 0.628,
+                "n": 11,
+                "sum": 27.131
+              },
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "label": "Fed Funds: 1.25%",
+              "pen": [
+                255,
+                80,
+                80,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 1.248,
+              "visible": true,
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Today"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              0.029457045,
+              7.8918393
+            ],
+            "y": [
+              0.34672676,
+              4.587021
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TreasuryYieldCurveChart"
+    },
+    "lookback=Max view=Rates": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading rates data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "2Y",
+              "pen": [
+                0,
+                200,
+                255,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 5944,
+                "first": 2.736,
+                "last": 0.628,
+                "max": 6.366,
+                "min": 0.05,
+                "n": 6738,
+                "sum": 13662.492
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "5Y",
+              "pen": [
+                100,
+                255,
+                100,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 6738,
+                "first": 4.774,
+                "last": 1.126,
+                "max": 7.258,
+                "min": 0.05,
+                "n": 6738,
+                "sum": 23094.016
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "10Y",
+              "pen": [
+                255,
+                180,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 6209,
+                "first": 4.149,
+                "last": 4.408,
+                "max": 6.156,
+                "min": 0.3,
+                "n": 6738,
+                "sum": 23047.45
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "30Y",
+              "pen": [
+                255,
+                80,
+                180,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 6738,
+                "first": 4.391,
+                "last": 4.092,
+                "max": 6.512,
+                "min": 1.301,
+                "n": 6738,
+                "sum": 23165.685
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "2Y",
+              "5Y",
+              "10Y",
+              "30Y"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -134.74,
+              6871.74
+            ],
+            "y": [
+              -0.52664,
+              7.83464
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TreasuryRatesChart"
+    },
+    "lookback=Max view=Spread": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading spread data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                255,
+                60,
+                60,
+                60
+              ],
+              "type": "FillBetweenItem",
+              "visible": true,
+              "z": -1.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 5680,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 5680,
+                "first": 0.0,
+                "last": 5679.0,
+                "max": 5679.0,
+                "min": 0.0,
+                "n": 5680,
+                "sum": 16128360.0
+              },
+              "y": {
+                "finite": 5680,
+                "first": 0.374,
+                "last": 1.689,
+                "max": 2.777,
+                "min": -1.558,
+                "n": 5680,
+                "sum": 1706.888
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -113.58,
+              5792.58
+            ],
+            "y": [
+              -1.9048,
+              3.1238
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TreasurySpreadChart"
+    }
+  },
+  "size": [
+    1716,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                60,
+                60,
+                60
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                60,
+                60,
+                60
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "brush": [
+                255,
+                60,
+                60,
+                60
+              ],
+              "type": "FillBetweenItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "10Y: 4.41%",
+    "Fit:",
+    "Lookback:",
+    "|"
+  ]
+}
