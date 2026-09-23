@@ -1,0 +1,384 @@
+{
+  "fred_ids": [
+    "A191RL1Q225SBEA",
+    "EXPGS",
+    "EXPGSC1",
+    "GCE",
+    "GCEC1",
+    "GDP",
+    "GDPC1",
+    "GPDI",
+    "GPDIC1",
+    "IMPGS",
+    "IMPGSC1",
+    "INDPRO",
+    "IPMAN",
+    "PCEC",
+    "PCECC96",
+    "TCU",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "capacity_util": 80.2,
+    "gdp_growth": 6.9,
+    "ip_index": 103.0,
+    "ip_mom": 0.56,
+    "quarter": "Q2 2026",
+    "real_gdp": 23.7
+  },
+  "outputs": {
+    "capacity": {
+      "columns": [
+        "Capacity Utilization"
+      ],
+      "data": {
+        "Capacity Utilization": {
+          "count": 666,
+          "first": 76.685,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 80.211,
+          "last_valid": "2026-06-01",
+          "max": 81.22,
+          "min": 68.08,
+          "sum": 50511.837
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 666,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1971-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        666,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "components": {
+      "columns": [
+        "PCE",
+        "Investment",
+        "Government",
+        "Exports",
+        "Imports"
+      ],
+      "data": {
+        "Exports": {
+          "count": 678,
+          "first": 0.104124,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 2.6,
+          "last_valid": "2026-06-01",
+          "max": 2.6,
+          "min": 0.104124,
+          "sum": 508.29013
+        },
+        "Government": {
+          "count": 678,
+          "first": 0.231834,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 4.1,
+          "last_valid": "2026-06-01",
+          "max": 4.1,
+          "min": 0.231834,
+          "sum": 918.90642
+        },
+        "Imports": {
+          "count": 630,
+          "first": 0.287978,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 3.7,
+          "last_valid": "2026-06-01",
+          "max": 3.7,
+          "min": 0.287978,
+          "sum": 806.21404
+        },
+        "Investment": {
+          "count": 666,
+          "first": 0.21264,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 4.5,
+          "last_valid": "2026-06-01",
+          "max": 4.5,
+          "min": 0.21264,
+          "sum": 857.53174
+        },
+        "PCE": {
+          "count": 642,
+          "first": 1.269468,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 16.5,
+          "last_valid": "2026-06-01",
+          "max": 16.5,
+          "min": 1.269468,
+          "sum": 3841.5403
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "gdp": {
+      "columns": [
+        "Real GDP",
+        "Nominal GDP"
+      ],
+      "data": {
+        "Nominal GDP": {
+          "count": 678,
+          "first": 1.48083,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 30.5,
+          "last_valid": "2026-06-01",
+          "max": 30.5,
+          "min": 1.48083,
+          "sum": 6893.0739
+        },
+        "Real GDP": {
+          "count": 678,
+          "first": 1.512081,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 23.7,
+          "last_valid": "2026-06-01",
+          "max": 23.7,
+          "min": 1.512081,
+          "sum": 5222.7215
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "growth": {
+      "columns": [
+        "GDP Growth"
+      ],
+      "data": {
+        "GDP Growth": {
+          "count": 618,
+          "first": -3.953,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 6.885,
+          "last_valid": "2026-06-01",
+          "max": 8.359,
+          "min": -3.953,
+          "sum": 1853.568
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 618,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1975-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        618,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "nominal_components": {
+      "columns": [
+        "PCE",
+        "Investment",
+        "Government",
+        "Exports",
+        "Imports"
+      ],
+      "data": {
+        "Exports": {
+          "count": 666,
+          "first": 0.202226,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 3.2,
+          "last_valid": "2026-06-01",
+          "max": 3.2,
+          "min": 0.202226,
+          "sum": 740.84723
+        },
+        "Government": {
+          "count": 678,
+          "first": 0.358031,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 5.2,
+          "last_valid": "2026-06-01",
+          "max": 5.2,
+          "min": 0.358031,
+          "sum": 1236.9695
+        },
+        "Imports": {
+          "count": 618,
+          "first": 0.264601,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 4.1,
+          "last_valid": "2026-06-01",
+          "max": 4.1,
+          "min": 0.264601,
+          "sum": 893.45569
+        },
+        "Investment": {
+          "count": 618,
+          "first": 0.323381,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 5.4,
+          "last_valid": "2026-06-01",
+          "max": 5.4,
+          "min": 0.323381,
+          "sum": 1056.0538
+        },
+        "PCE": {
+          "count": 642,
+          "first": 1.266569,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 20.5,
+          "last_valid": "2026-06-01",
+          "max": 20.5,
+          "min": 1.266569,
+          "sum": 4348.679
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "production": {
+      "columns": [
+        "Industrial Production",
+        "Manufacturing"
+      ],
+      "data": {
+        "Industrial Production": {
+          "count": 654,
+          "first": 37.544,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 103.0,
+          "last_valid": "2026-06-01",
+          "max": 106.459,
+          "min": 37.544,
+          "sum": 40324.312
+        },
+        "Manufacturing": {
+          "count": 618,
+          "first": 48.866,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 100.0,
+          "last_valid": "2026-06-01",
+          "max": 105.296,
+          "min": 47.036,
+          "sum": 42924.246
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 654,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1972-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        654,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "GdpFredService"
+}

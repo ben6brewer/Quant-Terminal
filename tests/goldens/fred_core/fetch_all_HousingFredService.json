@@ -1,0 +1,166 @@
+{
+  "fred_ids": [
+    "HOUST",
+    "HOUST1F",
+    "HOUST5F",
+    "PERMIT",
+    "PERMIT1",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "sf_starts": 935,
+    "total_permits": 1607,
+    "total_starts": 952
+  },
+  "outputs": {
+    "permits": {
+      "columns": [
+        "Total Permits",
+        "SF Permits",
+        "Multi-Family Permits"
+      ],
+      "data": {
+        "Multi-Family Permits": {
+          "count": 630,
+          "first": 836.397,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 817.196,
+          "last_valid": "2026-06-01",
+          "max": 1363.008,
+          "min": -301.416,
+          "sum": 336448.35
+        },
+        "SF Permits": {
+          "count": 630,
+          "first": 677.281,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 789.827,
+          "last_valid": "2026-06-01",
+          "max": 1347.01,
+          "min": 424.881,
+          "sum": 535813.93
+        },
+        "Total Permits": {
+          "count": 630,
+          "first": 1513.678,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 1607.023,
+          "last_valid": "2026-06-01",
+          "max": 1870.605,
+          "min": 840.017,
+          "sum": 872262.28
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 630,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1974-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        630,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "starts": {
+      "columns": [
+        "Total Starts",
+        "Single-Family",
+        "5+ Units"
+      ],
+      "data": {
+        "5+ Units": {
+          "count": 642,
+          "first": 412.164,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 362.335,
+          "last_valid": "2026-06-01",
+          "max": 643.711,
+          "min": 267.343,
+          "sum": 294971.47
+        },
+        "Single-Family": {
+          "count": 642,
+          "first": 1130.29,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 935.046,
+          "last_valid": "2026-06-01",
+          "max": 1556.58,
+          "min": 506.569,
+          "sum": 597806.95
+        },
+        "Total Starts": {
+          "count": 642,
+          "first": 892.817,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 952.024,
+          "last_valid": "2026-06-01",
+          "max": 2049.114,
+          "min": 869.856,
+          "sum": 851970.21
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 642,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1973-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        642,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "HousingFredService"
+}

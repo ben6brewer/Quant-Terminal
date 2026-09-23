@@ -1,0 +1,170 @@
+{
+  "fred_ids": [
+    "OVXCLS",
+    "RVXCLS",
+    "USREC",
+    "VIXCLS",
+    "VXDCLS",
+    "VXEEMCLS",
+    "VXNCLS",
+    "VXVCLS"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "move": 104.84,
+    "vix": 13.76
+  },
+  "outputs": {
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 7111,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-30",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 745.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 7111,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        7111,
+        1
+      ],
+      "type": "DataFrame"
+    },
+    "volatility": {
+      "columns": [
+        "VIX",
+        "3M Vol",
+        "Oil Vol",
+        "NASDAQ Vol",
+        "Russell Vol",
+        "DJIA Vol",
+        "EM Vol",
+        "MOVE"
+      ],
+      "data": {
+        "3M Vol": {
+          "count": 6209,
+          "first": 15.799,
+          "first_valid": "2003-01-03",
+          "kind": "f",
+          "last": 11.185,
+          "last_valid": "2026-06-30",
+          "max": 34.274,
+          "min": 11.0,
+          "sum": 134824.31
+        },
+        "DJIA Vol": {
+          "count": 6209,
+          "first": 33.25,
+          "first_valid": "2003-01-03",
+          "kind": "f",
+          "last": 22.904,
+          "last_valid": "2026-06-30",
+          "max": 33.667,
+          "min": 9.0,
+          "sum": 111681.36
+        },
+        "EM Vol": {
+          "count": 5944,
+          "first": 29.452,
+          "first_valid": "2004-01-05",
+          "kind": "f",
+          "last": 24.732,
+          "last_valid": "2026-06-30",
+          "max": 41.934,
+          "min": 11.0,
+          "sum": 147223.62
+        },
+        "MOVE": {
+          "count": 9443,
+          "first": 124.93055,
+          "first_valid": "1990-01-02",
+          "kind": "f",
+          "last": 104.84347,
+          "last_valid": "2026-06-30",
+          "max": 158.50116,
+          "min": 50.684005,
+          "sum": 939696.77
+        },
+        "NASDAQ Vol": {
+          "count": 6738,
+          "first": 11.0,
+          "first_valid": "2001-01-03",
+          "kind": "f",
+          "last": 13.048,
+          "last_valid": "2026-06-30",
+          "max": 34.467,
+          "min": 11.0,
+          "sum": 119071.9
+        },
+        "Oil Vol": {
+          "count": 6473,
+          "first": 39.956,
+          "first_valid": "2002-01-03",
+          "kind": "f",
+          "last": 31.155,
+          "last_valid": "2026-06-30",
+          "max": 64.64,
+          "min": 18.445,
+          "sum": 258081.81
+        },
+        "Russell Vol": {
+          "count": 6738,
+          "first": 18.678,
+          "first_valid": "2001-01-03",
+          "kind": "f",
+          "last": 26.843,
+          "last_valid": "2026-06-30",
+          "max": 33.693,
+          "min": 13.0,
+          "sum": 144106.19
+        },
+        "VIX": {
+          "count": 6473,
+          "first": 27.738,
+          "first_valid": "2002-01-03",
+          "kind": "f",
+          "last": 13.755,
+          "last_valid": "2026-06-30",
+          "max": 31.153,
+          "min": 9.0,
+          "sum": 136535.11
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 9586,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1990-01-02",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        9586,
+        8
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "VolatilityFredService"
+}

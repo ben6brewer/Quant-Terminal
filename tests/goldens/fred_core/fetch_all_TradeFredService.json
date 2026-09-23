@@ -1,0 +1,106 @@
+{
+  "fred_ids": [
+    "BOPGSTB",
+    "BOPTEXP",
+    "BOPTIMP",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "balance": -71.224553,
+    "balance_chg": -8.3164962
+  },
+  "outputs": {
+    "trade": {
+      "columns": [
+        "Trade Balance",
+        "Exports",
+        "Imports"
+      ],
+      "data": {
+        "Exports": {
+          "count": 654,
+          "first": 32.278922,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 265.0,
+          "last_valid": "2026-06-01",
+          "max": 269.24957,
+          "min": 32.265566,
+          "sum": 78465.234
+        },
+        "Imports": {
+          "count": 630,
+          "first": 37.520419,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 335.0,
+          "last_valid": "2026-06-01",
+          "max": 366.99732,
+          "min": 37.520419,
+          "sum": 104347.53
+        },
+        "Trade Balance": {
+          "count": 666,
+          "first": -48.837459,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": -71.224553,
+          "last_valid": "2026-06-01",
+          "max": -27.76031,
+          "min": -114.99971,
+          "sum": -44659.921
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 666,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1971-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        666,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "TradeFredService"
+}

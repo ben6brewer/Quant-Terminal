@@ -1,0 +1,346 @@
+{
+  "fred_ids": [
+    "CPIAPPSL",
+    "CPIAUCSL",
+    "CPIEDUSL",
+    "CPIENGSL",
+    "CPIFABSL",
+    "CPIHOSSL",
+    "CPILFESL",
+    "CPIMEDSL",
+    "CPIRECSL",
+    "CPITRNSL",
+    "MICH",
+    "PCEPI",
+    "PCEPILFE",
+    "PPICOR",
+    "PPIDES",
+    "PPIFDS",
+    "PPIFID",
+    "T10YIEM",
+    "T5YIEM"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "core_cpi": 3.84,
+    "core_pce": 1.73,
+    "date": "Jun 2026",
+    "headline_cpi": 1.72,
+    "pce": 3.39
+  },
+  "outputs": {
+    "cpi": {
+      "columns": [
+        "Apparel",
+        "Core CPI",
+        "Education",
+        "Energy",
+        "Food & Beverages",
+        "Headline CPI",
+        "Housing",
+        "Medical Care",
+        "Recreation",
+        "Transportation"
+      ],
+      "data": {
+        "Apparel": {
+          "count": 606,
+          "first": 3.5871099,
+          "first_valid": "1976-01-01",
+          "kind": "f",
+          "last": 2.779761,
+          "last_valid": "2026-06-01",
+          "max": 6.9494065,
+          "min": -0.6049084,
+          "sum": 1972.8028
+        },
+        "Core CPI": {
+          "count": 618,
+          "first": 4.706488,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 3.8398726,
+          "last_valid": "2026-06-01",
+          "max": 6.8048905,
+          "min": 0.48515188,
+          "sum": 2150.1949
+        },
+        "Education": {
+          "count": 666,
+          "first": 4.0755517,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 4.1577491,
+          "last_valid": "2026-06-01",
+          "max": 6.4491691,
+          "min": 0.6333272,
+          "sum": 2392.4595
+        },
+        "Energy": {
+          "count": 642,
+          "first": 2.6933606,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 4.3256718,
+          "last_valid": "2026-06-01",
+          "max": 7.2651981,
+          "min": -0.54033757,
+          "sum": 2283.4646
+        },
+        "Food & Beverages": {
+          "count": 630,
+          "first": 3.6582694,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 4.4460214,
+          "last_valid": "2026-06-01",
+          "max": 8.1903113,
+          "min": -0.38282209,
+          "sum": 2000.3027
+        },
+        "Headline CPI": {
+          "count": 618,
+          "first": 0.68551518,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 1.7236684,
+          "last_valid": "2026-06-01",
+          "max": 8.0538786,
+          "min": 0.14640048,
+          "sum": 2202.5714
+        },
+        "Housing": {
+          "count": 666,
+          "first": 2.9938201,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 2.7052879,
+          "last_valid": "2026-06-01",
+          "max": 7.3224751,
+          "min": 0.96709435,
+          "sum": 2465.8527
+        },
+        "Medical Care": {
+          "count": 630,
+          "first": 2.0653078,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 1.6445568,
+          "last_valid": "2026-06-01",
+          "max": 7.5750858,
+          "min": 0.14041899,
+          "sum": 2236.1612
+        },
+        "Recreation": {
+          "count": 606,
+          "first": 4.1656992,
+          "first_valid": "1976-01-01",
+          "kind": "f",
+          "last": 2.4922189,
+          "last_valid": "2026-06-01",
+          "max": 7.8654085,
+          "min": 0.44863683,
+          "sum": 2223.973
+        },
+        "Transportation": {
+          "count": 642,
+          "first": 4.8586456,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 3.7619216,
+          "last_valid": "2026-06-01",
+          "max": 6.1042308,
+          "min": -0.10288301,
+          "sum": 2175.72
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 666,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1971-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        666,
+        10
+      ],
+      "type": "DataFrame"
+    },
+    "expectations": {
+      "columns": [
+        "10Y Breakeven",
+        "5Y Breakeven",
+        "Michigan 1Y"
+      ],
+      "data": {
+        "10Y Breakeven": {
+          "count": 678,
+          "first": 2.113,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 2.349,
+          "last_valid": "2026-06-01",
+          "max": 2.758,
+          "min": 1.428,
+          "sum": 1460.95
+        },
+        "5Y Breakeven": {
+          "count": 678,
+          "first": 1.732,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 1.616,
+          "last_valid": "2026-06-01",
+          "max": 2.539,
+          "min": 0.966,
+          "sum": 1197.395
+        },
+        "Michigan 1Y": {
+          "count": 666,
+          "first": 2.018,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 3.557,
+          "last_valid": "2026-06-01",
+          "max": 4.964,
+          "min": 0.669,
+          "sum": 2246.884
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        3
+      ],
+      "type": "DataFrame"
+    },
+    "pce": {
+      "columns": [
+        "Core PCE",
+        "PCE"
+      ],
+      "data": {
+        "Core PCE": {
+          "count": 618,
+          "first": 5.4821186,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 1.7302211,
+          "last_valid": "2026-06-01",
+          "max": 7.8101033,
+          "min": -0.052655828,
+          "sum": 2090.6039
+        },
+        "PCE": {
+          "count": 642,
+          "first": 2.0008637,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 3.394239,
+          "last_valid": "2026-06-01",
+          "max": 7.7587098,
+          "min": -2.1390922,
+          "sum": 2187.8272
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 642,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1973-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        642,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "ppi": {
+      "columns": [
+        "PPI Core",
+        "PPI Energy",
+        "PPI Final Demand",
+        "PPI Services"
+      ],
+      "data": {
+        "PPI Core": {
+          "count": 630,
+          "first": 1.4461409,
+          "first_valid": "1974-01-01",
+          "kind": "f",
+          "last": 1.2947816,
+          "last_valid": "2026-06-01",
+          "max": 6.4163161,
+          "min": -0.80012209,
+          "sum": 1872.4055
+        },
+        "PPI Energy": {
+          "count": 618,
+          "first": 1.3934783,
+          "first_valid": "1975-01-01",
+          "kind": "f",
+          "last": 2.8111092,
+          "last_valid": "2026-06-01",
+          "max": 6.5846599,
+          "min": -1.2826377,
+          "sum": 1585.1992
+        },
+        "PPI Final Demand": {
+          "count": 654,
+          "first": 3.9604344,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 2.8637261,
+          "last_valid": "2026-06-01",
+          "max": 7.7637633,
+          "min": -1.3221224,
+          "sum": 2117.0931
+        },
+        "PPI Services": {
+          "count": 606,
+          "first": 2.5895104,
+          "first_valid": "1976-01-01",
+          "kind": "f",
+          "last": 3.3121045,
+          "last_valid": "2026-06-01",
+          "max": 8.193759,
+          "min": -0.32565538,
+          "sum": 2142.9447
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 654,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1972-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        654,
+        4
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "InflationFredService"
+}

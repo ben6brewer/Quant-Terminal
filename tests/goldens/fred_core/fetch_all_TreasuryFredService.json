@@ -1,0 +1,218 @@
+{
+  "actual_date_for_2026-06-14": "2026-06-12",
+  "fred_ids": [
+    "DGS1",
+    "DGS10",
+    "DGS1MO",
+    "DGS2",
+    "DGS20",
+    "DGS3",
+    "DGS30",
+    "DGS3MO",
+    "DGS5",
+    "DGS6MO",
+    "DGS7",
+    "FEDFUNDS",
+    "T10Y2Y"
+  ],
+  "latest_yields": {
+    "10y": 4.41,
+    "2y": 0.63,
+    "date": "Jun 2026",
+    "spread": 1.69
+  },
+  "outputs": {
+    "treasury": {
+      "columns": [
+        "10Y",
+        "10Y-2Y Spread",
+        "1M",
+        "1Y",
+        "20Y",
+        "2Y",
+        "30Y",
+        "3M",
+        "3Y",
+        "5Y",
+        "6M",
+        "7Y",
+        "Fed Funds"
+      ],
+      "data": {
+        "10Y": {
+          "count": 6209,
+          "first": 4.149,
+          "first_valid": "2003-01-03",
+          "kind": "f",
+          "last": 4.408,
+          "last_valid": "2026-06-30",
+          "max": 6.156,
+          "min": 0.3,
+          "sum": 23047.45
+        },
+        "10Y-2Y Spread": {
+          "count": 5680,
+          "first": 0.374,
+          "first_valid": "2005-01-03",
+          "kind": "f",
+          "last": 1.689,
+          "last_valid": "2026-06-30",
+          "max": 2.777,
+          "min": -1.558,
+          "sum": 1706.888
+        },
+        "1M": {
+          "count": 6473,
+          "first": 2.591,
+          "first_valid": "2002-01-03",
+          "kind": "f",
+          "last": 2.12,
+          "last_valid": "2026-06-30",
+          "max": 5.236,
+          "min": 0.01,
+          "sum": 17596.596
+        },
+        "1Y": {
+          "count": 7003,
+          "first": 2.175,
+          "first_valid": "2000-01-03",
+          "kind": "f",
+          "last": 3.428,
+          "last_valid": "2026-06-30",
+          "max": 8.354,
+          "min": 0.064,
+          "sum": 24254.345
+        },
+        "20Y": {
+          "count": 5944,
+          "first": 2.913,
+          "first_valid": "2004-01-05",
+          "kind": "f",
+          "last": 2.472,
+          "last_valid": "2026-06-30",
+          "max": 5.129,
+          "min": 0.3,
+          "sum": 16474.145
+        },
+        "2Y": {
+          "count": 5944,
+          "first": 2.736,
+          "first_valid": "2004-01-05",
+          "kind": "f",
+          "last": 0.628,
+          "last_valid": "2026-06-30",
+          "max": 6.366,
+          "min": 0.05,
+          "sum": 13662.492
+        },
+        "30Y": {
+          "count": 6738,
+          "first": 4.391,
+          "first_valid": "2001-01-03",
+          "kind": "f",
+          "last": 4.092,
+          "last_valid": "2026-06-30",
+          "max": 6.512,
+          "min": 1.301,
+          "sum": 23165.685
+        },
+        "3M": {
+          "count": 7003,
+          "first": 0.688,
+          "first_valid": "2000-01-03",
+          "kind": "f",
+          "last": 1.409,
+          "last_valid": "2026-06-30",
+          "max": 5.354,
+          "min": 0.01,
+          "sum": 12561.602
+        },
+        "3Y": {
+          "count": 6473,
+          "first": 1.376,
+          "first_valid": "2002-01-03",
+          "kind": "f",
+          "last": 1.482,
+          "last_valid": "2026-06-30",
+          "max": 7.803,
+          "min": 0.05,
+          "sum": 23588.994
+        },
+        "5Y": {
+          "count": 6738,
+          "first": 4.774,
+          "first_valid": "2001-01-03",
+          "kind": "f",
+          "last": 1.126,
+          "last_valid": "2026-06-30",
+          "max": 7.258,
+          "min": 0.05,
+          "sum": 23094.016
+        },
+        "6M": {
+          "count": 6209,
+          "first": 3.595,
+          "first_valid": "2003-01-03",
+          "kind": "f",
+          "last": 2.686,
+          "last_valid": "2026-06-30",
+          "max": 5.0,
+          "min": 0.01,
+          "sum": 10874.859
+        },
+        "7Y": {
+          "count": 5680,
+          "first": 3.312,
+          "first_valid": "2005-01-03",
+          "kind": "f",
+          "last": 3.28,
+          "last_valid": "2026-06-30",
+          "max": 5.717,
+          "min": 0.844,
+          "sum": 18337.487
+        },
+        "Fed Funds": {
+          "count": 7352,
+          "first": 1.487,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 1.248,
+          "last_valid": "2026-06-30",
+          "max": 8.014,
+          "min": 0.05,
+          "sum": 11553.262
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 7352,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1971-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        7352,
+        13
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "TreasuryFredService",
+  "yields_for_1900-01-01": null,
+  "yields_for_2026-06-14": {
+    "10Y": 4.863,
+    "1M": 2.017,
+    "1Y": 3.03,
+    "20Y": 2.352,
+    "2Y": 0.604,
+    "30Y": 3.793,
+    "3M": 1.701,
+    "3Y": 1.56,
+    "5Y": 1.181,
+    "6M": 2.193,
+    "7Y": 3.637
+  }
+}

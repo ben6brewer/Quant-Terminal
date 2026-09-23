@@ -1,0 +1,92 @@
+{
+  "fred_ids": [
+    "DCOILWTICO",
+    "IPMINE",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "extraction": 115.0
+  },
+  "outputs": {
+    "production": {
+      "columns": [
+        "Mining Production",
+        "WTI Crude"
+      ],
+      "data": {
+        "Mining Production": {
+          "count": 7352,
+          "first": 38.492,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 115.0,
+          "last_valid": "2026-06-30",
+          "max": 115.741,
+          "min": 38.492,
+          "sum": 656097.36
+        },
+        "WTI Crude": {
+          "count": 7003,
+          "first": 67.427,
+          "first_valid": "2000-01-03",
+          "kind": "f",
+          "last": 46.606,
+          "last_valid": "2026-06-30",
+          "max": 88.435,
+          "min": 20.978,
+          "sum": 413694.49
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 7352,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1971-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        7352,
+        2
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 7364,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-30",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 745.0
+        }
+      },
+      "index": {
+        "end": "2026-06-30",
+        "freq": null,
+        "len": 7364,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        7364,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "EnergyProductionFredService"
+}

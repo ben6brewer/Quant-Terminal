@@ -1,0 +1,118 @@
+{
+  "fred_ids": [
+    "ISRATIO",
+    "MNFCTRIRSA",
+    "RETAILIRSA",
+    "USREC",
+    "WHLSLRIRSA"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "total_is": 1.246
+  },
+  "outputs": {
+    "inventories": {
+      "columns": [
+        "Total I/S Ratio",
+        "Retail I/S",
+        "Manufacturing I/S",
+        "Wholesale I/S"
+      ],
+      "data": {
+        "Manufacturing I/S": {
+          "count": 642,
+          "first": 1.384,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 1.492,
+          "last_valid": "2026-06-01",
+          "max": 1.807,
+          "min": 1.2,
+          "sum": 955.631
+        },
+        "Retail I/S": {
+          "count": 654,
+          "first": 1.316,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 1.314,
+          "last_valid": "2026-06-01",
+          "max": 1.462,
+          "min": 1.092,
+          "sum": 843.261
+        },
+        "Total I/S Ratio": {
+          "count": 666,
+          "first": 1.45,
+          "first_valid": "1971-01-01",
+          "kind": "f",
+          "last": 1.246,
+          "last_valid": "2026-06-01",
+          "max": 1.45,
+          "min": 1.237,
+          "sum": 893.191
+        },
+        "Wholesale I/S": {
+          "count": 678,
+          "first": 1.353,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 1.267,
+          "last_valid": "2026-06-01",
+          "max": 1.492,
+          "min": 1.145,
+          "sum": 885.61
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        4
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "SupplyChainFredService"
+}

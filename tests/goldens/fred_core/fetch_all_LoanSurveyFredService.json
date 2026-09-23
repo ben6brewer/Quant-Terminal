@@ -1,0 +1,132 @@
+{
+  "fred_ids": [
+    "DRTSCILM",
+    "DRTSCIS",
+    "DRTSCLCC",
+    "STDSAUTO",
+    "SUBLPDHMSENQ",
+    "USREC"
+  ],
+  "has_get_latest_stats": true,
+  "latest_stats": {
+    "ci_large": -32.49,
+    "credit_card": -10.87
+  },
+  "outputs": {
+    "standards": {
+      "columns": [
+        "C&I Large Firms",
+        "C&I Small Firms",
+        "Credit Cards",
+        "Mortgages",
+        "Auto Loans"
+      ],
+      "data": {
+        "Auto Loans": {
+          "count": 214,
+          "first": -31.061,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": 0.56,
+          "last_valid": "2026-04-01",
+          "max": 54.125,
+          "min": -37.084,
+          "sum": 289.746
+        },
+        "C&I Large Firms": {
+          "count": 226,
+          "first": -9.06,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": -32.487,
+          "last_valid": "2026-04-01",
+          "max": 33.593,
+          "min": -37.954,
+          "sum": -973.404
+        },
+        "C&I Small Firms": {
+          "count": 218,
+          "first": 17.802,
+          "first_valid": "1972-01-01",
+          "kind": "f",
+          "last": 20.278,
+          "last_valid": "2026-04-01",
+          "max": 37.619,
+          "min": -40.0,
+          "sum": -839.769
+        },
+        "Credit Cards": {
+          "count": 214,
+          "first": -31.67,
+          "first_valid": "1973-01-01",
+          "kind": "f",
+          "last": -10.87,
+          "last_valid": "2026-04-01",
+          "max": 32.655,
+          "min": -35.322,
+          "sum": -752.24
+        },
+        "Mortgages": {
+          "count": 226,
+          "first": -12.954,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 27.556,
+          "last_valid": "2026-04-01",
+          "max": 40.806,
+          "min": -40.0,
+          "sum": -71.32
+        }
+      },
+      "index": {
+        "end": "2026-04-01",
+        "freq": "QS-OCT",
+        "len": 226,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        226,
+        5
+      ],
+      "type": "DataFrame"
+    },
+    "usrec": {
+      "columns": [
+        "USREC"
+      ],
+      "data": {
+        "USREC": {
+          "count": 678,
+          "first": 1.0,
+          "first_valid": "1970-01-01",
+          "kind": "f",
+          "last": 0.0,
+          "last_valid": "2026-06-01",
+          "max": 1.0,
+          "min": 0.0,
+          "sum": 92.0
+        }
+      },
+      "index": {
+        "end": "2026-06-01",
+        "freq": "MS",
+        "len": 678,
+        "monotonic_increasing": true,
+        "name": "Date",
+        "start": "1970-01-01",
+        "type": "DatetimeIndex",
+        "unique": true
+      },
+      "shape": [
+        678,
+        1
+      ],
+      "type": "DataFrame"
+    }
+  },
+  "service": "LoanSurveyFredService"
+}
