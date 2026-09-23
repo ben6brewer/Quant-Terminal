@@ -1,0 +1,12 @@
+[
+  {
+    "name": "_QT_TEST_model",
+    "key": "custom_qt_test_model",
+    "factors": [
+      "Mkt-RF",
+      "SMB",
+      "HML",
+      "UMD"
+    ]
+  }
+]

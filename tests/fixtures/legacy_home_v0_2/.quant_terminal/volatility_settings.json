@@ -1,0 +1,19 @@
+{
+  "show_vix": true,
+  "show_3m_vol": false,
+  "show_oil_vol": true,
+  "show_nasdaq_vol": false,
+  "show_russell_vol": false,
+  "show_djia_vol": false,
+  "show_em_vol": false,
+  "show_move": false,
+  "show_recession_bands": false,
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "show_thresholds": true,
+  "threshold_1": 25,
+  "threshold_2": 30,
+  "lookback": "10Y"
+}

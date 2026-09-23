@@ -1,0 +1,12 @@
+{
+  "show_total_is": true,
+  "show_retail_is": true,
+  "show_mfg_is": true,
+  "show_wholesale_is": false,
+  "show_recession_bands": false,
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "10Y"
+}

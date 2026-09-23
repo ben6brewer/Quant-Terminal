@@ -1,0 +1,15 @@
+{
+  "view_mode": "YoY %",
+  "data_mode": "Nominal",
+  "show_pce": true,
+  "show_investment": true,
+  "show_government": true,
+  "show_exports": true,
+  "show_imports": false,
+  "show_recession_bands": false,
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "20Y"
+}

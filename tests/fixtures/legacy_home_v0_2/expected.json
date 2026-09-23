@@ -1,0 +1,1831 @@
+{
+  "app_version": "0.2.0",
+  "custom_factor_models": {
+    "custom_qt_test_model": {
+      "factors": [
+        "Mkt-RF",
+        "SMB",
+        "HML",
+        "UMD"
+      ],
+      "name": "_QT_TEST_model"
+    }
+  },
+  "custom_imports": {
+    "_QT_TEST_series": {
+      "asset_class": "Alternatives",
+      "end_date": "2026-05-31",
+      "frequency": "monthly",
+      "returns_first": -0.011684,
+      "returns_last": 0.04005,
+      "returns_sum": 1.076525,
+      "row_count": 125,
+      "source_filename": "_QT_TEST_series.csv",
+      "start_date": "2016-01-31",
+      "ticker": "[Custom] _QT_TEST_series"
+    }
+  },
+  "favorites": [
+    "charts",
+    "correlation_matrix",
+    "covariance_matrix",
+    "cpi",
+    "demographics",
+    "housing_permits",
+    "housing_starts",
+    "market_concentration",
+    "portfolio_construction",
+    "recession_probability",
+    "rolling_covariance",
+    "sahm_rule",
+    "unemployment_age",
+    "yields"
+  ],
+  "files": [
+    {
+      "path": "analysis_settings.json",
+      "size": 655
+    },
+    {
+      "path": "asset_class_returns_settings.json",
+      "size": 117
+    },
+    {
+      "path": "bank_lending_settings.json",
+      "size": 270
+    },
+    {
+      "path": "cache/.data_source_version",
+      "size": 8
+    },
+    {
+      "path": "cache/fred/.fred_cache_version",
+      "size": 1
+    },
+    {
+      "path": "cache/fred/housing_monthly.parquet",
+      "size": 33984
+    },
+    {
+      "path": "cache/fred/recession_monthly.parquet",
+      "size": 23858
+    },
+    {
+      "path": "cache/fred/unemployment_age_monthly.parquet",
+      "size": 56055
+    },
+    {
+      "path": "chart_settings.json",
+      "size": 298
+    },
+    {
+      "path": "commercial_real_estate_settings.json",
+      "size": 222
+    },
+    {
+      "path": "consumer_credit_settings.json",
+      "size": 194
+    },
+    {
+      "path": "consumer_sentiment_settings.json",
+      "size": 170
+    },
+    {
+      "path": "corporate_spreads_settings.json",
+      "size": 232
+    },
+    {
+      "path": "cpi_settings.json",
+      "size": 267
+    },
+    {
+      "path": "crude_oil_settings.json",
+      "size": 239
+    },
+    {
+      "path": "currency_settings.json",
+      "size": 255
+    },
+    {
+      "path": "custom_data/metadata.json",
+      "size": 364
+    },
+    {
+      "path": "custom_data/series/_QT_TEST_series.parquet",
+      "size": 4302
+    },
+    {
+      "path": "custom_factor_models.json",
+      "size": 164
+    },
+    {
+      "path": "custom_indicators.json",
+      "size": 3400
+    },
+    {
+      "path": "delinquency_rates_settings.json",
+      "size": 170
+    },
+    {
+      "path": "demographics_settings.json",
+      "size": 249
+    },
+    {
+      "path": "distribution_settings.json",
+      "size": 1969
+    },
+    {
+      "path": "durable_goods_settings.json",
+      "size": 194
+    },
+    {
+      "path": "energy_production_settings.json",
+      "size": 239
+    },
+    {
+      "path": "factor_models_settings.json",
+      "size": 508
+    },
+    {
+      "path": "favorites.json",
+      "size": 349
+    },
+    {
+      "path": "fed_balance_sheet_settings.json",
+      "size": 320
+    },
+    {
+      "path": "fed_funds_rate_settings.json",
+      "size": 175
+    },
+    {
+      "path": "financial_conditions_settings.json",
+      "size": 301
+    },
+    {
+      "path": "financial_stress_settings.json",
+      "size": 217
+    },
+    {
+      "path": "gdp_settings.json",
+      "size": 349
+    },
+    {
+      "path": "government_debt_settings.json",
+      "size": 194
+    },
+    {
+      "path": "home_prices_settings.json",
+      "size": 251
+    },
+    {
+      "path": "home_sales_settings.json",
+      "size": 253
+    },
+    {
+      "path": "household_debt_settings.json",
+      "size": 201
+    },
+    {
+      "path": "household_wealth_settings.json",
+      "size": 170
+    },
+    {
+      "path": "housing_permits_settings.json",
+      "size": 252
+    },
+    {
+      "path": "housing_starts_settings.json",
+      "size": 237
+    },
+    {
+      "path": "housing_supply_settings.json",
+      "size": 231
+    },
+    {
+      "path": "income_inequality_settings.json",
+      "size": 254
+    },
+    {
+      "path": "industrial_production_settings.json",
+      "size": 268
+    },
+    {
+      "path": "inflation_expectations_settings.json",
+      "size": 168
+    },
+    {
+      "path": "jolts_settings.json",
+      "size": 257
+    },
+    {
+      "path": "labor_claims_settings.json",
+      "size": 196
+    },
+    {
+      "path": "labor_market_overview_settings.json",
+      "size": 191
+    },
+    {
+      "path": "loan_survey_settings.json",
+      "size": 338
+    },
+    {
+      "path": "metals_settings.json",
+      "size": 282
+    },
+    {
+      "path": "money_supply_settings.json",
+      "size": 235
+    },
+    {
+      "path": "money_velocity_settings.json",
+      "size": 146
+    },
+    {
+      "path": "monte_carlo_settings.json",
+      "size": 1075
+    },
+    {
+      "path": "monthly_returns_settings.json",
+      "size": 97
+    },
+    {
+      "path": "mortgage_rates_settings.json",
+      "size": 170
+    },
+    {
+      "path": "natural_gas_settings.json",
+      "size": 194
+    },
+    {
+      "path": "ols_regression_settings.json",
+      "size": 247
+    },
+    {
+      "path": "payrolls_settings.json",
+      "size": 172
+    },
+    {
+      "path": "pce_settings.json",
+      "size": 250
+    },
+    {
+      "path": "performance_metrics_settings.json",
+      "size": 261
+    },
+    {
+      "path": "personal_income_settings.json",
+      "size": 218
+    },
+    {
+      "path": "plugin_indicator_appearance.json",
+      "size": 280
+    },
+    {
+      "path": "population_settings.json",
+      "size": 276
+    },
+    {
+      "path": "portfolio_settings.json",
+      "size": 77
+    },
+    {
+      "path": "portfolios/_QT_TEST_portfolio.json",
+      "size": 1844
+    },
+    {
+      "path": "portfolios/_QT_TEST_weights.json",
+      "size": 248
+    },
+    {
+      "path": "ppi_settings.json",
+      "size": 254
+    },
+    {
+      "path": "preferences.json",
+      "size": 24
+    },
+    {
+      "path": "productivity_settings.json",
+      "size": 248
+    },
+    {
+      "path": "rate_probability_settings.json",
+      "size": 98
+    },
+    {
+      "path": "real_rates_settings.json",
+      "size": 273
+    },
+    {
+      "path": "recent_portfolios.json",
+      "size": 111
+    },
+    {
+      "path": "recession_probability_settings.json",
+      "size": 146
+    },
+    {
+      "path": "regional_pmi_settings.json",
+      "size": 242
+    },
+    {
+      "path": "reserve_balances_settings.json",
+      "size": 207
+    },
+    {
+      "path": "retail_sales_settings.json",
+      "size": 218
+    },
+    {
+      "path": "risk_analytics_settings.json",
+      "size": 157
+    },
+    {
+      "path": "rolling_settings.json",
+      "size": 339
+    },
+    {
+      "path": "sahm_rule_settings.json",
+      "size": 199
+    },
+    {
+      "path": "savings_rate_settings.json",
+      "size": 146
+    },
+    {
+      "path": "sector_overrides.json",
+      "size": 104
+    },
+    {
+      "path": "stock_heatmap_settings.json",
+      "size": 234
+    },
+    {
+      "path": "student_loans_settings.json",
+      "size": 254
+    },
+    {
+      "path": "supply_chain_settings.json",
+      "size": 277
+    },
+    {
+      "path": "ticker_lists/_QT_TEST_list.json",
+      "size": 151
+    },
+    {
+      "path": "trade_balance_settings.json",
+      "size": 194
+    },
+    {
+      "path": "treasury_settings.json",
+      "size": 392
+    },
+    {
+      "path": "unemployment_age_settings.json",
+      "size": 235
+    },
+    {
+      "path": "vehicle_sales_settings.json",
+      "size": 277
+    },
+    {
+      "path": "volatility_settings.json",
+      "size": 446
+    },
+    {
+      "path": "volume_settings.json",
+      "size": 204
+    },
+    {
+      "path": "wage_growth_settings.json",
+      "size": 235
+    },
+    {
+      "path": "wealth_distribution_settings.json",
+      "size": 288
+    }
+  ],
+  "format": 1,
+  "fred": {
+    "services": {
+      "HousingFredService": {
+        "cache_file": "housing_monthly.parquet",
+        "columns": [
+          "5+ Units",
+          "SF Permits",
+          "Single-Family",
+          "Total Permits",
+          "Total Starts",
+          "USREC"
+        ],
+        "first_date": "1970-01-01",
+        "last_date": "2026-06-01",
+        "output_keys": [
+          "permits",
+          "starts",
+          "usrec"
+        ],
+        "rows": 678
+      },
+      "RecessionFredService": {
+        "cache_file": "recession_monthly.parquet",
+        "columns": [
+          "CFNAI",
+          "CFNAI-MA3",
+          "Recession Prob",
+          "Sahm Rule",
+          "USREC"
+        ],
+        "first_date": "1970-01-01",
+        "last_date": "2026-06-01",
+        "output_keys": [
+          "leading",
+          "recession",
+          "usrec"
+        ],
+        "rows": 678
+      },
+      "UnemploymentAgeService": {
+        "cache_file": "unemployment_age_monthly.parquet",
+        "columns": [
+          "16+",
+          "16-17",
+          "16-19",
+          "18-19",
+          "20-24",
+          "25+",
+          "25-34",
+          "35-44",
+          "45-54",
+          "55-64",
+          "65+",
+          "USREC"
+        ],
+        "first_date": "1970-01-01",
+        "last_date": "2026-06-01",
+        "output_keys": [
+          "rates",
+          "usrec"
+        ],
+        "rows": 678
+      }
+    },
+    "version": "2"
+  },
+  "generated_from": "ac1fc8396cecaad6b1d0b88139399d894586beef",
+  "generator": "tests/upgrade/make_legacy_home_v0_2.py",
+  "indicators": {
+    "migrated_without_per_line_appearance": [
+      "EMA(21)"
+    ],
+    "oscillators": {
+      "MACD(12,26,9)": {
+        "fast": 12,
+        "kind": "macd",
+        "per_line_appearance": {
+          "MACD": {
+            "color": [
+              0,
+              150,
+              255
+            ],
+            "label": "MACD Line",
+            "line_style": "SolidLine",
+            "line_width": 2,
+            "marker_shape": "o",
+            "marker_size": 10,
+            "visible": true
+          },
+          "MACDh": {
+            "color": [
+              150,
+              150,
+              150
+            ],
+            "label": "Histogram",
+            "line_style": "SolidLine",
+            "line_width": 2,
+            "marker_shape": "o",
+            "marker_size": 10,
+            "visible": true
+          },
+          "MACDs": {
+            "color": [
+              255,
+              150,
+              0
+            ],
+            "label": "Signal Line",
+            "line_style": "SolidLine",
+            "line_width": 2,
+            "marker_shape": "o",
+            "marker_size": 10,
+            "visible": true
+          }
+        },
+        "signal": 9,
+        "slow": 26
+      },
+      "RSI(14)": {
+        "kind": "rsi",
+        "length": 14,
+        "per_line_appearance": {
+          "RSI": {
+            "color": [
+              150,
+              0,
+              255
+            ],
+            "label": "RSI",
+            "line_style": "DashLine",
+            "line_width": 2,
+            "marker_shape": "o",
+            "marker_size": 10,
+            "visible": true
+          }
+        }
+      }
+    },
+    "overlays": {
+      "BB(20,2.0)": {
+        "kind": "bbands",
+        "length": 20,
+        "per_line_appearance": {
+          "BB_Lower": {
+            "color": [
+              100,
+              255,
+              100
+            ],
+            "label": "Lower Band",
+            "line_style": "DashLine",
+            "line_width": 2,
+            "marker_shape": "o",
+            "marker_size": 10,
+            "visible": true
+          },
+          "BB_Middle": {
+            "color": [
+              255,
+              255,
+              100
+            ],
+            "label": "Middle Band",
+            "line_style": "SolidLine",
+            "line_width": 2,
+            "marker_shape": "o",
+            "marker_size": 10,
+            "visible": false
+          },
+          "BB_Upper": {
+            "color": [
+              255,
+              100,
+              100
+            ],
+            "label": "Upper Band",
+            "line_style": "DashLine",
+            "line_width": 2,
+            "marker_shape": "o",
+            "marker_size": 10,
+            "visible": true
+          }
+        },
+        "std": 2.0
+      },
+      "EMA(21)": {
+        "kind": "ema",
+        "length": 21
+      },
+      "SMA(50)": {
+        "kind": "sma",
+        "length": 50,
+        "per_line_appearance": {
+          "SMA": {
+            "color": [
+              255,
+              215,
+              0
+            ],
+            "label": "SMA",
+            "line_style": "SolidLine",
+            "line_width": 3,
+            "marker_shape": "o",
+            "marker_size": 10,
+            "visible": true
+          }
+        }
+      }
+    },
+    "plugin_appearance": {
+      "Death/Golden Cross": {
+        "SMA50": {
+          "color": [
+            255,
+            0,
+            255
+          ],
+          "label": "SMA50",
+          "line_style": "DotLine",
+          "line_width": 4,
+          "marker_shape": "o",
+          "marker_size": 10,
+          "visible": true
+        }
+      }
+    },
+    "plugin_columns": {
+      "Death/Golden Cross": [
+        "SMA50",
+        "SMA200",
+        "Golden_Cross",
+        "Death_Cross"
+      ]
+    },
+    "volume": {
+      "display_type": "line",
+      "line_color": [
+        200,
+        200,
+        50
+      ],
+      "line_width": 3,
+      "up_color": [
+        0,
+        180,
+        90
+      ]
+    }
+  },
+  "portfolios": {
+    "_QT_TEST_portfolio": {
+      "avg_cost_basis": {
+        "AAPL": 185.64666666666665,
+        "AGG": 97.1,
+        "SPY": 421.22428571428566
+      },
+      "quantities": {
+        "AAPL": 150.0,
+        "AGG": 200.0,
+        "SPY": 70.0
+      },
+      "tickers": [
+        "SPY",
+        "AAPL",
+        "AGG"
+      ],
+      "transaction_count": 6,
+      "transactions": [
+        {
+          "date": "2024-01-02",
+          "entry_price": 1.0,
+          "fees": 0.0,
+          "notes": "_QT_TEST_ deposit",
+          "quantity": 100000.0,
+          "sequence": 0,
+          "ticker": "FREE CASH",
+          "transaction_type": "Buy"
+        },
+        {
+          "date": "2024-01-02",
+          "entry_price": 472.65,
+          "fees": 1.0,
+          "notes": "",
+          "quantity": 100.0,
+          "sequence": 1,
+          "ticker": "SPY",
+          "transaction_type": "Buy"
+        },
+        {
+          "date": "2024-01-02",
+          "entry_price": 185.64,
+          "fees": 1.0,
+          "notes": "",
+          "quantity": 150.0,
+          "sequence": 2,
+          "ticker": "AAPL",
+          "transaction_type": "Buy"
+        },
+        {
+          "date": "2024-03-15",
+          "entry_price": 97.1,
+          "fees": 0.0,
+          "notes": "",
+          "quantity": 200.0,
+          "sequence": 0,
+          "ticker": "AGG",
+          "transaction_type": "Buy"
+        },
+        {
+          "date": "2025-06-02",
+          "entry_price": 592.71,
+          "fees": 1.0,
+          "notes": "trim",
+          "quantity": 30.0,
+          "sequence": 0,
+          "ticker": "SPY",
+          "transaction_type": "Sell"
+        },
+        {
+          "date": "2025-06-02",
+          "entry_price": 1.0,
+          "fees": 0.0,
+          "notes": "_QT_TEST_ withdrawal",
+          "quantity": 5000.0,
+          "sequence": 1,
+          "ticker": "FREE CASH",
+          "transaction_type": "Sell"
+        }
+      ],
+      "type": "transaction"
+    },
+    "_QT_TEST_weights": {
+      "type": "weights",
+      "weights": {
+        "AGG": 0.3,
+        "SPY": 0.5,
+        "[Custom] _QT_TEST_series": 0.2
+      }
+    }
+  },
+  "preferences": {
+    "theme": "light"
+  },
+  "recent_portfolios": [
+    "_QT_TEST_portfolio",
+    "_QT_TEST_weights"
+  ],
+  "sector_overrides": {
+    "_QT_TEST_TKR": {
+      "industry": "Software - Infrastructure",
+      "sector": "Technology"
+    }
+  },
+  "settings": {
+    "asset_class_returns": {
+      "file": "asset_class_returns_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "cagr_years": 10,
+        "decimals": 2,
+        "label_mode": "ticker",
+        "show_cagr": false
+      }
+    },
+    "bank_lending": {
+      "file": "bank_lending_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_consumer": false,
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "charts": {
+      "file": "chart_settings.json",
+      "manager": "ChartSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "candle_down_color": [
+          220,
+          40,
+          90
+        ],
+        "candle_up_color": [
+          0,
+          200,
+          120
+        ],
+        "line_style": "DashLine",
+        "line_width": 3,
+        "show_price_label": false
+      }
+    },
+    "commercial_real_estate": {
+      "file": "commercial_real_estate_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "consumer_credit": {
+      "file": "consumer_credit_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "consumer_sentiment": {
+      "file": "consumer_sentiment_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "corporate_spreads": {
+      "file": "corporate_spreads_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_hy": false,
+        "show_recession_bands": false
+      }
+    },
+    "correlation_matrix": {
+      "file": "analysis_settings.json",
+      "manager": "AnalysisSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [
+        "efficient_frontier",
+        "covariance_matrix"
+      ],
+      "values": {
+        "corr_decimals": 2,
+        "corr_fixed_color_scale": false,
+        "cov_decimals": 6,
+        "ef_allow_leverage": false,
+        "ef_colorscale": "Viridis",
+        "ef_show_cml": false,
+        "ef_show_indifference_curve": false,
+        "lookback_days": 1095,
+        "matrix_colorscale": "Blue-White-Red",
+        "num_simulations": 5000,
+        "periodicity": "weekly",
+        "show_matrix_overlay": false,
+        "tickers": [
+          "AAPL",
+          "MSFT",
+          "NVDA",
+          "JPM",
+          "XOM",
+          "KO"
+        ]
+      }
+    },
+    "covariance_matrix": {
+      "file": "analysis_settings.json",
+      "manager": "AnalysisSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [
+        "efficient_frontier",
+        "correlation_matrix"
+      ],
+      "values": {
+        "corr_decimals": 2,
+        "corr_fixed_color_scale": false,
+        "cov_decimals": 6,
+        "ef_allow_leverage": false,
+        "ef_colorscale": "Viridis",
+        "ef_show_cml": false,
+        "ef_show_indifference_curve": false,
+        "lookback_days": 1095,
+        "matrix_colorscale": "Blue-White-Red",
+        "num_simulations": 5000,
+        "periodicity": "weekly",
+        "show_matrix_overlay": false,
+        "tickers": [
+          "AAPL",
+          "MSFT",
+          "NVDA",
+          "JPM",
+          "XOM",
+          "KO"
+        ]
+      }
+    },
+    "cpi": {
+      "file": "cpi_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "show_breakdown": false,
+        "show_gridlines": false,
+        "show_headline_overlay": false,
+        "show_legend": false
+      }
+    },
+    "crude_oil": {
+      "file": "crude_oil_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_brent": false,
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "currency": {
+      "file": "currency_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "delinquency_rates": {
+      "file": "delinquency_rates_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_crosshair": false,
+        "show_gridlines": false,
+        "show_recession_bands": false
+      }
+    },
+    "demographics": {
+      "file": "demographics_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "demo_series": [
+          "Black",
+          "Hispanic",
+          "Youth (16-24)"
+        ],
+        "lookback": "10Y",
+        "show_legend": false,
+        "show_recession_shading": false
+      }
+    },
+    "distribution_metrics": {
+      "file": "distribution_settings.json",
+      "manager": "DistributionSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "benchmark_show_portfolio_mean": true,
+        "exclude_cash": false,
+        "kde_color": [
+          255,
+          64,
+          64
+        ],
+        "kde_line_style": "DotLine",
+        "show_cdf_view": true,
+        "show_gridlines": true
+      }
+    },
+    "durable_goods": {
+      "file": "durable_goods_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "efficient_frontier": {
+      "file": "analysis_settings.json",
+      "manager": "AnalysisSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [
+        "correlation_matrix",
+        "covariance_matrix"
+      ],
+      "values": {
+        "corr_decimals": 2,
+        "corr_fixed_color_scale": false,
+        "cov_decimals": 6,
+        "ef_allow_leverage": false,
+        "ef_colorscale": "Viridis",
+        "ef_show_cml": false,
+        "ef_show_indifference_curve": false,
+        "lookback_days": 1095,
+        "matrix_colorscale": "Blue-White-Red",
+        "num_simulations": 5000,
+        "periodicity": "weekly",
+        "show_matrix_overlay": false,
+        "tickers": [
+          "AAPL",
+          "MSFT",
+          "NVDA",
+          "JPM",
+          "XOM",
+          "KO"
+        ]
+      }
+    },
+    "energy_production": {
+      "file": "energy_production_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "factor_models": {
+      "file": "factor_models_settings.json",
+      "manager": "FactorSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "confidence_level": 0.99,
+        "frequency": "weekly",
+        "input_mode": "portfolio",
+        "lookback_days": 1095,
+        "model_key": "custom_qt_test_model",
+        "portfolio": "_QT_TEST_portfolio",
+        "show_only_significant": true
+      }
+    },
+    "fed_balance_sheet": {
+      "file": "fed_balance_sheet_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_breakdown": true,
+        "show_gridlines": false,
+        "show_recession_bands": false
+      }
+    },
+    "fed_funds_rate": {
+      "file": "fed_funds_rate_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "show_target_band": false
+      }
+    },
+    "financial_conditions": {
+      "file": "financial_conditions_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_nonfin_leverage": false,
+        "show_recession_bands": false
+      }
+    },
+    "financial_stress": {
+      "file": "financial_stress_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_kcfsi": false,
+        "show_recession_bands": false
+      }
+    },
+    "gdp": {
+      "file": "gdp_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "data_mode": "Nominal",
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_imports": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "government_debt": {
+      "file": "government_debt_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "% GDP"
+      }
+    },
+    "home_prices": {
+      "file": "home_prices_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "home_sales": {
+      "file": "home_sales_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "household_debt": {
+      "file": "household_debt_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "Debt Service"
+      }
+    },
+    "household_wealth": {
+      "file": "household_wealth_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "housing_permits": {
+      "file": "housing_permits_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_crosshair": false,
+        "show_recession_bands": false,
+        "show_sf_permits": false
+      }
+    },
+    "housing_starts": {
+      "file": "housing_starts_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_multi": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "housing_supply": {
+      "file": "housing_supply_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_existing_supply": false,
+        "show_gridlines": false,
+        "show_recession_bands": false
+      }
+    },
+    "income_inequality": {
+      "file": "income_inequality_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "industrial_production": {
+      "file": "industrial_production_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "inflation_expectations": {
+      "file": "inflation_expectations_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_reference_line": false
+      }
+    },
+    "jolts": {
+      "file": "jolts_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "jolts_series": [
+          "Job Openings",
+          "Quits"
+        ],
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_shading": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "labor_claims": {
+      "file": "labor_claims_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_shading": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "labor_market_overview": {
+      "file": "labor_market_overview_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_shading": false,
+        "show_u6": true
+      }
+    },
+    "loan_survey": {
+      "file": "loan_survey_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_auto_loans": false,
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "By Category"
+      }
+    },
+    "metals": {
+      "file": "metals_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_palladium": false,
+        "view_mode": "Raw"
+      }
+    },
+    "money_supply": {
+      "file": "money_supply_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_m1": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "money_velocity": {
+      "file": "money_velocity_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_hover_tooltip": false,
+        "show_recession_bands": false
+      }
+    },
+    "monte_carlo": {
+      "file": "monte_carlo_settings.json",
+      "manager": "MonteCarloSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "band_90_color": [
+          40,
+          120,
+          220
+        ],
+        "benchmark": "SPY",
+        "n_simulations": 5000,
+        "n_years": 3,
+        "portfolio_median_line_style": "DashDotLine",
+        "show_mean": true,
+        "simulation_method": "parametric",
+        "var_confidence_level": 0.99
+      }
+    },
+    "monthly_returns": {
+      "file": "monthly_returns_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "colorscale": "Viridis",
+        "decimals": 1,
+        "show_ytd": false,
+        "use_gradient": false
+      }
+    },
+    "mortgage_rates": {
+      "file": "mortgage_rates_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_legend": false,
+        "show_recession_bands": false
+      }
+    },
+    "natural_gas": {
+      "file": "natural_gas_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "ols_regression": {
+      "file": "ols_regression_settings.json",
+      "manager": "OLSSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "data_mode": "log_returns",
+        "frequency": "weekly",
+        "lookback_days": 1825,
+        "show_equation": false,
+        "ticker_x": "SPY",
+        "ticker_y": "QQQ"
+      }
+    },
+    "payrolls": {
+      "file": "payrolls_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_legend": false,
+        "show_recession_shading": false
+      }
+    },
+    "pce": {
+      "file": "pce_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_core_pce": false,
+        "show_gridlines": false,
+        "show_recession_shading": true
+      }
+    },
+    "performance_metrics": {
+      "file": "performance_metrics_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "custom_period_enabled": true,
+        "custom_period_years": 3.0,
+        "decimal_places": 3,
+        "manual_risk_free_rate": 0.042,
+        "risk_free_source": "manual",
+        "show_ytd": false
+      }
+    },
+    "personal_income": {
+      "file": "personal_income_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "data_mode": "Real",
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "population": {
+      "file": "population_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "portfolio_construction": {
+      "file": "portfolio_settings.json",
+      "manager": "PortfolioSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "hide_free_cash_summary": true,
+        "highlight_editable_fields": false
+      }
+    },
+    "ppi": {
+      "file": "ppi_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_ppi_energy": false
+      }
+    },
+    "productivity": {
+      "file": "productivity_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_real_comp": false,
+        "show_recession_bands": false
+      }
+    },
+    "rate_probability": {
+      "file": "rate_probability_settings.json",
+      "manager": "RateProbabilitySettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "show_futures_table": false,
+        "show_gridlines": false
+      }
+    },
+    "real_rates": {
+      "file": "real_rates_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "show_tips_30y": false
+      }
+    },
+    "recession_probability": {
+      "file": "recession_probability_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_crosshair": false,
+        "show_hover_tooltip": false,
+        "show_recession_bands": false
+      }
+    },
+    "regional_pmi": {
+      "file": "regional_pmi_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_dallas": false,
+        "show_gridlines": false,
+        "show_recession_bands": false
+      }
+    },
+    "reserve_balances": {
+      "file": "reserve_balances_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "show_total_assets_overlay": true
+      }
+    },
+    "retail_sales": {
+      "file": "retail_sales_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "data_mode": "Real",
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "risk_analytics": {
+      "file": "risk_analytics_settings.json",
+      "manager": "RiskAnalyticsSettingsManager",
+      "session_only_reverts_to_default": [
+        "lookback_days",
+        "portfolio_universe_sectors"
+      ],
+      "shared_with": [],
+      "values": {
+        "collapsed_sectors": [
+          "Technology",
+          "Energy"
+        ],
+        "decimal_places": 1,
+        "default_benchmark": "QQQ",
+        "show_currency_factor": false
+      }
+    },
+    "rolling_correlation": {
+      "file": "rolling_settings.json",
+      "manager": "RollingSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [
+        "rolling_covariance"
+      ],
+      "values": {
+        "line_color": [
+          255,
+          128,
+          0
+        ],
+        "line_style": "DashLine",
+        "line_width": 3,
+        "lookback_days": 1825,
+        "rolling_window": 126,
+        "show_reference_lines": false,
+        "ticker1": "SPY",
+        "ticker2": "TLT"
+      }
+    },
+    "rolling_covariance": {
+      "file": "rolling_settings.json",
+      "manager": "RollingSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [
+        "rolling_correlation"
+      ],
+      "values": {
+        "line_color": [
+          255,
+          128,
+          0
+        ],
+        "line_style": "DashLine",
+        "line_width": 3,
+        "lookback_days": 1825,
+        "rolling_window": 126,
+        "show_reference_lines": false,
+        "ticker1": "SPY",
+        "ticker2": "TLT"
+      }
+    },
+    "sahm_rule": {
+      "file": "sahm_rule_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_threshold": false,
+        "threshold_value": 0.6
+      }
+    },
+    "savings_rate": {
+      "file": "savings_rate_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_crosshair": false,
+        "show_gridlines": false,
+        "show_recession_bands": false
+      }
+    },
+    "stock_heatmap": {
+      "file": "stock_heatmap_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "color_scale": 5.0,
+        "lookback": "1M",
+        "show_logo": false,
+        "sizing_mode": "Equal Weight",
+        "view_mode": "Flat"
+      }
+    },
+    "student_loans": {
+      "file": "student_loans_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "supply_chain": {
+      "file": "supply_chain_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "show_wholesale_is": false
+      }
+    },
+    "trade_balance": {
+      "file": "trade_balance_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "20Y",
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "unemployment_age": {
+      "file": "unemployment_age_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "age_series": [
+          "16-19",
+          "20-24",
+          "65+"
+        ],
+        "lookback": "Max",
+        "show_gridlines": false,
+        "show_hover_tooltip": false
+      }
+    },
+    "vehicle_sales": {
+      "file": "vehicle_sales_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_heavy_trucks": false,
+        "show_recession_bands": false,
+        "view_mode": "YoY %"
+      }
+    },
+    "volatility": {
+      "file": "volatility_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_gridlines": false,
+        "show_move": false,
+        "show_oil_vol": true,
+        "show_recession_bands": false,
+        "threshold_1": 25
+      }
+    },
+    "wage_growth": {
+      "file": "wage_growth_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_eci": false,
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "Raw"
+      }
+    },
+    "wealth_distribution": {
+      "file": "wealth_distribution_settings.json",
+      "manager": "GenericSettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "lookback": "10Y",
+        "show_bottom50": false,
+        "show_gridlines": false,
+        "show_recession_bands": false,
+        "view_mode": "Line"
+      }
+    },
+    "yields": {
+      "file": "treasury_settings.json",
+      "manager": "TreasurySettingsManager",
+      "session_only_reverts_to_default": [],
+      "shared_with": [],
+      "values": {
+        "line_color": [
+          255,
+          128,
+          0
+        ],
+        "line_style": "DotLine",
+        "line_width": 3,
+        "rate_series": [
+          "2Y",
+          "10Y",
+          "30Y"
+        ],
+        "show_fed_funds_rate": true,
+        "show_inversion_shading": false
+      }
+    }
+  },
+  "ticker_lists": {
+    "_QT_TEST_list": [
+      "AAPL",
+      "MSFT",
+      "SPY",
+      "TLT"
+    ]
+  },
+  "total_bytes": 145581
+}

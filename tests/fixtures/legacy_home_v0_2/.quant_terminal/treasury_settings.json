@@ -1,0 +1,22 @@
+{
+  "show_gridlines": true,
+  "show_crosshair": true,
+  "show_value_label": true,
+  "show_date_label": true,
+  "show_fed_funds": true,
+  "rate_series": [
+    "2Y",
+    "10Y",
+    "30Y"
+  ],
+  "show_fed_funds_rate": true,
+  "show_inversion_shading": false,
+  "show_zero_line": true,
+  "line_color": [
+    255,
+    128,
+    0
+  ],
+  "line_width": 3,
+  "line_style": "dot"
+}

@@ -1,0 +1,8 @@
+{
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": false,
+  "show_hover_tooltip": true,
+  "show_recession_shading": false,
+  "lookback": "10Y"
+}

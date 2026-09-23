@@ -1,0 +1,56 @@
+{
+  "simulation_method": "parametric",
+  "n_simulations": 5000,
+  "n_years": 3,
+  "block_size": 21,
+  "initial_value": 100.0,
+  "show_band_90": true,
+  "show_band_50": true,
+  "show_median": true,
+  "show_mean": true,
+  "band_90_color": [
+    40,
+    120,
+    220
+  ],
+  "band_50_color": [
+    50,
+    50,
+    200
+  ],
+  "median_color": [
+    255,
+    255,
+    255
+  ],
+  "mean_color": [
+    255,
+    200,
+    0
+  ],
+  "benchmark": "SPY",
+  "benchmark_is_portfolio": false,
+  "show_gridlines": false,
+  "show_terminal_histogram": true,
+  "show_var_cvar": true,
+  "var_confidence_level": 0.99,
+  "show_crosshair": true,
+  "show_median_label": true,
+  "chart_background": null,
+  "portfolio_median_color": [
+    255,
+    255,
+    255
+  ],
+  "portfolio_median_line_style": "dashdot",
+  "portfolio_median_line_width": 2,
+  "show_portfolio_median": true,
+  "benchmark_median_color": [
+    255,
+    165,
+    0
+  ],
+  "benchmark_median_line_style": "solid",
+  "benchmark_median_line_width": 2,
+  "show_benchmark_median": true
+}

@@ -1,0 +1,19 @@
+{
+  "input_mode": "portfolio",
+  "ticker": "",
+  "portfolio": "_QT_TEST_portfolio",
+  "model_key": "custom_qt_test_model",
+  "frequency": "weekly",
+  "lookback_days": 1095,
+  "custom_start_date": null,
+  "custom_end_date": null,
+  "show_goodness_of_fit": true,
+  "show_diagnostics": true,
+  "show_col_coefficient": true,
+  "show_col_std_error": true,
+  "show_col_t_stat": true,
+  "show_col_p_value": true,
+  "show_col_ci": true,
+  "show_only_significant": true,
+  "confidence_level": 0.99
+}

@@ -1,0 +1,13 @@
+{
+  "show_gridlines": false,
+  "show_crosshair": true,
+  "show_legend": true,
+  "show_hover_tooltip": false,
+  "show_recession_shading": true,
+  "age_series": [
+    "16-19",
+    "20-24",
+    "65+"
+  ],
+  "lookback": "Max"
+}

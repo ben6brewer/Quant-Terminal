@@ -1,0 +1,11 @@
+{
+  "view_mode": "Raw",
+  "show_sf_permits": false,
+  "show_multi_permits": true,
+  "show_recession_bands": false,
+  "show_gridlines": true,
+  "show_crosshair": false,
+  "show_legend": true,
+  "show_hover_tooltip": true,
+  "lookback": "20Y"
+}

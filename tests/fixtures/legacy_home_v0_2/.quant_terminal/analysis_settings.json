@@ -1,0 +1,28 @@
+{
+  "tickers": [
+    "AAPL",
+    "MSFT",
+    "NVDA",
+    "JPM",
+    "XOM",
+    "KO"
+  ],
+  "lookback_days": 1095,
+  "num_simulations": 5000,
+  "corr_decimals": 2,
+  "cov_decimals": 6,
+  "matrix_colorscale": "Blue-White-Red",
+  "corr_fixed_color_scale": false,
+  "show_matrix_overlay": false,
+  "ef_show_gridlines": true,
+  "ef_colorscale": "Viridis",
+  "ef_show_individual_securities": true,
+  "ef_show_frontier": true,
+  "ef_show_cml": false,
+  "ef_show_max_sharpe": true,
+  "ef_show_min_vol": true,
+  "ef_show_max_sortino": true,
+  "ef_show_indifference_curve": false,
+  "ef_allow_leverage": false,
+  "periodicity": "weekly"
+}

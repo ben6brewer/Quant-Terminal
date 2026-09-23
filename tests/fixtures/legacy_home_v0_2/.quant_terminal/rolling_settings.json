@@ -1,0 +1,18 @@
+{
+  "ticker1": "SPY",
+  "ticker2": "TLT",
+  "rolling_window": 126,
+  "lookback_days": 1825,
+  "show_gridlines": true,
+  "show_reference_lines": false,
+  "show_crosshair": true,
+  "show_value_label": true,
+  "show_date_label": true,
+  "line_width": 3,
+  "line_color": [
+    255,
+    128,
+    0
+  ],
+  "line_style": "dash"
+}

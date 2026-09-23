@@ -1,0 +1,162 @@
+{
+  "overlays": {
+    "SMA(50)": {
+      "kind": "sma",
+      "length": 50,
+      "per_line_appearance": {
+        "SMA": {
+          "label": "SMA",
+          "visible": true,
+          "color": [
+            255,
+            215,
+            0
+          ],
+          "line_width": 3,
+          "line_style": "solid",
+          "marker_shape": "o",
+          "marker_size": 10
+        }
+      }
+    },
+    "BB(20,2.0)": {
+      "kind": "bbands",
+      "length": 20,
+      "std": 2.0,
+      "per_line_appearance": {
+        "BB_Upper": {
+          "label": "Upper Band",
+          "visible": true,
+          "color": [
+            255,
+            100,
+            100
+          ],
+          "line_width": 2,
+          "line_style": "dash",
+          "marker_shape": "o",
+          "marker_size": 10
+        },
+        "BB_Middle": {
+          "label": "Middle Band",
+          "visible": false,
+          "color": [
+            255,
+            255,
+            100
+          ],
+          "line_width": 2,
+          "line_style": "solid",
+          "marker_shape": "o",
+          "marker_size": 10
+        },
+        "BB_Lower": {
+          "label": "Lower Band",
+          "visible": true,
+          "color": [
+            100,
+            255,
+            100
+          ],
+          "line_width": 2,
+          "line_style": "dash",
+          "marker_shape": "o",
+          "marker_size": 10
+        }
+      }
+    },
+    "EMA(21)": {
+      "kind": "ema",
+      "length": 21
+    }
+  },
+  "oscillators": {
+    "Volume": {
+      "kind": "volume",
+      "builtin": true,
+      "display_type": "histogram",
+      "up_color": [
+        76,
+        153,
+        0
+      ],
+      "down_color": [
+        200,
+        50,
+        50
+      ],
+      "line_color": [
+        100,
+        100,
+        100
+      ],
+      "line_width": 2
+    },
+    "RSI(14)": {
+      "kind": "rsi",
+      "length": 14,
+      "per_line_appearance": {
+        "RSI": {
+          "label": "RSI",
+          "visible": true,
+          "color": [
+            150,
+            0,
+            255
+          ],
+          "line_width": 2,
+          "line_style": "dash",
+          "marker_shape": "o",
+          "marker_size": 10
+        }
+      }
+    },
+    "MACD(12,26,9)": {
+      "kind": "macd",
+      "fast": 12,
+      "slow": 26,
+      "signal": 9,
+      "per_line_appearance": {
+        "MACD": {
+          "label": "MACD Line",
+          "visible": true,
+          "color": [
+            0,
+            150,
+            255
+          ],
+          "line_width": 2,
+          "line_style": "solid",
+          "marker_shape": "o",
+          "marker_size": 10
+        },
+        "MACDs": {
+          "label": "Signal Line",
+          "visible": true,
+          "color": [
+            255,
+            150,
+            0
+          ],
+          "line_width": 2,
+          "line_style": "solid",
+          "marker_shape": "o",
+          "marker_size": 10
+        },
+        "MACDh": {
+          "label": "Histogram",
+          "visible": true,
+          "color": [
+            150,
+            150,
+            150
+          ],
+          "line_width": 2,
+          "line_style": "solid",
+          "marker_shape": "o",
+          "marker_size": 10
+        }
+      }
+    }
+  }
+}

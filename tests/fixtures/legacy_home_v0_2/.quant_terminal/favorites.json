@@ -1,0 +1,18 @@
+{
+  "favorites": [
+    "cpi",
+    "rolling_covariance",
+    "sahm_rule",
+    "covariance_matrix",
+    "yields",
+    "recession_probability",
+    "housing_permits",
+    "charts",
+    "demographics",
+    "unemployment_age",
+    "housing_starts",
+    "market_concentration",
+    "correlation_matrix",
+    "portfolio_construction"
+  ]
+}
