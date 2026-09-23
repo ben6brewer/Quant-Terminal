@@ -1,0 +1,1618 @@
+{
+  "country_contributions": {
+    "Non-US": {
+      "active_weight": -25.0,
+      "benchmark_weight": 35.0,
+      "portfolio_weight": 10.0,
+      "securities": [
+        {
+          "active_weight": -35.0,
+          "benchmark_weight": 35.0,
+          "country": "Ireland",
+          "name": "_QT_TEST_ECHO Holdings",
+          "portfolio_weight": 0.0,
+          "ticker": "_QT_TEST_ECHO"
+        },
+        {
+          "active_weight": 10.0,
+          "benchmark_weight": 0.0,
+          "country": "Netherlands",
+          "name": "_QT_TEST_DELTA Holdings",
+          "portfolio_weight": 10.0,
+          "ticker": "_QT_TEST_DELTA"
+        }
+      ]
+    },
+    "US": {
+      "active_weight": 25.0,
+      "benchmark_weight": 65.0,
+      "portfolio_weight": 90.0,
+      "securities": [
+        {
+          "active_weight": -20.0,
+          "benchmark_weight": 20.0,
+          "country": "United States",
+          "name": "_QT_TEST_FOXTROT Holdings",
+          "portfolio_weight": 0.0,
+          "ticker": "_QT_TEST_FOXTROT"
+        },
+        {
+          "active_weight": 18.0,
+          "benchmark_weight": 12.0,
+          "country": "United States",
+          "name": "_QT_TEST_BRAVO Holdings",
+          "portfolio_weight": 30.0,
+          "ticker": "_QT_TEST_BRAVO"
+        },
+        {
+          "active_weight": 15.0,
+          "benchmark_weight": 25.0,
+          "country": "United States",
+          "name": "_QT_TEST_ALPHA Holdings",
+          "portfolio_weight": 40.0,
+          "ticker": "_QT_TEST_ALPHA"
+        },
+        {
+          "active_weight": 12.0,
+          "benchmark_weight": 8.0,
+          "country": "United States",
+          "name": "_QT_TEST_CHARLIE Holdings",
+          "portfolio_weight": 20.0,
+          "ticker": "_QT_TEST_CHARLIE"
+        }
+      ]
+    }
+  },
+  "country_contributions_metadata_only": {
+    "Non-US": {
+      "active_weight": 10.0,
+      "benchmark_weight": 0.0,
+      "portfolio_weight": 10.0,
+      "securities": [
+        {
+          "active_weight": 10.0,
+          "benchmark_weight": 0.0,
+          "country": "Netherlands",
+          "name": "_QT_TEST_DELTA Holdings",
+          "portfolio_weight": 10.0,
+          "ticker": "_QT_TEST_DELTA"
+        }
+      ]
+    },
+    "US": {
+      "active_weight": -10.0,
+      "benchmark_weight": 100.0,
+      "portfolio_weight": 90.0,
+      "securities": [
+        {
+          "active_weight": -35.0,
+          "benchmark_weight": 35.0,
+          "country": "United States",
+          "name": "_QT_TEST_ECHO Holdings",
+          "portfolio_weight": 0.0,
+          "ticker": "_QT_TEST_ECHO"
+        },
+        {
+          "active_weight": -20.0,
+          "benchmark_weight": 20.0,
+          "country": "United States",
+          "name": "_QT_TEST_FOXTROT Holdings",
+          "portfolio_weight": 0.0,
+          "ticker": "_QT_TEST_FOXTROT"
+        },
+        {
+          "active_weight": 18.0,
+          "benchmark_weight": 12.0,
+          "country": "United States",
+          "name": "_QT_TEST_BRAVO Holdings",
+          "portfolio_weight": 30.0,
+          "ticker": "_QT_TEST_BRAVO"
+        },
+        {
+          "active_weight": 15.0,
+          "benchmark_weight": 25.0,
+          "country": "United States",
+          "name": "_QT_TEST_ALPHA Holdings",
+          "portfolio_weight": 40.0,
+          "ticker": "_QT_TEST_ALPHA"
+        },
+        {
+          "active_weight": 12.0,
+          "benchmark_weight": 8.0,
+          "country": "United States",
+          "name": "_QT_TEST_CHARLIE Holdings",
+          "portfolio_weight": 20.0,
+          "ticker": "_QT_TEST_CHARLIE"
+        }
+      ]
+    }
+  },
+  "ctev_by_group": {
+    "Country": {
+      "active_weight": 10.0,
+      "ctev": 0.22
+    },
+    "Industry": {
+      "active_weight": 110.0,
+      "ctev": 2.47
+    },
+    "Market": {
+      "active_weight": 5.85,
+      "ctev": 0.13
+    },
+    "Sector": {
+      "active_weight": 80.0,
+      "ctev": 1.8
+    },
+    "Style": {
+      "active_weight": 21.75,
+      "ctev": 0.49
+    }
+  },
+  "ctev_by_group_no_active_bets": {
+    "Country": {
+      "active_weight": 0.0,
+      "ctev": 0.51
+    },
+    "Industry": {
+      "active_weight": 0.0,
+      "ctev": 0.77
+    },
+    "Market": {
+      "active_weight": 0.0,
+      "ctev": 1.79
+    },
+    "Sector": {
+      "active_weight": 0.0,
+      "ctev": 0.77
+    },
+    "Style": {
+      "active_weight": 0.0,
+      "ctev": 1.28
+    }
+  },
+  "ctev_by_group_zero_te": {
+    "Country": {
+      "active_weight": 0.0,
+      "ctev": 0.0
+    },
+    "Industry": {
+      "active_weight": 0.0,
+      "ctev": 0.0
+    },
+    "Market": {
+      "active_weight": 0.0,
+      "ctev": 0.0
+    },
+    "Sector": {
+      "active_weight": 0.0,
+      "ctev": 0.0
+    },
+    "Style": {
+      "active_weight": 0.0,
+      "ctev": 0.0
+    }
+  },
+  "currency_contributions": {
+    "Non-USD": {
+      "active_weight": 10.0,
+      "benchmark_weight": 0.0,
+      "portfolio_weight": 10.0,
+      "securities": [
+        {
+          "active_weight": 10.0,
+          "benchmark_weight": 0.0,
+          "currency": "EUR",
+          "name": "_QT_TEST_DELTA Holdings",
+          "portfolio_weight": 10.0,
+          "ticker": "_QT_TEST_DELTA"
+        }
+      ]
+    },
+    "USD": {
+      "active_weight": -10.0,
+      "benchmark_weight": 100.0,
+      "portfolio_weight": 90.0,
+      "securities": [
+        {
+          "active_weight": -35.0,
+          "benchmark_weight": 35.0,
+          "currency": "USD",
+          "name": "_QT_TEST_ECHO Holdings",
+          "portfolio_weight": 0.0,
+          "ticker": "_QT_TEST_ECHO"
+        },
+        {
+          "active_weight": -20.0,
+          "benchmark_weight": 20.0,
+          "currency": "USD",
+          "name": "_QT_TEST_FOXTROT Holdings",
+          "portfolio_weight": 0.0,
+          "ticker": "_QT_TEST_FOXTROT"
+        },
+        {
+          "active_weight": 18.0,
+          "benchmark_weight": 12.0,
+          "currency": "USD",
+          "name": "_QT_TEST_BRAVO Holdings",
+          "portfolio_weight": 30.0,
+          "ticker": "_QT_TEST_BRAVO"
+        },
+        {
+          "active_weight": 15.0,
+          "benchmark_weight": 25.0,
+          "currency": "USD",
+          "name": "_QT_TEST_ALPHA Holdings",
+          "portfolio_weight": 40.0,
+          "ticker": "_QT_TEST_ALPHA"
+        },
+        {
+          "active_weight": 12.0,
+          "benchmark_weight": 8.0,
+          "currency": "USD",
+          "name": "_QT_TEST_CHARLIE Holdings",
+          "portfolio_weight": 20.0,
+          "ticker": "_QT_TEST_CHARLIE"
+        }
+      ]
+    }
+  },
+  "currency_contributions_metadata_only": {
+    "Non-USD": {
+      "active_weight": 10.0,
+      "benchmark_weight": 0.0,
+      "portfolio_weight": 10.0,
+      "securities": [
+        {
+          "active_weight": 10.0,
+          "benchmark_weight": 0.0,
+          "currency": "EUR",
+          "name": "_QT_TEST_DELTA Holdings",
+          "portfolio_weight": 10.0,
+          "ticker": "_QT_TEST_DELTA"
+        }
+      ]
+    },
+    "USD": {
+      "active_weight": -10.0,
+      "benchmark_weight": 100.0,
+      "portfolio_weight": 90.0,
+      "securities": [
+        {
+          "active_weight": -35.0,
+          "benchmark_weight": 35.0,
+          "currency": "USD",
+          "name": "_QT_TEST_ECHO Holdings",
+          "portfolio_weight": 0.0,
+          "ticker": "_QT_TEST_ECHO"
+        },
+        {
+          "active_weight": -20.0,
+          "benchmark_weight": 20.0,
+          "currency": "USD",
+          "name": "_QT_TEST_FOXTROT Holdings",
+          "portfolio_weight": 0.0,
+          "ticker": "_QT_TEST_FOXTROT"
+        },
+        {
+          "active_weight": 18.0,
+          "benchmark_weight": 12.0,
+          "currency": "USD",
+          "name": "_QT_TEST_BRAVO Holdings",
+          "portfolio_weight": 30.0,
+          "ticker": "_QT_TEST_BRAVO"
+        },
+        {
+          "active_weight": 15.0,
+          "benchmark_weight": 25.0,
+          "currency": "USD",
+          "name": "_QT_TEST_ALPHA Holdings",
+          "portfolio_weight": 40.0,
+          "ticker": "_QT_TEST_ALPHA"
+        },
+        {
+          "active_weight": 12.0,
+          "benchmark_weight": 8.0,
+          "currency": "USD",
+          "name": "_QT_TEST_CHARLIE Holdings",
+          "portfolio_weight": 20.0,
+          "ticker": "_QT_TEST_CHARLIE"
+        }
+      ]
+    }
+  },
+  "factor_contributions": {
+    "items": {
+      "Investment": {
+        "active_beta": 0.163,
+        "benchmark_beta": 0.119,
+        "ctev": 0.13,
+        "factor_code": "CMA",
+        "portfolio_beta": 0.283,
+        "securities": [
+          {
+            "active_weight": 12.0,
+            "beta": 0.595,
+            "contribution": 7.135,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": 0.296,
+            "contribution": 5.331,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": -20.0,
+            "beta": 0.157,
+            "contribution": -3.147,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": -35.0,
+            "beta": -0.089,
+            "contribution": 3.121,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": 0.144,
+            "contribution": 2.159,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.174,
+            "contribution": 1.741,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Market": {
+        "active_beta": 0.059,
+        "benchmark_beta": 1.003,
+        "ctev": 0.13,
+        "factor_code": "Mkt-RF",
+        "portfolio_beta": 1.062,
+        "securities": [
+          {
+            "active_weight": -35.0,
+            "beta": 0.908,
+            "contribution": -31.784,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": 1.321,
+            "contribution": 19.808,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": -20.0,
+            "beta": 0.821,
+            "contribution": -16.423,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": 0.869,
+            "contribution": 15.645,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": 1.086,
+            "contribution": 13.028,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.558,
+            "contribution": 5.581,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Momentum": {
+        "active_beta": 0.006,
+        "benchmark_beta": 0.029,
+        "ctev": 0.0,
+        "factor_code": "UMD",
+        "portfolio_beta": 0.035,
+        "securities": [
+          {
+            "active_weight": -20.0,
+            "beta": -0.369,
+            "contribution": 7.377,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": -35.0,
+            "beta": 0.208,
+            "contribution": -7.272,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": -0.165,
+            "contribution": -2.972,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": 0.184,
+            "contribution": 2.759,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": 0.053,
+            "contribution": 0.64,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.008,
+            "contribution": 0.079,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Profitability": {
+        "active_beta": -0.051,
+        "benchmark_beta": 0.155,
+        "ctev": 0.04,
+        "factor_code": "RMW",
+        "portfolio_beta": 0.104,
+        "securities": [
+          {
+            "active_weight": -35.0,
+            "beta": 0.235,
+            "contribution": -8.237,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.641,
+            "contribution": 6.415,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": -0.455,
+            "contribution": -5.464,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": 0.243,
+            "contribution": 3.641,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": -20.0,
+            "beta": 0.174,
+            "contribution": -3.478,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": 0.114,
+            "contribution": 2.048,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          }
+        ]
+      },
+      "Size": {
+        "active_beta": -0.121,
+        "benchmark_beta": 0.093,
+        "ctev": 0.09,
+        "factor_code": "SMB",
+        "portfolio_beta": -0.028,
+        "securities": [
+          {
+            "active_weight": -20.0,
+            "beta": 0.416,
+            "contribution": -8.32,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": -0.352,
+            "contribution": -3.522,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": 0.154,
+            "contribution": 2.773,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": -0.133,
+            "contribution": -1.998,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": -35.0,
+            "beta": 0.054,
+            "contribution": -1.894,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": 0.069,
+            "contribution": 0.828,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          }
+        ]
+      },
+      "Value": {
+        "active_beta": 0.297,
+        "benchmark_beta": -0.138,
+        "ctev": 0.23,
+        "factor_code": "HML",
+        "portfolio_beta": 0.16,
+        "securities": [
+          {
+            "active_weight": 18.0,
+            "beta": 0.878,
+            "contribution": 15.803,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": -35.0,
+            "beta": -0.447,
+            "contribution": 15.653,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": -0.555,
+            "contribution": -8.33,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": 0.517,
+            "contribution": 6.207,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.15,
+            "contribution": 1.496,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          },
+          {
+            "active_weight": -20.0,
+            "beta": 0.055,
+            "contribution": -1.098,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          }
+        ]
+      }
+    },
+    "order": [
+      "Value",
+      "Market",
+      "Investment",
+      "Size",
+      "Profitability",
+      "Momentum"
+    ]
+  },
+  "factor_contributions_fallback": {
+    "items": {
+      "Investment": {
+        "active_beta": 0.163,
+        "benchmark_beta": 0.119,
+        "ctev": 0.34,
+        "factor_code": "CMA",
+        "portfolio_beta": 0.283,
+        "securities": [
+          {
+            "active_weight": 12.0,
+            "beta": 0.595,
+            "contribution": 7.135,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": 0.296,
+            "contribution": 5.331,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": -20.0,
+            "beta": 0.157,
+            "contribution": -3.147,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": -35.0,
+            "beta": -0.089,
+            "contribution": 3.121,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": 0.144,
+            "contribution": 2.159,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.174,
+            "contribution": 1.741,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Market": {
+        "active_beta": 0.059,
+        "benchmark_beta": 1.003,
+        "ctev": 0.12,
+        "factor_code": "Mkt-RF",
+        "portfolio_beta": 1.062,
+        "securities": [
+          {
+            "active_weight": -35.0,
+            "beta": 0.908,
+            "contribution": -31.784,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": 1.321,
+            "contribution": 19.808,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": -20.0,
+            "beta": 0.821,
+            "contribution": -16.423,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": 0.869,
+            "contribution": 15.645,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": 1.086,
+            "contribution": 13.028,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.558,
+            "contribution": 5.581,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Momentum": {
+        "active_beta": 0.006,
+        "benchmark_beta": 0.029,
+        "ctev": 0.01,
+        "factor_code": "UMD",
+        "portfolio_beta": 0.035,
+        "securities": [
+          {
+            "active_weight": -20.0,
+            "beta": -0.369,
+            "contribution": 7.377,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": -35.0,
+            "beta": 0.208,
+            "contribution": -7.272,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": -0.165,
+            "contribution": -2.972,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": 0.184,
+            "contribution": 2.759,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": 0.053,
+            "contribution": 0.64,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.008,
+            "contribution": 0.079,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Profitability": {
+        "active_beta": -0.051,
+        "benchmark_beta": 0.155,
+        "ctev": 0.1,
+        "factor_code": "RMW",
+        "portfolio_beta": 0.104,
+        "securities": [
+          {
+            "active_weight": -35.0,
+            "beta": 0.235,
+            "contribution": -8.237,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.641,
+            "contribution": 6.415,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": -0.455,
+            "contribution": -5.464,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": 0.243,
+            "contribution": 3.641,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": -20.0,
+            "beta": 0.174,
+            "contribution": -3.478,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": 0.114,
+            "contribution": 2.048,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          }
+        ]
+      },
+      "Size": {
+        "active_beta": -0.121,
+        "benchmark_beta": 0.093,
+        "ctev": 0.25,
+        "factor_code": "SMB",
+        "portfolio_beta": -0.028,
+        "securities": [
+          {
+            "active_weight": -20.0,
+            "beta": 0.416,
+            "contribution": -8.32,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": -0.352,
+            "contribution": -3.522,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          },
+          {
+            "active_weight": 18.0,
+            "beta": 0.154,
+            "contribution": 2.773,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": -0.133,
+            "contribution": -1.998,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": -35.0,
+            "beta": 0.054,
+            "contribution": -1.894,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": 0.069,
+            "contribution": 0.828,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          }
+        ]
+      },
+      "Value": {
+        "active_beta": 0.297,
+        "benchmark_beta": -0.138,
+        "ctev": 0.61,
+        "factor_code": "HML",
+        "portfolio_beta": 0.16,
+        "securities": [
+          {
+            "active_weight": 18.0,
+            "beta": 0.878,
+            "contribution": 15.803,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "ticker": "_QT_TEST_BRAVO"
+          },
+          {
+            "active_weight": -35.0,
+            "beta": -0.447,
+            "contribution": 15.653,
+            "name": "_QT_TEST_ECHO Holdings",
+            "ticker": "_QT_TEST_ECHO"
+          },
+          {
+            "active_weight": 15.0,
+            "beta": -0.555,
+            "contribution": -8.33,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "ticker": "_QT_TEST_ALPHA"
+          },
+          {
+            "active_weight": 12.0,
+            "beta": 0.517,
+            "contribution": 6.207,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "ticker": "_QT_TEST_CHARLIE"
+          },
+          {
+            "active_weight": 10.0,
+            "beta": 0.15,
+            "contribution": 1.496,
+            "name": "_QT_TEST_DELTA Holdings",
+            "ticker": "_QT_TEST_DELTA"
+          },
+          {
+            "active_weight": -20.0,
+            "beta": 0.055,
+            "contribution": -1.098,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "ticker": "_QT_TEST_FOXTROT"
+          }
+        ]
+      }
+    },
+    "order": [
+      "Value",
+      "Investment",
+      "Size",
+      "Market",
+      "Profitability",
+      "Momentum"
+    ]
+  },
+  "idio_ctev": {
+    "_QT_TEST_ALPHA": 1.5848799,
+    "_QT_TEST_BRAVO": 0.65596068,
+    "_QT_TEST_CHARLIE": 1.3997625,
+    "_QT_TEST_DELTA": 0.10671179,
+    "_QT_TEST_ECHO": 0.20488881,
+    "_QT_TEST_FOXTROT": 0.2227403
+  },
+  "industry_contributions": {
+    "items": {
+      "Banks - Diversified": {
+        "active_weight": 18.0,
+        "benchmark_weight": 12.0,
+        "portfolio_weight": 30.0,
+        "securities": [
+          {
+            "active_weight": 18.0,
+            "benchmark_weight": 12.0,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "portfolio_weight": 30.0,
+            "ticker": "_QT_TEST_BRAVO"
+          }
+        ]
+      },
+      "Drug Manufacturers - General": {
+        "active_weight": 10.0,
+        "benchmark_weight": 0.0,
+        "portfolio_weight": 10.0,
+        "securities": [
+          {
+            "active_weight": 10.0,
+            "benchmark_weight": 0.0,
+            "name": "_QT_TEST_DELTA Holdings",
+            "portfolio_weight": 10.0,
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Internet Content & Information": {
+        "active_weight": -35.0,
+        "benchmark_weight": 35.0,
+        "portfolio_weight": 0.0,
+        "securities": [
+          {
+            "active_weight": -35.0,
+            "benchmark_weight": 35.0,
+            "name": "_QT_TEST_ECHO Holdings",
+            "portfolio_weight": 0.0,
+            "ticker": "_QT_TEST_ECHO"
+          }
+        ]
+      },
+      "Not Classified": {
+        "active_weight": -20.0,
+        "benchmark_weight": 20.0,
+        "portfolio_weight": 0.0,
+        "securities": [
+          {
+            "active_weight": -20.0,
+            "benchmark_weight": 20.0,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "portfolio_weight": 0.0,
+            "ticker": "_QT_TEST_FOXTROT"
+          }
+        ]
+      },
+      "Oil & Gas Integrated": {
+        "active_weight": 12.0,
+        "benchmark_weight": 8.0,
+        "portfolio_weight": 20.0,
+        "securities": [
+          {
+            "active_weight": 12.0,
+            "benchmark_weight": 8.0,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "portfolio_weight": 20.0,
+            "ticker": "_QT_TEST_CHARLIE"
+          }
+        ]
+      },
+      "Software - Infrastructure": {
+        "active_weight": 15.0,
+        "benchmark_weight": 25.0,
+        "portfolio_weight": 40.0,
+        "securities": [
+          {
+            "active_weight": 15.0,
+            "benchmark_weight": 25.0,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "portfolio_weight": 40.0,
+            "ticker": "_QT_TEST_ALPHA"
+          }
+        ]
+      }
+    },
+    "order": [
+      "Internet Content & Information",
+      "Not Classified",
+      "Banks - Diversified",
+      "Software - Infrastructure",
+      "Oil & Gas Integrated",
+      "Drug Manufacturers - General"
+    ]
+  },
+  "portfolio_residuals": {
+    "columns": [
+      "value"
+    ],
+    "data": {
+      "value": {
+        "count": 249,
+        "first": 0.0063193541,
+        "first_valid": "2025-06-02",
+        "kind": "f",
+        "last": 0.003272168,
+        "last_valid": "2026-05-29",
+        "max": 0.013003755,
+        "min": -0.012525475,
+        "sum": 5.8980598e-17
+      }
+    },
+    "index": {
+      "end": "2026-05-29",
+      "freq": null,
+      "len": 249,
+      "monotonic_increasing": true,
+      "name": null,
+      "start": "2025-06-02",
+      "type": "DatetimeIndex",
+      "unique": true
+    },
+    "shape": [
+      249
+    ],
+    "type": "Series"
+  },
+  "sector_contributions": {
+    "items": {
+      "Communication Services": {
+        "active_weight": -35.0,
+        "benchmark_weight": 35.0,
+        "ctev": 2.24,
+        "portfolio_weight": 0.0,
+        "securities": [
+          {
+            "active_weight": -35.0,
+            "benchmark_weight": 35.0,
+            "ctev": 2.2385,
+            "name": "_QT_TEST_ECHO Holdings",
+            "portfolio_weight": 0.0,
+            "ticker": "_QT_TEST_ECHO"
+          }
+        ]
+      },
+      "Energy": {
+        "active_weight": 12.0,
+        "benchmark_weight": 8.0,
+        "ctev": 0.77,
+        "portfolio_weight": 20.0,
+        "securities": [
+          {
+            "active_weight": 12.0,
+            "benchmark_weight": 8.0,
+            "ctev": 0.7675,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "portfolio_weight": 20.0,
+            "ticker": "_QT_TEST_CHARLIE"
+          }
+        ]
+      },
+      "Financial Services": {
+        "active_weight": 18.0,
+        "benchmark_weight": 12.0,
+        "ctev": 1.15,
+        "portfolio_weight": 30.0,
+        "securities": [
+          {
+            "active_weight": 18.0,
+            "benchmark_weight": 12.0,
+            "ctev": 1.1512,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "portfolio_weight": 30.0,
+            "ticker": "_QT_TEST_BRAVO"
+          }
+        ]
+      },
+      "Healthcare": {
+        "active_weight": 10.0,
+        "benchmark_weight": 0.0,
+        "ctev": 0.64,
+        "portfolio_weight": 10.0,
+        "securities": [
+          {
+            "active_weight": 10.0,
+            "benchmark_weight": 0.0,
+            "ctev": 0.6396,
+            "name": "_QT_TEST_DELTA Holdings",
+            "portfolio_weight": 10.0,
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Technology": {
+        "active_weight": -5.0,
+        "benchmark_weight": 45.0,
+        "ctev": 0.32,
+        "portfolio_weight": 40.0,
+        "securities": [
+          {
+            "active_weight": -20.0,
+            "benchmark_weight": 20.0,
+            "ctev": 0.1827,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "portfolio_weight": 0.0,
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": 15.0,
+            "benchmark_weight": 25.0,
+            "ctev": 0.1371,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "portfolio_weight": 40.0,
+            "ticker": "_QT_TEST_ALPHA"
+          }
+        ]
+      }
+    },
+    "order": [
+      "Communication Services",
+      "Financial Services",
+      "Energy",
+      "Healthcare",
+      "Technology"
+    ]
+  },
+  "sector_contributions_default_r2": {
+    "items": {
+      "Communication Services": {
+        "active_weight": -35.0,
+        "benchmark_weight": 35.0,
+        "ctev": 2.26,
+        "portfolio_weight": 0.0,
+        "securities": [
+          {
+            "active_weight": -35.0,
+            "benchmark_weight": 35.0,
+            "ctev": 2.2575,
+            "name": "_QT_TEST_ECHO Holdings",
+            "portfolio_weight": 0.0,
+            "ticker": "_QT_TEST_ECHO"
+          }
+        ]
+      },
+      "Energy": {
+        "active_weight": 12.0,
+        "benchmark_weight": 8.0,
+        "ctev": 0.77,
+        "portfolio_weight": 20.0,
+        "securities": [
+          {
+            "active_weight": 12.0,
+            "benchmark_weight": 8.0,
+            "ctev": 0.774,
+            "name": "_QT_TEST_CHARLIE Holdings",
+            "portfolio_weight": 20.0,
+            "ticker": "_QT_TEST_CHARLIE"
+          }
+        ]
+      },
+      "Financial Services": {
+        "active_weight": 18.0,
+        "benchmark_weight": 12.0,
+        "ctev": 1.16,
+        "portfolio_weight": 30.0,
+        "securities": [
+          {
+            "active_weight": 18.0,
+            "benchmark_weight": 12.0,
+            "ctev": 1.161,
+            "name": "_QT_TEST_BRAVO Holdings",
+            "portfolio_weight": 30.0,
+            "ticker": "_QT_TEST_BRAVO"
+          }
+        ]
+      },
+      "Healthcare": {
+        "active_weight": 10.0,
+        "benchmark_weight": 0.0,
+        "ctev": 0.65,
+        "portfolio_weight": 10.0,
+        "securities": [
+          {
+            "active_weight": 10.0,
+            "benchmark_weight": 0.0,
+            "ctev": 0.645,
+            "name": "_QT_TEST_DELTA Holdings",
+            "portfolio_weight": 10.0,
+            "ticker": "_QT_TEST_DELTA"
+          }
+        ]
+      },
+      "Technology": {
+        "active_weight": -5.0,
+        "benchmark_weight": 45.0,
+        "ctev": 0.32,
+        "portfolio_weight": 40.0,
+        "securities": [
+          {
+            "active_weight": -20.0,
+            "benchmark_weight": 20.0,
+            "ctev": 0.1843,
+            "name": "_QT_TEST_FOXTROT Holdings",
+            "portfolio_weight": 0.0,
+            "ticker": "_QT_TEST_FOXTROT"
+          },
+          {
+            "active_weight": 15.0,
+            "benchmark_weight": 25.0,
+            "ctev": 0.1382,
+            "name": "_QT_TEST_ALPHA Holdings",
+            "portfolio_weight": 40.0,
+            "ticker": "_QT_TEST_ALPHA"
+          }
+        ]
+      }
+    },
+    "order": [
+      "Communication Services",
+      "Financial Services",
+      "Energy",
+      "Healthcare",
+      "Technology"
+    ]
+  },
+  "sector_industry_contributions": {
+    "items": {
+      "Communication Services": {
+        "active_weight": -35.0,
+        "benchmark_weight": 35.0,
+        "ctev": 2.24,
+        "industries": {
+          "items": {
+            "Internet Content & Information": {
+              "active_weight": -35.0,
+              "benchmark_weight": 35.0,
+              "ctev": 2.24,
+              "portfolio_weight": 0.0,
+              "securities": [
+                {
+                  "active_weight": -35.0,
+                  "benchmark_weight": 35.0,
+                  "ctev": 2.2385,
+                  "name": "_QT_TEST_ECHO Holdings",
+                  "portfolio_weight": 0.0,
+                  "ticker": "_QT_TEST_ECHO"
+                }
+              ]
+            }
+          },
+          "order": [
+            "Internet Content & Information"
+          ]
+        },
+        "portfolio_weight": 0.0
+      },
+      "Energy": {
+        "active_weight": 12.0,
+        "benchmark_weight": 8.0,
+        "ctev": 0.77,
+        "industries": {
+          "items": {
+            "Oil & Gas Integrated": {
+              "active_weight": 12.0,
+              "benchmark_weight": 8.0,
+              "ctev": 0.77,
+              "portfolio_weight": 20.0,
+              "securities": [
+                {
+                  "active_weight": 12.0,
+                  "benchmark_weight": 8.0,
+                  "ctev": 0.7675,
+                  "name": "_QT_TEST_CHARLIE Holdings",
+                  "portfolio_weight": 20.0,
+                  "ticker": "_QT_TEST_CHARLIE"
+                }
+              ]
+            }
+          },
+          "order": [
+            "Oil & Gas Integrated"
+          ]
+        },
+        "portfolio_weight": 20.0
+      },
+      "Financial Services": {
+        "active_weight": 18.0,
+        "benchmark_weight": 12.0,
+        "ctev": 1.15,
+        "industries": {
+          "items": {
+            "Banks - Diversified": {
+              "active_weight": 18.0,
+              "benchmark_weight": 12.0,
+              "ctev": 1.15,
+              "portfolio_weight": 30.0,
+              "securities": [
+                {
+                  "active_weight": 18.0,
+                  "benchmark_weight": 12.0,
+                  "ctev": 1.1512,
+                  "name": "_QT_TEST_BRAVO Holdings",
+                  "portfolio_weight": 30.0,
+                  "ticker": "_QT_TEST_BRAVO"
+                }
+              ]
+            }
+          },
+          "order": [
+            "Banks - Diversified"
+          ]
+        },
+        "portfolio_weight": 30.0
+      },
+      "Healthcare": {
+        "active_weight": 10.0,
+        "benchmark_weight": 0.0,
+        "ctev": 0.64,
+        "industries": {
+          "items": {
+            "Drug Manufacturers - General": {
+              "active_weight": 10.0,
+              "benchmark_weight": 0.0,
+              "ctev": 0.64,
+              "portfolio_weight": 10.0,
+              "securities": [
+                {
+                  "active_weight": 10.0,
+                  "benchmark_weight": 0.0,
+                  "ctev": 0.6396,
+                  "name": "_QT_TEST_DELTA Holdings",
+                  "portfolio_weight": 10.0,
+                  "ticker": "_QT_TEST_DELTA"
+                }
+              ]
+            }
+          },
+          "order": [
+            "Drug Manufacturers - General"
+          ]
+        },
+        "portfolio_weight": 10.0
+      },
+      "Technology": {
+        "active_weight": -5.0,
+        "benchmark_weight": 45.0,
+        "ctev": 0.32,
+        "industries": {
+          "items": {
+            "Not Classified": {
+              "active_weight": -20.0,
+              "benchmark_weight": 20.0,
+              "ctev": 0.18,
+              "portfolio_weight": 0.0,
+              "securities": [
+                {
+                  "active_weight": -20.0,
+                  "benchmark_weight": 20.0,
+                  "ctev": 0.1827,
+                  "name": "_QT_TEST_FOXTROT Holdings",
+                  "portfolio_weight": 0.0,
+                  "ticker": "_QT_TEST_FOXTROT"
+                }
+              ]
+            },
+            "Software - Infrastructure": {
+              "active_weight": 15.0,
+              "benchmark_weight": 25.0,
+              "ctev": 0.14,
+              "portfolio_weight": 40.0,
+              "securities": [
+                {
+                  "active_weight": 15.0,
+                  "benchmark_weight": 25.0,
+                  "ctev": 0.1371,
+                  "name": "_QT_TEST_ALPHA Holdings",
+                  "portfolio_weight": 40.0,
+                  "ticker": "_QT_TEST_ALPHA"
+                }
+              ]
+            }
+          },
+          "order": [
+            "Software - Infrastructure",
+            "Not Classified"
+          ]
+        },
+        "portfolio_weight": 40.0
+      }
+    },
+    "order": [
+      "Communication Services",
+      "Financial Services",
+      "Energy",
+      "Healthcare",
+      "Technology"
+    ]
+  },
+  "security_metrics": {
+    "_QT_TEST_ALPHA": {
+      "active_weight": 15.0,
+      "benchmark_weight": 25.0,
+      "factor_vol": 21.64,
+      "idio_vol": 13.97,
+      "portfolio_weight": 40.0,
+      "r_squared": 70.57,
+      "total_vol": 25.76
+    },
+    "_QT_TEST_BRAVO": {
+      "active_weight": 18.0,
+      "benchmark_weight": 12.0,
+      "factor_vol": 16.54,
+      "idio_vol": 9.64,
+      "portfolio_weight": 30.0,
+      "r_squared": 74.62,
+      "total_vol": 19.14
+    },
+    "_QT_TEST_CHARLIE": {
+      "active_weight": 12.0,
+      "benchmark_weight": 8.0,
+      "factor_vol": 18.73,
+      "idio_vol": 20.34,
+      "portfolio_weight": 20.0,
+      "r_squared": 45.9,
+      "total_vol": 27.65
+    },
+    "_QT_TEST_DELTA": {
+      "active_weight": 10.0,
+      "benchmark_weight": 0.0,
+      "factor_vol": 10.27,
+      "idio_vol": 9.63,
+      "portfolio_weight": 10.0,
+      "r_squared": 53.25,
+      "total_vol": 14.08
+    },
+    "_QT_TEST_ECHO": {
+      "active_weight": -35.0,
+      "benchmark_weight": 35.0,
+      "factor_vol": 15.06,
+      "idio_vol": 21.25,
+      "portfolio_weight": 0.0,
+      "r_squared": 33.45,
+      "total_vol": 26.04
+    },
+    "_QT_TEST_FOXTROT": {
+      "active_weight": -20.0,
+      "benchmark_weight": 20.0,
+      "factor_vol": 14.51,
+      "idio_vol": 29.32,
+      "portfolio_weight": 0.0,
+      "r_squared": 19.68,
+      "total_vol": 32.71
+    }
+  },
+  "security_metrics_from_residuals": {
+    "active_weight": 15.0,
+    "benchmark_weight": 25.0,
+    "factor_vol": 21.69,
+    "idio_vol": 14.0,
+    "portfolio_weight": 40.0,
+    "r_squared": 70.57,
+    "total_vol": 25.81
+  },
+  "security_risks": {
+    "_QT_TEST_ALPHA": {
+      "active_weight": 15.0,
+      "benchmark_weight": 25.0,
+      "factor_vol": 21.64,
+      "idio_ctev": 1.58,
+      "idio_tev": 2.1,
+      "idio_vol": 13.97,
+      "portfolio_weight": 40.0,
+      "r_squared": 70.57,
+      "total_vol": 25.76
+    },
+    "_QT_TEST_BRAVO": {
+      "active_weight": 18.0,
+      "benchmark_weight": 12.0,
+      "factor_vol": 16.54,
+      "idio_ctev": 0.66,
+      "idio_tev": 1.74,
+      "idio_vol": 9.64,
+      "portfolio_weight": 30.0,
+      "r_squared": 74.62,
+      "total_vol": 19.14
+    },
+    "_QT_TEST_CHARLIE": {
+      "active_weight": 12.0,
+      "benchmark_weight": 8.0,
+      "factor_vol": 18.73,
+      "idio_ctev": 1.4,
+      "idio_tev": 2.44,
+      "idio_vol": 20.34,
+      "portfolio_weight": 20.0,
+      "r_squared": 45.9,
+      "total_vol": 27.65
+    },
+    "_QT_TEST_DELTA": {
+      "active_weight": 10.0,
+      "benchmark_weight": 0.0,
+      "factor_vol": 10.27,
+      "idio_ctev": 0.11,
+      "idio_tev": 0.96,
+      "idio_vol": 9.63,
+      "portfolio_weight": 10.0,
+      "r_squared": 53.25,
+      "total_vol": 14.08
+    },
+    "_QT_TEST_ECHO": {
+      "active_weight": -35.0,
+      "benchmark_weight": 35.0,
+      "factor_vol": 15.06,
+      "idio_ctev": 0.2,
+      "idio_tev": 7.44,
+      "idio_vol": 21.25,
+      "portfolio_weight": 0.0,
+      "r_squared": 33.45,
+      "total_vol": 26.04
+    },
+    "_QT_TEST_FOXTROT": {
+      "active_weight": -20.0,
+      "benchmark_weight": 20.0,
+      "factor_vol": 14.51,
+      "idio_ctev": 0.22,
+      "idio_tev": 5.86,
+      "idio_vol": 29.32,
+      "portfolio_weight": 0.0,
+      "r_squared": 19.68,
+      "total_vol": 32.71
+    }
+  },
+  "security_risks_unfitted": {
+    "active_weight": -5.0,
+    "benchmark_weight": 5.0,
+    "factor_vol": 0.0,
+    "idio_ctev": 0.0,
+    "idio_tev": 0.0,
+    "idio_vol": 0.0,
+    "portfolio_weight": 0.0,
+    "r_squared": 0.0,
+    "total_vol": 0.0
+  },
+  "summary": {
+    "ex_ante_beta": 1.06,
+    "ex_post_beta": 0.82,
+    "factor_risk_pct": 45.9,
+    "idio_risk_pct": 54.1,
+    "total_active_risk": 10.32
+  }
+}
