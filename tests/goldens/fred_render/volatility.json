@@ -1,0 +1,906 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading volatility data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              136,
+              136,
+              136,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 20.0,
+            "visible": true,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              255,
+              107,
+              107,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 30.0,
+            "visible": true,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "VIX",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 26.152,
+              "last": 13.755,
+              "max": 31.153,
+              "min": 13.704,
+              "n": 1260,
+              "sum": 30435.93
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "MOVE",
+            "pen": [
+              255,
+              238,
+              88,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1234,
+              "first": 86.509917,
+              "last": 104.84347,
+              "max": 115.32047,
+              "min": 57.550173,
+              "n": 1260,
+              "sum": 107393.97
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "VIX",
+            "MOVE"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -25.18,
+            1284.18
+          ],
+          "y": [
+            5.5746822,
+            123.44979
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "VolatilityChart"
+  },
+  "hover": {
+    "state": "lookback=Max",
+    "tooltip": "Apr 2014\n\u25a0 VIX: 20.3\n\u25a0 MOVE: 97.2"
+  },
+  "module": "volatility",
+  "renders": {
+    "lookback=5Y": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading volatility data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 20.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 30.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "VIX",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 26.152,
+                "last": 13.755,
+                "max": 31.153,
+                "min": 13.704,
+                "n": 1260,
+                "sum": 30435.93
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "MOVE",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1234,
+                "first": 86.509917,
+                "last": 104.84347,
+                "max": 115.32047,
+                "min": 57.550173,
+                "n": 1260,
+                "sum": 107393.97
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "VIX",
+              "MOVE"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -25.18,
+              1284.18
+            ],
+            "y": [
+              5.5746822,
+              123.44979
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "VolatilityChart"
+    },
+    "lookback=Max": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading volatility data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                1561.5,
+                1979.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                4778.5,
+                4844.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 20.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 30.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6473,
+              "name": "VIX",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6473,
+                "first": 0.0,
+                "last": 6472.0,
+                "max": 6472.0,
+                "min": 0.0,
+                "n": 6473,
+                "sum": 20946628.0
+              },
+              "y": {
+                "finite": 6473,
+                "first": 27.738,
+                "last": 13.755,
+                "max": 31.153,
+                "min": 9.0,
+                "n": 6473,
+                "sum": 136535.11
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6473,
+              "name": "MOVE",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6473,
+                "first": 0.0,
+                "last": 6472.0,
+                "max": 6472.0,
+                "min": 0.0,
+                "n": 6473,
+                "sum": 20946628.0
+              },
+              "y": {
+                "finite": 6337,
+                "first": 61.923072,
+                "last": 104.84347,
+                "max": 129.36628,
+                "min": 54.101993,
+                "n": 6473,
+                "sum": 569584.29
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "VIX",
+              "MOVE"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -129.44,
+              6601.44
+            ],
+            "y": [
+              -0.6293024,
+              138.99558
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "VolatilityChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "VIX",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "MOVE",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "VIX",
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "MOVE",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "pen": [
+                255,
+                107,
+                107,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "VIX",
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "MOVE",
+              "pen": [
+                255,
+                238,
+                88,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Lookback:",
+    "MOVE: 104.8",
+    "VIX: 13.8",
+    "|"
+  ]
+}

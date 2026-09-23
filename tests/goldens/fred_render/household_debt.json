@@ -1,0 +1,2109 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Raw",
+      "% GDP",
+      "Debt Service",
+      "YoY"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading household debt data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              -0.5,
+              3.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              15.5,
+              20.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              39.5,
+              42.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              45.5,
+              51.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              81.5,
+              84.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              124.5,
+              127.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              151.5,
+              157.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              200.5,
+              201.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 226,
+            "name": null,
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 226,
+              "first": 0.0,
+              "last": 225.0,
+              "max": 225.0,
+              "min": 0.0,
+              "n": 226,
+              "sum": 25425.0
+            },
+            "y": {
+              "finite": 226,
+              "first": 0.001345631,
+              "last": 0.0205,
+              "max": 0.0205,
+              "min": 0.001345631,
+              "n": 226,
+              "sum": 1.5677894
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [],
+          "visible": false
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -4.5,
+            229.5
+          ],
+          "y": [
+            -0.00018671852,
+            0.02203235
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "HouseholdDebtChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=YoY",
+    "tooltip": "Jul 1998\n\u25a0 Debt YoY: +2.4%"
+  },
+  "module": "household_debt",
+  "renders": {
+    "lookback=5Y view=% GDP": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading household debt data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 65.917,
+                "last": 54.161,
+                "max": 76.226,
+                "min": 54.161,
+                "n": 20,
+                "sum": 1333.112
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [],
+            "visible": false
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.38,
+              19.38
+            ],
+            "y": [
+              52.3958,
+              77.9912
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "HouseholdDebtChart"
+    },
+    "lookback=5Y view=Debt Service": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading household debt data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 10.703,
+                "last": 11.531,
+                "max": 11.573,
+                "min": 9.842,
+                "n": 20,
+                "sum": 216.693
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [],
+            "visible": false
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.38,
+              19.38
+            ],
+            "y": [
+              9.70352,
+              11.71148
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "HouseholdDebtChart"
+    },
+    "lookback=5Y view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading household debt data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 0.016329906,
+                "last": 0.0205,
+                "max": 0.0205,
+                "min": 0.016329906,
+                "n": 20,
+                "sum": 0.3724586
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [],
+            "visible": false
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.38,
+              19.38
+            ],
+            "y": [
+              0.015996298,
+              0.020833608
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "HouseholdDebtChart"
+    },
+    "lookback=5Y view=YoY": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading household debt data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 16,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 16,
+                "first": 0.0,
+                "last": 15.0,
+                "max": 15.0,
+                "min": 0.0,
+                "n": 16,
+                "sum": 120.0
+              },
+              "y": {
+                "finite": 16,
+                "first": 6.6471234,
+                "last": 5.8304908,
+                "max": 8.1189753,
+                "min": -0.14095908,
+                "n": 16,
+                "sum": 72.483371
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [],
+            "visible": false
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.3,
+              15.3
+            ],
+            "y": [
+              -0.96695252,
+              8.9449688
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "HouseholdDebtChart"
+    },
+    "lookback=Max view=% GDP": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading household debt data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                3.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                15.5,
+                20.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                39.5,
+                42.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                45.5,
+                51.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                81.5,
+                84.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                124.5,
+                127.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                151.5,
+                157.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                200.5,
+                201.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 226,
+                "first": 71.524,
+                "last": 54.161,
+                "max": 96.539,
+                "min": 54.161,
+                "n": 226,
+                "sum": 16843.103
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [],
+            "visible": false
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.5,
+              229.5
+            ],
+            "y": [
+              50.77076,
+              99.92924
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "HouseholdDebtChart"
+    },
+    "lookback=Max view=Debt Service": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading household debt data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                7.5,
+                12.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                31.5,
+                34.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                37.5,
+                43.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                73.5,
+                76.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                116.5,
+                119.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                143.5,
+                149.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                192.5,
+                193.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 218,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 218,
+                "first": 0.0,
+                "last": 217.0,
+                "max": 217.0,
+                "min": 0.0,
+                "n": 218,
+                "sum": 23653.0
+              },
+              "y": {
+                "finite": 218,
+                "first": 12.627,
+                "last": 11.531,
+                "max": 13.238,
+                "min": 8.773,
+                "n": 218,
+                "sum": 2359.096
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [],
+            "visible": false
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.34,
+              221.34
+            ],
+            "y": [
+              8.4158,
+              13.5952
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "HouseholdDebtChart"
+    },
+    "lookback=Max view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading household debt data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                3.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                15.5,
+                20.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                39.5,
+                42.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                45.5,
+                51.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                81.5,
+                84.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                124.5,
+                127.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                151.5,
+                157.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                200.5,
+                201.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 226,
+                "first": 0.001345631,
+                "last": 0.0205,
+                "max": 0.0205,
+                "min": 0.001345631,
+                "n": 226,
+                "sum": 1.5677894
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [],
+            "visible": false
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.5,
+              229.5
+            ],
+            "y": [
+              -0.00018671852,
+              0.02203235
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "HouseholdDebtChart"
+    },
+    "lookback=Max view=YoY": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading household debt data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": false,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                11.5,
+                16.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                35.5,
+                38.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                41.5,
+                47.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                77.5,
+                80.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                120.5,
+                123.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                147.5,
+                153.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                196.5,
+                197.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 222,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 222,
+                "first": 0.0,
+                "last": 221.0,
+                "max": 221.0,
+                "min": 0.0,
+                "n": 222,
+                "sum": 24531.0
+              },
+              "y": {
+                "finite": 222,
+                "first": 8.7286188,
+                "last": 5.8304908,
+                "max": 14.090635,
+                "min": -6.3167272,
+                "n": 222,
+                "sum": 1105.043
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [],
+            "visible": false
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.42,
+              225.42
+            ],
+            "y": [
+              -8.3574633,
+              16.131371
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "HouseholdDebtChart"
+    }
+  },
+  "size": [
+    1478,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Debt/GDP: 54.2%",
+    "Debt: $0.0T",
+    "Lookback:",
+    "View:",
+    "|"
+  ]
+}

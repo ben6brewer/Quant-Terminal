@@ -1,0 +1,1244 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Raw",
+      "YoY %"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading consumer sentiment data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": null,
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 78.706,
+              "last": 84.728,
+              "max": 84.728,
+              "min": 50.748,
+              "n": 60,
+              "sum": 4113.632
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": null,
+        "title": "",
+        "view_range": {
+          "x": [
+            -1.18,
+            60.18
+          ],
+          "y": [
+            47.35,
+            88.126
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "ConsumerSentimentChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=YoY %",
+    "tooltip": "Sep 2000\n\u25a0 Sentiment YoY: -13.3%"
+  },
+  "module": "consumer_sentiment",
+  "renders": {
+    "lookback=5Y view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading consumer sentiment data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 78.706,
+                "last": 84.728,
+                "max": 84.728,
+                "min": 50.748,
+                "n": 60,
+                "sum": 4113.632
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.18,
+              60.18
+            ],
+            "y": [
+              47.35,
+              88.126
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "ConsumerSentimentChart"
+    },
+    "lookback=5Y view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading consumer sentiment data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": -32.424466,
+                "last": 9.8395084,
+                "max": 33.590365,
+                "min": -32.424466,
+                "n": 48,
+                "sum": 297.56005
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.94,
+              47.94
+            ],
+            "y": [
+              -39.025949,
+              40.191848
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "ConsumerSentimentChart"
+    },
+    "lookback=Max view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading consumer sentiment data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                14.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                71.5,
+                78.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                89.5,
+                106.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                197.5,
+                206.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                325.5,
+                334.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                406.5,
+                425.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                552.5,
+                555.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 630,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 630,
+                "first": 0.0,
+                "last": 629.0,
+                "max": 629.0,
+                "min": 0.0,
+                "n": 630,
+                "sum": 198135.0
+              },
+              "y": {
+                "finite": 630,
+                "first": 81.634,
+                "last": 84.728,
+                "max": 100.855,
+                "min": 50.748,
+                "n": 630,
+                "sum": 48779.737
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -12.58,
+              641.58
+            ],
+            "y": [
+              45.7373,
+              105.8657
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "ConsumerSentimentChart"
+    },
+    "lookback=Max view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading consumer sentiment data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                2.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                59.5,
+                66.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                77.5,
+                94.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                185.5,
+                194.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                313.5,
+                322.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                394.5,
+                413.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                540.5,
+                543.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 618,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 618,
+                "first": 0.0,
+                "last": 617.0,
+                "max": 617.0,
+                "min": 0.0,
+                "n": 618,
+                "sum": 190653.0
+              },
+              "y": {
+                "finite": 618,
+                "first": -1.8056202,
+                "last": 9.8395084,
+                "max": 44.295618,
+                "min": -36.365213,
+                "n": 618,
+                "sum": 351.35061
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": null,
+          "title": "",
+          "view_range": {
+            "x": [
+              -12.34,
+              629.34
+            ],
+            "y": [
+              -44.431296,
+              52.361701
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "ConsumerSentimentChart"
+    }
+  },
+  "size": [
+    1426,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": null,
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Lookback:",
+    "MoM: +5.7",
+    "UMCSENT: 84.7",
+    "View:",
+    "|"
+  ]
+}

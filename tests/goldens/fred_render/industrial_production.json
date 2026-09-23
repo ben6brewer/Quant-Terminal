@@ -1,0 +1,1157 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Raw",
+      "YoY %"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading industrial production data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "Industrial Production",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 95.374,
+              "last": 103.0,
+              "max": 106.459,
+              "min": 95.374,
+              "n": 60,
+              "sum": 6114.5
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "Manufacturing",
+            "pen": [
+              239,
+              83,
+              80,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 95.983,
+              "last": 100.0,
+              "max": 105.296,
+              "min": 95.255,
+              "n": 60,
+              "sum": 5979.956
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "Capacity Utilization",
+            "pen": [
+              255,
+              167,
+              38,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 75.757,
+              "last": 80.211,
+              "max": 81.22,
+              "min": 72.183,
+              "n": 60,
+              "sum": 4541.532
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Industrial Production",
+            "Manufacturing",
+            "Capacity Utilization"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -1.18,
+            60.18
+          ],
+          "y": [
+            69.44092,
+            109.20108
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "IndustrialProductionChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=YoY %",
+    "tooltip": "Oct 1999\n\u25a0 Industrial Production: +7.0%\n\u25a0 Manufacturing: -0.9%"
+  },
+  "module": "industrial_production",
+  "renders": {
+    "lookback=5Y view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading industrial production data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Industrial Production",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 95.374,
+                "last": 103.0,
+                "max": 106.459,
+                "min": 95.374,
+                "n": 60,
+                "sum": 6114.5
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Manufacturing",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 95.983,
+                "last": 100.0,
+                "max": 105.296,
+                "min": 95.255,
+                "n": 60,
+                "sum": 5979.956
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Capacity Utilization",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 75.757,
+                "last": 80.211,
+                "max": 81.22,
+                "min": 72.183,
+                "n": 60,
+                "sum": 4541.532
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Industrial Production",
+              "Manufacturing",
+              "Capacity Utilization"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.18,
+              60.18
+            ],
+            "y": [
+              69.44092,
+              109.20108
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "IndustrialProductionChart"
+    },
+    "lookback=5Y view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading industrial production data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": "Industrial Production",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": 1.8369786,
+                "last": -0.26241636,
+                "max": 6.3083006,
+                "min": -2.8337161,
+                "n": 48,
+                "sum": 85.822731
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": "Manufacturing",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": 0.28546722,
+                "last": -2.9710271,
+                "max": 4.4354519,
+                "min": -2.9710271,
+                "n": 48,
+                "sum": 70.842104
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Industrial Production",
+              "Manufacturing"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.94,
+              47.94
+            ],
+            "y": [
+              -3.8989599,
+              7.2362333
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "IndustrialProductionChart"
+    },
+    "lookback=Max view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading industrial production data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Industrial Production",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 654,
+                "first": 37.544,
+                "last": 103.0,
+                "max": 106.459,
+                "min": 37.544,
+                "n": 654,
+                "sum": 40324.312
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Manufacturing",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 618,
+                "first": 48.866,
+                "last": 100.0,
+                "max": 105.296,
+                "min": 47.036,
+                "n": 654,
+                "sum": 42924.246
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Capacity Utilization",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 654,
+                "first": 75.405,
+                "last": 80.211,
+                "max": 81.22,
+                "min": 68.08,
+                "n": 654,
+                "sum": 49598.623
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Industrial Production",
+              "Manufacturing",
+              "Capacity Utilization"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -13.06,
+              666.06
+            ],
+            "y": [
+              32.0308,
+              111.9722
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "IndustrialProductionChart"
+    },
+    "lookback=Max view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading industrial production data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 642,
+              "name": "Industrial Production",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 642,
+                "first": 0.0,
+                "last": 641.0,
+                "max": 641.0,
+                "min": 0.0,
+                "n": 642,
+                "sum": 205761.0
+              },
+              "y": {
+                "finite": 642,
+                "first": 8.6565097,
+                "last": -0.26241636,
+                "max": 9.4029909,
+                "min": -5.2607161,
+                "n": 642,
+                "sum": 1222.2908
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 642,
+              "name": "Manufacturing",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 642,
+                "first": 0.0,
+                "last": 641.0,
+                "max": 641.0,
+                "min": 0.0,
+                "n": 642,
+                "sum": 205761.0
+              },
+              "y": {
+                "finite": 606,
+                "first": -3.4175091,
+                "last": -2.9710271,
+                "max": 10.162498,
+                "min": -5.9952369,
+                "n": 642,
+                "sum": 934.79375
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Industrial Production",
+              "Manufacturing"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -12.82,
+              653.82
+            ],
+            "y": [
+              -7.6110104,
+              11.778271
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "IndustrialProductionChart"
+    }
+  },
+  "size": [
+    1543,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Industrial Production",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Manufacturing",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Industrial Production",
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Manufacturing",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Industrial Production",
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Manufacturing",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Cap. Util: 80.2%",
+    "IP Index: 103.0",
+    "Lookback:",
+    "View:",
+    "|"
+  ]
+}

@@ -1,0 +1,1393 @@
+{
+  "controls": {
+    "data": [
+      "Market Cap",
+      "Equal Weight"
+    ],
+    "lookback": [
+      "1D",
+      "1Y"
+    ],
+    "view": [
+      "Sector Grouped",
+      "Flat"
+    ]
+  },
+  "default": {
+    "background": null,
+    "extra_viewboxes": [],
+    "heatmap": {
+      "placeholder": {
+        "shown": false,
+        "text": "Loading..."
+      },
+      "rects": [
+        [
+          "_QT_TEST_CCC",
+          0.0,
+          28.0,
+          612.88212,
+          341.82865
+        ],
+        [
+          "_QT_TEST_AAA",
+          0.0,
+          369.82865,
+          489.02963,
+          420.17135
+        ],
+        [
+          "_QT_TEST_BBB",
+          489.02963,
+          369.82865,
+          123.85249,
+          420.17135
+        ],
+        [
+          "_QT_TEST_DDD",
+          612.88212,
+          28.0,
+          411.4743,
+          426.12836
+        ],
+        [
+          "_QT_TEST_EEE",
+          612.88212,
+          454.12836,
+          411.4743,
+          140.7996
+        ],
+        [
+          "_QT_TEST_HHH",
+          1024.3564,
+          28.0,
+          375.64358,
+          566.92797
+        ],
+        [
+          "_QT_TEST_FFF",
+          612.88212,
+          622.92797,
+          453.48744,
+          167.07203
+        ],
+        [
+          "_QT_TEST_GGG",
+          1066.3696,
+          622.92797,
+          333.63044,
+          167.07203
+        ]
+      ],
+      "sector_rects": [
+        [
+          "Information Technology",
+          0.0,
+          0.0,
+          612.88212,
+          28.0
+        ],
+        [
+          "Health Care",
+          612.88212,
+          0.0,
+          411.4743,
+          28.0
+        ],
+        [
+          "Energy",
+          1024.3564,
+          0.0,
+          375.64358,
+          28.0
+        ],
+        [
+          "Financials",
+          612.88212,
+          594.92797,
+          787.11788,
+          28.0
+        ]
+      ],
+      "tiles": [
+        [
+          "_QT_TEST_AAA",
+          "Information Technology",
+          3.7309653,
+          2967224400000.0,
+          2967224400000.0
+        ],
+        [
+          "_QT_TEST_BBB",
+          "Information Technology",
+          -3.3494771,
+          751484400000.0,
+          751484400000.0
+        ],
+        [
+          "_QT_TEST_CCC",
+          "Information Technology",
+          -3.6223114,
+          3025340000000.0,
+          3025340000000.0
+        ],
+        [
+          "_QT_TEST_DDD",
+          "Health Care",
+          -0.7800008,
+          2562927500000.0,
+          2562927500000.0
+        ],
+        [
+          "_QT_TEST_EEE",
+          "Health Care",
+          -2.0344455,
+          846832100000.0,
+          846832100000.0
+        ],
+        [
+          "_QT_TEST_FFF",
+          "Financials",
+          3.9490381,
+          1232187900000.0,
+          1232187900000.0
+        ],
+        [
+          "_QT_TEST_GGG",
+          "Financials",
+          -8.6421961,
+          906519900000.0,
+          906519900000.0
+        ],
+        [
+          "_QT_TEST_HHH",
+          "Energy",
+          -2.7694857,
+          3112841600000.0,
+          3112841600000.0
+        ]
+      ],
+      "view_mode": "Sector Grouped"
+    },
+    "placeholder": null,
+    "plots": [],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "StockHeatmapWidget"
+  },
+  "hover": {
+    "state": "lookback=1Y view=Flat data=Equal Weight",
+    "tooltip": null
+  },
+  "module": "stock_heatmap",
+  "renders": {
+    "lookback=1D view=Flat data=Equal Weight": {
+      "background": null,
+      "extra_viewboxes": [],
+      "heatmap": {
+        "placeholder": {
+          "shown": false,
+          "text": "Loading..."
+        },
+        "rects": [
+          [
+            "_QT_TEST_AAA",
+            0.0,
+            0.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            0.0,
+            395.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            350.0,
+            0.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            350.0,
+            395.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            700.0,
+            0.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            1050.0,
+            0.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            700.0,
+            395.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            1050.0,
+            395.0,
+            350.0,
+            395.0
+          ]
+        ],
+        "sector_rects": [],
+        "tiles": [
+          [
+            "_QT_TEST_AAA",
+            "Information Technology",
+            1.5430783,
+            1.0,
+            2967224400000.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            "Information Technology",
+            -0.89929339,
+            1.0,
+            751484400000.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            "Information Technology",
+            -0.76534241,
+            1.0,
+            3025340000000.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            "Health Care",
+            -0.22419613,
+            1.0,
+            2562927500000.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            "Health Care",
+            -1.6234292,
+            1.0,
+            846832100000.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            "Financials",
+            1.7783568,
+            1.0,
+            1232187900000.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            "Financials",
+            -1.9954777,
+            1.0,
+            906519900000.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            "Energy",
+            -0.16861908,
+            1.0,
+            3112841600000.0
+          ]
+        ],
+        "view_mode": "Flat"
+      },
+      "placeholder": null,
+      "plots": [],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "StockHeatmapWidget"
+    },
+    "lookback=1D view=Flat data=Market Cap": {
+      "background": null,
+      "extra_viewboxes": [],
+      "heatmap": {
+        "placeholder": {
+          "shown": false,
+          "text": "Loading..."
+        },
+        "rects": [
+          [
+            "_QT_TEST_HHH",
+            0.0,
+            0.0,
+            557.82244,
+            400.63084
+          ],
+          [
+            "_QT_TEST_CCC",
+            0.0,
+            400.63084,
+            557.82244,
+            389.36916
+          ],
+          [
+            "_QT_TEST_AAA",
+            557.82244,
+            0.0,
+            502.56623,
+            423.87756
+          ],
+          [
+            "_QT_TEST_DDD",
+            557.82244,
+            423.87756,
+            502.56623,
+            366.12244
+          ],
+          [
+            "_QT_TEST_FFF",
+            1060.3887,
+            0.0,
+            339.61133,
+            260.48223
+          ],
+          [
+            "_QT_TEST_GGG",
+            1060.3887,
+            260.48223,
+            339.61133,
+            191.63662
+          ],
+          [
+            "_QT_TEST_EEE",
+            1060.3887,
+            452.11886,
+            179.93543,
+            337.88114
+          ],
+          [
+            "_QT_TEST_BBB",
+            1240.3241,
+            452.11886,
+            159.67589,
+            337.88114
+          ]
+        ],
+        "sector_rects": [],
+        "tiles": [
+          [
+            "_QT_TEST_AAA",
+            "Information Technology",
+            1.5430783,
+            2967224400000.0,
+            2967224400000.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            "Information Technology",
+            -0.89929339,
+            751484400000.0,
+            751484400000.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            "Information Technology",
+            -0.76534241,
+            3025340000000.0,
+            3025340000000.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            "Health Care",
+            -0.22419613,
+            2562927500000.0,
+            2562927500000.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            "Health Care",
+            -1.6234292,
+            846832100000.0,
+            846832100000.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            "Financials",
+            1.7783568,
+            1232187900000.0,
+            1232187900000.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            "Financials",
+            -1.9954777,
+            906519900000.0,
+            906519900000.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            "Energy",
+            -0.16861908,
+            3112841600000.0,
+            3112841600000.0
+          ]
+        ],
+        "view_mode": "Flat"
+      },
+      "placeholder": null,
+      "plots": [],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "StockHeatmapWidget"
+    },
+    "lookback=1D view=Sector Grouped data=Equal Weight": {
+      "background": null,
+      "extra_viewboxes": [],
+      "heatmap": {
+        "placeholder": {
+          "shown": false,
+          "text": "Loading..."
+        },
+        "rects": [
+          [
+            "_QT_TEST_AAA",
+            0.0,
+            28.0,
+            262.5,
+            508.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            262.5,
+            28.0,
+            262.5,
+            508.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            0.0,
+            536.0,
+            525.0,
+            254.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            525.0,
+            28.0,
+            350.0,
+            367.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            875.0,
+            28.0,
+            350.0,
+            367.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            525.0,
+            423.0,
+            350.0,
+            367.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            875.0,
+            423.0,
+            350.0,
+            367.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            1225.0,
+            28.0,
+            175.0,
+            762.0
+          ]
+        ],
+        "sector_rects": [
+          [
+            "Information Technology",
+            0.0,
+            0.0,
+            525.0,
+            28.0
+          ],
+          [
+            "Health Care",
+            525.0,
+            0.0,
+            700.0,
+            28.0
+          ],
+          [
+            "Financials",
+            525.0,
+            395.0,
+            700.0,
+            28.0
+          ],
+          [
+            "Energy",
+            1225.0,
+            0.0,
+            175.0,
+            28.0
+          ]
+        ],
+        "tiles": [
+          [
+            "_QT_TEST_AAA",
+            "Information Technology",
+            1.5430783,
+            1.0,
+            2967224400000.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            "Information Technology",
+            -0.89929339,
+            1.0,
+            751484400000.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            "Information Technology",
+            -0.76534241,
+            1.0,
+            3025340000000.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            "Health Care",
+            -0.22419613,
+            1.0,
+            2562927500000.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            "Health Care",
+            -1.6234292,
+            1.0,
+            846832100000.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            "Financials",
+            1.7783568,
+            1.0,
+            1232187900000.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            "Financials",
+            -1.9954777,
+            1.0,
+            906519900000.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            "Energy",
+            -0.16861908,
+            1.0,
+            3112841600000.0
+          ]
+        ],
+        "view_mode": "Sector Grouped"
+      },
+      "placeholder": null,
+      "plots": [],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "StockHeatmapWidget"
+    },
+    "lookback=1D view=Sector Grouped data=Market Cap": {
+      "background": null,
+      "extra_viewboxes": [],
+      "heatmap": {
+        "placeholder": {
+          "shown": false,
+          "text": "Loading..."
+        },
+        "rects": [
+          [
+            "_QT_TEST_CCC",
+            0.0,
+            28.0,
+            612.88212,
+            341.82865
+          ],
+          [
+            "_QT_TEST_AAA",
+            0.0,
+            369.82865,
+            489.02963,
+            420.17135
+          ],
+          [
+            "_QT_TEST_BBB",
+            489.02963,
+            369.82865,
+            123.85249,
+            420.17135
+          ],
+          [
+            "_QT_TEST_DDD",
+            612.88212,
+            28.0,
+            411.4743,
+            426.12836
+          ],
+          [
+            "_QT_TEST_EEE",
+            612.88212,
+            454.12836,
+            411.4743,
+            140.7996
+          ],
+          [
+            "_QT_TEST_HHH",
+            1024.3564,
+            28.0,
+            375.64358,
+            566.92797
+          ],
+          [
+            "_QT_TEST_FFF",
+            612.88212,
+            622.92797,
+            453.48744,
+            167.07203
+          ],
+          [
+            "_QT_TEST_GGG",
+            1066.3696,
+            622.92797,
+            333.63044,
+            167.07203
+          ]
+        ],
+        "sector_rects": [
+          [
+            "Information Technology",
+            0.0,
+            0.0,
+            612.88212,
+            28.0
+          ],
+          [
+            "Health Care",
+            612.88212,
+            0.0,
+            411.4743,
+            28.0
+          ],
+          [
+            "Energy",
+            1024.3564,
+            0.0,
+            375.64358,
+            28.0
+          ],
+          [
+            "Financials",
+            612.88212,
+            594.92797,
+            787.11788,
+            28.0
+          ]
+        ],
+        "tiles": [
+          [
+            "_QT_TEST_AAA",
+            "Information Technology",
+            1.5430783,
+            2967224400000.0,
+            2967224400000.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            "Information Technology",
+            -0.89929339,
+            751484400000.0,
+            751484400000.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            "Information Technology",
+            -0.76534241,
+            3025340000000.0,
+            3025340000000.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            "Health Care",
+            -0.22419613,
+            2562927500000.0,
+            2562927500000.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            "Health Care",
+            -1.6234292,
+            846832100000.0,
+            846832100000.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            "Financials",
+            1.7783568,
+            1232187900000.0,
+            1232187900000.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            "Financials",
+            -1.9954777,
+            906519900000.0,
+            906519900000.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            "Energy",
+            -0.16861908,
+            3112841600000.0,
+            3112841600000.0
+          ]
+        ],
+        "view_mode": "Sector Grouped"
+      },
+      "placeholder": null,
+      "plots": [],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "StockHeatmapWidget"
+    },
+    "lookback=1Y view=Flat data=Equal Weight": {
+      "background": null,
+      "extra_viewboxes": [],
+      "heatmap": {
+        "placeholder": {
+          "shown": false,
+          "text": "Loading..."
+        },
+        "rects": [
+          [
+            "_QT_TEST_AAA",
+            0.0,
+            0.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            0.0,
+            395.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            350.0,
+            0.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            350.0,
+            395.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            700.0,
+            0.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            1050.0,
+            0.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            700.0,
+            395.0,
+            350.0,
+            395.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            1050.0,
+            395.0,
+            350.0,
+            395.0
+          ]
+        ],
+        "sector_rects": [],
+        "tiles": [
+          [
+            "_QT_TEST_AAA",
+            "Information Technology",
+            57.913479,
+            1.0,
+            2967224400000.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            "Information Technology",
+            -40.651175,
+            1.0,
+            751484400000.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            "Information Technology",
+            104.04562,
+            1.0,
+            3025340000000.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            "Health Care",
+            16.779215,
+            1.0,
+            2562927500000.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            "Health Care",
+            15.297719,
+            1.0,
+            846832100000.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            "Financials",
+            87.190904,
+            1.0,
+            1232187900000.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            "Financials",
+            11.248424,
+            1.0,
+            906519900000.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            "Energy",
+            -18.904567,
+            1.0,
+            3112841600000.0
+          ]
+        ],
+        "view_mode": "Flat"
+      },
+      "placeholder": null,
+      "plots": [],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "StockHeatmapWidget"
+    },
+    "lookback=1Y view=Flat data=Market Cap": {
+      "background": null,
+      "extra_viewboxes": [],
+      "heatmap": {
+        "placeholder": {
+          "shown": false,
+          "text": "Loading..."
+        },
+        "rects": [
+          [
+            "_QT_TEST_HHH",
+            0.0,
+            0.0,
+            557.82244,
+            400.63084
+          ],
+          [
+            "_QT_TEST_CCC",
+            0.0,
+            400.63084,
+            557.82244,
+            389.36916
+          ],
+          [
+            "_QT_TEST_AAA",
+            557.82244,
+            0.0,
+            502.56623,
+            423.87756
+          ],
+          [
+            "_QT_TEST_DDD",
+            557.82244,
+            423.87756,
+            502.56623,
+            366.12244
+          ],
+          [
+            "_QT_TEST_FFF",
+            1060.3887,
+            0.0,
+            339.61133,
+            260.48223
+          ],
+          [
+            "_QT_TEST_GGG",
+            1060.3887,
+            260.48223,
+            339.61133,
+            191.63662
+          ],
+          [
+            "_QT_TEST_EEE",
+            1060.3887,
+            452.11886,
+            179.93543,
+            337.88114
+          ],
+          [
+            "_QT_TEST_BBB",
+            1240.3241,
+            452.11886,
+            159.67589,
+            337.88114
+          ]
+        ],
+        "sector_rects": [],
+        "tiles": [
+          [
+            "_QT_TEST_AAA",
+            "Information Technology",
+            57.913479,
+            2967224400000.0,
+            2967224400000.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            "Information Technology",
+            -40.651175,
+            751484400000.0,
+            751484400000.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            "Information Technology",
+            104.04562,
+            3025340000000.0,
+            3025340000000.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            "Health Care",
+            16.779215,
+            2562927500000.0,
+            2562927500000.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            "Health Care",
+            15.297719,
+            846832100000.0,
+            846832100000.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            "Financials",
+            87.190904,
+            1232187900000.0,
+            1232187900000.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            "Financials",
+            11.248424,
+            906519900000.0,
+            906519900000.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            "Energy",
+            -18.904567,
+            3112841600000.0,
+            3112841600000.0
+          ]
+        ],
+        "view_mode": "Flat"
+      },
+      "placeholder": null,
+      "plots": [],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "StockHeatmapWidget"
+    },
+    "lookback=1Y view=Sector Grouped data=Equal Weight": {
+      "background": null,
+      "extra_viewboxes": [],
+      "heatmap": {
+        "placeholder": {
+          "shown": false,
+          "text": "Loading..."
+        },
+        "rects": [
+          [
+            "_QT_TEST_AAA",
+            0.0,
+            28.0,
+            262.5,
+            508.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            262.5,
+            28.0,
+            262.5,
+            508.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            0.0,
+            536.0,
+            525.0,
+            254.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            525.0,
+            28.0,
+            350.0,
+            367.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            875.0,
+            28.0,
+            350.0,
+            367.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            525.0,
+            423.0,
+            350.0,
+            367.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            875.0,
+            423.0,
+            350.0,
+            367.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            1225.0,
+            28.0,
+            175.0,
+            762.0
+          ]
+        ],
+        "sector_rects": [
+          [
+            "Information Technology",
+            0.0,
+            0.0,
+            525.0,
+            28.0
+          ],
+          [
+            "Health Care",
+            525.0,
+            0.0,
+            700.0,
+            28.0
+          ],
+          [
+            "Financials",
+            525.0,
+            395.0,
+            700.0,
+            28.0
+          ],
+          [
+            "Energy",
+            1225.0,
+            0.0,
+            175.0,
+            28.0
+          ]
+        ],
+        "tiles": [
+          [
+            "_QT_TEST_AAA",
+            "Information Technology",
+            57.913479,
+            1.0,
+            2967224400000.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            "Information Technology",
+            -40.651175,
+            1.0,
+            751484400000.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            "Information Technology",
+            104.04562,
+            1.0,
+            3025340000000.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            "Health Care",
+            16.779215,
+            1.0,
+            2562927500000.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            "Health Care",
+            15.297719,
+            1.0,
+            846832100000.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            "Financials",
+            87.190904,
+            1.0,
+            1232187900000.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            "Financials",
+            11.248424,
+            1.0,
+            906519900000.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            "Energy",
+            -18.904567,
+            1.0,
+            3112841600000.0
+          ]
+        ],
+        "view_mode": "Sector Grouped"
+      },
+      "placeholder": null,
+      "plots": [],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "StockHeatmapWidget"
+    },
+    "lookback=1Y view=Sector Grouped data=Market Cap": {
+      "background": null,
+      "extra_viewboxes": [],
+      "heatmap": {
+        "placeholder": {
+          "shown": false,
+          "text": "Loading..."
+        },
+        "rects": [
+          [
+            "_QT_TEST_CCC",
+            0.0,
+            28.0,
+            612.88212,
+            341.82865
+          ],
+          [
+            "_QT_TEST_AAA",
+            0.0,
+            369.82865,
+            489.02963,
+            420.17135
+          ],
+          [
+            "_QT_TEST_BBB",
+            489.02963,
+            369.82865,
+            123.85249,
+            420.17135
+          ],
+          [
+            "_QT_TEST_DDD",
+            612.88212,
+            28.0,
+            411.4743,
+            426.12836
+          ],
+          [
+            "_QT_TEST_EEE",
+            612.88212,
+            454.12836,
+            411.4743,
+            140.7996
+          ],
+          [
+            "_QT_TEST_HHH",
+            1024.3564,
+            28.0,
+            375.64358,
+            566.92797
+          ],
+          [
+            "_QT_TEST_FFF",
+            612.88212,
+            622.92797,
+            453.48744,
+            167.07203
+          ],
+          [
+            "_QT_TEST_GGG",
+            1066.3696,
+            622.92797,
+            333.63044,
+            167.07203
+          ]
+        ],
+        "sector_rects": [
+          [
+            "Information Technology",
+            0.0,
+            0.0,
+            612.88212,
+            28.0
+          ],
+          [
+            "Health Care",
+            612.88212,
+            0.0,
+            411.4743,
+            28.0
+          ],
+          [
+            "Energy",
+            1024.3564,
+            0.0,
+            375.64358,
+            28.0
+          ],
+          [
+            "Financials",
+            612.88212,
+            594.92797,
+            787.11788,
+            28.0
+          ]
+        ],
+        "tiles": [
+          [
+            "_QT_TEST_AAA",
+            "Information Technology",
+            57.913479,
+            2967224400000.0,
+            2967224400000.0
+          ],
+          [
+            "_QT_TEST_BBB",
+            "Information Technology",
+            -40.651175,
+            751484400000.0,
+            751484400000.0
+          ],
+          [
+            "_QT_TEST_CCC",
+            "Information Technology",
+            104.04562,
+            3025340000000.0,
+            3025340000000.0
+          ],
+          [
+            "_QT_TEST_DDD",
+            "Health Care",
+            16.779215,
+            2562927500000.0,
+            2562927500000.0
+          ],
+          [
+            "_QT_TEST_EEE",
+            "Health Care",
+            15.297719,
+            846832100000.0,
+            846832100000.0
+          ],
+          [
+            "_QT_TEST_FFF",
+            "Financials",
+            87.190904,
+            1232187900000.0,
+            1232187900000.0
+          ],
+          [
+            "_QT_TEST_GGG",
+            "Financials",
+            11.248424,
+            906519900000.0,
+            906519900000.0
+          ],
+          [
+            "_QT_TEST_HHH",
+            "Energy",
+            -18.904567,
+            3112841600000.0,
+            3112841600000.0
+          ]
+        ],
+        "view_mode": "Sector Grouped"
+      },
+      "placeholder": null,
+      "plots": [],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "StockHeatmapWidget"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": null,
+      "plots": [],
+      "tables": null
+    },
+    "dark": {
+      "background": null,
+      "plots": [],
+      "tables": null
+    },
+    "light": {
+      "background": null,
+      "plots": [],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Data:",
+    "Lookback:",
+    "Market:",
+    "View:",
+    "|"
+  ]
+}

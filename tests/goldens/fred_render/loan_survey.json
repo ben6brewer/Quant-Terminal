@@ -1,0 +1,2000 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "All Standards",
+      "By Category"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading SLOOS data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              -0.5,
+              3.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              15.5,
+              20.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              39.5,
+              42.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              45.5,
+              51.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              81.5,
+              84.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              124.5,
+              127.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              151.5,
+              157.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              200.5,
+              201.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              136,
+              136,
+              136,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": true,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 226,
+            "name": "C&I Large Firms",
+            "pen": [
+              79,
+              195,
+              247,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 226,
+              "first": 0.0,
+              "last": 225.0,
+              "max": 225.0,
+              "min": 0.0,
+              "n": 226,
+              "sum": 25425.0
+            },
+            "y": {
+              "finite": 226,
+              "first": -9.06,
+              "last": -32.487,
+              "max": 33.593,
+              "min": -37.954,
+              "n": 226,
+              "sum": -973.404
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 226,
+            "name": "C&I Small Firms",
+            "pen": [
+              129,
+              199,
+              132,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 226,
+              "first": 0.0,
+              "last": 225.0,
+              "max": 225.0,
+              "min": 0.0,
+              "n": 226,
+              "sum": 25425.0
+            },
+            "y": {
+              "finite": 218,
+              "first": 17.802,
+              "last": 20.278,
+              "max": 37.619,
+              "min": -40.0,
+              "n": 226,
+              "sum": -839.769
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 226,
+            "name": "Credit Cards",
+            "pen": [
+              255,
+              167,
+              38,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 226,
+              "first": 0.0,
+              "last": 225.0,
+              "max": 225.0,
+              "min": 0.0,
+              "n": 226,
+              "sum": 25425.0
+            },
+            "y": {
+              "finite": 214,
+              "first": -31.67,
+              "last": -10.87,
+              "max": 32.655,
+              "min": -35.322,
+              "n": 226,
+              "sum": -752.24
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 226,
+            "name": "Mortgages",
+            "pen": [
+              206,
+              147,
+              216,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 226,
+              "first": 0.0,
+              "last": 225.0,
+              "max": 225.0,
+              "min": 0.0,
+              "n": 226,
+              "sum": 25425.0
+            },
+            "y": {
+              "finite": 226,
+              "first": -12.954,
+              "last": 27.556,
+              "max": 40.806,
+              "min": -40.0,
+              "n": 226,
+              "sum": -71.32
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 226,
+            "name": "Auto Loans",
+            "pen": [
+              239,
+              83,
+              80,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 226,
+              "first": 0.0,
+              "last": 225.0,
+              "max": 225.0,
+              "min": 0.0,
+              "n": 226,
+              "sum": 25425.0
+            },
+            "y": {
+              "finite": 214,
+              "first": -31.061,
+              "last": 0.56,
+              "max": 54.125,
+              "min": -37.084,
+              "n": 226,
+              "sum": 289.746
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "C&I Large Firms",
+            "C&I Small Firms",
+            "Credit Cards",
+            "Mortgages",
+            "Auto Loans"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -4.5,
+            229.5
+          ],
+          "y": [
+            -47.53,
+            61.655
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "LoanSurveyChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=By Category",
+    "tooltip": "Jan 1998\n\u25a0 C&I Large Firms: -12.2%\n\u25a0 C&I Small Firms: -16.9%"
+  },
+  "module": "loan_survey",
+  "renders": {
+    "lookback=5Y view=All Standards": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading SLOOS data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "C&I Large Firms",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": -26.513,
+                "last": -32.487,
+                "max": 5.138,
+                "min": -32.487,
+                "n": 20,
+                "sum": -239.563
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "C&I Small Firms",
+              "pen": [
+                129,
+                199,
+                132,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": -37.067,
+                "last": 20.278,
+                "max": 32.742,
+                "min": -40.0,
+                "n": 20,
+                "sum": 20.551
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "Credit Cards",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": -2.609,
+                "last": -10.87,
+                "max": 18.469,
+                "min": -16.103,
+                "n": 20,
+                "sum": -8.733
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "Mortgages",
+              "pen": [
+                206,
+                147,
+                216,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": -2.681,
+                "last": 27.556,
+                "max": 30.617,
+                "min": -9.015,
+                "n": 20,
+                "sum": 222.382
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "Auto Loans",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": 12.401,
+                "last": 0.56,
+                "max": 14.509,
+                "min": -17.897,
+                "n": 20,
+                "sum": -82.792
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "C&I Large Firms",
+              "C&I Small Firms",
+              "Credit Cards",
+              "Mortgages",
+              "Auto Loans"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.38,
+              19.38
+            ],
+            "y": [
+              -45.81936,
+              38.56136
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "LoanSurveyChart"
+    },
+    "lookback=5Y view=By Category": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading SLOOS data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "C&I Large Firms",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": -26.513,
+                "last": -32.487,
+                "max": 5.138,
+                "min": -32.487,
+                "n": 20,
+                "sum": -239.563
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 20,
+              "name": "C&I Small Firms",
+              "pen": [
+                129,
+                199,
+                132,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 20,
+                "first": 0.0,
+                "last": 19.0,
+                "max": 19.0,
+                "min": 0.0,
+                "n": 20,
+                "sum": 190.0
+              },
+              "y": {
+                "finite": 20,
+                "first": -37.067,
+                "last": 20.278,
+                "max": 32.742,
+                "min": -40.0,
+                "n": 20,
+                "sum": 20.551
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "C&I Large Firms",
+              "C&I Small Firms"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.38,
+              19.38
+            ],
+            "y": [
+              -45.81936,
+              38.56136
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "LoanSurveyChart"
+    },
+    "lookback=Max view=All Standards": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading SLOOS data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                3.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                15.5,
+                20.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                39.5,
+                42.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                45.5,
+                51.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                81.5,
+                84.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                124.5,
+                127.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                151.5,
+                157.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                200.5,
+                201.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": "C&I Large Firms",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 226,
+                "first": -9.06,
+                "last": -32.487,
+                "max": 33.593,
+                "min": -37.954,
+                "n": 226,
+                "sum": -973.404
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": "C&I Small Firms",
+              "pen": [
+                129,
+                199,
+                132,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 218,
+                "first": 17.802,
+                "last": 20.278,
+                "max": 37.619,
+                "min": -40.0,
+                "n": 226,
+                "sum": -839.769
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": "Credit Cards",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 214,
+                "first": -31.67,
+                "last": -10.87,
+                "max": 32.655,
+                "min": -35.322,
+                "n": 226,
+                "sum": -752.24
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": "Mortgages",
+              "pen": [
+                206,
+                147,
+                216,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 226,
+                "first": -12.954,
+                "last": 27.556,
+                "max": 40.806,
+                "min": -40.0,
+                "n": 226,
+                "sum": -71.32
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": "Auto Loans",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 214,
+                "first": -31.061,
+                "last": 0.56,
+                "max": 54.125,
+                "min": -37.084,
+                "n": 226,
+                "sum": 289.746
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "C&I Large Firms",
+              "C&I Small Firms",
+              "Credit Cards",
+              "Mortgages",
+              "Auto Loans"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.5,
+              229.5
+            ],
+            "y": [
+              -47.53,
+              61.655
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "LoanSurveyChart"
+    },
+    "lookback=Max view=By Category": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading SLOOS data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                3.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                15.5,
+                20.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                39.5,
+                42.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                45.5,
+                51.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                81.5,
+                84.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                124.5,
+                127.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                151.5,
+                157.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                200.5,
+                201.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": "C&I Large Firms",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 226,
+                "first": -9.06,
+                "last": -32.487,
+                "max": 33.593,
+                "min": -37.954,
+                "n": 226,
+                "sum": -973.404
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 226,
+              "name": "C&I Small Firms",
+              "pen": [
+                129,
+                199,
+                132,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 226,
+                "first": 0.0,
+                "last": 225.0,
+                "max": 225.0,
+                "min": 0.0,
+                "n": 226,
+                "sum": 25425.0
+              },
+              "y": {
+                "finite": 218,
+                "first": 17.802,
+                "last": 20.278,
+                "max": 37.619,
+                "min": -40.0,
+                "n": 226,
+                "sum": -839.769
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "C&I Large Firms",
+              "C&I Small Firms"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -4.5,
+              229.5
+            ],
+            "y": [
+              -46.20952,
+              43.82852
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "LoanSurveyChart"
+    }
+  },
+  "size": [
+    1608,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Large Firms",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Small Firms",
+              "pen": [
+                129,
+                199,
+                132,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Large Firms",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Small Firms",
+              "pen": [
+                129,
+                199,
+                132,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Large Firms",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "C&I Small Firms",
+              "pen": [
+                129,
+                199,
+                132,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "C&I Large: -32.5%",
+    "Credit Card: -10.9%",
+    "Lookback:",
+    "View:",
+    "|"
+  ]
+}

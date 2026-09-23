@@ -1,0 +1,1175 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading demographics data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "White",
+            "pen": [
+              92,
+              155,
+              214,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 6.45,
+              "last": 5.142,
+              "max": 7.98,
+              "min": 3.898,
+              "n": 60,
+              "sum": 351.298
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "Black",
+            "pen": [
+              171,
+              71,
+              188,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 7.791,
+              "last": 5.705,
+              "max": 8.526,
+              "min": 4.568,
+              "n": 60,
+              "sum": 366.731
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 60,
+            "name": "Hispanic",
+            "pen": [
+              38,
+              198,
+              218,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 60,
+              "first": 0.0,
+              "last": 59.0,
+              "max": 59.0,
+              "min": 0.0,
+              "n": 60,
+              "sum": 1770.0
+            },
+            "y": {
+              "finite": 60,
+              "first": 4.85,
+              "last": 7.635,
+              "max": 8.534,
+              "min": 2.833,
+              "n": 60,
+              "sum": 336.039
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "White",
+            "Black",
+            "Hispanic"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -1.18,
+            60.18
+          ],
+          "y": [
+            2.37692,
+            8.99008
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "DemographicsChart"
+  },
+  "hover": {
+    "state": "lookback=Max",
+    "tooltip": "Mar 1998\n\u25a0 White            3.1%\n\u25a0 Black            9.0%\n\u25a0 Hispanic         6.8%"
+  },
+  "module": "demographics",
+  "renders": {
+    "lookback=5Y": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading demographics data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "White",
+              "pen": [
+                92,
+                155,
+                214,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 6.45,
+                "last": 5.142,
+                "max": 7.98,
+                "min": 3.898,
+                "n": 60,
+                "sum": 351.298
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Black",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 7.791,
+                "last": 5.705,
+                "max": 8.526,
+                "min": 4.568,
+                "n": 60,
+                "sum": 366.731
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Hispanic",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 4.85,
+                "last": 7.635,
+                "max": 8.534,
+                "min": 2.833,
+                "n": 60,
+                "sum": 336.039
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "White",
+              "Black",
+              "Hispanic"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.18,
+              60.18
+            ],
+            "y": [
+              2.37692,
+              8.99008
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "DemographicsChart"
+    },
+    "lookback=Max": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading demographics data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                -0.5,
+                10.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                45.5,
+                62.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                119.5,
+                126.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                137.5,
+                154.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                245.5,
+                254.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                373.5,
+                382.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                454.5,
+                473.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                600.5,
+                603.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "White",
+              "pen": [
+                92,
+                155,
+                214,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 618,
+                "first": 6.79,
+                "last": 5.142,
+                "max": 8.022,
+                "min": 2.5,
+                "n": 678,
+                "sum": 3033.677
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "Black",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 654,
+                "first": 12.953,
+                "last": 5.705,
+                "max": 15.839,
+                "min": 4.5,
+                "n": 678,
+                "sum": 6070.293
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 678,
+              "name": "Hispanic",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 678,
+                "first": 0.0,
+                "last": 677.0,
+                "max": 677.0,
+                "min": 0.0,
+                "n": 678,
+                "sum": 229503.0
+              },
+              "y": {
+                "finite": 666,
+                "first": 4.493,
+                "last": 7.635,
+                "max": 8.534,
+                "min": 2.5,
+                "n": 678,
+                "sum": 3022.321
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "White",
+              "Black",
+              "Hispanic"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -13.54,
+              690.54
+            ],
+            "y": [
+              1.43288,
+              16.90612
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "DemographicsChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "White",
+              "pen": [
+                92,
+                155,
+                214,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Black",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Hispanic",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "White",
+              "pen": [
+                92,
+                155,
+                214,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Black",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Hispanic",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "White",
+              "pen": [
+                92,
+                155,
+                214,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Black",
+              "pen": [
+                171,
+                71,
+                188,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Hispanic",
+              "pen": [
+                38,
+                198,
+                218,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "As of Jun 2026",
+    "Lookback:",
+    "|"
+  ]
+}

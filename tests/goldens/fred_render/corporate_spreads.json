@@ -1,0 +1,951 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading corporate spread data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Baa-10Y Spread",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 1.451,
+              "last": 1.671,
+              "max": 1.849,
+              "min": 0.8,
+              "n": 1260,
+              "sum": 1557.636
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Aaa-10Y Spread",
+            "pen": [
+              102,
+              187,
+              106,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 0.936,
+              "last": 0.993,
+              "max": 1.302,
+              "min": 0.433,
+              "n": 1260,
+              "sum": 1059.325
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "HY OAS",
+            "pen": [
+              255,
+              112,
+              67,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 7.146,
+              "last": 2.588,
+              "max": 9.388,
+              "min": 2.3,
+              "n": 1260,
+              "sum": 7447.34
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Baa-10Y Spread",
+            "Aaa-10Y Spread",
+            "HY OAS"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -25.18,
+            1284.18
+          ],
+          "y": [
+            -0.2834,
+            10.1044
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "CorporateSpreadsChart"
+  },
+  "hover": {
+    "state": "lookback=Max",
+    "tooltip": "Oct 2013\n\u25a0 Baa-10Y Spread: 1.64%\n\u25a0 Aaa-10Y Spread: 0.59%\n\u25a0 HY OAS: 4bp"
+  },
+  "module": "corporate_spreads",
+  "renders": {
+    "lookback=5Y": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading corporate spread data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Baa-10Y Spread",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 1.451,
+                "last": 1.671,
+                "max": 1.849,
+                "min": 0.8,
+                "n": 1260,
+                "sum": 1557.636
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Aaa-10Y Spread",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 0.936,
+                "last": 0.993,
+                "max": 1.302,
+                "min": 0.433,
+                "n": 1260,
+                "sum": 1059.325
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "HY OAS",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 7.146,
+                "last": 2.588,
+                "max": 9.388,
+                "min": 2.3,
+                "n": 1260,
+                "sum": 7447.34
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Baa-10Y Spread",
+              "Aaa-10Y Spread",
+              "HY OAS"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -25.18,
+              1284.18
+            ],
+            "y": [
+              -0.2834,
+              10.1044
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "CorporateSpreadsChart"
+    },
+    "lookback=Max": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading corporate spread data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                40.5,
+                240.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                1826.5,
+                2244.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                5043.5,
+                5109.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "Baa-10Y Spread",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 6738,
+                "first": 0.908,
+                "last": 1.671,
+                "max": 2.474,
+                "min": 0.8,
+                "n": 6738,
+                "sum": 10327.492
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "Aaa-10Y Spread",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 6209,
+                "first": 0.89,
+                "last": 0.993,
+                "max": 1.435,
+                "min": 0.2,
+                "n": 6738,
+                "sum": 4771.458
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "HY OAS",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 5944,
+                "first": 4.175,
+                "last": 2.588,
+                "max": 9.388,
+                "min": 2.3,
+                "n": 6738,
+                "sum": 25023.513
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Baa-10Y Spread",
+              "Aaa-10Y Spread",
+              "HY OAS"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -134.74,
+              6871.74
+            ],
+            "y": [
+              -0.53504,
+              10.12304
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "CorporateSpreadsChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Baa-10Y Spread",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Aaa-10Y Spread",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "HY OAS",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Baa-10Y Spread",
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Aaa-10Y Spread",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "HY OAS",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Baa-10Y Spread",
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Aaa-10Y Spread",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "HY OAS",
+              "pen": [
+                255,
+                112,
+                67,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Baa: 1.67%",
+    "HY OAS: 3bp",
+    "Lookback:",
+    "|"
+  ]
+}

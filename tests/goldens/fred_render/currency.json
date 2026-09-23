@@ -1,0 +1,1190 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Raw",
+      "YoY %"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading currency data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Dollar Index",
+            "pen": [
+              255,
+              128,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 109.431,
+              "last": 113.042,
+              "max": 123.473,
+              "min": 106.446,
+              "n": 1260,
+              "sum": 144777.4
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Adv. Economies",
+            "pen": [
+              102,
+              187,
+              106,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 114.755,
+              "last": 117.515,
+              "max": 120.932,
+              "min": 104.476,
+              "n": 1260,
+              "sum": 141024.75
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Dollar Index",
+            "Adv. Economies"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -25.18,
+            1284.18
+          ],
+          "y": [
+            102.95624,
+            124.99276
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "CurrencyChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=YoY %",
+    "tooltip": "Mar 2014\n\u25a0 Dollar Index: +0.1%\n\u25a0 Adv. Economies: +1.8%"
+  },
+  "module": "currency",
+  "renders": {
+    "lookback=5Y view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading currency data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Dollar Index",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 109.431,
+                "last": 113.042,
+                "max": 123.473,
+                "min": 106.446,
+                "n": 1260,
+                "sum": 144777.4
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Adv. Economies",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 114.755,
+                "last": 117.515,
+                "max": 120.932,
+                "min": 104.476,
+                "n": 1260,
+                "sum": 141024.75
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Dollar Index",
+              "Adv. Economies"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -25.18,
+              1284.18
+            ],
+            "y": [
+              102.95624,
+              124.99276
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "CurrencyChart"
+    },
+    "lookback=5Y view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading currency data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1008,
+              "name": "Dollar Index",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1008,
+                "first": 0.0,
+                "last": 1007.0,
+                "max": 1007.0,
+                "min": 0.0,
+                "n": 1008,
+                "sum": 507528.0
+              },
+              "y": {
+                "finite": 1008,
+                "first": 7.4375634,
+                "last": -5.2614817,
+                "max": 11.309161,
+                "min": -12.611561,
+                "n": 1008,
+                "sum": 965.84192
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1008,
+              "name": "Adv. Economies",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1008,
+                "first": 0.0,
+                "last": 1007.0,
+                "max": 1007.0,
+                "min": 0.0,
+                "n": 1008,
+                "sum": 507528.0
+              },
+              "y": {
+                "finite": 1008,
+                "first": -6.7770468,
+                "last": 6.1351854,
+                "max": 9.2533328,
+                "min": -9.7052859,
+                "n": 1008,
+                "sum": -92.035347
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Dollar Index",
+              "Adv. Economies"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -20.14,
+              1027.14
+            ],
+            "y": [
+              -15.003633,
+              13.701233
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "CurrencyChart"
+    },
+    "lookback=Max view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading currency data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                40.5,
+                240.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                1826.5,
+                2244.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                5043.5,
+                5109.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "Dollar Index",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 6738,
+                "first": 112.012,
+                "last": 113.042,
+                "max": 125.775,
+                "min": 104.824,
+                "n": 6738,
+                "sum": 773021.59
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6738,
+              "name": "Adv. Economies",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6738,
+                "first": 0.0,
+                "last": 6737.0,
+                "max": 6737.0,
+                "min": 0.0,
+                "n": 6738,
+                "sum": 22696953.0
+              },
+              "y": {
+                "finite": 5944,
+                "first": 116.627,
+                "last": 117.515,
+                "max": 122.587,
+                "min": 89.399,
+                "n": 6738,
+                "sum": 660409.73
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Dollar Index",
+              "Adv. Economies"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -134.74,
+              6871.74
+            ],
+            "y": [
+              86.48892,
+              128.68508
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "CurrencyChart"
+    },
+    "lookback=Max view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading currency data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                1574.5,
+                1992.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                4791.5,
+                4857.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6486,
+              "name": "Dollar Index",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6486,
+                "first": 0.0,
+                "last": 6485.0,
+                "max": 6485.0,
+                "min": 0.0,
+                "n": 6486,
+                "sum": 21030855.0
+              },
+              "y": {
+                "finite": 6486,
+                "first": 1.1936221,
+                "last": -5.2614817,
+                "max": 12.433138,
+                "min": -13.35639,
+                "n": 6486,
+                "sum": 1453.713
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6486,
+              "name": "Adv. Economies",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6486,
+                "first": 0.0,
+                "last": 6485.0,
+                "max": 6485.0,
+                "min": 0.0,
+                "n": 6486,
+                "sum": 21030855.0
+              },
+              "y": {
+                "finite": 5692,
+                "first": -0.59334459,
+                "last": 6.1351854,
+                "max": 17.134272,
+                "min": -14.634519,
+                "n": 6486,
+                "sum": 752.81616
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Dollar Index",
+              "Adv. Economies"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -129.7,
+              6614.7
+            ],
+            "y": [
+              -17.811398,
+              20.311151
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "CurrencyChart"
+    }
+  },
+  "size": [
+    1413,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Dollar Index",
+              "pen": [
+                255,
+                128,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Adv. Economies",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Dollar Index",
+              "pen": [
+                0,
+                212,
+                255,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Adv. Economies",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Dollar Index",
+              "pen": [
+                0,
+                102,
+                204,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Adv. Economies",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "DXY: 113.0",
+    "EUR: 1.1200",
+    "Lookback:",
+    "View:",
+    "|"
+  ]
+}

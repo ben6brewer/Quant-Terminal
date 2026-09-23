@@ -1,0 +1,1734 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Raw",
+      "YoY %"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading trade balance data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              42.5,
+              45.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              136,
+              136,
+              136,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": true,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 120,
+            "name": "Exports",
+            "pen": [
+              102,
+              187,
+              106,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 120,
+              "first": 0.0,
+              "last": 119.0,
+              "max": 119.0,
+              "min": 0.0,
+              "n": 120,
+              "sum": 7140.0
+            },
+            "y": {
+              "finite": 120,
+              "first": 195.93326,
+              "last": 265.0,
+              "max": 269.24957,
+              "min": 195.93326,
+              "n": 120,
+              "sum": 28126.53
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 120,
+            "name": "Imports",
+            "pen": [
+              239,
+              83,
+              80,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 120,
+              "first": 0.0,
+              "last": 119.0,
+              "max": 119.0,
+              "min": 0.0,
+              "n": 120,
+              "sum": 7140.0
+            },
+            "y": {
+              "finite": 120,
+              "first": 277.93352,
+              "last": 335.0,
+              "max": 366.99732,
+              "min": 275.8487,
+              "n": 120,
+              "sum": 38931.2
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 120,
+            "name": "Trade Balance",
+            "pen": [
+              79,
+              195,
+              247,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 120,
+              "first": 0.0,
+              "last": 119.0,
+              "max": 119.0,
+              "min": 0.0,
+              "n": 120,
+              "sum": 7140.0
+            },
+            "y": {
+              "finite": 120,
+              "first": -60.822056,
+              "last": -71.224553,
+              "max": -40.830202,
+              "min": -85.018119,
+              "n": 120,
+              "sum": -7553.1484
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Exports",
+            "Imports",
+            "Trade Balance"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -2.38,
+            121.38
+          ],
+          "y": [
+            -121.17935,
+            403.15856
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "TradeBalanceChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=YoY %",
+    "tooltip": "Mar 1999\n\u25a0 Exports YoY: -1.1%\n\u25a0 Imports YoY: +1.3%\n\u25a0 Trade Balance YoY: -0.2%"
+  },
+  "module": "trade_balance",
+  "renders": {
+    "lookback=5Y view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading trade balance data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Exports",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 231.69706,
+                "last": 265.0,
+                "max": 269.24957,
+                "min": 230.20657,
+                "n": 60,
+                "sum": 15042.086
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Imports",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 338.19625,
+                "last": 335.0,
+                "max": 366.99732,
+                "min": 319.5866,
+                "n": 60,
+                "sum": 20588.942
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Trade Balance",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": -57.270561,
+                "last": -71.224553,
+                "max": -42.979604,
+                "min": -75.564297,
+                "n": 60,
+                "sum": -3468.6573
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Exports",
+              "Imports",
+              "Trade Balance"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.18,
+              60.18
+            ],
+            "y": [
+              -110.96923,
+              402.40225
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TradeBalanceChart"
+    },
+    "lookback=5Y view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading trade balance data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": "Exports YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": 1.4437944,
+                "last": 0.35836571,
+                "max": 12.319742,
+                "min": -3.5241602,
+                "n": 48,
+                "sum": 137.62961
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": "Imports YoY",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": 6.5302129,
+                "last": 2.253773,
+                "max": 6.5302129,
+                "min": -8.2127994,
+                "n": 48,
+                "sum": -85.09903
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": "Trade Balance YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": -24.953408,
+                "last": 6.5022893,
+                "max": 44.981529,
+                "min": -24.953408,
+                "n": 48,
+                "sum": 380.56829
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Exports YoY",
+              "Imports YoY",
+              "Trade Balance YoY"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.94,
+              47.94
+            ],
+            "y": [
+              -31.946902,
+              51.975023
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TradeBalanceChart"
+    },
+    "lookback=Max view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading trade balance data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                21.5,
+                38.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                95.5,
+                102.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                113.5,
+                130.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                221.5,
+                230.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                349.5,
+                358.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                430.5,
+                449.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                576.5,
+                579.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Exports",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 654,
+                "first": 32.278922,
+                "last": 265.0,
+                "max": 269.24957,
+                "min": 32.265566,
+                "n": 654,
+                "sum": 78465.234
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Imports",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 630,
+                "first": 37.520419,
+                "last": 335.0,
+                "max": 366.99732,
+                "min": 37.520419,
+                "n": 654,
+                "sum": 104347.53
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Trade Balance",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 654,
+                "first": -27.838332,
+                "last": -71.224553,
+                "max": -27.76031,
+                "min": -114.99971,
+                "n": 654,
+                "sum": -44179.431
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Exports",
+              "Imports",
+              "Trade Balance"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -13.06,
+              666.06
+            ],
+            "y": [
+              -153.55947,
+              405.55709
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TradeBalanceChart"
+    },
+    "lookback=Max view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading trade balance data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                21.5,
+                38.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                95.5,
+                102.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                113.5,
+                130.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                221.5,
+                230.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                349.5,
+                358.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                430.5,
+                449.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                576.5,
+                579.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": true,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Exports YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 642,
+                "first": 12.705973,
+                "last": 0.35836571,
+                "max": 13.863114,
+                "min": -7.8257794,
+                "n": 654,
+                "sum": 2578.9573
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Imports YoY",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 618,
+                "first": 4.0270019,
+                "last": 2.253773,
+                "max": 20.279229,
+                "min": -8.2127994,
+                "n": 654,
+                "sum": 2689.9267
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Trade Balance YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 654,
+                "first": -42.997993,
+                "last": 6.5022893,
+                "max": 107.81631,
+                "min": -47.144423,
+                "n": 654,
+                "sum": 2702.3023
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Exports YoY",
+              "Imports YoY",
+              "Trade Balance YoY"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -13.06,
+              666.06
+            ],
+            "y": [
+              -62.640496,
+              123.31238
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "TradeBalanceChart"
+    }
+  },
+  "size": [
+    1400,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Exports YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Imports YoY",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Trade Balance YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Exports YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Imports YoY",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Trade Balance YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "pen": [
+                136,
+                136,
+                136,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Exports YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Imports YoY",
+              "pen": [
+                239,
+                83,
+                80,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Trade Balance YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Balance: $-71.2B",
+    "Lookback:",
+    "View:",
+    "|"
+  ]
+}

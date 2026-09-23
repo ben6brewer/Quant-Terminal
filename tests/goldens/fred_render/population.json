@@ -1,0 +1,1730 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Raw",
+      "YoY %"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading population data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              21.5,
+              38.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              95.5,
+              102.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              113.5,
+              130.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              221.5,
+              230.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              349.5,
+              358.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              430.5,
+              449.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "brush": [
+              128,
+              128,
+              128,
+              45
+            ],
+            "region": [
+              576.5,
+              579.5
+            ],
+            "type": "LinearRegionItem",
+            "visible": true,
+            "z": -10.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 654,
+            "name": "Total Population",
+            "pen": [
+              79,
+              195,
+              247,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 654,
+              "first": 0.0,
+              "last": 653.0,
+              "max": 653.0,
+              "min": 0.0,
+              "n": 654,
+              "sum": 213531.0
+            },
+            "y": {
+              "finite": 654,
+              "first": 220.27876,
+              "last": 342.0,
+              "max": 342.0,
+              "min": 220.27876,
+              "n": 654,
+              "sum": 181501.94
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 654,
+            "name": "Civilian Population",
+            "pen": [
+              255,
+              167,
+              38,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 654,
+              "first": 0.0,
+              "last": 653.0,
+              "max": 653.0,
+              "min": 0.0,
+              "n": 654,
+              "sum": 213531.0
+            },
+            "y": {
+              "finite": 630,
+              "first": 182.95074,
+              "last": 275.0,
+              "max": 275.0,
+              "min": 182.95074,
+              "n": 654,
+              "sum": 142521.06
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 654,
+            "name": "Working Age (15-64)",
+            "pen": [
+              102,
+              187,
+              106,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 654,
+              "first": 0.0,
+              "last": 653.0,
+              "max": 653.0,
+              "min": 0.0,
+              "n": 654,
+              "sum": 213531.0
+            },
+            "y": {
+              "finite": 654,
+              "first": 134.97331,
+              "last": 210.0,
+              "max": 210.0,
+              "min": 134.97331,
+              "n": 654,
+              "sum": 110669.34
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Total Population",
+            "Civilian Population",
+            "Working Age (15-64)"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -13.06,
+            666.06
+          ],
+          "y": [
+            118.41118,
+            358.56213
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "PopulationChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=YoY %",
+    "tooltip": "Oct 1999\n\u25a0 Total Population YoY: +0.8%\n\u25a0 Civilian Population YoY: +0.8%\n\u25a0 Working Age (15-64) YoY: +0.7%"
+  },
+  "module": "population",
+  "renders": {
+    "lookback=5Y view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading population data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Total Population",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 328.58453,
+                "last": 342.0,
+                "max": 342.0,
+                "min": 328.58453,
+                "n": 60,
+                "sum": 20115.953
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Civilian Population",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 264.61302,
+                "last": 275.0,
+                "max": 275.0,
+                "min": 264.61302,
+                "n": 60,
+                "sum": 16179.484
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 60,
+              "name": "Working Age (15-64)",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 60,
+                "first": 0.0,
+                "last": 59.0,
+                "max": 59.0,
+                "min": 0.0,
+                "n": 60,
+                "sum": 1770.0
+              },
+              "y": {
+                "finite": 60,
+                "first": 201.63662,
+                "last": 210.0,
+                "max": 210.0,
+                "min": 201.63662,
+                "n": 60,
+                "sum": 12338.137
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Total Population",
+              "Civilian Population",
+              "Working Age (15-64)"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -1.18,
+              60.18
+            ],
+            "y": [
+              190.40755,
+              353.22907
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "PopulationChart"
+    },
+    "lookback=5Y view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading population data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": "Total Population YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": 0.77109596,
+                "last": 0.89435887,
+                "max": 0.95352359,
+                "min": 0.66437571,
+                "n": 48,
+                "sum": 38.729809
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": "Civilian Population YoY",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": 0.73327986,
+                "last": 0.7792427,
+                "max": 0.9354611,
+                "min": 0.66741599,
+                "n": 48,
+                "sum": 38.19287
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 48,
+              "name": "Working Age (15-64) YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 48,
+                "first": 0.0,
+                "last": 47.0,
+                "max": 47.0,
+                "min": 0.0,
+                "n": 48,
+                "sum": 1128.0
+              },
+              "y": {
+                "finite": 48,
+                "first": 0.68703333,
+                "last": 0.78105218,
+                "max": 1.0960092,
+                "min": 0.57515809,
+                "n": 48,
+                "sum": 40.441959
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Total Population YoY",
+              "Civilian Population YoY",
+              "Working Age (15-64) YoY"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -0.94,
+              47.94
+            ],
+            "y": [
+              0.53349,
+              1.1376773
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "PopulationChart"
+    },
+    "lookback=Max view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading population data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                21.5,
+                38.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                95.5,
+                102.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                113.5,
+                130.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                221.5,
+                230.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                349.5,
+                358.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                430.5,
+                449.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                576.5,
+                579.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Total Population",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 654,
+                "first": 220.27876,
+                "last": 342.0,
+                "max": 342.0,
+                "min": 220.27876,
+                "n": 654,
+                "sum": 181501.94
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Civilian Population",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 630,
+                "first": 182.95074,
+                "last": 275.0,
+                "max": 275.0,
+                "min": 182.95074,
+                "n": 654,
+                "sum": 142521.06
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 654,
+              "name": "Working Age (15-64)",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 654,
+                "first": 0.0,
+                "last": 653.0,
+                "max": 653.0,
+                "min": 0.0,
+                "n": 654,
+                "sum": 213531.0
+              },
+              "y": {
+                "finite": 654,
+                "first": 134.97331,
+                "last": 210.0,
+                "max": 210.0,
+                "min": 134.97331,
+                "n": 654,
+                "sum": 110669.34
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Total Population",
+              "Civilian Population",
+              "Working Age (15-64)"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -13.06,
+              666.06
+            ],
+            "y": [
+              118.41118,
+              358.56213
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "PopulationChart"
+    },
+    "lookback=Max view=YoY %": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading population data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                9.5,
+                26.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                83.5,
+                90.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                101.5,
+                118.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                209.5,
+                218.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                337.5,
+                346.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                418.5,
+                437.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "region": [
+                564.5,
+                567.5
+              ],
+              "type": "LinearRegionItem",
+              "visible": true,
+              "z": -10.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 642,
+              "name": "Total Population YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 642,
+                "first": 0.0,
+                "last": 641.0,
+                "max": 641.0,
+                "min": 0.0,
+                "n": 642,
+                "sum": 205761.0
+              },
+              "y": {
+                "finite": 642,
+                "first": 1.0607133,
+                "last": 0.89435887,
+                "max": 1.0607133,
+                "min": 0.44662995,
+                "n": 642,
+                "sum": 519.44855
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 642,
+              "name": "Civilian Population YoY",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 642,
+                "first": 0.0,
+                "last": 641.0,
+                "max": 641.0,
+                "min": 0.0,
+                "n": 642,
+                "sum": 205761.0
+              },
+              "y": {
+                "finite": 618,
+                "first": 0.89051951,
+                "last": 0.7792427,
+                "max": 1.0411494,
+                "min": 0.50193956,
+                "n": 642,
+                "sum": 481.7002
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 642,
+              "name": "Working Age (15-64) YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 642,
+                "first": 0.0,
+                "last": 641.0,
+                "max": 641.0,
+                "min": 0.0,
+                "n": 642,
+                "sum": 205761.0
+              },
+              "y": {
+                "finite": 642,
+                "first": 0.96366241,
+                "last": 0.78105218,
+                "max": 1.0960092,
+                "min": 0.47386751,
+                "n": 642,
+                "sum": 522.33365
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Total Population YoY",
+              "Civilian Population YoY",
+              "Working Age (15-64) YoY"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -12.82,
+              653.82
+            ],
+            "y": [
+              0.39467961,
+              1.1479596
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "PopulationChart"
+    }
+  },
+  "size": [
+    1621,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Population YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Civilian Population YoY",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Working Age (15-64) YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Population YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Civilian Population YoY",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Working Age (15-64) YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "brush": [
+                128,
+                128,
+                128,
+                45
+              ],
+              "type": "LinearRegionItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Total Population YoY",
+              "pen": [
+                79,
+                195,
+                247,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Civilian Population YoY",
+              "pen": [
+                255,
+                167,
+                38,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Working Age (15-64) YoY",
+              "pen": [
+                102,
+                187,
+                106,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Lookback:",
+    "Population: 342.0M",
+    "View:",
+    "Working Age: 210.0M",
+    "|"
+  ]
+}

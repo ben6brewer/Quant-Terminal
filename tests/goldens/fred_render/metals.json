@@ -1,0 +1,1620 @@
+{
+  "controls": {
+    "lookback": [
+      "5Y",
+      "Max"
+    ],
+    "view": [
+      "Normalized",
+      "Raw"
+    ]
+  },
+  "default": {
+    "background": [
+      13,
+      20,
+      32,
+      255
+    ],
+    "extra_viewboxes": [],
+    "placeholder": {
+      "shown": false,
+      "text": "Loading metals data..."
+    },
+    "plots": [
+      {
+        "axes": {
+          "bottom": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "left": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          },
+          "right": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": true
+          },
+          "top": {
+            "grid": 76,
+            "label": "",
+            "units": "",
+            "visible": false
+          }
+        },
+        "items": [
+          {
+            "angle": 90.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "angle": 0.0,
+            "pen": [
+              100,
+              120,
+              140,
+              255
+            ],
+            "type": "InfiniteLine",
+            "value": 0.0,
+            "visible": false,
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Gold",
+            "pen": [
+              255,
+              215,
+              0,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 100.0,
+              "last": 98.009056,
+              "max": 140.00942,
+              "min": 91.697363,
+              "n": 1260,
+              "sum": 136282.74
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Silver",
+            "pen": [
+              192,
+              192,
+              192,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 100.0,
+              "last": 150.97555,
+              "max": 176.23484,
+              "min": 70.663674,
+              "n": 1260,
+              "sum": 141019.09
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Copper",
+            "pen": [
+              184,
+              115,
+              51,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 100.0,
+              "last": 107.36804,
+              "max": 160.5507,
+              "min": 86.612046,
+              "n": 1260,
+              "sum": 143810.1
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Platinum",
+            "pen": [
+              229,
+              228,
+              226,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 100.0,
+              "last": 106.27485,
+              "max": 231.9721,
+              "min": 84.437112,
+              "n": 1260,
+              "sum": 167133.89
+            },
+            "z": 0.0
+          },
+          {
+            "fill_brush": null,
+            "len_x": 1260,
+            "name": "Palladium",
+            "pen": [
+              206,
+              208,
+              221,
+              255
+            ],
+            "symbol": null,
+            "type": "PlotDataItem",
+            "visible": true,
+            "x": {
+              "finite": 1260,
+              "first": 0.0,
+              "last": 1259.0,
+              "max": 1259.0,
+              "min": 0.0,
+              "n": 1260,
+              "sum": 793170.0
+            },
+            "y": {
+              "finite": 1260,
+              "first": 100.0,
+              "last": 448.30068,
+              "max": 603.166,
+              "min": 98.339623,
+              "n": 1260,
+              "sum": 345305.77
+            },
+            "z": 0.0
+          }
+        ],
+        "legend": {
+          "names": [
+            "Gold",
+            "Silver",
+            "Copper",
+            "Platinum",
+            "Palladium"
+          ],
+          "visible": true
+        },
+        "title": "",
+        "view_range": {
+          "x": [
+            -25.18,
+            1284.18
+          ],
+          "y": [
+            28.063488,
+            645.76619
+          ]
+        }
+      }
+    ],
+    "theme": "bloomberg",
+    "tooltip": null,
+    "type": "MetalsChart"
+  },
+  "hover": {
+    "state": "lookback=Max view=Raw",
+    "tooltip": "Aug 2013\n\u25a0 Gold: $1,494.59\n\u25a0 Silver: $10.29\n\u25a0 Copper: $6.32\n\u25a0 Platinum: $621.15\n\u25a0 Palladium: $153.96"
+  },
+  "module": "metals",
+  "renders": {
+    "lookback=5Y view=Normalized": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading metals data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Gold",
+              "pen": [
+                255,
+                215,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 100.0,
+                "last": 98.009056,
+                "max": 140.00942,
+                "min": 91.697363,
+                "n": 1260,
+                "sum": 136282.74
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Silver",
+              "pen": [
+                192,
+                192,
+                192,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 100.0,
+                "last": 150.97555,
+                "max": 176.23484,
+                "min": 70.663674,
+                "n": 1260,
+                "sum": 141019.09
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Copper",
+              "pen": [
+                184,
+                115,
+                51,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 100.0,
+                "last": 107.36804,
+                "max": 160.5507,
+                "min": 86.612046,
+                "n": 1260,
+                "sum": 143810.1
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Platinum",
+              "pen": [
+                229,
+                228,
+                226,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 100.0,
+                "last": 106.27485,
+                "max": 231.9721,
+                "min": 84.437112,
+                "n": 1260,
+                "sum": 167133.89
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Palladium",
+              "pen": [
+                206,
+                208,
+                221,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 100.0,
+                "last": 448.30068,
+                "max": 603.166,
+                "min": 98.339623,
+                "n": 1260,
+                "sum": 345305.77
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Gold",
+              "Silver",
+              "Copper",
+              "Platinum",
+              "Palladium"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -25.18,
+              1284.18
+            ],
+            "y": [
+              28.063488,
+              645.76619
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "MetalsChart"
+    },
+    "lookback=5Y view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading metals data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Gold",
+              "pen": [
+                255,
+                215,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 2448.7533,
+                "last": 2400.0,
+                "max": 3428.4854,
+                "min": 2245.4422,
+                "n": 1260,
+                "sum": 3337228.1
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Silver",
+              "pen": [
+                192,
+                192,
+                192,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 19.870767,
+                "last": 30.0,
+                "max": 35.019215,
+                "min": 14.041414,
+                "n": 1260,
+                "sum": 28021.574
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Copper",
+              "pen": [
+                184,
+                115,
+                51,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 4.284329,
+                "last": 4.6,
+                "max": 6.87852,
+                "min": 3.710745,
+                "n": 1260,
+                "sum": 6161.2978
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Platinum",
+              "pen": [
+                229,
+                228,
+                226,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 940.95643,
+                "last": 1000.0,
+                "max": 2182.7563,
+                "min": 794.51643,
+                "n": 1260,
+                "sum": 1572657.1
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 1260,
+              "name": "Palladium",
+              "pen": [
+                206,
+                208,
+                221,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 1260,
+                "first": 0.0,
+                "last": 1259.0,
+                "max": 1259.0,
+                "min": 0.0,
+                "n": 1260,
+                "sum": 793170.0
+              },
+              "y": {
+                "finite": 1260,
+                "first": 223.06457,
+                "last": 1000.0,
+                "max": 1345.4497,
+                "min": 219.36086,
+                "n": 1260,
+                "sum": 770254.84
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Gold",
+              "Silver",
+              "Copper",
+              "Platinum",
+              "Palladium"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -25.18,
+              1284.18
+            ],
+            "y": [
+              -270.27122,
+              3702.4673
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "MetalsChart"
+    },
+    "lookback=Max view=Normalized": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading metals data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Gold",
+              "pen": [
+                255,
+                215,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 100.0,
+                "last": 337.29934,
+                "max": 523.01495,
+                "min": 93.41659,
+                "n": 6683,
+                "sum": 1756561.4
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Silver",
+              "pen": [
+                192,
+                192,
+                192,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 100.0,
+                "last": 369.20819,
+                "max": 430.97936,
+                "min": 87.035895,
+                "n": 6683,
+                "sum": 1284532.4
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Copper",
+              "pen": [
+                184,
+                115,
+                51,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 100.0,
+                "last": 707.76417,
+                "max": 1647.8484,
+                "min": 96.317165,
+                "n": 6683,
+                "sum": 4058180.4
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Platinum",
+              "pen": [
+                229,
+                228,
+                226,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 100.0,
+                "last": 144.2619,
+                "max": 314.88859,
+                "min": 65.771026,
+                "n": 6683,
+                "sum": 1132554.2
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Palladium",
+              "pen": [
+                206,
+                208,
+                221,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 100.0,
+                "last": 449.73828,
+                "max": 605.10021,
+                "min": 57.572863,
+                "n": 6683,
+                "sum": 921171.15
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Gold",
+              "Silver",
+              "Copper",
+              "Platinum",
+              "Palladium"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -133.64,
+              6815.64
+            ],
+            "y": [
+              -69.64918,
+              1775.0704
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "MetalsChart"
+    },
+    "lookback=Max view=Raw": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "extra_viewboxes": [],
+      "placeholder": {
+        "shown": false,
+        "text": "Loading metals data..."
+      },
+      "plots": [
+        {
+          "axes": {
+            "bottom": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "left": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            },
+            "right": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": true
+            },
+            "top": {
+              "grid": 76,
+              "label": "",
+              "units": "",
+              "visible": false
+            }
+          },
+          "items": [
+            {
+              "angle": 90.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "angle": 0.0,
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "value": 0.0,
+              "visible": false,
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Gold",
+              "pen": [
+                255,
+                215,
+                0,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 711.53416,
+                "last": 2400.0,
+                "max": 3721.43,
+                "min": 664.69095,
+                "n": 6683,
+                "sum": 12498535.0
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Silver",
+              "pen": [
+                192,
+                192,
+                192,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 8.125497,
+                "last": 30.0,
+                "max": 35.019215,
+                "min": 7.072099,
+                "n": 6683,
+                "sum": 104374.64
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Copper",
+              "pen": [
+                184,
+                115,
+                51,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 0.649934,
+                "last": 4.6,
+                "max": 10.709927,
+                "min": 0.625998,
+                "n": 6683,
+                "sum": 26375.494
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Platinum",
+              "pen": [
+                229,
+                228,
+                226,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 693.1837,
+                "last": 1000.0,
+                "max": 2182.7563,
+                "min": 455.91403,
+                "n": 6683,
+                "sum": 7850680.8
+              },
+              "z": 0.0
+            },
+            {
+              "fill_brush": null,
+              "len_x": 6683,
+              "name": "Palladium",
+              "pen": [
+                206,
+                208,
+                221,
+                255
+              ],
+              "symbol": null,
+              "type": "PlotDataItem",
+              "visible": true,
+              "x": {
+                "finite": 6683,
+                "first": 0.0,
+                "last": 6682.0,
+                "max": 6682.0,
+                "min": 0.0,
+                "n": 6683,
+                "sum": 22327903.0
+              },
+              "y": {
+                "finite": 6683,
+                "first": 222.35154,
+                "last": 1000.0,
+                "max": 1345.4497,
+                "min": 128.01415,
+                "n": 6683,
+                "sum": 2048238.3
+              },
+              "z": 0.0
+            }
+          ],
+          "legend": {
+            "names": [
+              "Gold",
+              "Silver",
+              "Copper",
+              "Platinum",
+              "Palladium"
+            ],
+            "visible": true
+          },
+          "title": "",
+          "view_range": {
+            "x": [
+              -133.64,
+              6815.64
+            ],
+            "y": [
+              -297.03833,
+              4019.0944
+            ]
+          }
+        }
+      ],
+      "theme": "bloomberg",
+      "tooltip": null,
+      "type": "MetalsChart"
+    }
+  },
+  "size": [
+    1945,
+    850
+  ],
+  "themes": {
+    "bloomberg": {
+      "background": [
+        13,
+        20,
+        32,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                120,
+                140,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "fill_brush": null,
+              "name": "Gold",
+              "pen": [
+                255,
+                215,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Silver",
+              "pen": [
+                192,
+                192,
+                192,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Copper",
+              "pen": [
+                184,
+                115,
+                51,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Platinum",
+              "pen": [
+                229,
+                228,
+                226,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Palladium",
+              "pen": [
+                206,
+                208,
+                221,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "dark": {
+      "background": [
+        30,
+        30,
+        30,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                150,
+                150,
+                150,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "fill_brush": null,
+              "name": "Gold",
+              "pen": [
+                255,
+                215,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Silver",
+              "pen": [
+                192,
+                192,
+                192,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Copper",
+              "pen": [
+                184,
+                115,
+                51,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Platinum",
+              "pen": [
+                229,
+                228,
+                226,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Palladium",
+              "pen": [
+                206,
+                208,
+                221,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    },
+    "light": {
+      "background": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "plots": [
+        {
+          "items": [
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "pen": [
+                100,
+                100,
+                100,
+                255
+              ],
+              "type": "InfiniteLine",
+              "visible": false
+            },
+            {
+              "fill_brush": null,
+              "name": "Gold",
+              "pen": [
+                255,
+                215,
+                0,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Silver",
+              "pen": [
+                192,
+                192,
+                192,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Copper",
+              "pen": [
+                184,
+                115,
+                51,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Platinum",
+              "pen": [
+                229,
+                228,
+                226,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            },
+            {
+              "fill_brush": null,
+              "name": "Palladium",
+              "pen": [
+                206,
+                208,
+                221,
+                255
+              ],
+              "type": "PlotDataItem",
+              "visible": true
+            }
+          ]
+        }
+      ],
+      "tables": null
+    }
+  },
+  "toolbar_texts": [
+    "Ag: $30.00",
+    "Au: $2,400",
+    "Cu: $4.60",
+    "Lookback:",
+    "Pd: $1,000",
+    "Pt: $1,000",
+    "View:",
+    "|"
+  ]
+}
