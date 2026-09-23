@@ -1,0 +1,263 @@
+{
+  "producer": "app.ui.modules.risk_analytics.widgets.security_risk_table.SecurityRiskTable",
+  "themes": {
+    "bloomberg": {
+      "SecurityRiskTable": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#section_title",
+            [
+              ["color", "#ffffff"],
+              ["font-size", "15px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"],
+              ["padding", "4px 0"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button",
+            [
+              ["background-color", "transparent"],
+              ["color", "#808080"],
+              ["border", "none"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "normal"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button:hover",
+            [
+              ["color", "#ff8000"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button_active",
+            [
+              ["background-color", "transparent"],
+              ["color", "#ff8000"],
+              ["border", "none"],
+              ["border-bottom", "2px solid #ff8000"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2838"],
+              ["border-radius", "4px"],
+              ["font-size", "12px"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "6px 8px"]
+            ]
+          ],
+          [
+            "QHeaderView::section",
+            [
+              ["background-color", "#000814"],
+              ["color", "#808080"],
+              ["border", "none"],
+              ["border-bottom", "1px solid #1a2838"],
+              ["border-right", "1px solid #1a2838"],
+              ["padding", "8px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QHeaderView::section:last",
+            [
+              ["border-right", "none"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "SecurityRiskTable": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#section_title",
+            [
+              ["color", "#ffffff"],
+              ["font-size", "15px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"],
+              ["padding", "4px 0"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button",
+            [
+              ["background-color", "transparent"],
+              ["color", "#808080"],
+              ["border", "none"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "normal"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button:hover",
+            [
+              ["color", "#00d4ff"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button_active",
+            [
+              ["background-color", "transparent"],
+              ["color", "#00d4ff"],
+              ["border", "none"],
+              ["border-bottom", "2px solid #00d4ff"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "4px"],
+              ["font-size", "12px"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "6px 8px"]
+            ]
+          ],
+          [
+            "QHeaderView::section",
+            [
+              ["background-color", "#1e1e1e"],
+              ["color", "#a0a0a0"],
+              ["border", "none"],
+              ["border-bottom", "1px solid #3d3d3d"],
+              ["border-right", "1px solid #3d3d3d"],
+              ["padding", "8px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QHeaderView::section:last",
+            [
+              ["border-right", "none"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "SecurityRiskTable": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#section_title",
+            [
+              ["color", "#000000"],
+              ["font-size", "15px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"],
+              ["padding", "4px 0"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button",
+            [
+              ["background-color", "transparent"],
+              ["color", "#808080"],
+              ["border", "none"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "normal"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button:hover",
+            [
+              ["color", "#0066cc"]
+            ]
+          ],
+          [
+            "QPushButton#tab_button_active",
+            [
+              ["background-color", "transparent"],
+              ["color", "#0066cc"],
+              ["border", "none"],
+              ["border-bottom", "2px solid #0066cc"],
+              ["padding", "6px 12px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#ffffff"],
+              ["color", "#000000"],
+              ["border", "1px solid #cccccc"],
+              ["border-radius", "4px"],
+              ["font-size", "12px"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "6px 8px"]
+            ]
+          ],
+          [
+            "QHeaderView::section",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#666666"],
+              ["border", "none"],
+              ["border-bottom", "1px solid #cccccc"],
+              ["border-right", "1px solid #cccccc"],
+              ["padding", "8px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QHeaderView::section:last",
+            [
+              ["border-right", "none"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

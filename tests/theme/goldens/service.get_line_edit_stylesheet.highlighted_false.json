@@ -1,0 +1,47 @@
+{
+  "kwargs": {
+    "highlighted": false
+  },
+  "producer": "ThemeStylesheetService.get_line_edit_stylesheet",
+  "themes": {
+    "bloomberg": [
+      [
+        "QLineEdit",
+        [
+          ["background-color", "transparent"],
+          ["color", "#e8e8e8"],
+          ["border", "none"],
+          ["margin", "0px"],
+          ["padding", "0px 8px"],
+          ["font-size", "14px"]
+        ]
+      ]
+    ],
+    "dark": [
+      [
+        "QLineEdit",
+        [
+          ["background-color", "transparent"],
+          ["color", "#ffffff"],
+          ["border", "none"],
+          ["margin", "0px"],
+          ["padding", "0px 8px"],
+          ["font-size", "14px"]
+        ]
+      ]
+    ],
+    "light": [
+      [
+        "QLineEdit",
+        [
+          ["background-color", "transparent"],
+          ["color", "#000000"],
+          ["border", "none"],
+          ["margin", "0px"],
+          ["padding", "0px 8px"],
+          ["font-size", "14px"]
+        ]
+      ]
+    ]
+  }
+}

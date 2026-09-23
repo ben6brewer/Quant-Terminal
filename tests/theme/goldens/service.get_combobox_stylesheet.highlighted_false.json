@@ -1,0 +1,89 @@
+{
+  "kwargs": {
+    "highlighted": false
+  },
+  "producer": "ThemeStylesheetService.get_combobox_stylesheet",
+  "themes": {
+    "bloomberg": [
+      [
+        "QComboBox",
+        [
+          ["background-color", "transparent"],
+          ["color", "#e8e8e8"],
+          ["border", "none"],
+          ["padding", "4px 8px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "0px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#0d1420"],
+          ["color", "#e8e8e8"],
+          ["selection-background-color", "#ff8000"]
+        ]
+      ]
+    ],
+    "dark": [
+      [
+        "QComboBox",
+        [
+          ["background-color", "transparent"],
+          ["color", "#ffffff"],
+          ["border", "none"],
+          ["padding", "4px 8px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "0px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#2d2d2d"],
+          ["color", "#ffffff"],
+          ["selection-background-color", "#00d4ff"]
+        ]
+      ]
+    ],
+    "light": [
+      [
+        "QComboBox",
+        [
+          ["background-color", "transparent"],
+          ["color", "#000000"],
+          ["border", "none"],
+          ["padding", "4px 8px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "0px"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#f5f5f5"],
+          ["color", "#000000"],
+          ["selection-background-color", "#0066cc"]
+        ]
+      ]
+    ]
+  }
+}

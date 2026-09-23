@@ -1,0 +1,281 @@
+{
+  "producer": "app.ui.modules.risk_analytics.widgets.risk_summary_panel.RiskSummaryPanel",
+  "themes": {
+    "bloomberg": {
+      "RiskSummaryPanel#risk_summary_panel": [
+        [
+          [
+            "QFrame#risk_summary_panel",
+            [
+              ["background-color", "#0d1420"],
+              ["border", "1px solid #1a2838"],
+              ["border-radius", "6px"]
+            ]
+          ],
+          [
+            "QLabel#panel_title",
+            [
+              ["color", "#ffffff"],
+              ["font-size", "15px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"],
+              ["padding", "4px"]
+            ]
+          ],
+          [
+            "QWidget#risk_container",
+            [
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#risk_title",
+            [
+              ["color", "#808080"],
+              ["font-size", "13px"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#risk_value",
+            [
+              ["color", "#ff8000"],
+              ["font-size", "28px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"],
+              ["border", "none"],
+              ["font-size", "12px"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "6px 8px"],
+              ["border-bottom", "1px solid #1a2838"]
+            ]
+          ],
+          [
+            "QTableWidget::item:alternate",
+            [
+              ["background-color", "#0a1018"]
+            ]
+          ],
+          [
+            "QWidget#beta_container",
+            [
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#beta_label",
+            [
+              ["color", "#808080"],
+              ["font-size", "13px"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#beta_value",
+            [
+              ["color", "#ff8000"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "RiskSummaryPanel#risk_summary_panel": [
+        [
+          [
+            "QFrame#risk_summary_panel",
+            [
+              ["background-color", "#2d2d2d"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "6px"]
+            ]
+          ],
+          [
+            "QLabel#panel_title",
+            [
+              ["color", "#ffffff"],
+              ["font-size", "15px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"],
+              ["padding", "4px"]
+            ]
+          ],
+          [
+            "QWidget#risk_container",
+            [
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#risk_title",
+            [
+              ["color", "#a0a0a0"],
+              ["font-size", "13px"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#risk_value",
+            [
+              ["color", "#00d4ff"],
+              ["font-size", "28px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"],
+              ["border", "none"],
+              ["font-size", "12px"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "6px 8px"],
+              ["border-bottom", "1px solid #3d3d3d"]
+            ]
+          ],
+          [
+            "QTableWidget::item:alternate",
+            [
+              ["background-color", "#252525"]
+            ]
+          ],
+          [
+            "QWidget#beta_container",
+            [
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#beta_label",
+            [
+              ["color", "#a0a0a0"],
+              ["font-size", "13px"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#beta_value",
+            [
+              ["color", "#00d4ff"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "RiskSummaryPanel#risk_summary_panel": [
+        [
+          [
+            "QFrame#risk_summary_panel",
+            [
+              ["background-color", "#f5f5f5"],
+              ["border", "1px solid #cccccc"],
+              ["border-radius", "6px"]
+            ]
+          ],
+          [
+            "QLabel#panel_title",
+            [
+              ["color", "#000000"],
+              ["font-size", "15px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"],
+              ["padding", "4px"]
+            ]
+          ],
+          [
+            "QWidget#risk_container",
+            [
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#risk_title",
+            [
+              ["color", "#666666"],
+              ["font-size", "13px"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#risk_value",
+            [
+              ["color", "#0066cc"],
+              ["font-size", "28px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "none"],
+              ["font-size", "12px"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "6px 8px"],
+              ["border-bottom", "1px solid #e0e0e0"]
+            ]
+          ],
+          [
+            "QTableWidget::item:alternate",
+            [
+              ["background-color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "QWidget#beta_container",
+            [
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#beta_label",
+            [
+              ["color", "#666666"],
+              ["font-size", "13px"],
+              ["background", "transparent"]
+            ]
+          ],
+          [
+            "QLabel#beta_value",
+            [
+              ["color", "#0066cc"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"],
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

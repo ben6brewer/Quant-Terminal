@@ -1,0 +1,8 @@
+{
+  "producer": "ThemeStylesheetService.get_accent_rgb",
+  "themes": {
+    "bloomberg": [255, 128, 0],
+    "dark": [0, 212, 255],
+    "light": [0, 102, 204]
+  }
+}

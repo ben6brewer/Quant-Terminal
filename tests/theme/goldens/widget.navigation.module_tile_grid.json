@@ -1,0 +1,62 @@
+{
+  "producer": "app.ui.widgets.navigation.module_tile_grid.ModuleTileGrid",
+  "themes": {
+    "bloomberg": {
+      "ModuleTileGrid": [
+        [
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#000814"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QWidget#container",
+            [
+              ["background-color", "#000814"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "ModuleTileGrid": [
+        [
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#1e1e1e"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QWidget#container",
+            [
+              ["background-color", "#1e1e1e"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "ModuleTileGrid": [
+        [
+          [
+            "QScrollArea",
+            [
+              ["background-color", "#ffffff"],
+              ["border", "none"]
+            ]
+          ],
+          [
+            "QWidget#container",
+            [
+              ["background-color", "#ffffff"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

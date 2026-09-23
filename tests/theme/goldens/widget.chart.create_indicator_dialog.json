@@ -1,0 +1,748 @@
+{
+  "producer": "app.ui.modules.chart.widgets.create_indicator_dialog.CreateIndicatorDialog",
+  "themes": {
+    "bloomberg": {
+      "CreateIndicatorDialog": [
+        [
+          [
+            "QDialog",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "#titleBar",
+            [
+              ["background-color", "#0d1420"],
+              ["border-bottom", "1px solid #1a2332"]
+            ]
+          ],
+          [
+            "#titleLabel",
+            [
+              ["background-color", "transparent"],
+              ["color", "#e8e8e8"],
+              ["font-size", "13px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton",
+            [
+              ["background-color", "rgba(255, 255, 255, 0.08)"],
+              ["color", "#e8e8e8"],
+              ["border", "none"],
+              ["border-radius", "4px"],
+              ["font-size", "18px"],
+              ["font-weight", "bold"],
+              ["padding", "0px"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton:hover",
+            [
+              ["background-color", "#d32f2f"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QLabel",
+            [
+              ["color", "#b0b0b0"],
+              ["font-size", "13px"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["color", "#e8e8e8"],
+              ["background-color", "#0d1420"],
+              ["border", "2px solid #1a2332"],
+              ["border-radius", "8px"],
+              ["margin-top", "10px"],
+              ["padding-top", "20px"],
+              ["font-size", "14px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QGroupBox::title",
+            [
+              ["subcontrol-origin", "margin"],
+              ["left", "15px"],
+              ["padding", "0 5px"]
+            ]
+          ],
+          [
+            "QCheckBox",
+            [
+              ["color", "#b0b0b0"],
+              ["font-size", "13px"],
+              ["background-color", "transparent"],
+              ["spacing", "8px"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator",
+            [
+              ["width", "16px"],
+              ["height", "16px"],
+              ["border-radius", "3px"],
+              ["border", "2px solid #1a2838"],
+              ["background-color", "#0d1420"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator:checked",
+            [
+              ["border-color", "#ff8000"],
+              ["background-color", "#ff8000"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator:hover",
+            [
+              ["border-color", "#ff8000"]
+            ]
+          ],
+          [
+            "QComboBox",
+            [
+              ["background-color", "transparent"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2332"],
+              ["border-radius", "2px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QComboBox:hover",
+            [
+              ["border", "1px solid #ff8000"]
+            ]
+          ],
+          [
+            "QComboBox::drop-down",
+            [
+              ["border", "none"],
+              ["width", "20px"]
+            ]
+          ],
+          [
+            "QComboBox::down-arrow",
+            [
+              ["image", "none"],
+              ["border-left", "5px solid transparent"],
+              ["border-right", "5px solid transparent"],
+              ["border-top", "6px solid #e8e8e8"],
+              ["margin-right", "8px"]
+            ]
+          ],
+          [
+            "QComboBox QAbstractItemView",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"],
+              ["selection-background-color", "#ff8000"],
+              ["selection-color", "#000000"],
+              ["padding", "4px"]
+            ]
+          ],
+          [
+            "QLineEdit",
+            [
+              ["background-color", "transparent"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2332"],
+              ["border-radius", "2px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QLineEdit:focus",
+            [
+              ["border", "1px solid #ff8000"]
+            ]
+          ],
+          [
+            "QSpinBox",
+            [
+              ["background-color", "transparent"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2332"],
+              ["border-radius", "2px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QSpinBox:hover",
+            [
+              ["border", "1px solid #ff8000"]
+            ]
+          ],
+          [
+            "QPushButton",
+            [
+              ["background-color", "transparent"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #1a2332"],
+              ["border-radius", "2px"],
+              ["padding", "10px 20px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton:hover",
+            [
+              ["border", "1px solid #ff8000"],
+              ["background-color", "rgba(255, 128, 0, 0.1)"]
+            ]
+          ],
+          [
+            "QPushButton:pressed",
+            [
+              ["background-color", "#ff8000"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "QPushButton#defaultButton",
+            [
+              ["background-color", "#ff8000"],
+              ["color", "#000000"],
+              ["border", "1px solid #ff8000"]
+            ]
+          ],
+          [
+            "QPushButton#defaultButton:hover",
+            [
+              ["background-color", "#ff9520"]
+            ]
+          ]
+        ]
+      ],
+      "QPushButton": [
+        [
+          [
+            "<inline>",
+            [
+              ["background-color", "rgb(0, 150, 255)"],
+              ["border", "1px solid #555"]
+            ]
+          ]
+        ]
+      ],
+      "QWidget": [
+        [
+          [
+            "<inline>",
+            [
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "CreateIndicatorDialog": [
+        [
+          [
+            "QDialog",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "#titleBar",
+            [
+              ["background-color", "#2d2d2d"],
+              ["border-bottom", "1px solid #3d3d3d"]
+            ]
+          ],
+          [
+            "#titleLabel",
+            [
+              ["background-color", "transparent"],
+              ["color", "#ffffff"],
+              ["font-size", "13px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton",
+            [
+              ["background-color", "rgba(255, 255, 255, 0.1)"],
+              ["color", "#ffffff"],
+              ["border", "none"],
+              ["border-radius", "4px"],
+              ["font-size", "18px"],
+              ["font-weight", "bold"],
+              ["padding", "0px"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton:hover",
+            [
+              ["background-color", "#d32f2f"]
+            ]
+          ],
+          [
+            "QLabel",
+            [
+              ["color", "#cccccc"],
+              ["font-size", "13px"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["color", "#ffffff"],
+              ["background-color", "#2d2d2d"],
+              ["border", "2px solid #3d3d3d"],
+              ["border-radius", "8px"],
+              ["margin-top", "10px"],
+              ["padding-top", "20px"],
+              ["font-size", "14px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QGroupBox::title",
+            [
+              ["subcontrol-origin", "margin"],
+              ["left", "15px"],
+              ["padding", "0 5px"]
+            ]
+          ],
+          [
+            "QCheckBox",
+            [
+              ["color", "#cccccc"],
+              ["font-size", "13px"],
+              ["background-color", "transparent"],
+              ["spacing", "8px"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator",
+            [
+              ["width", "16px"],
+              ["height", "16px"],
+              ["border-radius", "3px"],
+              ["border", "2px solid #3d3d3d"],
+              ["background-color", "#2d2d2d"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator:checked",
+            [
+              ["border-color", "#00d4ff"],
+              ["background-color", "#00d4ff"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator:hover",
+            [
+              ["border-color", "#00d4ff"]
+            ]
+          ],
+          [
+            "QComboBox",
+            [
+              ["background-color", "#1e1e1e"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "4px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QComboBox:hover",
+            [
+              ["border", "1px solid #00d4ff"]
+            ]
+          ],
+          [
+            "QComboBox::drop-down",
+            [
+              ["border", "none"],
+              ["width", "20px"]
+            ]
+          ],
+          [
+            "QComboBox::down-arrow",
+            [
+              ["image", "none"],
+              ["border-left", "5px solid transparent"],
+              ["border-right", "5px solid transparent"],
+              ["border-top", "6px solid #ffffff"],
+              ["margin-right", "8px"]
+            ]
+          ],
+          [
+            "QComboBox QAbstractItemView",
+            [
+              ["background-color", "#2d2d2d"],
+              ["color", "#ffffff"],
+              ["selection-background-color", "#00d4ff"],
+              ["selection-color", "#000000"],
+              ["padding", "4px"]
+            ]
+          ],
+          [
+            "QLineEdit",
+            [
+              ["background-color", "#1e1e1e"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "4px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QLineEdit:focus",
+            [
+              ["border", "1px solid #00d4ff"]
+            ]
+          ],
+          [
+            "QSpinBox",
+            [
+              ["background-color", "#1e1e1e"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "4px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QSpinBox:hover",
+            [
+              ["border", "1px solid #00d4ff"]
+            ]
+          ],
+          [
+            "QPushButton",
+            [
+              ["background-color", "#1e1e1e"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #3d3d3d"],
+              ["border-radius", "4px"],
+              ["padding", "10px 20px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton:hover",
+            [
+              ["border", "1px solid #00d4ff"],
+              ["background-color", "#2d2d2d"]
+            ]
+          ],
+          [
+            "QPushButton:pressed",
+            [
+              ["background-color", "#00d4ff"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "QPushButton#defaultButton",
+            [
+              ["background-color", "#00d4ff"],
+              ["color", "#000000"],
+              ["border", "1px solid #00d4ff"]
+            ]
+          ],
+          [
+            "QPushButton#defaultButton:hover",
+            [
+              ["background-color", "#00c4ef"]
+            ]
+          ]
+        ]
+      ],
+      "QPushButton": [
+        [
+          [
+            "<inline>",
+            [
+              ["background-color", "rgb(0, 150, 255)"],
+              ["border", "1px solid #555"]
+            ]
+          ]
+        ]
+      ],
+      "QWidget": [
+        [
+          [
+            "<inline>",
+            [
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "CreateIndicatorDialog": [
+        [
+          [
+            "QDialog",
+            [
+              ["background-color", "#ffffff"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "#titleBar",
+            [
+              ["background-color", "#f5f5f5"],
+              ["border-bottom", "1px solid #cccccc"]
+            ]
+          ],
+          [
+            "#titleLabel",
+            [
+              ["background-color", "transparent"],
+              ["color", "#000000"],
+              ["font-size", "13px"],
+              ["font-weight", "500"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton",
+            [
+              ["background-color", "rgba(0, 0, 0, 0.08)"],
+              ["color", "#000000"],
+              ["border", "none"],
+              ["border-radius", "4px"],
+              ["font-size", "18px"],
+              ["font-weight", "bold"],
+              ["padding", "0px"]
+            ]
+          ],
+          [
+            "#titleBarCloseButton:hover",
+            [
+              ["background-color", "#d32f2f"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QLabel",
+            [
+              ["color", "#333333"],
+              ["font-size", "13px"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QGroupBox",
+            [
+              ["color", "#000000"],
+              ["background-color", "#f5f5f5"],
+              ["border", "2px solid #d0d0d0"],
+              ["border-radius", "8px"],
+              ["margin-top", "10px"],
+              ["padding-top", "20px"],
+              ["font-size", "14px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QGroupBox::title",
+            [
+              ["subcontrol-origin", "margin"],
+              ["left", "15px"],
+              ["padding", "0 5px"]
+            ]
+          ],
+          [
+            "QCheckBox",
+            [
+              ["color", "#333333"],
+              ["font-size", "13px"],
+              ["background-color", "transparent"],
+              ["spacing", "8px"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator",
+            [
+              ["width", "16px"],
+              ["height", "16px"],
+              ["border-radius", "3px"],
+              ["border", "2px solid #cccccc"],
+              ["background-color", "#f5f5f5"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator:checked",
+            [
+              ["border-color", "#0066cc"],
+              ["background-color", "#0066cc"]
+            ]
+          ],
+          [
+            "QCheckBox::indicator:hover",
+            [
+              ["border-color", "#0066cc"]
+            ]
+          ],
+          [
+            "QComboBox",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "1px solid #d0d0d0"],
+              ["border-radius", "4px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QComboBox:hover",
+            [
+              ["border", "1px solid #0066cc"]
+            ]
+          ],
+          [
+            "QComboBox::drop-down",
+            [
+              ["border", "none"],
+              ["width", "20px"]
+            ]
+          ],
+          [
+            "QComboBox::down-arrow",
+            [
+              ["image", "none"],
+              ["border-left", "5px solid transparent"],
+              ["border-right", "5px solid transparent"],
+              ["border-top", "6px solid #000000"],
+              ["margin-right", "8px"]
+            ]
+          ],
+          [
+            "QComboBox QAbstractItemView",
+            [
+              ["background-color", "#ffffff"],
+              ["color", "#000000"],
+              ["selection-background-color", "#0066cc"],
+              ["selection-color", "#ffffff"],
+              ["padding", "4px"]
+            ]
+          ],
+          [
+            "QLineEdit",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "1px solid #d0d0d0"],
+              ["border-radius", "4px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QLineEdit:focus",
+            [
+              ["border", "1px solid #0066cc"]
+            ]
+          ],
+          [
+            "QSpinBox",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "1px solid #d0d0d0"],
+              ["border-radius", "4px"],
+              ["padding", "8px"],
+              ["font-size", "13px"]
+            ]
+          ],
+          [
+            "QSpinBox:hover",
+            [
+              ["border", "1px solid #0066cc"]
+            ]
+          ],
+          [
+            "QPushButton",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#000000"],
+              ["border", "1px solid #d0d0d0"],
+              ["border-radius", "4px"],
+              ["padding", "10px 20px"],
+              ["font-size", "13px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton:hover",
+            [
+              ["border", "1px solid #0066cc"],
+              ["background-color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "QPushButton:pressed",
+            [
+              ["background-color", "#0066cc"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QPushButton#defaultButton",
+            [
+              ["background-color", "#0066cc"],
+              ["color", "#ffffff"],
+              ["border", "1px solid #0066cc"]
+            ]
+          ],
+          [
+            "QPushButton#defaultButton:hover",
+            [
+              ["background-color", "#0052a3"]
+            ]
+          ]
+        ]
+      ],
+      "QPushButton": [
+        [
+          [
+            "<inline>",
+            [
+              ["background-color", "rgb(0, 150, 255)"],
+              ["border", "1px solid #555"]
+            ]
+          ]
+        ]
+      ],
+      "QWidget": [
+        [
+          [
+            "<inline>",
+            [
+              ["background", "transparent"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

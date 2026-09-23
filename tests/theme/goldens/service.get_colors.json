@@ -1,0 +1,41 @@
+{
+  "producer": "ThemeStylesheetService.get_colors",
+  "themes": {
+    "bloomberg": {
+      "accent": "#FF8000",
+      "accent_hover": "#FF9020",
+      "accent_selection": "#FFa040",
+      "bg": "#000814",
+      "bg_alt": "#0a0f1c",
+      "bg_header": "#0d1420",
+      "border": "#1a2838",
+      "text": "#e8e8e8",
+      "text_muted": "#a8a8a8",
+      "text_on_accent": "#000000"
+    },
+    "dark": {
+      "accent": "#00d4ff",
+      "accent_hover": "#00e5ff",
+      "accent_selection": "#40e0ff",
+      "bg": "#1e1e1e",
+      "bg_alt": "#232323",
+      "bg_header": "#2d2d2d",
+      "border": "#3d3d3d",
+      "text": "#ffffff",
+      "text_muted": "#cccccc",
+      "text_on_accent": "#000000"
+    },
+    "light": {
+      "accent": "#0066cc",
+      "accent_hover": "#0077dd",
+      "accent_selection": "#0088ee",
+      "bg": "#ffffff",
+      "bg_alt": "#f5f5f5",
+      "bg_header": "#f5f5f5",
+      "border": "#cccccc",
+      "text": "#000000",
+      "text_muted": "#333333",
+      "text_on_accent": "#ffffff"
+    }
+  }
+}

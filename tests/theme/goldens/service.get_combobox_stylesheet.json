@@ -1,0 +1,105 @@
+{
+  "kwargs": {},
+  "producer": "ThemeStylesheetService.get_combobox_stylesheet",
+  "themes": {
+    "bloomberg": [
+      [
+        "QComboBox",
+        [
+          ["background-color", "transparent"],
+          ["color", "#000000"],
+          ["border", "none"],
+          ["padding", "4px 4px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "0px"]
+        ]
+      ],
+      [
+        "QComboBox:focus",
+        [
+          ["background-color", "transparent"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#ff8000"],
+          ["color", "#000000"],
+          ["selection-background-color", "#ffa040"]
+        ]
+      ]
+    ],
+    "dark": [
+      [
+        "QComboBox",
+        [
+          ["background-color", "transparent"],
+          ["color", "#000000"],
+          ["border", "none"],
+          ["padding", "4px 4px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "0px"]
+        ]
+      ],
+      [
+        "QComboBox:focus",
+        [
+          ["background-color", "transparent"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#00d4ff"],
+          ["color", "#000000"],
+          ["selection-background-color", "#40e0ff"]
+        ]
+      ]
+    ],
+    "light": [
+      [
+        "QComboBox",
+        [
+          ["background-color", "transparent"],
+          ["color", "#ffffff"],
+          ["border", "none"],
+          ["padding", "4px 4px"],
+          ["font-size", "14px"]
+        ]
+      ],
+      [
+        "QComboBox::drop-down",
+        [
+          ["border", "none"],
+          ["width", "0px"]
+        ]
+      ],
+      [
+        "QComboBox:focus",
+        [
+          ["background-color", "transparent"]
+        ]
+      ],
+      [
+        "QComboBox QAbstractItemView",
+        [
+          ["background-color", "#0066cc"],
+          ["color", "#ffffff"],
+          ["selection-background-color", "#0088ee"]
+        ]
+      ]
+    ]
+  }
+}

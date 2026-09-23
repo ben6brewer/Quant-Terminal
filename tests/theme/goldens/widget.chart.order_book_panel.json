@@ -1,0 +1,402 @@
+{
+  "producer": "app.ui.modules.chart.widgets.depth_chart.OrderBookPanel",
+  "themes": {
+    "bloomberg": {
+      "OrderBookLadderWidget": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "#spreadHeader",
+            [
+              ["background-color", "#0a1018"],
+              ["border-bottom", "2px solid #ff8000"]
+            ]
+          ],
+          [
+            "#spreadLabel",
+            [
+              ["color", "#ff8000"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#0d1420"],
+              ["border", "none"],
+              ["gridline-color", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["border", "none"],
+              ["padding", "4px 8px"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QHeaderView::section",
+            [
+              ["background-color", "#0a1018"],
+              ["color", "#b0b0b0"],
+              ["border", "none"],
+              ["padding", "6px 8px"],
+              ["font-weight", "bold"],
+              ["font-size", "11px"]
+            ]
+          ],
+          [
+            "#orderTable",
+            [
+              ["background-color", "#0d1420"]
+            ]
+          ]
+        ]
+      ],
+      "OrderBookPanel": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"]
+            ]
+          ],
+          [
+            "#depthHeader",
+            [
+              ["background-color", "#0a1018"],
+              ["border-bottom", "2px solid #ff8000"]
+            ]
+          ],
+          [
+            "#depthTitle",
+            [
+              ["color", "#ff8000"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "#statusLabel",
+            [
+              ["color", "#b0b0b0"],
+              ["background-color", "transparent"],
+              ["font-size", "10px"],
+              ["font-style", "italic"],
+              ["padding", "5px"]
+            ]
+          ],
+          [
+            "QPushButton",
+            [
+              ["background-color", "#0a1018"],
+              ["color", "#b0b0b0"],
+              ["border", "1px solid #1a2332"],
+              ["border-radius", "2px"],
+              ["padding", "6px 12px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton:hover",
+            [
+              ["background-color", "#0d1420"],
+              ["color", "#e8e8e8"],
+              ["border", "1px solid #ff8000"]
+            ]
+          ],
+          [
+            "QPushButton:checked",
+            [
+              ["background-color", "#ff8000"],
+              ["color", "#000000"]
+            ]
+          ]
+        ]
+      ],
+      "UnifiedOrderBookTable#orderTable": [
+        [
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "4px 8px"],
+              ["border", "none"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "dark": {
+      "OrderBookLadderWidget": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#1a1d2e"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "#spreadHeader",
+            [
+              ["background-color", "#232739"],
+              ["border-bottom", "1px solid #2a2f45"]
+            ]
+          ],
+          [
+            "#spreadLabel",
+            [
+              ["color", "#8b92ab"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#1a1d2e"],
+              ["border", "none"],
+              ["gridline-color", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["border", "none"],
+              ["padding", "4px 8px"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QHeaderView::section",
+            [
+              ["background-color", "#232739"],
+              ["color", "#8b92ab"],
+              ["border", "none"],
+              ["padding", "6px 8px"],
+              ["font-weight", "bold"],
+              ["font-size", "11px"]
+            ]
+          ],
+          [
+            "#orderTable",
+            [
+              ["background-color", "#1a1d2e"]
+            ]
+          ]
+        ]
+      ],
+      "OrderBookPanel": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#1a1d2e"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "#depthHeader",
+            [
+              ["background-color", "#232739"],
+              ["border-bottom", "1px solid #2a2f45"]
+            ]
+          ],
+          [
+            "#depthTitle",
+            [
+              ["color", "#ffffff"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "#statusLabel",
+            [
+              ["color", "#8b92ab"],
+              ["background-color", "transparent"],
+              ["font-size", "10px"],
+              ["font-style", "italic"],
+              ["padding", "5px"]
+            ]
+          ],
+          [
+            "QPushButton",
+            [
+              ["background-color", "#2a2f45"],
+              ["color", "#8b92ab"],
+              ["border", "none"],
+              ["border-radius", "4px"],
+              ["padding", "6px 12px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton:hover",
+            [
+              ["background-color", "#343a52"],
+              ["color", "#ffffff"]
+            ]
+          ],
+          [
+            "QPushButton:checked",
+            [
+              ["background-color", "#00d4ff"],
+              ["color", "#1a1d2e"]
+            ]
+          ]
+        ]
+      ],
+      "UnifiedOrderBookTable#orderTable": [
+        [
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "4px 8px"],
+              ["border", "none"]
+            ]
+          ]
+        ]
+      ]
+    },
+    "light": {
+      "OrderBookLadderWidget": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#ffffff"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "#spreadHeader",
+            [
+              ["background-color", "#f5f5f5"],
+              ["border-bottom", "1px solid #e0e0e0"]
+            ]
+          ],
+          [
+            "#spreadLabel",
+            [
+              ["color", "#666666"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget",
+            [
+              ["background-color", "#ffffff"],
+              ["border", "none"],
+              ["gridline-color", "transparent"]
+            ]
+          ],
+          [
+            "QTableWidget::item",
+            [
+              ["border", "none"],
+              ["padding", "4px 8px"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "QHeaderView::section",
+            [
+              ["background-color", "#f5f5f5"],
+              ["color", "#666666"],
+              ["border", "none"],
+              ["padding", "6px 8px"],
+              ["font-weight", "bold"],
+              ["font-size", "11px"]
+            ]
+          ],
+          [
+            "#orderTable",
+            [
+              ["background-color", "#ffffff"]
+            ]
+          ]
+        ]
+      ],
+      "OrderBookPanel": [
+        [
+          [
+            "QWidget",
+            [
+              ["background-color", "#ffffff"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "#depthHeader",
+            [
+              ["background-color", "#f5f5f5"],
+              ["border-bottom", "2px solid #0066cc"]
+            ]
+          ],
+          [
+            "#depthTitle",
+            [
+              ["color", "#0066cc"],
+              ["background-color", "transparent"]
+            ]
+          ],
+          [
+            "#statusLabel",
+            [
+              ["color", "#666666"],
+              ["background-color", "transparent"],
+              ["font-size", "10px"],
+              ["font-style", "italic"],
+              ["padding", "5px"]
+            ]
+          ],
+          [
+            "QPushButton",
+            [
+              ["background-color", "#e8e8e8"],
+              ["color", "#333333"],
+              ["border", "1px solid #d0d0d0"],
+              ["border-radius", "4px"],
+              ["padding", "6px 12px"],
+              ["font-size", "11px"],
+              ["font-weight", "bold"]
+            ]
+          ],
+          [
+            "QPushButton:hover",
+            [
+              ["background-color", "#d8d8d8"],
+              ["color", "#000000"]
+            ]
+          ],
+          [
+            "QPushButton:checked",
+            [
+              ["background-color", "#0066cc"],
+              ["color", "#ffffff"]
+            ]
+          ]
+        ]
+      ],
+      "UnifiedOrderBookTable#orderTable": [
+        [
+          [
+            "QTableWidget::item",
+            [
+              ["padding", "4px 8px"],
+              ["border", "none"]
+            ]
+          ]
+        ]
+      ]
+    }
+  }
+}

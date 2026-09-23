@@ -1,0 +1,8 @@
+{
+  "producer": "ThemeStylesheetService.get_chart_line_color",
+  "themes": {
+    "bloomberg": [0, 212, 255],
+    "dark": [76, 175, 80],
+    "light": [0, 0, 0]
+  }
+}
