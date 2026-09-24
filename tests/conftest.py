@@ -190,7 +190,9 @@ def pytest_collection_modifyitems(config, items):
     skip_ui = pytest.mark.skip(reason="UI tests require --full flag")
     skip_net = pytest.mark.skip(reason="network tests require --network flag")
     for item in items:
-        if not run_ui and "ui" in item.keywords:
+        # Markers only: ``item.keywords`` also holds directory names, so a
+        # keyword test would skip everything under tests/ui/.
+        if not run_ui and item.get_closest_marker("ui"):
             item.add_marker(skip_ui)
         if not run_network and item.get_closest_marker("network"):
             item.add_marker(skip_net)

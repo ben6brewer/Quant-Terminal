@@ -23,9 +23,8 @@ goldened in ``slice_data.module.<id>.json`` and every offered label is driven
 through the real ``toolbar.lookback_changed`` signal and checked against the
 profile.  Restart tests check that the chosen lookback is saved.
 
-NOTE: the root conftest skips every test whose keywords contain "ui", and the
-``tests/ui`` directory name is such a keyword, so this whole file (including
-the widget-free tests) only runs with ``--full``.
+The widget-free tests run in the default (non ``--full``) suite; only the
+``@pytest.mark.ui`` tests need ``--full``.
 
 P2 (B-slice) makes the slice date based: regenerate the ``slice_data.profile.*``
 goldens in that Behavior-Change commit, drop the KNOWN-BUG:fred-rowcount-lookback
