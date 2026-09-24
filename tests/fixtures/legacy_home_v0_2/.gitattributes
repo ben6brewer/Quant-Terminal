@@ -1,2 +1,4 @@
 # Byte-exact legacy files: no end-of-line normalisation.
-* -text
+# The JSON files keep their original CRLF endings, so let `git diff --check`
+# treat a CR at end of line as part of the line ending, not trailing space.
+* -text whitespace=cr-at-eol

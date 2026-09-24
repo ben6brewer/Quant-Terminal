@@ -1,0 +1,4 @@
+# Ken French CSV fixtures copy the upstream format byte for byte, including
+# trailing spaces in header lines (",Mom   ", " Annual Factors: ... ").
+# generate_ff_fixtures.py writes them on purpose, so skip whitespace checks.
+*.csv -whitespace
