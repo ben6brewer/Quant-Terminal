@@ -10,15 +10,13 @@ from __future__ import annotations
 
 import pytest
 
-from golden_utils import assert_golden
-
 from app.services import custom_data_service as cds
 from app.services.market_data import fetch_price_history
 from app.ui.modules.portfolio_construction.services.portfolio_service import (
     PortfolioService,
 )
 
-from ._helpers import CUSTOM_NAME, PREFIX, daily_returns
+from ._helpers import CUSTOM_NAME, PREFIX, assert_golden, daily_returns
 
 PS = PortfolioService
 BAD = f"{PREFIX}BAD"

@@ -11,12 +11,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from golden_utils import assert_golden
-
 from app.services.market_data import fetch_price_history
 from app.ui.modules.chart.services.ticker_equation_parser import TickerEquationParser
 
-from ._helpers import PREFIX
+from ._helpers import PREFIX, assert_golden
 
 OHLC = ["Open", "High", "Low", "Close"]
 

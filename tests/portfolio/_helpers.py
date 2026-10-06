@@ -2,10 +2,19 @@
 
 from __future__ import annotations
 
+from functools import partial
+from pathlib import Path
 from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
+
+import golden_utils
+
+# This slice keeps its goldens in its own directory:
+# tests/portfolio/goldens/<area>/<name>.json.
+GOLDENS_DIR: Path = Path(__file__).resolve().parent / "goldens"
+assert_golden = partial(golden_utils.assert_golden, goldens_dir=GOLDENS_DIR)
 
 PREFIX = "_QT_TEST_"
 CUSTOM_NAME = f"{PREFIX}Series"  # canonical, case-preserved custom import name

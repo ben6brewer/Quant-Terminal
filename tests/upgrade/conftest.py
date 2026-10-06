@@ -76,13 +76,11 @@ def legacy_home(fresh_home, monkeypatch) -> Path:
 
 
 @pytest.fixture
-def upgrade_golden(monkeypatch):
+def upgrade_golden():
     """``assert_golden(name, data, **kw)`` for area ``legacy_home_v0_2`` (goldens in tests/upgrade/)."""
     import golden_utils
 
-    monkeypatch.setattr(golden_utils, "GOLDENS_DIR", GOLDENS_DIR)
-
     def check(name: str, data, **kwargs) -> None:
-        golden_utils.assert_golden(name, data, area=GOLDEN_AREA, **kwargs)
+        golden_utils.assert_golden(name, data, area=GOLDEN_AREA, goldens_dir=GOLDENS_DIR, **kwargs)
 
     return check

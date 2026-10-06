@@ -151,12 +151,17 @@ def canonical_json(data: Any, sig: int = SIG_DIGITS) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def golden_path(name: str, area: str) -> Path:
-    """Path of ``tests/goldens/<area>/<name>.json`` (names: ``[A-Za-z0-9_.-]``)."""
+def golden_path(name: str, area: str, goldens_dir: Optional[PurePath] = None) -> Path:
+    """Path of ``<goldens_dir>/<area>/<name>.json`` (names: ``[A-Za-z0-9_.-]``).
+
+    ``goldens_dir`` defaults to :data:`GOLDENS_DIR` (``tests/goldens``); a test
+    directory that keeps its own goldens passes its directory explicitly.
+    """
     for part, label in ((name, "name"), (area, "area")):
         if not part or not _NAME_RE.match(part):
             raise ValueError(f"golden {label} must match [A-Za-z0-9_.-]+, got {part!r}")
-    return GOLDENS_DIR / area / f"{name}.json"
+    root = GOLDENS_DIR if goldens_dir is None else Path(goldens_dir)
+    return root / area / f"{name}.json"
 
 
 def _numbers_close(a, b, rel_tol, abs_tol) -> bool:
@@ -200,16 +205,18 @@ def compare_canonical(actual, expected, *, rel_tol: float = 1e-7, abs_tol: float
 
 
 def assert_golden(name: str, data: Any, area: str, *, rel_tol: float = 1e-7,
-                  abs_tol: float = 1e-12, update: Optional[bool] = None) -> None:
-    """Compare ``data`` with ``tests/goldens/<area>/<name>.json``.
+                  abs_tol: float = 1e-12, update: Optional[bool] = None,
+                  goldens_dir: Optional[PurePath] = None) -> None:
+    """Compare ``data`` with ``<goldens_dir>/<area>/<name>.json``.
 
+    ``goldens_dir`` defaults to ``tests/goldens`` (see :func:`golden_path`).
     With ``--update-goldens`` (or ``update=True``) the file is (re)written and
     the assertion passes.  Otherwise a missing file or any difference fails
     the test with a readable diff.
     """
     import pytest
 
-    path = golden_path(name, area)
+    path = golden_path(name, area, goldens_dir)
     text = canonical_json(data)
     actual = json.loads(text)
     do_update = UPDATE if update is None else update

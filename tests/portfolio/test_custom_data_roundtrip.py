@@ -16,12 +16,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from golden_utils import assert_golden
-
 from app.core.paths import user_data_dir
 from app.services import custom_data_service as cds
 
-from ._helpers import CUSTOM_NAME, PREFIX, daily_returns
+from ._helpers import CUSTOM_NAME, PREFIX, assert_golden, daily_returns
 
 OTHER_NAME = f"{PREFIX}Monthly"
 

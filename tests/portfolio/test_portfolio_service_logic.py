@@ -13,13 +13,11 @@ from datetime import datetime
 
 import pytest
 
-from golden_utils import assert_golden
-
 from app.ui.modules.portfolio_construction.services.portfolio_service import (
     PortfolioService,
 )
 
-from ._helpers import PREFIX, sample_ledger, tx
+from ._helpers import PREFIX, assert_golden, sample_ledger, tx
 
 PS = PortfolioService
 PRICES = {"AAPL": 200.0, "SPY": 500.0, "MSFT": None}

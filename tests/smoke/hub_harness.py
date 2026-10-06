@@ -61,79 +61,14 @@ TRACEBACK_MARKER = "Traceback (most recent call last)"
 # Fonts (offscreen platform)
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Font files for the families the app asks for ("Segoe UI", "Arial",
-# "Consolas", "Courier New"); Menlo/Helvetica fall back to these.
-_WINDOWS_FONT_FILES: Tuple[str, ...] = (
-    "segoeui.ttf", "segoeuib.ttf", "arial.ttf", "arialbd.ttf",
-    "consola.ttf", "consolab.ttf", "cour.ttf", "courbd.ttf",
+# The font helpers live in fixtures.qt_fonts (the root conftest's qapp fixture
+# uses them too); re-exported here for the smoke and visual tests.
+from fixtures.qt_fonts import (  # noqa: E402,F401
+    APP_FONT,
+    FONT_SUBSTITUTIONS,
+    ensure_fonts,
+    pin_app_font,
 )
-_FONT_IDS: List[int] = []
-
-
-def ensure_fonts() -> List[str]:
-    """Give the offscreen platform real fonts; return the registered families.
-
-    On Windows the offscreen QPA looks for fonts in ``PySide6/lib/fonts``
-    (absent), so the font database is EMPTY and every glyph is drawn as a
-    box.  In that state building the hub and then the first pyqtgraph chart
-    crashes with an access violation roughly one run in three (reproduced
-    outside pytest; never with fonts).  Registering a fixed set of system
-    fonts as application fonts fixes both the crash and the rendering, and
-    keeps screenshots deterministic.  Fonts stay registered for the rest of
-    the session (removing fonts that live widgets use is unsafe).
-
-    No-op when the database already has families (e.g. fontconfig on Linux,
-    or ``QT_QPA_FONTDIR`` set before the QApplication was created).
-    """
-    import os
-
-    from PySide6.QtGui import QFontDatabase
-
-    if QFontDatabase.families():
-        return list(QFontDatabase.families())
-    if os.name == "nt":
-        font_dir = Path(os.environ.get("WINDIR", r"C:\Windows")) / "Fonts"
-        for name in _WINDOWS_FONT_FILES:
-            path = font_dir / name
-            if path.exists():
-                font_id = QFontDatabase.addApplicationFont(str(path))
-                if font_id >= 0:
-                    _FONT_IDS.append(font_id)
-    return list(QFontDatabase.families())
-
-
-# Families the app asks for that Windows does not have, mapped the way Windows
-# itself maps them (Helvetica -> Arial) or to the next CSS fallback.
-FONT_SUBSTITUTIONS: Tuple[Tuple[str, str], ...] = (
-    ("Helvetica", "Arial"),
-    ("Menlo", "Consolas"),
-    ("Sans Serif", "Segoe UI"),
-    ("sans-serif", "Segoe UI"),
-    ("monospace", "Consolas"),
-)
-APP_FONT: Tuple[str, int] = ("Segoe UI", 9)  # the Windows default UI font
-
-
-def pin_app_font():
-    """Pin the default font (Segoe UI 9pt, as on Windows) and family fallbacks.
-
-    Makes captures independent of whatever else is in the font database.
-    Returns a callable that restores the previous state.
-    """
-    from PySide6.QtGui import QFont
-    from PySide6.QtWidgets import QApplication
-
-    old = QApplication.font()
-    for family, substitute in FONT_SUBSTITUTIONS:
-        QFont.insertSubstitution(family, substitute)
-    QApplication.setFont(QFont(*APP_FONT))
-
-    def undo() -> None:
-        QApplication.setFont(old)
-        for family, _ in FONT_SUBSTITUTIONS:
-            QFont.removeSubstitutions(family)
-
-    return undo
 
 
 # ─────────────────────────────────────────────────────────────────────────────

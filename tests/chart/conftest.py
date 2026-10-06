@@ -101,14 +101,12 @@ def ohlcv(_ohlcv_master):
 
 
 @pytest.fixture
-def chart_golden(monkeypatch):
+def chart_golden():
     """``assert_golden`` writing/reading ``tests/chart/goldens/<area>/<name>.json``."""
     import golden_utils
 
-    monkeypatch.setattr(golden_utils, "GOLDENS_DIR", CHART_GOLDENS_DIR)
-
     def check(name, data, area="indicators", **kwargs):
-        golden_utils.assert_golden(name, data, area=area, **kwargs)
+        golden_utils.assert_golden(name, data, area=area, goldens_dir=CHART_GOLDENS_DIR, **kwargs)
 
     return check
 

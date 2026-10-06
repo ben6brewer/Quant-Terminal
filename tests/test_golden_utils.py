@@ -121,6 +121,16 @@ class TestAssertGolden:
     def test_goldens_dir_default_location(self):
         assert gu.golden_path("x", "area").parent.parent.name == "goldens"
 
+    def test_explicit_goldens_dir(self, goldens_dir, tmp_path):
+        other = tmp_path / "slice_goldens"
+        assert gu.golden_path("x", "area", other) == other / "area" / "x.json"
+        assert_golden("demo", {"x": 1}, area="unit", update=True, goldens_dir=other)
+        assert (other / "unit" / "demo.json").exists()
+        assert not (goldens_dir / "unit" / "demo.json").exists()
+        assert_golden("demo", {"x": 1}, area="unit", goldens_dir=other)
+        with pytest.raises(pytest.fail.Exception, match="golden file missing"):
+            assert_golden("demo", {"x": 1}, area="unit")  # default dir untouched
+
 
 # ── frame_digest ─────────────────────────────────────────────────────────────
 

@@ -1,9 +1,9 @@
 """Local fixtures for ``tests/portfolio`` (P0.T7 characterization slice).
 
 Goldens for this directory live in ``tests/portfolio/goldens/<area>/<name>.json``:
-this slice owns only ``tests/portfolio/``, so ``golden_utils.GOLDENS_DIR`` is
-re-pointed here for every test collected below this directory.  Everything else
-(``assert_golden``, ``--update-goldens``, canonicalization) is the shared harness.
+the tests use ``_helpers.assert_golden``, which is ``golden_utils.assert_golden``
+with ``goldens_dir`` bound to that directory.  Everything else
+(``--update-goldens``, canonicalization) is the shared harness.
 
 Isolation:
 
@@ -17,19 +17,7 @@ Isolation:
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
-
-import golden_utils
-
-LOCAL_GOLDENS_DIR: Path = Path(__file__).resolve().parent / "goldens"
-
-
-@pytest.fixture(autouse=True)
-def _portfolio_goldens_dir(monkeypatch):
-    """Store/compare this directory's goldens under tests/portfolio/goldens/."""
-    monkeypatch.setattr(golden_utils, "GOLDENS_DIR", LOCAL_GOLDENS_DIR)
 
 
 @pytest.fixture

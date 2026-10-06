@@ -4,6 +4,9 @@ IMPORT-TIME SIDE EFFECTS (run before ANY ``app`` import, because many app
 modules compute cache/settings paths from ``Path.home()`` at import time):
 
 * ``QT_QPA_PLATFORM=offscreen`` (override with ``QT_TEST_QPA_PLATFORM``).
+* Windows + offscreen: ``QT_QPA_FONTDIR=%WINDIR%\\Fonts`` unless already set
+  (otherwise the font database is empty), and the ``qapp`` fixture pins the
+  default font to Segoe UI 9pt (:mod:`fixtures.qt_fonts`).
 * ``HOME`` / ``USERPROFILE`` / ``HOMEDRIVE`` / ``HOMEPATH`` point at a fresh
   ``tempfile.mkdtemp(prefix="_QT_TEST_home_")`` directory, so every
   ``~/.quant_terminal`` write lands in a throw-away home.  The directory is
@@ -48,6 +51,14 @@ from pathlib import Path, PurePath
 # ─────────────────────────────────────────────────────────────────────────────
 
 os.environ["QT_QPA_PLATFORM"] = os.environ.get("QT_TEST_QPA_PLATFORM", "offscreen")
+
+# On Windows the offscreen QPA looks for fonts in PySide6/lib/fonts (absent),
+# so the font database is EMPTY: every glyph is a box and pyqtgraph menus/axes
+# intermittently crash with access violations.  Point it at the system fonts
+# before any QApplication exists (an explicit QT_QPA_FONTDIR wins).  The qapp
+# fixture then pins the default font (see fixtures/qt_fonts.py).
+if os.environ["QT_QPA_PLATFORM"] == "offscreen" and os.name == "nt" and not os.environ.get("QT_QPA_FONTDIR"):
+    os.environ["QT_QPA_FONTDIR"] = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
 
 TESTS_DIR: Path = Path(__file__).resolve().parent
 PROJECT_ROOT: Path = TESTS_DIR.parent
@@ -470,12 +481,20 @@ def _nonblocking_dialogs(request, monkeypatch):
 
 @pytest.fixture(scope="session")
 def qapp():
-    """Session-scoped QApplication (offscreen). Overrides pytest-qt's ``qapp``."""
+    """Session-scoped QApplication (offscreen). Overrides pytest-qt's ``qapp``.
+
+    The default font is pinned (Segoe UI 9pt plus family substitutions, see
+    :mod:`fixtures.qt_fonts`) so text metrics in goldens do not depend on
+    which other fonts the machine has.
+    """
     from PySide6.QtWidgets import QApplication
+
+    from fixtures.qt_fonts import pin_app_font
 
     app = QApplication.instance()
     if app is None:
         app = QApplication([])
+    pin_app_font()
     yield app
 
 

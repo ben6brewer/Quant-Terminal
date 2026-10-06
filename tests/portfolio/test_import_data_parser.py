@@ -11,13 +11,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from golden_utils import assert_golden
-
 from app.services import custom_data_service as cds
 from app.ui.modules.import_data.import_data_module import _parse_and_save
 from app.ui.modules.import_data.parser import SUPPORTED_EXTENSIONS, parse_returns_file
 
-from ._helpers import CUSTOM_NAME, PREFIX
+from ._helpers import CUSTOM_NAME, PREFIX, assert_golden
 
 # pandas >= 3 reads text columns as StringDtype instead of object.  The parser only
 # runs its per-cell "%"-stripping / row-numbered error path for ``dtype == object``,
